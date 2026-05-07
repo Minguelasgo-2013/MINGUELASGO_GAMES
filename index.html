@@ -17,11 +17,14 @@
             max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         .game-card { 
             display: inline-block; 
             width: 280px; 
-            padding: 25px; 
+            padding: 20px; 
             margin: 20px;
             background: #1a1a1a; 
             border: 2px solid #00ffcc; 
@@ -30,6 +33,16 @@
             cursor: pointer;
             box-shadow: 0 0 10px rgba(0,255,204,0.3);
         }
+        /* Estilo para las imágenes de los juegos */
+        .game-img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #333; /* Color de carga */
+        }
+
         .game-card:hover { 
             transform: scale(1.05); 
             box-shadow: 0 0 30px #00ffcc; 
@@ -68,86 +81,51 @@
             color: #888;
             font-size: 14px;
         }
-        .instructions {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 10px;
-            border-left: 4px solid #00ffcc;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            font-size: 14px;
+        @keyframes blink {
+            from { opacity: 1; text-shadow: 0 0 10px #00ffcc; }
+            to { opacity: 0.8; text-shadow: 0 0 20px #00ffcc; }
         }
     </style>
 </head>
-<body onclick="window.focus()">
+<body>
 
-    <!-- Título neón -->
-    <h1>🎮 MINGUELASGO JUEGOS 🎮</h1>
+    <h1>🎮 MINGUELASGO JUEGOS </h1>
 
     <div class="container" id="gameContainer">
-        <!-- BLOCK DASH -->
-        <div class="game-card">
+        
+        <!-- JUEGO 1: BLOCK DASH -->
+        <div class="game-card" onclick="playGame('BlockDash/index.html')">
+            <!-- Imagen temática: Un cuadrado neón saltando bloques -->
+            <img src="https://itch.zone" alt="Block Dash" class="game-img">
             <h3>🏃‍♂️ BLOCK DASH</h3>
             <p>Esquiva los bloques rojos<br>¡No te pillen!</p>
-            <button onclick="playGame('BlockDash/index.html')">🚀 JUGAR BLOCK DASH</button>
+            <button>🚀 JUGAR AHORA</button>
         </div>
 
-        <!-- Espacio para más juegos -->
-        <div class="game-card" style="opacity: 0.5;">
-            <h3>🎯 Juego 2</h3>
-            <p>Próximamente...</p>
-            <button disabled>SOON</button>
+        <!-- JUEGO 2: CONEXIÓN DE TU OTRO JUEGO -->
+        <div class="game-card" onclick="playGame('NombreDeTuCarpeta/index.html')">
+            <!-- Imagen temática: Un mando de juego retro o target -->
+            <img src="https://freepik.com" alt="Tu Juego" class="game-img">
+            <h3>🎯 TU OTRO JUEGO</h3>
+            <p>Descripción de tu segundo juego.<br>¡Pruébalo ya!</p>
+            <button>🎮 JUGAR AHORA</button>
         </div>
 
-        <div class="game-card" style="opacity: 0.5;">
+        <!-- JUEGO 3: PRÓXIMAMENTE -->
+        <div class="game-card" style="opacity: 0.6; cursor: default;">
+            <img src="https://placeholder.com" alt="Próximamente" class="game-img">
             <h3>⭐ Juego 3</h3>
-            <p>Próximamente...</p>
-            <button disabled>SOON</button>
+            <p>Nuevos niveles en camino...<br>Mantente atento.</p>
+            <button disabled style="background: #444; color: #888;">SOON</button>
         </div>
-    </div>
 
-    <!-- Instrucciones -->
-    <div class="instructions">
-        <strong>📋 CÓMO JUGAR:</strong><br>
-        - Clica en cualquier juego para empezar<br>
-        - [P] o [ESC] para pausar en cualquier juego<br>
-        - Botón "SALIR AL MENÚ" te trae de vuelta aquí<br>
-        - Todos los juegos tienen controles simples
     </div>
 
     <script>
-        // Función para jugar (navegación fluida)
         function playGame(gamePath) {
             window.location.href = gamePath;
         }
-
-        // Efecto hover en tarjetas
-        document.querySelectorAll('.game-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'scale(1.05)';
-            });
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'scale(1)';
-            });
-        });
-
-        // Animación blink
     </script>
-
-    <style>
-    @keyframes blink {
-        from { 
-            opacity: 1; 
-            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc; 
-        }
-        to { 
-            opacity: 0.8; 
-            text-shadow: 0 0 5px #00ffcc, 0 0 15px #00ffcc; 
-        }
-    }
-    </style>
 
 </body>
 </html>
