@@ -2,110 +2,360 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BLOCK DASH - MINGUELASGO</title>
+
     <style>
-        body { margin: 0; background: #0a0a0a; color: #00ffcc; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        canvas { background: #000; border: 3px solid #00ffcc; border-radius: 10px; box-shadow: 0 0 20px #00ffcc; }
-        #pauseMenu { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95); padding: 30px; border-radius: 15px;
-            border: 2px solid #00ffcc; text-align: center; display: none; z-index: 10;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        button { 
-            display: block; width: 100%; padding: 12px; margin: 10px 0;
-            background: transparent; color: #00ffcc; border: 1px solid #00ffcc;
-            font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s;
+
+        body {
+            background: #0a0a0a;
+            color: #00ffcc;
+            font-family: 'Segoe UI', sans-serif;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            height: 100vh;
+            overflow: hidden;
         }
-        button:hover { background: #00ffcc; color: black; box-shadow: 0 0 15px #00ffcc; }
-        .score-ui { font-size: 28px; margin-bottom: 10px; text-shadow: 0 0 15px #00ffcc; font-weight: bold; }
-        .controls-hint { font-size: 12px; color: #555; margin-top: 10px; }
+
+        .score-ui {
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-shadow: 0 0 15px #00ffcc;
+        }
+
+        canvas {
+            background: #000;
+            border: 3px solid #00ffcc;
+            border-radius: 12px;
+            box-shadow: 0 0 20px #00ffcc;
+        }
+
+        .controls-hint {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        #pauseMenu {
+            position: absolute;
+
+            top: 50%;
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+
+            background: rgba(0, 0, 0, 0.95);
+
+            padding: 30px;
+            border-radius: 15px;
+
+            border: 2px solid #00ffcc;
+
+            text-align: center;
+
+            display: none;
+
+            z-index: 10;
+        }
+
+        #pauseMenu h2 {
+            color: #00ffcc;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ffcc;
+        }
+
+        #pauseMenu p {
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        button {
+            display: block;
+
+            width: 100%;
+
+            padding: 12px;
+            margin: 10px 0;
+
+            background: transparent;
+            color: #00ffcc;
+
+            border: 1px solid #00ffcc;
+            border-radius: 6px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #00ffcc;
+            color: black;
+            box-shadow: 0 0 15px #00ffcc;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="score-ui">BLOCK DASH: <span id="score">0</span></div>
+    <div class="score-ui">
+        BLOCK DASH: <span id="score">0</span>
+    </div>
 
-<canvas id="game" width="400" height="500"></canvas>
+    <canvas id="game" width="400" height="500"></canvas>
 
-<div class="controls-hint">[A / D] o Flechas para mover. [P] para Pausa.</div>
+    <div class="controls-hint">
+        [A / D] o Flechas para mover · [P] o [ESC] para pausa
+    </div>
 
-<div id="pauseMenu">
-    <h2 style="text-shadow: 0 0 10px #00ffcc; color: #00ffcc;">BLOCK DASH</h2>
-    <p style="color: #666; font-size: 14px;">Juego Pausado</p>
-    <button onclick="togglePause()">RESUMEN</button>
-    <button onclick="location.reload()">REINTENTAR</button>
-    <button onclick="location.href='../index.html'">SALIR AL MENÚ</button>
-</div>
+    <div id="pauseMenu">
+        <h2>BLOCK DASH</h2>
+        <p>Juego pausado</p>
 
-<script>
-const canvas = document.getElementById('game');
-const ctx = canvas.getContext('2d');
-let score = 0;
-let isPaused = false;
+        <button onclick="togglePause()">REANUDAR</button>
+        <button onclick="restartGame()">REINICIAR</button>
+        <button onclick="goToMenu()">SALIR AL MENÚ</button>
+    </div>
 
-let player = { x: 180, y: 440, w: 40, h: 40, speed: 8 };
-let enemy = { x: Math.random()*360, y: -40, w: 40, h: 40, speed: 4 };
+    <script>
+        // Canvas
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
 
-let keys = {};
-window.addEventListener('keydown', (e) => {
-    keys[e.key] = true;
-    if(e.key.toLowerCase() === "p" || e.key === "Escape") togglePause();
-});
-window.addEventListener('keyup', (e) => keys[e.key] = false);
+        // UI
+        const scoreElement = document.getElementById("score");
+        const pauseMenu = document.getElementById("pauseMenu");
 
-function togglePause() {
-    isPaused = !isPaused;
-    document.getElementById('pauseMenu').style.display = isPaused ? 'block' : 'none';
-    if(!isPaused) loop();
-}
+        // Variables
+        let score = 0;
+        let isPaused = false;
+        let gameOver = false;
 
-function loop() {
-    if(isPaused) return;
+        // Jugador
+        const player = {
+            x: 180,
+            y: 440,
+            w: 40,
+            h: 40,
+            speed: 8
+        };
 
-    if (keys["ArrowLeft"] || keys["a"] || keys["A"]) player.x -= player.speed;
-    if (keys["ArrowRight"] || keys["d"] || keys["D"]) player.x += player.speed;
+        // Enemigo
+        const enemy = {
+            x: Math.random() * 360,
+            y: -40,
+            w: 40,
+            h: 40,
+            speed: 4
+        };
 
-    if (player.x < 0) player.x = 0;
-    if (player.x > canvas.width - player.w) player.x = canvas.width - player.w;
+        // Teclas
+        const keys = {};
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Controles
+        window.addEventListener("keydown", (e) => {
 
-    // Dibujar Jugador
-    ctx.fillStyle = '#00ffcc';
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = '#00ffcc';
-    ctx.fillRect(player.x, player.y, player.w, player.h);
-    
-    // Dibujar Enemigo
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = '#ff4444';
-    ctx.fillStyle = '#ff4444';
-    ctx.fillRect(enemy.x, enemy.y, enemy.w, enemy.h);
-    
-    ctx.shadowBlur = 0; // Reset sombras
-    enemy.y += enemy.speed;
+            keys[e.key] = true;
 
-    if(enemy.y > canvas.height) {
-        enemy.y = -40;
-        enemy.x = Math.random() * (canvas.width - enemy.w);
-        score++;
-        document.getElementById('score').innerText = score;
-        enemy.speed += 0.25;
-    }
+            if (
+                e.key.toLowerCase() === "p" ||
+                e.key === "Escape"
+            ) {
+                togglePause();
+            }
+        });
 
-        if(player.x < enemy.x + enemy.w && player.x + player.w > enemy.x && 
-       player.y < enemy.y + enemy.h && player.y + player.h > enemy.y) {
-        isPaused = true;
-        alert("¡BLOCK DASH TERMINADO!\nTu puntuación: " + score);
-        location.reload();
-        return;
-    }
-    }
+        window.addEventListener("keyup", (e) => {
+            keys[e.key] = false;
+        });
 
-    requestAnimationFrame(loop);
-}
+        // Pausa
+        function togglePause() {
 
-loop();
-</script>
+            if (gameOver) return;
+
+            isPaused = !isPaused;
+
+            pauseMenu.style.display =
+                isPaused ? "block" : "none";
+
+            if (!isPaused) {
+                loop();
+            }
+        }
+
+        // Reiniciar
+        function restartGame() {
+            location.reload();
+        }
+
+        // Menú
+        function goToMenu() {
+            alert("Aquí puedes conectar tu menú principal.");
+        }
+
+        // Dibujar jugador
+        function drawPlayer() {
+
+            ctx.fillStyle = "#00ffcc";
+
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = "#00ffcc";
+
+            ctx.fillRect(
+                player.x,
+                player.y,
+                player.w,
+                player.h
+            );
+        }
+
+        // Dibujar enemigo
+        function drawEnemy() {
+
+            ctx.fillStyle = "#ff4444";
+
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = "#ff4444";
+
+            ctx.fillRect(
+                enemy.x,
+                enemy.y,
+                enemy.w,
+                enemy.h
+            );
+        }
+
+        // Movimiento jugador
+        function movePlayer() {
+
+            if (
+                keys["ArrowLeft"] ||
+                keys["a"] ||
+                keys["A"]
+            ) {
+                player.x -= player.speed;
+            }
+
+            if (
+                keys["ArrowRight"] ||
+                keys["d"] ||
+                keys["D"]
+            ) {
+                player.x += player.speed;
+            }
+
+            // Limites
+            if (player.x < 0) {
+                player.x = 0;
+            }
+
+            if (player.x > canvas.width - player.w) {
+                player.x = canvas.width - player.w;
+            }
+        }
+
+        // Movimiento enemigo
+        function moveEnemy() {
+
+            enemy.y += enemy.speed;
+
+            if (enemy.y > canvas.height) {
+
+                enemy.y = -40;
+
+                enemy.x =
+                    Math.random() *
+                    (canvas.width - enemy.w);
+
+                score++;
+
+                scoreElement.textContent = score;
+
+                // Aumentar dificultad
+                enemy.speed += 0.25;
+            }
+        }
+
+        // Colisiones
+        function checkCollision() {
+
+            return (
+                player.x < enemy.x + enemy.w &&
+                player.x + player.w > enemy.x &&
+                player.y < enemy.y + enemy.h &&
+                player.y + player.h > enemy.y
+            );
+        }
+
+        // Fin del juego
+        function endGame() {
+
+            gameOver = true;
+            isPaused = true;
+
+            setTimeout(() => {
+
+                alert(
+                    "¡BLOCK DASH TERMINADO!\n\n" +
+                    "Puntuación: " + score
+                );
+
+                location.reload();
+
+            }, 100);
+        }
+
+        // Loop principal
+        function loop() {
+
+            if (isPaused || gameOver) return;
+
+            // Limpiar canvas
+            ctx.clearRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+            // Movimiento
+            movePlayer();
+            moveEnemy();
+
+            // Dibujar
+            drawPlayer();
+            drawEnemy();
+
+            // Reset sombras
+            ctx.shadowBlur = 0;
+
+            // Colisiones
+            if (checkCollision()) {
+                endGame();
+                return;
+            }
+
+            // Siguiente frame
+            requestAnimationFrame(loop);
+        }
+
+        // Iniciar juego
+        loop();
+
+    </script>
+
 </body>
 </html>
