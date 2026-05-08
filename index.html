@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>MINGUELASGO JUEGOS</title>
+    <title>MINGUELASGO JUEGOS - VIP</title>
     <style>
         body { 
             background: #0f0f0f; 
@@ -13,7 +13,7 @@
             padding: 20px;
         }
 
-        /* SECCIÓN VIP ESTILO DAVO */
+        /* BANNER VIP ESTILO DAVO */
         .vip-banner {
             max-width: 650px;
             margin: 20px auto 40px;
@@ -36,6 +36,7 @@
             border-radius: 8px;
             text-align: center;
             font-weight: bold;
+            outline: none;
         }
 
         .vip-banner button {
@@ -85,57 +86,67 @@
 
     <h1>🎮 MINGUELASGO JUEGOS</h1>
 
-    <!-- BANNER VIP -->
+    <!-- SECCIÓN VIP -->
     <div class="vip-banner" id="vipSection">
         <div id="vip-locked" style="display: flex; align-items: center; gap: 15px;">
-            <span style="color: #ffd700; font-weight: bold; letter-spacing: 1px;">⭐ ACCESO VIP:</span>
-            <input type="password" id="vipPass" placeholder="Código">
+            <span style="color: #ffd700; font-weight: bold;">⭐ ACCESO VIP:</span>
+            <input type="password" id="vipPass" placeholder="Introduce el código">
             <button onclick="checkVip()">ENTRAR</button>
         </div>
         
         <div id="vip-unlocked" style="display: none; width: 100%; text-align: center;">
-            <span style="color: #ffd700; font-weight: bold; margin-right: 20px;">✅ BIENVENIDO MINGUELASGO VIP</span>
-            <button onclick="location.href='vip-extension.html'" style="background: #fff; color: #000;">ABRIR EXTENSIÓN</button>
+            <span style="color: #ffd700; font-weight: bold; margin-right: 20px;">✅ ACCESO CONCEDIDO</span>
+            <button onclick="location.href='vip-extension.html'" style="background: #fff; color: #000;">ABRIR EXTENSIÓN VIP</button>
         </div>
     </div>
 
     <div class="container">
-        <!-- JUEGO 1 -->
+        <!-- TUS JUEGOS -->
         <div class="game-card">
             <img src="https://itch.zone" class="game-img">
             <h3>BLOCK DASH</h3>
             <button class="play-btn" onclick="location.href='BlockDash/index.html'">JUGAR AHORA</button>
         </div>
 
-        <!-- JUEGO 2 -->
-        <div class="game-card">
-            <img src="https://freepik.com" class="game-img">
-            <h3>TRABAJANDO EN ELLO</h3>
-            <button class="play-btn" onclick="location.href='OtroJuego/index.html'">JUGAR AHORA</button>
+        <div class="game-card" style="opacity: 0.5;">
+            <img src="https://placeholder.com" class="game-img">
+            <h3>PRÓXIMAMENTE</h3>
+            <button class="play-btn" disabled>SOON</button>
         </div>
     </div>
 
     <script>
         async function checkVip() {
-            const pass = document.getElementById('vipPass').value;
+            // El trim() quita espacios accidentales al final
+            const pass = document.getElementById('vipPass').value.trim();
+            
+            if (!pass) return;
+
             const encoder = new TextEncoder();
             const data = encoder.encode(pass);
             const hashBuffer = await crypto.subtle.digest('SHA-256', data);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-            // Hash único para la contraseña: M1gu5l R1c0
+            // Hash verificado para la contraseña: M1gu5l R1c0
             const secret = "f9a4613271188402506e987c6742a78f44d84f881923485c2c776080365778b8";
 
             if (hashHex === secret) {
                 document.getElementById('vip-locked').style.display = 'none';
                 document.getElementById('vip-unlocked').style.display = 'block';
-                document.getElementById('vipSection').style.border = "2px solid #fff";
+                document.getElementById('vipSection').style.border = "2px solid #00ffcc";
                 document.getElementById('vipSection').style.background = "rgba(0, 255, 204, 0.1)";
             } else {
-                alert("Código incorrecto. Preguntale a Migui.");
+                alert("Código incorrecto.Preguntale a Migui");
             }
         }
+
+        // Permitir dar a "Enter" para entrar
+        document.getElementById('vipPass').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkVip();
+            }
+        });
     </script>
 </body>
 </html>
