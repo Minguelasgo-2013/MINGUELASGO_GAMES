@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINGUELASGO JUEGOS</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            background:#0f0f0f;
+            color:#00ffcc;
+            font-family:Arial, sans-serif;
+            text-align:center;
+            padding:20px;
+            overflow-x:hidden;
+        }
+
+        h1{
+            font-size:3.5em;
+            text-shadow:
+            0 0 15px #00ffcc,
+            0 0 30px #00ffcc;
+
+            margin-top:40px;
+            letter-spacing:2px;
+        }
+
+        /* CONTENEDOR */
+
+        .container{
+
+            max-width:1200px;
+
+            margin:50px auto;
+
+            display:flex;
+
+            flex-wrap:wrap;
+
+            justify-content:center;
+
+            gap:30px;
+        }
+
+        /* TARJETAS */
+
+        .game-card{
+
+            width:300px;
+
+            padding:20px;
+
+            background:#1a1a1a;
+
+            border:2px solid #00ffcc;
+
+            border-radius:20px;
+
+            transition:0.3s;
+
+            box-shadow:
+            0 0 15px rgba(0,255,204,0.2);
+        }
+
+        .game-card:hover{
+
+            transform:scale(1.05);
+
+            box-shadow:0 0 35px #00ffcc;
+
+            border-color:#fff;
+        }
+
+        /* IMAGENES */
+
+        .game-img{
+
+            width:100%;
+
+            height:160px;
+
+            object-fit:cover;
+
+            border-radius:12px;
+
+            margin-bottom:15px;
+
+            border:1px solid #333;
+        }
+
+        h3{
+
+            color:#fff;
+
+            margin:10px 0;
+
+            font-size:1.4em;
+        }
+
+        p{
+
+            color:#888;
+
+            font-size:0.9em;
+
+            margin-bottom:20px;
+        }
+
+        /* BOTONES */
+
+        .play-btn{
+
+            background:#00ffcc;
+
+            color:#000;
+
+            border:none;
+
+            padding:14px;
+
+            width:100%;
+
+            border-radius:10px;
+
+            cursor:pointer;
+
+            font-weight:bold;
+
+            font-size:1em;
+
+            transition:0.2s;
+        }
+
+        .play-btn:hover{
+
+            background:#fff;
+
+            transform:translateY(-2px);
+        }
+
+        /* FOOTER */
+
+        footer{
+
+            margin-top:50px;
+
+            color:#444;
+
+            font-size:0.8em;
+        }
+
+        /* VIP BOX */
+
+        #vipBox{
+
+            position:fixed;
+
+            right:20px;
+            bottom:20px;
+
+            width:260px;
+
+            background:rgba(0,0,0,0.96);
+
+            border:2px solid #00ffcc;
+
+            border-radius:15px;
+
+            padding:20px;
+
+            box-shadow:0 0 20px #00ffcc55;
+
+            text-align:center;
+
+            z-index:999;
+        }
+
+        #vipBox h2{
+
+            color:#00ffcc;
+
+            margin-bottom:10px;
+
+            text-shadow:0 0 10px #00ffcc;
+        }
+
+        #vipBox p{
+
+            color:#666;
+
+            margin-bottom:12px;
+        }
+
+        #vipInput{
+
+            width:100%;
+
+            padding:12px;
+
+            background:#000;
+
+            border:2px solid #00ffcc;
+
+            border-radius:8px;
+
+            color:#00ffcc;
+
+            text-align:center;
+
+            margin-bottom:12px;
+
+            outline:none;
+        }
+
+        #vipBtn{
+
+            width:100%;
+
+            padding:12px;
+
+            background:transparent;
+
+            color:#00ffcc;
+
+            border:2px solid #00ffcc;
+
+            border-radius:8px;
+
+            font-weight:bold;
+
+            cursor:pointer;
+
+            transition:0.3s;
+        }
+
+        #vipBtn:hover{
+
+            background:#00ffcc;
+
+            color:black;
+
+            box-shadow:0 0 15px #00ffcc;
+        }
+
+        #vipError{
+
+            color:#ff4444;
+
+            display:none;
+
+            margin-top:10px;
+
+            font-size:14px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>🎮 MINGUELASGO JUEGOS</h1>
+
+    <div class="container">
+
+        <!-- BLOCK DASH -->
+
+        <div class="game-card">
+
+            <img
+                src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200"
+                class="game-img"
+                alt="Block Dash"
+            >
+
+            <h3>BLOCK DASH</h3>
+
+            <p>
+                Esquiva los bloques rojos.<br>
+                ¡Récord de velocidad!
+            </p>
+
+            <button
+                class="play-btn"
+                onclick="location.href='BlockDash/index.html'"
+            >
+                JUGAR AHORA
+            </button>
+
+        </div>
+
+        <!-- CAZA EL PUNTO -->
+
+        <div class="game-card">
+
+            <img
+                src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1200"
+                class="game-img"
+                alt="Caza Puntos"
+            >
+
+            <h3>🎯 CAZA EL PUNTO</h3>
+
+            <p>
+                Pon a prueba tus reflejos.<br>
+                ¡Clica antes del tiempo!
+            </p>
+
+            <button
+                class="play-btn"
+                onclick="location.href='CazaPuntos/index.html'"
+            >
+                JUGAR AHORA
+            </button>
+
+        </div>
+
+        <!-- PROXIMAMENTE -->
+
+        <div
+            class="game-card"
+            style="opacity:0.4; cursor:not-allowed;"
+        >
+
+            <img
+                src="https://images.unsplash.com/photo-1511882150382-421056c89033?q=80&w=1200"
+                class="game-img"
+                alt="Coming Soon"
+            >
+
+            <h3>PRÓXIMAMENTE</h3>
+
+            <p>
+                Estamos cocinando<br>
+                algo nuevo...
+            </p>
+
+            <button
+                class="play-btn"
+                disabled
+            >
+                BLOQUEADO
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- VIP BOX -->
+
+    <div id="vipBox">
+
+        <h2>VIP ACCESS</h2>
+
+        <p>Introduce el código VIP</p>
+
+        <input
+            type="password"
+            id="vipInput"
+            placeholder="Código VIP"
+        >
+
+        <button id="vipBtn" onclick="checkVIP()">
+            ENTRAR
+        </button>
+
+        <div id="vipError">
+            Código incorrecto
+        </div>
+
+    </div>
+
+    <footer>
+        &copy; 2026 MINGUELASGO GAMES
+    </footer>
+
+    <script>
+
+        function checkVIP(){
+
+            const code =
+                document
+                .getElementById("vipInput")
+                .value
+                .trim();
+
+            const error =
+                document
+                .getElementById("vipError");
+
+            // CODIGO VIP
+
+            if(code === "MINGUELASGO"){
+
+                // PAGINA VIP
+
+                location.href = "vip.html";
+
+            }else{
+
+                error.style.display = "block";
+            }
+        }
+
+    </script>
+
+</body>
+</html>
