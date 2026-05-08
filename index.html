@@ -1,12 +1,12 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MINGUELASGO JUEGOS</title>
     <style>
-        *{ margin:0; padding:0; box-sizing:border-box; }
-        body{
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
             background:#0f0f0f;
             color:#00ffcc;
             font-family:Arial, sans-serif;
@@ -14,13 +14,13 @@
             padding:20px;
             overflow-x:hidden;
         }
-        h1{
+        h1 {
             font-size:3.5em;
             text-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
             margin-top:40px;
             letter-spacing:2px;
         }
-        .container{
+        .container {
             max-width:1200px;
             margin:50px auto;
             display:flex;
@@ -28,7 +28,7 @@
             justify-content:center;
             gap:30px;
         }
-        .game-card{
+        .game-card {
             width:300px;
             padding:20px;
             background:#1a1a1a;
@@ -38,12 +38,12 @@
             box-shadow: 0 0 15px rgba(0,255,204,0.2);
             position:relative;
         }
-        .game-card:hover{
+        .game-card:hover {
             transform:scale(1.05);
             box-shadow:0 0 35px #00ffcc;
             border-color:#fff;
         }
-        .game-img{
+        .game-img {
             width:100%;
             height:160px;
             object-fit:cover;
@@ -51,10 +51,9 @@
             margin-bottom:15px;
             border:1px solid #333;
         }
-        h3{ color:#fff; margin:10px 0; font-size:1.4em; }
-        p{ color:#888; font-size:0.9em; margin-bottom:20px; }
-
-        .play-btn{
+        h3 { color:#fff; margin:10px 0; font-size:1.4em; }
+        p { color:#888; font-size:0.9em; margin-bottom:20px; }
+        .play-btn {
             background:#00ffcc;
             color:#000;
             border:none;
@@ -66,13 +65,13 @@
             font-size:1em;
             transition:0.2s;
         }
-        .play-btn:hover{
+        .play-btn:hover {
             background:#fff;
             transform:translateY(-2px);
         }
 
         /* VIP BOX */
-        #vipBox{
+        #vipBox {
             position:fixed;
             right:20px;
             bottom:20px;
@@ -85,7 +84,9 @@
             text-align:center;
             z-index:999;
         }
-        #vipInput{
+        #vipBox h2 { color:#00ffcc; margin-bottom:10px; text-shadow:0 0 10px #00ffcc; }
+        #vipBox p { color:#666; margin-bottom:12px; }
+        #vipInput {
             width:100%;
             padding:12px;
             background:#000;
@@ -96,7 +97,7 @@
             margin-bottom:12px;
             outline:none;
         }
-        #vipBtn{
+        #vipBtn {
             width:100%;
             padding:12px;
             background:transparent;
@@ -107,44 +108,48 @@
             cursor:pointer;
             transition:0.3s;
         }
-        #vipBtn:hover{
-            background:#00ffcc;
-            color:black;
-        }
-        #vipError{
-            color:#ff4444;
-            display:none;
-            margin-top:10px;
-        }
+        #vipBtn:hover { background:#00ffcc; color:black; }
+        #vipError { color:#ff4444; display:none; margin-top:10px; font-size:14px; }
 
         /* SECCIÓN VIP */
-        #vipSection{
-            display: none;
-            width: 100%;
-            margin: 60px 0 30px 0;
+        #vipSection { display:none; width:100%; margin:60px 0 30px 0; }
+        #vipSection h2 {
+            color:#ffd700;
+            text-shadow:0 0 15px #ffd700;
+            margin-bottom:30px;
+            font-size:2em;
         }
-        #vipSection h2{
-            color: #ffd700;
-            text-shadow: 0 0 15px #ffd700;
-            margin-bottom: 30px;
+        .vip-badge {
+            position:absolute;
+            top:-12px;
+            right:-12px;
+            background:#ffd700;
+            color:#000;
+            padding:6px 14px;
+            border-radius:20px;
+            font-size:0.85em;
+            font-weight:bold;
         }
-        .vip-badge{
-            position: absolute;
-            top: -12px;
-            right: -12px;
-            background: #ffd700;
-            color: #000;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: bold;
+        .game-card.vip-card {
+            border-color:#ffd700;
+            box-shadow:0 0 15px rgba(255,215,0,0.2);
         }
+        .game-card.vip-card:hover {
+            box-shadow:0 0 35px #ffd700;
+        }
+        .play-btn.vip-btn {
+            background:#ffd700;
+        }
+        .play-btn.vip-btn:hover { background:#fff; }
+
+        footer { margin-top:50px; color:#444; font-size:0.8em; }
     </style>
 </head>
 <body>
+
     <h1>🎮 MINGUELASGO JUEGOS</h1>
 
-    <!-- Juegos Públicos -->
+    <!-- JUEGOS PÚBLICOS -->
     <div class="container" id="publicGames">
         <div class="game-card">
             <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200" class="game-img" alt="Block Dash">
@@ -168,22 +173,23 @@
         </div>
     </div>
 
-    <!-- SECCIÓN VIP (aparece al poner el código) -->
+    <!-- SECCIÓN VIP (oculta hasta introducir el código) -->
     <div id="vipSection">
-        <h2>🔒 CONTENIDO VIP DESBLOQUEADO</h2>
+        <h2>👑 CONTENIDO VIP DESBLOQUEADO</h2>
         <div class="container">
 
-            <!-- === TU JUEGO VIP AQUÍ === -->
-            <div class="game-card">
+            <!-- ===== JUEGO VIP 1 — cambia la ruta del botón ===== -->
+            <div class="game-card vip-card">
                 <span class="vip-badge">VIP</span>
-                <img src="https://images.unsplash.com/photo-1551105370-5c3f7e8e5e0f?q=80&w=1200" 
-                     class="game-img" alt="Juego VIP">
-                <h3>🎮 NOMBRE DE TU JUEGO VIP</h3>
-                <p>Descripción breve de tu nuevo juego.</p>
-                <button class="play-btn" onclick="location.href='TuJuegoVIP/index.html'">
+                <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?q=80&w=1200" class="game-img" alt="Juego VIP">
+                <h3>🎮 NOMBRE DEL JUEGO VIP</h3>
+                <p>Descripción breve de tu juego exclusivo.</p>
+                <button class="play-btn vip-btn" onclick="location.href='TuJuegoVIP/index.html'">
                     JUGAR AHORA
                 </button>
             </div>
+
+            <!-- ===== Añade más tarjetas VIP aquí si quieres ===== -->
 
         </div>
     </div>
@@ -193,38 +199,31 @@
         <h2>VIP ACCESS</h2>
         <p>Introduce el código VIP</p>
         <input type="password" id="vipInput" placeholder="Código VIP">
-        <button id="vipBtn" onclick="checkVIP()">DESBLOQUEAR VIP</button>
+        <button id="vipBtn" onclick="checkVIP()">DESBLOQUEAR</button>
         <div id="vipError">Código incorrecto</div>
     </div>
 
-    <footer>
-        &copy; 2026 MINGUELASGO GAMES
-    </footer>
+    <footer>&copy; 2026 MINGUELASGO GAMES</footer>
 
-   <script>
-    function checkVIP(){
-        const code = document.getElementById("vipInput").value.trim();
-        const error = document.getElementById("vipError");
-        const vipSection = document.getElementById("vipSection");
+    <script>
+        function checkVIP() {
+            const code = document.getElementById("vipInput").value.trim();
+            const error = document.getElementById("vipError");
 
-        if(code === "MINGUELASVIP"){   // ← Cambia aquí por tu código
-            vipSection.style.display = "block";
-            error.style.display = "none";
-            document.getElementById("vipBox").style.opacity = "0.5";
-        } else {
-            error.style.display = "block";
+            if (code === "MINGUELASVIP") {   // ← tu código VIP
+                document.getElementById("vipSection").style.display = "block";
+                document.getElementById("vipBox").style.display = "none";
+                error.style.display = "none";
+                document.getElementById("vipSection").scrollIntoView({ behavior: "smooth" });
+            } else {
+                error.style.display = "block";
+            }
         }
-    }
 
-    document.getElementById("vipInput").addEventListener("keypress", function(e){
-        if(e.key === "Enter") checkVIP();
-    });
-</script>
-
-        // Pulsar Enter para validar
-        document.getElementById("vipInput").addEventListener("keypress", function(e){
-            if(e.key === "Enter") checkVIP();
+        document.getElementById("vipInput").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") checkVIP();
         });
     </script>
+
 </body>
 </html>
