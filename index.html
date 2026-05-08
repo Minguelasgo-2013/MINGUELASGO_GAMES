@@ -62,7 +62,7 @@
             border-radius:12px;
             margin-bottom:15px;
             border:1px solid #333;
-            background: #000; /* Fondo por si no hay imagen */
+            background: #000;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -106,7 +106,6 @@
             font-size:0.8em;
         }
 
-        /* VIP BOX */
         #vipBox{
             position:fixed;
             right:20px;
@@ -162,7 +161,6 @@
     <h1>MINGUELASGO JUEGOS</h1>
 
     <div class="container">
-        <!-- TARJETA DEL NUEVO JUEGO -->
         <div class="game-card">
             <div class="game-img">
                 <span style="font-size: 50px;">⚡</span>
@@ -171,8 +169,6 @@
             <p>Esquiva los bloques rojos a toda velocidad en este desafío de neón.</p>
             <a href="juegos/neon-runner.html" class="play-btn">JUGAR AHORA</a>
         </div>
-
-        <!-- Aquí puedes añadir más tarjetas de juegos en el futuro -->
     </div>
 
     <div id="vipBox">
@@ -185,6 +181,28 @@
     <footer>
         &copy; 2024 MINGUELASGO JUEGOS - Todos los derechos reservados
     </footer>
+
+    <!-- SCRIPT DE CONEXIÓN -->
+    <script>
+        document.getElementById('vipBtn').addEventListener('click', function() {
+            const pass = document.getElementById('vipInput').value;
+            
+            // CAMBIA "VIP2024" POR LA CONTRASEÑA QUE QUIERAS
+            if (pass === "VIP2024") {
+                window.location.href = "vip.html";
+            } else {
+                alert("Código VIP incorrecto");
+                document.getElementById('vipInput').value = "";
+            }
+        });
+
+        // También permite entrar pulsando la tecla "Enter"
+        document.getElementById('vipInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('vipBtn').click();
+            }
+        });
+    </script>
 
 </body>
 </html>
