@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Car Racing VIP - MINGUELASGO GAMES</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .game-wrapper {
+            background: #0f3460;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #00ff88;
+            text-shadow: 0 0 10px #00ff88;
+        }
+
+        /* PANTALLA DE CÓDIGO */
+        .code-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .code-screen.hidden {
+            display: none;
+        }
+
+        .code-form {
+            background: rgba(0, 255, 136, 0.05);
+            border: 3px solid #00ff88;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .code-form h2 {
+            color: #00ff88;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-shadow: 0 0 10px #00ff88;
+        }
+
+        .code-form p {
+            color: #aaa;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .code-input-group {
+            margin-bottom: 20px;
+        }
+
+        .code-input-group label {
+            display: block;
+            color: #00ff88;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .code-input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #00ff88;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-size: 18px;
+            border-radius: 5px;
+            text-align: center;
+            letter-spacing: 2px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .code-input-group input:focus {
+            outline: none;
+            background: rgba(0, 255, 136, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+
+        .code-button {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            border: none;
+            color: #000;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .code-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+        }
+
+        .code-button:active {
+            transform: scale(0.95);
+        }
+
+        .code-message {
+            padding: 12px 20px;
+            border-radius: 5px;
+            display: none;
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .code-message.show {
+            display: block;
+        }
+
+        .code-message.success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .code-message.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid #ff0000;
+            color: #ff0000;
+        }
+
+        /* PANTALLA DE JUEGO */
+        .game-screen {
+            display: none;
+        }
+
+        .game-screen.active {
+            display: block;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .stat-box label {
+            display: block;
+            font-size: 12px;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+
+        .stat-box .value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        canvas {
+            display: block;
+            background: #000;
+            border: 3px solid #00ff88;
+            border-radius: 5px;
+            margin: 0 auto 20px;
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            border: none;
+            color: #000;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #cc5555 100%);
+            color: #fff;
+            padding: 8px 15px;
+            font-size: 12px;
+        }
+
+        .logout-btn:hover {
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+        }
+
+        .garage {
+            background: rgba(0, 255, 136, 0.05);
+            border: 2px solid #00ff88;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .garage h2 {
+            color: #00ff88;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .car-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .car-item {
+            background: rgba(15, 52, 96, 0.8);
+            border: 2px solid #00ff88;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .car-item:hover {
+            background: rgba(0, 255, 136, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .car-item.selected {
+            background: rgba(0, 255, 136, 0.3);
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .car-item.locked {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+
+        .car-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #00ff88;
+        }
+
+        .car-price {
+            font-size: 12px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        .car-stats {
+            font-size: 11px;
+            color: #bbb;
+            margin-bottom: 8px;
+        }
+
+        .upgrade-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+            width: 100%;
+        }
+
+        .message {
+            text-align: center;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid #ff0000;
+            color: #ff0000;
+        }
+
+        @media (max-width: 600px) {
+            .stats {
+                flex-direction: column;
+            }
+
+            .car-list {
+                grid-template-columns: 1fr;
+            }
+
+            .code-form {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-wrapper">
+            <h1>🏎️ SUPER CAR RACING VIP</h1>
+
+            <!-- PANTALLA DE CÓDIGO -->
+            <div class="code-screen" id="codeScreen">
+                <div class="code-form">
+                    <h2>🔐 ACCESO VIP</h2>
+                    <p>Ingresa tu código exclusivo para jugar</p>
+                    <div class="code-input-group">
+                        <label>Código VIP:</label>
+                        <input type="text" id="codeInput" placeholder="Ej: MINGUI2024" maxlength="20">
+                    </div>
+                    <button class="code-button" id="submitCodeBtn">DESBLOQUEAR JUEGO</button>
+                    <div class="code-message" id="codeMessage"></div>
+                </div>
+            </div>
+
+            <!-- PANTALLA DE JUEGO -->
+            <div class="game-screen" id="gameScreen">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="color: #00ff88; font-size: 12px;">✅ Acceso VIP Verificado</span>
+                    <button class="logout-btn" id="logoutBtn">🔒 Cerrar Sesión</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-box">
+                        <label>💰 Dinero</label>
+                        <div class="value" id="money">$0</div>
+                    </div>
+                    <div class="stat-box">
+                        <label>📊 Velocidad</label>
+                        <div class="value" id="speed">100</div>
+                    </div>
+                    <div class="stat-box">
+                        <label>⚡ Nitro</label>
+                        <div class="value" id="nitro">50</div>
+                    </div>
+                    <div class="stat-box">
+                        <label>🏆 Récord</label>
+                        <div class="value" id="record">$0</div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    ⬅️ Izquierda | ➡️ Derecha | ESPACIO = Nitro
+                </div>
+
+                <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+                <div class="buttons">
+                    <button id="startBtn">▶️ JUGAR</button>
+                    <button id="pauseBtn">⏸️ PAUSAR</button>
+                    <button id="resetBtn">🔄 REINICIAR</button>
+                </div>
+
+                <div class="message" id="message"></div>
+
+                <div class="garage">
+                    <h2>🏎️ GARAJE - Elige tu auto</h2>
+                    <div class="car-list" id="carList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== SISTEMA DE CÓDIGOS =====
+        // CAMBIA ESTOS CÓDIGOS POR LOS QUE QUIERAS
+        const VALID_CODES = ['MIGUIPRO', 'MIGUI113', 'SUPERCAR'];
+
+        let accessGranted = false;
+
+        const codeScreen = document.getElementById('codeScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const codeInput = document.getElementById('codeInput');
+        const submitCodeBtn = document.getElementById('submitCodeBtn');
+        const codeMessage = document.getElementById('codeMessage');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Verificar si ya tiene acceso guardado
+        function checkAccess() {
+            const savedAccess = localStorage.getItem('superCarRacingAccess');
+            if (savedAccess === 'true') {
+                accessGranted = true;
+                showGameScreen();
+            } else {
+                showCodeScreen();
+            }
+        }
+
+        // Validar código
+        submitCodeBtn.addEventListener('click', () => {
+            const code = codeInput.value.toUpperCase().trim();
+
+            if (!code) {
+                showCodeMessage('Por favor ingresa un código', 'error');
+                return;
+            }
+
+            if (VALID_CODES.includes(code)) {
+                showCodeMessage('✅ ¡Código válido! Accediendo...', 'success');
+                accessGranted = true;
+                localStorage.setItem('superCarRacingAccess', 'true');
+
+                setTimeout(() => {
+                    showGameScreen();
+                }, 1500);
+            } else {
+                showCodeMessage('❌ Código incorrecto. Intenta de nuevo', 'error');
+                codeInput.value = '';
+            }
+        });
+
+        // Permitir Enter para enviar
+        codeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                submitCodeBtn.click();
+            }
+        });
+
+        // Cerrar sesión
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                accessGranted = false;
+                localStorage.removeItem('superCarRacingAccess');
+                gameRunning = false;
+                gamePaused = false;
+                codeInput.value = '';
+                showCodeScreen();
+            }
+        });
+
+        // Mostrar/ocultar pantallas
+        function showCodeScreen() {
+            codeScreen.classList.remove('hidden');
+            gameScreen.classList.remove('active');
+            codeInput.focus();
+        }
+
+        function showGameScreen() {
+            codeScreen.classList.add('hidden');
+            gameScreen.classList.add('active');
+            initGame();
+        }
+
+        function showCodeMessage(text, type) {
+            codeMessage.textContent = text;
+            codeMessage.className = `code-message show ${type}`;
+            setTimeout(() => {
