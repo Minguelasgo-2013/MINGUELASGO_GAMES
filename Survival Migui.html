@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SURVIVAL VIP - MINGUELASGO</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:#0f0f0f;
+    color:#00ffcc;
+    font-family:'Courier New', monospace;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:20px;
+  }
+  h1 {
+    font-size:2.2em;
+    text-shadow:0 0 15px #00ffcc, 0 0 30px #00ffcc;
+    margin:20px 0 5px;
+    letter-spacing:3px;
+  }
+  .vip-tag {
+    background:#ffd700;
+    color:#000;
+    padding:3px 14px;
+    border-radius:20px;
+    font-size:0.8em;
+    font-weight:bold;
+    margin-bottom:20px;
+    display:inline-block;
+  }
+  #game {
+    width:100%;
+    max-width:620px;
+    background:#111;
+    border:2px solid #00ffcc;
+    border-radius:16px;
+    padding:24px;
+    box-shadow:0 0 30px #00ffcc33;
+  }
+
+  /* STATS */
+  .stats {
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .stat-box {
+    flex:1;
+    min-width:80px;
+    background:#1a1a1a;
+    border:1px solid #00ffcc44;
+    border-radius:10px;
+    padding:10px;
+    text-align:center;
+  }
+  .stat-label { font-size:0.7em; color:#666; margin-bottom:4px; }
+  .stat-val { font-size:1.3em; font-weight:bold; }
+  .stat-val.hp { color:#ff4444; }
+  .stat-val.hunger { color:#ff9900; }
+  .stat-val.thirst { color:#00aaff; }
+  .stat-val.day { color:#00ffcc; }
+
+  /* BAR */
+  .bar-wrap { background:#222; border-radius:4px; height:6px; margin-top:4px; }
+  .bar { height:6px; border-radius:4px; transition:width 0.4s; }
+  .bar.hp { background:#ff4444; }
+  .bar.hunger { background:#ff9900; }
+  .bar.thirst { background:#00aaff; }
+
+  /* INVENTARIO */
+  .inventory {
+    background:#0a0a0a;
+    border:1px solid #333;
+    border-radius:10px;
+    padding:10px 14px;
+    font-size:0.82em;
+    color:#888;
+    margin-bottom:16px;
+  }
+  .inventory span { color:#00ffcc; }
+
+  /* ZONA + LOG */
+  .zone {
+    font-size:1.1em;
+    font-weight:bold;
+    color:#ffd700;
+    text-shadow:0 0 10px #ffd700;
+    margin-bottom:8px;
+  }
+  #log {
+    background:#0a0a0a;
+    border-left:3px solid #00ffcc;
+    padding:12px;
+    border-radius:8px;
+    font-size:0.88em;
+    color:#ccc;
+    min-height:60px;
+    margin-bottom:18px;
+    line-height:1.6;
+  }
+  #log .good { color:#00ffcc; }
+  #log .bad { color:#ff4444; }
+  #log .neutral { color:#aaa; }
+
+  /* OPCIONES */
+  .options { display:flex; flex-direction:column; gap:10px; }
+  .opt-btn {
+    background:transparent;
+    border:2px solid #00ffcc;
+    color:#00ffcc;
+    padding:12px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    font-family:'Courier New', monospace;
+    font-size:0.9em;
+    text-align:left;
+    transition:0.2s;
+  }
+  .opt-btn:hover {
+    background:#00ffcc;
+    color:#000;
+    box-shadow:0 0 15px #00ffcc;
+  }
+
+  /* GAME OVER / WIN */
+  #overlay {
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.92);
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:99;
+  }
+  #overlay.show { display:flex; }
+  #overlay h2 { font-size:3em; margin-bottom:10px; }
+  #overlay p { color:#aaa; margin-bottom:30px; font-size:1em; }
+  #overlay button {
+    background:#00ffcc;
+    color:#000;
+    border:none;
+    padding:14px 40px;
+    border-radius:10px;
+    font-size:1.1em;
+    font-weight:bold;
+    cursor:pointer;
+    font-family:'Courier New', monospace;
+  }
+  .dead h2 { color:#ff4444; text-shadow:0 0 20px #ff4444; }
+  .win h2 { color:#ffd700; text-shadow:0 0 20px #ffd700; }
+
+  footer { margin-top:30px; color:#333; font-size:0.75em; }
+</style>
+</head>
+<body>
+
+<h1>☠️ SURVIVAL</h1>
+<div class="vip-tag">👑 VIP EXCLUSIVE</div>
+
+<div id="game">
+  <div class="stats">
+    <div class="stat-box">
+      <div class="stat-label">DÍA</div>
+      <div class="stat-val day" id="sDia">1</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">❤️ HP</div>
+      <div class="stat-val hp" id="sHp">100</div>
+      <div class="bar-wrap"><div class="bar hp" id="bHp" style="width:100%"></div></div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">🍖 HAMBRE</div>
+      <div class="stat-val hunger" id="sHam">100</div>
+      <div class="bar-wrap"><div class="bar hunger" id="bHam" style="width:100%"></div></div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">💧 SED</div>
+      <div class="stat-val thirst" id="sSed">100</div>
+      <div class="bar-wrap"><div class="bar thirst" id="bSed" style="width:100%"></div></div>
+    </div>
+  </div>
+
+  <div class="inventory">
+    🎒 Madera: <span id="iMad">0</span> &nbsp;|&nbsp;
+    Comida: <span id="iCom">2</span> &nbsp;|&nbsp;
+    Agua: <span id="iAgu">2</span> &nbsp;|&nbsp;
+    Lanza: <span id="iLan">NO</span> &nbsp;|&nbsp;
+    Cabaña: <span id="iCab">NO</span>
+  </div>
+
+  <div class="zone" id="zoneName">📍 PLAYA</div>
+  <div id="log">Bienvenido. Estás solo en una isla desierta. ¡Sobrevive el máximo de días posible!</div>
+  <div class="options" id="options"></div>
+</div>
+
+<div id="overlay">
+  <h2 id="oTitle"></h2>
+  <p id="oMsg"></p>
+  <button onclick="resetGame()">🔄 REINTENTAR</button>
+</div>
+
+<footer>&copy; 2026 MINGUELASGO GAMES — VIP</footer>
+
+<script>
+const ZONES = [
+  {
+    name:"📍 PLAYA",
+    options:[
+      { txt:"🌊 Buscar agua en los cocos", fn: s => { s.sed=Math.min(100,s.sed+20); s.inv.comida++; return {msg:"Encontraste cocos. +20💧 +1🍖", cls:"good"}; }},
+      { txt:"🪵 Recoger madera de la orilla", fn: s => { s.inv.madera+=3; return {msg:"Recogiste 3 maderas de la playa.", cls:"neutral"}; }},
+      { txt:"🐟 Intentar pescar con las manos", fn: s => {
+          if(Math.random()>0.4){ s.inv.comida+=2; return {msg:"¡Atrapaste 2 peces! +2🍖", cls:"good"}; }
+          return {msg:"No pescaste nada. Te mojaste los pies.", cls:"neutral"};
+      }},
+      { txt:"🏃 Explorar la selva cercana", fn: s => { s.zone=1; return {msg:"Te adentras en la selva...", cls:"neutral"}; }},
+      { txt:"😴 Descansar en la arena", fn: s => { s.hp=Math.min(100,s.hp+15); return {msg:"Descansaste. +15❤️", cls:"good"}; }},
+      { txt:"🔍 Buscar supervivientes", fn: s => {
+          if(Math.random()>0.7){ s.hp-=10; return {msg:"Encontraste una criatura hostil. -10❤️", cls:"bad"}; }
+          return {msg:"Nada. Estás completamente solo.", cls:"neutral"};
+      }},
+    ]
+  },
+  {
+    name:"🌿 SELVA",
+    options:[
+      { txt:"🍄 Buscar frutas y setas", fn: s => {
+          if(Math.random()>0.3){ s.inv.comida+=2; s.hambre=Math.min(100,s.hambre+10); return {msg:"¡Encontraste frutas! +2🍖 +10🍖", cls:"good"}; }
+          s.hp-=15; return {msg:"Comiste setas venenosas. -15❤️", cls:"bad"};
+      }},
+      { txt:"🪵 Cortar árboles", fn: s => { s.inv.madera+=5; return {msg:"Conseguiste 5 maderas.", cls:"good"}; }},
+      { txt:"💧 Buscar un río", fn: s => {
+          if(Math.random()>0.4){ s.sed=Math.min(100,s.sed+30); s.inv.agua+=2; return {msg:"¡Encontraste un río! +30💧 +2🥤", cls:"good"}; }
+          return {msg:"Nada de agua por aquí.", cls:"neutral"};
+      }},
+      { txt:"🏗️ Construir cabaña", fn: s => {
+          if(s.inv.madera>=8){ s.inv.madera-=8; s.inv.cabana=true; return {msg:"¡Construiste una cabaña! Ya tienes refugio.", cls:"good"}; }
+          return {msg:`Te faltan maderas. Tienes ${s.inv.madera}/8.`, cls:"bad"};
+      }},
+      { txt:"🗡️ Fabricar una lanza", fn: s => {
+          if(s.inv.madera>=3){ s.inv.madera-=3; s.inv.lanza=true; return {msg:"¡Fabricaste una lanza! Ahora puedes cazar.", cls:"good"}; }
+          return {msg:`Necesitas 3 maderas. Tienes ${s.inv.madera}.`, cls:"bad"};
+      }},
+      { txt:"🔙 Volver a la playa", fn: s => { s.zone=0; return {msg:"Vuelves a la playa.", cls:"neutral"}; }},
+    ]
+  },
+  {
+    name:"⛰️ MONTAÑA",
+    options:[
+      { txt:"🦌 Cazar un animal", fn: s => {
+          if(s.inv.lanza){ s.inv.comida+=4; s.hambre=Math.min(100,s.hambre+20); return {msg:"¡Caza exitosa! +4🍖 +20🍗", cls:"good"}; }
+          s.hp-=20; return {msg:"Sin lanza el animal te atacó. -20❤️", cls:"bad"};
+      }},
+      { txt:"🌧️ Recoger agua de lluvia", fn: s => { s.sed=Math.min(100,s.sed+25); s.inv.agua++; return {msg:"Llenaste tu cantimplora. +25💧", cls:"good"}; }},
+      { txt:"🪨 Buscar piedras para herramientas", fn: s => { s.inv.madera+=2; return {msg:"Encontraste piedras útiles (+2 recursos).", cls:"neutral"}; }},
+      { txt:"🔥 Encender una hoguera", fn: s => {
+          if(s.inv.madera>=2){ s.inv.madera-=2; s.hp=Math.min(100,s.hp+20); return {msg:"La hoguera te calienta. +20❤️", cls:"good"}; }
+          return {msg:"No tienes suficiente madera.", cls:"bad"};
+      }},
+      { txt:"📡 Hacer señales de humo", fn: s => {
+          if(s.inv.madera>=2 && s.dia>=5){ s.dia=999; return {msg:"¡UN BARCO TE VIO! ¡Estás salvado!", cls:"good"}; }
+          return {msg:"Nadie te ve aún. Sigue sobreviviendo.", cls:"neutral"};
+      }},
+      { txt:"🔙 Bajar a la selva", fn: s => { s.zone=1; return {msg:"Bajas hacia la selva.", cls:"neutral"}; }},
+    ]
+  }
+];
+
+let state = {};
+
+function resetGame(){
+  state = {
+    dia:1, hp:100, hambre:100, sed:100, zone:0,
+    inv:{ madera:0, comida:2, agua:2, lanza:false, cabana:false }
+  };
+  document.getElementById("overlay").classList.remove("show","dead","win");
+  renderGame();
+  updateLog("Bienvenido. Estás solo en una isla desierta. ¡Sobrevive el máximo de días posible!", "neutral");
+}
+
+function renderGame(){
+  document.getElementById("sDia").textContent = state.dia > 900 ? "🏁" : state.dia;
+  document.getElementById("sHp").textContent = state.hp;
+  document.getElementById("sHam").textContent = state.hambre;
+  document.getElementById("sSed").textContent = state.sed;
+  document.getElementById("bHp").style.width = state.hp + "%";
+  document.getElementById("bHam").style.width = state.hambre + "%";
+  document.getElementById("bSed").style.width = state.sed + "%";
+  document.getElementById("iMad").textContent = state.inv.madera;
+  document.getElementById("iCom").textContent = state.inv.comida;
+  document.getElementById("iAgu").textContent = state.inv.agua;
+  document.getElementById("iLan").textContent = state.inv.lanza ? "✅" : "NO";
+  document.getElementById("iCab").textContent = state.inv.cabana ? "✅" : "NO";
+
+  const zone = ZONES[state.zone];
+  document.getElementById("zoneName").textContent = zone.name;
+
+  const opts = document.getElementById("options");
+  opts.innerHTML = "";
+  zone.options.forEach((o,i) => {
+    const btn = document.createElement("button");
+    btn.className = "opt-btn";
+    btn.textContent = o.txt;
+    btn.onclick = () => doAction(i);
+    opts.appendChild(btn);
+  });
+}
+
+function updateLog(msg, cls){
+  document.getElementById("log").innerHTML = `<span class="${cls}">${msg}</span>`;
+}
+
+function doAction(idx){
+  const result = ZONES[state.zone].options[idx].fn(state);
+  
+  // Victoria
+  if(state.dia === 999){
+    endGame(true);
+    return;
+  }
+
+  // Pasar día
+  state.dia++;
+  state.hambre = Math.max(0, state.hambre - (12 + Math.floor(Math.random()*8)));
+  state.sed    = Math.max(0, state.sed    - (15 + Math.floor(Math.random()*10)));
+
+  // Bonus cabaña
+  if(state.inv.cabana) state.hp = Math.min(100, state.hp + 5);
+
+  // Hambre/sed daño
+  if(state.hambre === 0) state.hp -= 15;
+  if(state.sed === 0)    state.hp -= 20;
+
+  // Usar consumibles si crítico
+  if(state.hambre < 20 && state.inv.comida > 0){ state.inv.comida--; state.hambre=Math.min(100,state.hambre+35); }
+  if(state.sed    < 20 && state.inv.agua   > 0){ state.inv.agua--;   state.sed   =Math.min(100,state.sed+35);    }
+
+  state.hp = Math.max(0, state.hp);
+
+  let logMsg = result.msg;
+  if(state.hambre < 30) logMsg += " ⚠️ Tienes hambre.";
+  if(state.sed    < 30) logMsg += " ⚠️ Tienes sed.";
+  if(state.hp     < 30) logMsg += " 🚨 Estás muy débil.";
+
+  updateLog(logMsg, result.cls);
+
+  if(state.hp <= 0){ endGame(false); return; }
+  renderGame();
+}
+
+function endGame(win){
+  const ov = document.getElementById("overlay");
+  ov.classList.add("show");
+  if(win){
+    ov.classList.add("win");
+    document.getElementById("oTitle").textContent = "🎉 ¡RESCATADO!";
+    document.getElementById("oMsg").textContent = `Sobreviviste ${state.dia} días. ¡Eres un superviviente legendario!`;
+  } else {
+    ov.classList.add("dead");
+    document.getElementById("oTitle").textContent = "💀 HAS MUERTO";
+    document.getElementById("oMsg").textContent = `Sobreviviste ${state.dia - 1} día${state.dia>2?'s':''}. ¡Inténtalo de nuevo!`;
+  }
+}
+
+resetGame();
+</script>
+</body>
+</html>
