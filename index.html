@@ -201,20 +201,25 @@
         &copy; 2026 MINGUELASGO GAMES
     </footer>
 
-    <script>
-        function checkVIP(){
-            const code = document.getElementById("vipInput").value.trim();
-            const error = document.getElementById("vipError");
-            const vipSection = document.getElementById("vipSection");
+   <script>
+    function checkVIP(){
+        const code = document.getElementById("vipInput").value.trim();
+        const error = document.getElementById("vipError");
+        const vipSection = document.getElementById("vipSection");
 
-            if(code === "MINGUELASGO"){
-                vipSection.style.display = "block";
-                error.style.display = "none";
-                document.getElementById("vipBox").style.opacity = "0.5";
-            } else {
-                error.style.display = "block";
-            }
+        if(code === "MINGUELASVIP"){   // ← Cambia aquí por tu código
+            vipSection.style.display = "block";
+            error.style.display = "none";
+            document.getElementById("vipBox").style.opacity = "0.5";
+        } else {
+            error.style.display = "block";
         }
+    }
+
+    document.getElementById("vipInput").addEventListener("keypress", function(e){
+        if(e.key === "Enter") checkVIP();
+    });
+</script>
 
         // Pulsar Enter para validar
         document.getElementById("vipInput").addEventListener("keypress", function(e){
