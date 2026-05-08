@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>MINGUELASGO JUEGOS - VIP</title>
+    <title>MINGUELASGO GAMES</title>
     <style>
         body { 
             background: #0f0f0f; 
@@ -35,7 +35,6 @@
             padding: 10px;
             border-radius: 8px;
             text-align: center;
-            font-weight: bold;
             outline: none;
         }
 
@@ -47,12 +46,6 @@
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .vip-banner button:hover {
-            box-shadow: 0 0 15px #ffd700;
-            transform: scale(1.05);
         }
 
         /* CONTENEDOR DE JUEGOS */
@@ -71,13 +64,11 @@
             background: #1a1a1a; 
             border: 2px solid #00ffcc; 
             border-radius: 15px;
-            transition: 0.3s;
         }
 
-        .game-img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
+        .game-img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; background: #333; }
         
-        h1 { font-size: 3em; text-shadow: 0 0 15px #00ffcc; margin-bottom: 10px; }
-        h3 { color: #fff; margin-bottom: 10px; }
+        h1 { font-size: 3em; text-shadow: 0 0 15px #00ffcc; }
         
         .play-btn { background: #00ffcc; color: #000; border: none; padding: 12px; width: 100%; border-radius: 8px; cursor: pointer; font-weight: bold; }
     </style>
@@ -90,26 +81,27 @@
     <div class="vip-banner" id="vipSection">
         <div id="vip-locked" style="display: flex; align-items: center; gap: 15px;">
             <span style="color: #ffd700; font-weight: bold;">⭐ ACCESO VIP:</span>
-            <input type="password" id="vipPass" placeholder="Introduce el código">
+            <input type="password" id="vipPass" placeholder="codigo">
             <button onclick="checkVip()">ENTRAR</button>
         </div>
         
         <div id="vip-unlocked" style="display: none; width: 100%; text-align: center;">
             <span style="color: #ffd700; font-weight: bold; margin-right: 20px;">✅ ACCESO CONCEDIDO</span>
-            <button onclick="location.href='vip-extension.html'" style="background: #fff; color: #000;">ABRIR EXTENSIÓN VIP</button>
+            <button onclick="location.href='vip-extension.html'" style="background: #fff; color: #000; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold;">ABRIR EXTENSIÓN VIP</button>
         </div>
     </div>
 
     <div class="container">
-        <!-- TUS JUEGOS -->
+        <!-- JUEGO 1 -->
         <div class="game-card">
-            <img src="https://itch.zone" class="game-img">
+            <img src="https://unsplash.com" class="game-img" alt="Block Dash">
             <h3>BLOCK DASH</h3>
             <button class="play-btn" onclick="location.href='BlockDash/index.html'">JUGAR AHORA</button>
         </div>
 
+        <!-- JUEGO 2 -->
         <div class="game-card" style="opacity: 0.5;">
-            <img src="https://placeholder.com" class="game-img">
+            <img src="https://unsplash.com" class="game-img" alt="Próximamente">
             <h3>PRÓXIMAMENTE</h3>
             <button class="play-btn" disabled>SOON</button>
         </div>
@@ -117,8 +109,8 @@
 
     <script>
         async function checkVip() {
-            // El trim() quita espacios accidentales al final
-            const pass = document.getElementById('vipPass').value.trim();
+            // Convertimos a minúsculas y quitamos espacios para que siempre funcione
+            const pass = document.getElementById('vipPass').value.toLowerCase().trim();
             
             if (!pass) return;
 
@@ -128,25 +120,17 @@
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-            // Hash verificado para la contraseña: M1gu5l R1c0
-            const secret = "f9a4613271188402506e987c6742a78f44d84f881923485c2c776080365778b8";
+            // Hash para la contraseña: miguelrico
+            const secret = "f45610e2009aa502844898857e4e1a141a0293d6291a134706504a5848c90f23";
 
             if (hashHex === secret) {
                 document.getElementById('vip-locked').style.display = 'none';
                 document.getElementById('vip-unlocked').style.display = 'block';
-                document.getElementById('vipSection').style.border = "2px solid #00ffcc";
                 document.getElementById('vipSection').style.background = "rgba(0, 255, 204, 0.1)";
             } else {
-                alert("Código incorrecto.Preguntale a Migui");
+                alert("Código incorrecto. Preguntale a Migui");
             }
         }
-
-        // Permitir dar a "Enter" para entrar
-        document.getElementById('vipPass').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                checkVip();
-            }
-        });
     </script>
 </body>
 </html>
