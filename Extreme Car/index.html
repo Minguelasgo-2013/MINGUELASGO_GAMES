@@ -1,517 +1,397 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Car Racing VIP - MINGUELASGO GAMES</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: #fff;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-            padding: 20px;
-        }
-
-        .game-wrapper {
-            background: #0f3460;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 15px;
-            color: #00ff88;
-            text-shadow: 0 0 10px #00ff88;
-        }
-
-        /* PANTALLA DE CÓDIGO */
-        .code-screen {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 500px;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        .code-screen.hidden {
-            display: none;
-        }
-
-        .code-form {
-            background: rgba(0, 255, 136, 0.05);
-            border: 3px solid #00ff88;
-            padding: 40px;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-        }
-
-        .code-form h2 {
-            color: #00ff88;
-            margin-bottom: 10px;
-            font-size: 28px;
-            text-shadow: 0 0 10px #00ff88;
-        }
-
-        .code-form p {
-            color: #aaa;
-            margin-bottom: 25px;
-            font-size: 14px;
-        }
-
-        .code-input-group {
-            margin-bottom: 20px;
-        }
-
-        .code-input-group label {
-            display: block;
-            color: #00ff88;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .code-input-group input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #00ff88;
-            background: rgba(0, 0, 0, 0.5);
-            color: #fff;
-            font-size: 18px;
-            border-radius: 5px;
-            text-align: center;
-            letter-spacing: 2px;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .code-input-group input:focus {
-            outline: none;
-            background: rgba(0, 255, 136, 0.1);
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
-        }
-
-        .code-button {
-            padding: 15px 40px;
-            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
-            border: none;
-            color: #000;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-            width: 100%;
-        }
-
-        .code-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
-        }
-
-        .code-button:active {
-            transform: scale(0.95);
-        }
-
-        .code-message {
-            padding: 12px 20px;
-            border-radius: 5px;
-            display: none;
-            margin-top: 15px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .code-message.show {
-            display: block;
-        }
-
-        .code-message.success {
-            background: rgba(0, 255, 136, 0.2);
-            border: 2px solid #00ff88;
-            color: #00ff88;
-        }
-
-        .code-message.error {
-            background: rgba(255, 0, 0, 0.2);
-            border: 2px solid #ff0000;
-            color: #ff0000;
-        }
-
-        /* PANTALLA DE JUEGO */
-        .game-screen {
-            display: none;
-        }
-
-        .game-screen.active {
-            display: block;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .stat-box {
-            background: rgba(0, 255, 136, 0.1);
-            border: 2px solid #00ff88;
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-align: center;
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .stat-box label {
-            display: block;
-            font-size: 12px;
-            color: #00ff88;
-            margin-bottom: 5px;
-        }
-
-        .stat-box .value {
-            font-size: 20px;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        canvas {
-            display: block;
-            background: #000;
-            border: 3px solid #00ff88;
-            border-radius: 5px;
-            margin: 0 auto 20px;
-            width: 100%;
-            max-width: 600px;
-            height: auto;
-        }
-
-        .controls {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #aaa;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
-            border: none;
-            color: #000;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
-
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
-        }
-
-        button:active {
-            transform: scale(0.95);
-        }
-
-        .logout-btn {
-            background: linear-gradient(135deg, #ff6b6b 0%, #cc5555 100%);
-            color: #fff;
-            padding: 8px 15px;
-            font-size: 12px;
-        }
-
-        .logout-btn:hover {
-            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
-        }
-
-        .garage {
-            background: rgba(0, 255, 136, 0.05);
-            border: 2px solid #00ff88;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
-        .garage h2 {
-            color: #00ff88;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-
-        .car-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-        }
-
-        .car-item {
-            background: rgba(15, 52, 96, 0.8);
-            border: 2px solid #00ff88;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .car-item:hover {
-            background: rgba(0, 255, 136, 0.2);
-            transform: translateY(-5px);
-        }
-
-        .car-item.selected {
-            background: rgba(0, 255, 136, 0.3);
-            border: 2px solid #fff;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-        }
-
-        .car-item.locked {
-            opacity: 0.5;
-            filter: grayscale(100%);
-        }
-
-        .car-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #00ff88;
-        }
-
-        .car-price {
-            font-size: 12px;
-            color: #aaa;
-            margin-bottom: 8px;
-        }
-
-        .car-stats {
-            font-size: 11px;
-            color: #bbb;
-            margin-bottom: 8px;
-        }
-
-        .upgrade-btn {
-            padding: 5px 10px;
-            font-size: 12px;
-            width: 100%;
-        }
-
-        .message {
-            text-align: center;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-            display: none;
-        }
-
-        .message.show {
-            display: block;
-        }
-
-        .message.success {
-            background: rgba(0, 255, 136, 0.2);
-            border: 2px solid #00ff88;
-            color: #00ff88;
-        }
-
-        .message.error {
-            background: rgba(255, 0, 0, 0.2);
-            border: 2px solid #ff0000;
-            color: #ff0000;
-        }
-
-        @media (max-width: 600px) {
-            .stats {
-                flex-direction: column;
-            }
-
-            .car-list {
-                grid-template-columns: 1fr;
-            }
-
-            .code-form {
-                padding: 30px 20px;
-            }
-        }
-    </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>SuperCar Ambient Clone</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="game-wrapper">
-            <h1>🏎️ SUPER CAR RACING VIP</h1>
+  <canvas id="game" width="480" height="800"></canvas>
 
-            <!-- PANTALLA DE CÓDIGO -->
-            <div class="code-screen" id="codeScreen">
-                <div class="code-form">
-                    <h2>🔐 ACCESO VIP</h2>
-                    <p>Ingresa tu código exclusivo para jugar</p>
-                    <div class="code-input-group">
-                        <label>Código VIP:</label>
-                        <input type="text" id="codeInput" placeholder="Ej: MINGUI2024" maxlength="20">
-                    </div>
-                    <button class="code-button" id="submitCodeBtn">DESBLOQUEAR JUEGO</button>
-                    <div class="code-message" id="codeMessage"></div>
-                </div>
-            </div>
+  <div id="ui">
+    <div id="left-ui">
+      <div id="score">P: 0</div>
+      <div id="speed">Vel: 0</div>
+    </div>
+    <div id="right-ui">
+      <div id="lives">Vidas: 3</div>
+      <button id="btn-codes">Canjear Código</button>
+      <button id="btn-pause">Pausa</button>
+    </div>
+  </div>
 
-            <!-- PANTALLA DE JUEGO -->
-            <div class="game-screen" id="gameScreen">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <span style="color: #00ff88; font-size: 12px;">✅ Acceso VIP Verificado</span>
-                    <button class="logout-btn" id="logoutBtn">🔒 Cerrar Sesión</button>
-                </div>
-
-                <div class="stats">
-                    <div class="stat-box">
-                        <label>💰 Dinero</label>
-                        <div class="value" id="money">$0</div>
-                    </div>
-                    <div class="stat-box">
-                        <label>📊 Velocidad</label>
-                        <div class="value" id="speed">100</div>
-                    </div>
-                    <div class="stat-box">
-                        <label>⚡ Nitro</label>
-                        <div class="value" id="nitro">50</div>
-                    </div>
-                    <div class="stat-box">
-                        <label>🏆 Récord</label>
-                        <div class="value" id="record">$0</div>
-                    </div>
-                </div>
-
-                <div class="controls">
-                    ⬅️ Izquierda | ➡️ Derecha | ESPACIO = Nitro
-                </div>
-
-                <canvas id="gameCanvas" width="600" height="400"></canvas>
-
-                <div class="buttons">
-                    <button id="startBtn">▶️ JUGAR</button>
-                    <button id="pauseBtn">⏸️ PAUSAR</button>
-                    <button id="resetBtn">🔄 REINICIAR</button>
-                </div>
-
-                <div class="message" id="message"></div>
-
-                <div class="garage">
-                    <h2>🏎️ GARAJE - Elige tu auto</h2>
-                    <div class="car-list" id="carList"></div>
-                </div>
-            </div>
-        </div>
+  <div id="overlay" class="hidden">
+    <div id="code-panel" class="panel hidden">
+      <h3>Introduce código</h3>
+      <input id="code-input" placeholder="XXXX-YYYY" />
+      <div style="display:flex;gap:8px">
+        <button id="redeem">Canjear</button>
+        <button id="close-code">Cerrar</button>
+      </div>
+      <div id="code-msg"></div>
     </div>
 
-    <script>
-        // ===== SISTEMA DE CÓDIGOS =====
-        // CAMBIA ESTOS CÓDIGOS POR LOS QUE QUIERAS
-        const VALID_CODES = ['MIGUIPRO', 'MIGUI113', 'SUPERCAR'];
+    <div id="pause-panel" class="panel hidden">
+      <h2 id="pause-title">Pausa</h2>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button id="resume">Continuar</button>
+        <button id="restart">Reiniciar</button>
+      </div>
+    </div>
+  </div>
 
-        let accessGranted = false;
+<script src="js/codes.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
+:root{
+  --bg-1:#04101a; --bg-2:#001417; --road:#162228; --accent:#ffd95b;
+  --panel:#07111a; --muted:#9fb3bf;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-1),var(--bg-2));color:#fff;font-family:Inter,system-ui,Arial}
+body{display:flex;align-items:center;justify-content:center}
+canvas{border:4px solid rgba(255,255,255,0.03);background:#001218;display:block}
+#ui{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;pointer-events:none}
+#ui div{pointer-events:auto}
+#left-ui,#right-ui{display:flex;gap:12px;align-items:center}
+#score,#speed,#lives{background:rgba(0,0,0,0.35);padding:8px 12px;border-radius:8px;font-weight:600}
+button{padding:8px 10px;border-radius:8px;border:0;background:var(--accent);color:#000;font-weight:700;cursor:pointer}
+#overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45)}
+.hidden{display:none}
+.panel{background:var(--panel);padding:16px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);min-width:260px}
+input{width:100%;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);margin:8px 0;background:transparent;color:#fff}
+#code-msg{margin-top:8px;color:var(--muted)}
+@media (max-width:520px){
+  canvas{width:360px;height:600px}
+}
+// Simple local code system. Add codes here.
+const CODES = [
+  {code:'OPENROAD', id:'openroad', reward:{type:'coins',amount:500}},
+  {code:'ONEUP', id:'oneup', reward:{type:'life',amount:1}},
+  {code:'NITRO50', id:'nitro', reward:{type:'nitro',amount:50}},
+  {code:'SKINRED', id:'skin', reward:{type:'skin',id:'red'}},
+];
 
-        const codeScreen = document.getElementById('codeScreen');
-        const gameScreen = document.getElementById('gameScreen');
-        const codeInput = document.getElementById('codeInput');
-        const submitCodeBtn = document.getElementById('submitCodeBtn');
-        const codeMessage = document.getElementById('codeMessage');
-        const logoutBtn = document.getElementById('logoutBtn');
+const STORAGE = 'sc_clone_v1';
+function loadData(){
+  const raw = localStorage.getItem(STORAGE);
+  if(!raw) return {coins:0,lives:3,nitro:0,skins:['default'],used:[]};
+  try{ return JSON.parse(raw); }catch(e){ return {coins:0,lives:3,nitro:0,skins:['default'],used:[]}; }
+}
+function saveData(d){ localStorage.setItem(STORAGE, JSON.stringify(d)); }
+window.playerData = loadData();
 
-        // Verificar si ya tiene acceso guardado
-        function checkAccess() {
-            const savedAccess = localStorage.getItem('superCarRacingAccess');
-            if (savedAccess === 'true') {
-                accessGranted = true;
-                showGameScreen();
-            } else {
-                showCodeScreen();
-            }
-        }
+function redeemCode(txt){
+  const code = String(txt||'').replace(/[^A-Za-z0-9]/g,'').toUpperCase();
+  const found = CODES.find(c=>c.code===code);
+  if(!found) return {ok:false,msg:'Código inválido.'};
+  if(window.playerData.used.includes(found.id)) return {ok:false,msg:'Código ya usado.'};
+  const r = found.reward;
+  if(r.type==='coins') window.playerData.coins += r.amount;
+  if(r.type==='life') window.playerData.lives = (window.playerData.lives||3) + r.amount;
+  if(r.type==='nitro') window.playerData.nitro = (window.playerData.nitro||0) + r.amount;
+  if(r.type==='skin'){
+    if(!window.playerData.skins) window.playerData.skins = ['default'];
+    if(!window.playerData.skins.includes(r.id)) window.playerData.skins.push(r.id);
+  }
+  window.playerData.used.push(found.id);
+  saveData(window.playerData);
+  window.dispatchEvent(new CustomEvent('playerDataChanged'));
+  return {ok:true,msg:'¡Código canjeado! Recompensa aplicada.'};
+}
 
-        // Validar código
-        submitCodeBtn.addEventListener('click', () => {
-            const code = codeInput.value.toUpperCase().trim();
+// UI logic
+document.addEventListener('DOMContentLoaded', ()=>{
+  const btnCodes = document.getElementById('btn-codes');
+  const overlay = document.getElementById('overlay');
+  const codePanel = document.getElementById('code-panel');
+  const codeInput = document.getElementById('code-input');
+  const redeemBtn = document.getElementById('redeem');
+  const closeBtn = document.getElementById('close-code');
+  const codeMsg = document.getElementById('code-msg');
 
-            if (!code) {
-                showCodeMessage('Por favor ingresa un código', 'error');
-                return;
-            }
+  btnCodes.onclick = ()=>{
+    overlay.classList.remove('hidden'); codePanel.classList.remove('hidden');
+    document.getElementById('pause-panel').classList.add('hidden'); codeMsg.textContent = '';
+  };
+  closeBtn.onclick = ()=>{ overlay.classList.add('hidden'); codePanel.classList.add('hidden'); }
+  redeemBtn.onclick = ()=>{
+    const res = redeemCode(codeInput.value);
+    codeMsg.textContent = res.msg;
+  };
+});
+// Main game: ambient track, curves, enemies, particles, sounds, codes integration.
+const canvas = document.getElementById('game'), ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
 
-            if (VALID_CODES.includes(code)) {
-                showCodeMessage('✅ ¡Código válido! Accediendo...', 'success');
-                accessGranted = true;
-                localStorage.setItem('superCarRacingAccess', 'true');
+const assets = {};
+const ASSET_PATHS = {
+  car: 'assets/car.png',
+  enemy1: 'assets/enemy1.png',
+  enemy2: 'assets/enemy2.png',
+  skid: 'assets/skid.png',
+  music: 'assets/music.mp3',
+  beep: 'assets/beep.wav',
+  crash: 'assets/crash.wav'
+};
 
-                setTimeout(() => {
-                    showGameScreen();
-                }, 1500);
-            } else {
-                showCodeMessage('❌ Código incorrecto. Intenta de nuevo', 'error');
-                codeInput.value = '';
-            }
-        });
+let audio = {music:null,beep:null,crash:null};
 
-        // Permitir Enter para enviar
-        codeInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                submitCodeBtn.click();
-            }
-        });
+function loadAssets(cb){
+  let toLoad = 0;
+  for(const k in ASSET_PATHS){
+    toLoad++;
+    const p = ASSET_PATHS[k];
+    if(p.endsWith('.png')){
+      const img = new Image(); img.src = p; img.onload = ()=>{ assets[k]=img; if(--toLoad===0) cb(); };
+      img.onerror = ()=>{ assets[k]=null; if(--toLoad===0) cb(); };
+    } else if(p.endsWith('.mp3') || p.endsWith('.wav')){
+      const a = new Audio(p); a.oncanplaythrough = ()=>{ assets[k]=a; if(--toLoad===0) cb(); };
+      a.onerror = ()=>{ assets[k]=null; if(--toLoad===0) cb(); };
+    } else { if(--toLoad===0) cb(); }
+  }
+}
 
-        // Cerrar sesión
-        logoutBtn.addEventListener('click', () => {
-            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-                accessGranted = false;
-                localStorage.removeItem('superCarRacingAccess');
-                gameRunning = false;
-                gamePaused = false;
-                codeInput.value = '';
-                showCodeScreen();
-            }
-        });
+// Game state
+const lanes = 3;
+const laneX = i => 60 + i*( (W-120)/(lanes-1) );
+let track = {segments:[], pos:0}; // procedural segments with curvature
+let player = {lane:1,x:laneX(1),y:H-160,w:44,h:80,speed:0,maxSpeed:10,acc:0.03,skin:'default',tilt:0,nitro:0};
+let enemies = [], particles = [], score=0, running=true;
+let spawnTimer=0, difficulty=1;
 
-        // Mostrar/ocultar pantallas
-        function showCodeScreen() {
-            codeScreen.classList.remove('hidden');
-            gameScreen.classList.remove('active');
-            codeInput.focus();
-        }
+// Input
+let keys = {};
+addEventListener('keydown', e=> keys[e.key.toLowerCase()]=true);
+addEventListener('keyup', e=> keys[e.key.toLowerCase()]=false);
 
-        function showGameScreen() {
-            codeScreen.classList.add('hidden');
-            gameScreen.classList.add('active');
-            initGame();
-        }
+// HUD
+function updateHUD(){
+  document.getElementById('score').textContent = 'P: ' + Math.floor(score);
+  document.getElementById('speed').textContent = 'Vel: ' + player.speed.toFixed(1);
+  document.getElementById('lives').textContent = 'Vidas: ' + (window.playerData?.lives ?? 3);
+}
+window.addEventListener('playerDataChanged', updateHUD);
+updateHUD();
 
-        function showCodeMessage(text, type) {
-            codeMessage.textContent = text;
-            codeMessage.className = `code-message show ${type}`;
-            setTimeout(() => {
+// Procedural track: array of segments {length, curve} where curve is -1..1
+function generateTrack(lengthSegments=200){
+  track.segments=[];
+  for(let i=0;i<lengthSegments;i++){
+    const curve = (Math.random()-0.5)*0.6 * (Math.random()>0.85?2:1); // occasional sharper curves
+    const len = 200 + Math.random()*400;
+    track.segments.push({length:len,curve});
+  }
+}
+generateTrack();
+
+// Spawn logic
+function spawnEnemy(){
+  const lane = Math.floor(Math.random()*lanes);
+  const img = Math.random()>0.5 ? assets.enemy1 : assets.enemy2;
+  enemies.push({lane, x: laneX(lane), y:-120, w:40, h:70, spd:2 + Math.random()*2, img});
+}
+
+// Particles
+function emit(x,y,life=600,color='rgba(200,200,200,0.9)'){
+  particles.push({x,y,vx:(Math.random()-0.5)*0.6,vy:-Math.random()*0.6,life,age:0,color,size:6+Math.random()*6});
+}
+
+// Collision AABB
+function rectIntersect(a,b){ return !(a.x+a.w < b.x || a.x > b.x+b.w || a.y+a.h < b.y || a.y > b.y+b.h); }
+
+// Update
+function update(dt){
+  if(!running) return;
+  // input accelerator
+  if((keys['arrowup']||keys['w'])) player.speed = Math.min(player.maxSpeed, player.speed + player.acc*dt*0.06);
+  else player.speed = Math.max(0, player.speed - player.acc*dt*0.015);
+
+  // lane change
+  if((keys['arrowleft']||keys['a']) && player.lane>0){ player.lane--; player.x = laneX(player.lane); player.tilt = -0.5; }
+  if((keys['arrowright']||keys['d']) && player.lane<lanes-1){ player.lane++; player.x = laneX(player.lane); player.tilt = 0.5; }
+
+  // track progression
+  track.pos += player.speed * dt * 0.06;
+  // compute current curvature based on segment
+  let segIndex=0, acc=0;
+  let p = track.pos;
+  while(segIndex < track.segments.length && p > 0){
+    p -= track.segments[segIndex].length;
+    segIndex++;
+  }
+  const seg = track.segments[Math.max(0, Math.min(track.segments.length-1, segIndex))];
+  const curve = seg ? seg.curve : 0;
+
+  // lane sway due to curve (visual)
+  const roadOffset = curve * 60 * Math.sin(track.pos*0.002);
+
+  // spawn enemies
+  spawnTimer += dt;
+  if(spawnTimer > 900 - Math.min(600, score*0.5)){ spawnEnemy(); spawnTimer = 0; }
+
+  // move enemies
+  for(const e of enemies) e.y += e.spd * dt * 0.06 * (1 + score/1000);
+
+  // collisions
+  const carRect = {x: player.x - player.w/2, y: player.y - player.h/2, w: player.w, h: player.h};
+  for(const e of enemies){
+    const r = {x:e.x - e.w/2, y:e.y - e.h/2, w:e.w, h:e.h};
+    if(rectIntersect(carRect,r)){
+      // hit
+      window.playerData.lives = (window.playerData.lives||3) - 1;
+      window.dispatchEvent(new CustomEvent('playerDataChanged'));
+      emit(player.x, player.y, 900, 'rgba(255,80,60,0.9)');
+      if(assets.crash) assets.crash.play();
+      e.y = H + 400;
+      player.speed = Math.max(0, player.speed - 4);
+      if(window.playerData.lives <= 0){ running = false; showGameOver(); }
+    }
+  }
+
+  // remove offscreen & score
+  enemies = enemies.filter(e => {
+    if(e.y > H + 140){ score += 10; return false; }
+    return true;
+  });
+
+  // particles update
+  for(const p of particles){
+    p.age += dt;
+    p.x += p.vx * dt * 0.06 * (1 + player.speed/6);
+    p.y += p.vy * dt * 0.06 + 0.1*dt*0.06;
+  }
+  particles = particles.filter(p=>p.age < p.life);
+
+  // emit skid when turning at speed
+  if(Math.abs(player.tilt) > 0.3 && player.speed > 4){
+    emit(player.x + (player.tilt>0?20:-20), player.y + player.h/2, 600, 'rgba(200,200,200,0.85)');
+  }
+  // tilt decay
+  player.tilt *= 0.9;
+
+  // update HUD
+  updateHUD();
+}
+
+// Rendering
+function drawRoad(offset, curve){
+  // background gradient already in CSS; draw road center, side stripes, perspective
+  const roadW = W-120;
+  const cx = W/2 + curve*40;
+  // road fill
+  ctx.fillStyle = '#111b1c';
+  ctx.fillRect(60,0,W-120,H);
+
+  // lane markings perspective: draw dashed center using transform
+  ctx.save();
+  ctx.translate(0, offset*0.02);
+  ctx.fillStyle = '#ffd';
+  const dashH = 48, gap = 36;
+  for(let y = -500; y < H + 500; y += dashH + gap){
+    const scale = 1 + (y/H)*0.8; // slight perspective scaling
+    const w = 12*scale;
+    ctx.fillRect(cx - w/2, y, w, dashH*scale);
+  }
+  ctx.restore();
+
+  // side borders
+  ctx.fillStyle = '#0b1315';
+  ctx.fillRect(60,0,6,H);
+  ctx.fillRect(W-66,0,6,H);
+}
+
+// draw car and enemies
+function render(){
+  // clear
+  ctx.clearRect(0,0,W,H);
+
+  // compute current curve for visuals
+  let segIndex=0, p = track.pos;
+  while(segIndex < track.segments.length && p > 0){ p -= track.segments[segIndex].length; segIndex++; }
+  const seg = track.segments[Math.max(0, Math.min(track.segments.length-1, segIndex))];
+  const curve = seg ? seg.curve : 0;
+  drawRoad(Date.now(), curve);
+
+  // draw enemies
+  for(const e of enemies){
+    if(e.img) ctx.drawImage(e.img, e.x - e.w/2, e.y - e.h/2, e.w, e.h);
+    else { ctx.fillStyle = '#c43'; ctx.fillRect(e.x - e.w/2, e.y - e.h/2, e.w, e.h); }
+  }
+
+  // particles
+  for(const p of particles){
+    if(assets.skid){ ctx.globalAlpha = Math.max(0,1 - p.age/p.life); ctx.drawImage(assets.skid, p.x - p.size/2, p.y - p.size/2, p.size, p.size); ctx.globalAlpha = 1; }
+    else { ctx.fillStyle = p.color; ctx.fillRect(p.x-3,p.y-3,6,6); }
+  }
+
+  // player
+  if(assets.car){
+    ctx.save();
+    ctx.translate(player.x, player.y);
+    ctx.rotate(player.tilt*0.35);
+    ctx.drawImage(assets.car, -player.w/2, -player.h/2, player.w, player.h);
+    ctx.restore();
+  } else {
+    ctx.fillStyle = '#49f7e0'; ctx.fillRect(player.x - player.w/2, player.y - player.h/2, player.w, player.h);
+  }
+
+  // overlay info when game over
+  if(!running){
+    ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fillRect(0,H/2-40,W,80);
+    ctx.fillStyle='white'; ctx.font='28px sans-serif'; ctx.fillText('Game Over', W/2-80, H/2+8);
+  }
+}
+
+// Game over / pause UI
+function showGameOver(){
+  const overlay = document.getElementById('overlay'); overlay.classList.remove('hidden');
+  const pausePanel = document.getElementById('pause-panel'); pausePanel.classList.remove('hidden');
+  document.getElementById('pause-title').textContent = 'Game Over';
+}
+
+document.getElementById('btn-pause').onclick = ()=>{
+  running = false;
+  document.getElementById('overlay').classList.remove('hidden');
+  document.getElementById('pause-panel').classList.remove('hidden');
+  document.getElementById('pause-title').textContent = 'Pausa';
+};
+document.getElementById('resume').onclick = ()=>{
+  running = true;
+  document.getElementById('overlay').classList.add('hidden');
+  document.getElementById('pause-panel').classList.add('hidden');
+};
+document.getElementById('restart').onclick = ()=>{
+  // reset game state
+  enemies = []; particles = []; score = 0; player.speed = 0; player.lane = 1; player.x = laneX(1);
+  window.playerData.lives = Math.max(1, window.playerData.lives||3);
+  savePlayerData();
+  running = true;
+  document.getElementById('overlay').classList.add('hidden');
+  document.getElementById('pause-panel').classList.add('hidden');
+};
+
+// Helper: save playerData (codes.js)
+function savePlayerData(){ try{ localStorage.setItem('sc_clone_v1', JSON.stringify(window.playerData)); }catch(e){} }
+
+// Game loop
+let last = performance.now();
+function loop(t){
+  const dt = t-last; last=t;
+  update(dt); render();
+  requestAnimationFrame(loop);
+}
+
+// Start
+loadAssets(()=>{ // assets loaded (some may be null)
+  assets.car = assets.car || null;
+  assets.skid = assets.skid || null;
+  assets.enemy1 = assets.enemy1 || null;
+  assets.enemy2 = assets.enemy2 || null;
+  assets.crash = assets.crash || null;
+  assets.music = assets.music || null;
+  if(assets.music){ assets.music.loop = true; /*assets.music.play();*/ }
+  requestAnimationFrame(loop);
+});
