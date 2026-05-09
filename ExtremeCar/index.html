@@ -1,427 +1,246 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Extreme Car - MINGUELASGO</title>
-  <style>
-    :root{ --bg-1:#04101a; --bg-2:#001417; --accent:#ffd95b; --panel:#07111a; }
-    *{ box-sizing:border-box; margin:0; padding:0; }
-    html,body{ height:100%; background:linear-gradient(180deg,var(--bg-1),var(--bg-2)); color:#fff; font-family:Inter,Arial,sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden; }
-    h1{ font-size:1.6em; letter-spacing:3px; color:#00ffcc; text-shadow:0 0 12px #00ffcc; margin-bottom:8px; }
-    .vip-tag{ background:#ffd700; color:#000; padding:2px 12px; border-radius:20px; font-size:0.75em; font-weight:bold; margin-bottom:10px; }
-    canvas{ border:3px solid rgba(0,255,204,0.2); background:#001218; display:block; }
-    #ui{ position:fixed; top:12px; left:50%; transform:translateX(-50%); width:min(480px,100vw); display:flex; justify-content:space-between; padding:0 8px; pointer-events:none; z-index:10; }
-    #ui>div{ pointer-events:auto; display:flex; gap:8px; align-items:center; }
-    #score,#speed,#lives{ background:rgba(0,0,0,0.55); padding:6px 12px; border-radius:8px; font-weight:600; font-size:0.85em; }
-    button{ padding:7px 10px; border-radius:8px; border:0; background:var(--accent); color:#000; font-weight:700; cursor:pointer; font-size:0.8em; }
-    button:hover{ opacity:0.85; }
-    #overlay{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); z-index:20; }
-    .hidden{ display:none!important; }
-    .panel{ background:var(--panel); padding:20px; border-radius:12px; border:1px solid rgba(255,255,255,0.06); min-width:260px; text-align:center; }
-    .panel h2,.panel h3{ margin-bottom:12px; color:var(--accent); }
-    input{ width:100%; padding:9px; border-radius:6px; border:1px solid rgba(255,255,255,0.1); margin:8px 0; background:rgba(255,255,255,0.05); color:#fff; text-align:center; font-size:1em; outline:none; }
-    #code-msg{ margin-top:8px; font-size:0.85em; color:#9fb3bf; }
-    .btn-row{ display:flex; gap:8px; justify-content:center; margin-top:8px; }
-    #controls-hint{ position:fixed; bottom:8px; left:50%; transform:translateX(-50%); font-size:0.7em; color:#334; background:rgba(0,0,0,0.4); padding:4px 12px; border-radius:8px; z-index:10; }
-    footer{ position:fixed; bottom:28px; left:50%; transform:translateX(-50%); font-size:0.65em; color:#222; z-index:1; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Extreme Car PRO</title>
+
+<style>
+body{
+margin:0;
+overflow:hidden;
+background:linear-gradient(#06131d,#001018);
+font-family:Arial;
+color:white;
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+h1{
+color:#00ffd5;
+margin:8px;
+}
+
+canvas{
+background:#001018;
+border:2px solid #00ffd5;
+}
+
+#ui{
+position:fixed;
+top:10px;
+width:100%;
+display:flex;
+justify-content:space-between;
+padding:0 10px;
+font-size:14px;
+}
+
+.panel{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#07131b;
+padding:20px;
+border-radius:10px;
+display:none;
+}
+button{
+padding:6px 10px;
+border:0;
+border-radius:6px;
+cursor:pointer;
+background:#00ffd5;
+}
+</style>
 </head>
+
 <body>
 
-<h1>🏎️ EXTREME CAR</h1>
-<div class="vip-tag">👑 VIP EXCLUSIVE</div>
-<canvas id="game" width="480" height="640"></canvas>
+<h1>🏎 EXTREME CAR PRO</h1>
+
+<canvas id="c" width="480" height="640"></canvas>
 
 <div id="ui">
-  <div id="left-ui">
-    <div id="score">P: 0</div>
-    <div id="speed">Vel: 0</div>
-  </div>
-  <div id="right-ui">
-    <div id="lives">❤️ 3</div>
-    <button id="btn-codes">🎁 Código</button>
-    <button id="btn-pause">⏸</button>
-  </div>
+<div id="stats">
+P:0 | 💰0 | ⚡0
+</div>
+<div>
+<button onclick="toggleCode()">🎁</button>
+</div>
 </div>
 
-<div id="overlay" class="hidden">
-  <!-- Panel códigos -->
-  <div id="code-panel" class="panel hidden">
-    <h3>🎁 Canjear Código</h3>
-    <input id="code-input" placeholder="Ej: ONEUP"/>
-    <div class="btn-row">
-      <button id="redeem">Canjear</button>
-      <button id="close-code">Cerrar</button>
-    </div>
-    <div id="code-msg"></div>
-  </div>
-  <!-- Panel pausa / game over -->
-  <div id="pause-panel" class="panel hidden">
-    <h2 id="pause-title">Pausa</h2>
-    <p id="pause-score" style="color:#aaa;margin-bottom:12px"></p>
-    <div class="btn-row">
-      <button id="resume">▶ Continuar</button>
-      <button id="restart">🔄 Reiniciar</button>
-    </div>
-    <a href="../index.html" style="display:block;margin-top:14px;color:#555;font-size:0.8em;">← Volver al inicio</a>
-  </div>
+<div class="panel" id="codePanel">
+<input id="codeInput" placeholder="codigo"/>
+<button onclick="redeem()">OK</button>
+<p id="msg"></p>
 </div>
-
-<div id="controls-hint">⬅ ➡ / A D = cambiar carril &nbsp;|&nbsp; ⬆ / W = acelerar</div>
-<footer>&copy; 2026 MINGUELASGO GAMES</footer>
 
 <script>
-// ── CÓDIGOS ──────────────────────────────────────────────────────────────
-const CODES = [
-  {code:'OPENROAD', id:'openroad', reward:{type:'coins', amount:500}},
-  {code:'ONEUP',    id:'oneup',    reward:{type:'life',  amount:1}},
-  {code:'NITRO50',  id:'nitro',    reward:{type:'nitro', amount:50}},
-  {code:'SKINRED',  id:'skin',     reward:{type:'skin',  id:'red'}},
-];
 
-let playerData = {coins:0, lives:3, nitro:0, skins:['default'], used:[]};
+// ================= STATE =================
+const c=document.getElementById("c");
+const ctx=c.getContext("2d");
 
-function redeemCode(txt){
-  const code = String(txt||'').replace(/[^A-Za-z0-9]/g,'').toUpperCase();
-  const found = CODES.find(c=>c.code===code);
-  if(!found) return {ok:false, msg:'Código inválido.'};
-  if(playerData.used.includes(found.id)) return {ok:false, msg:'Código ya usado.'};
-  const r = found.reward;
-  if(r.type==='coins') playerData.coins += r.amount;
-  if(r.type==='life')  { playerData.lives += r.amount; updateHUD(); }
-  if(r.type==='nitro') playerData.nitro = (playerData.nitro||0) + r.amount;
-  if(r.type==='skin')  { if(!playerData.skins.includes(r.id)) playerData.skins.push(r.id); }
-  playerData.used.push(found.id);
-  return {ok:true, msg:'¡Código canjeado! ✅'};
-}
+const W=480,H=640;
+const lanes=[120,240,360];
 
-// ── CANVAS ───────────────────────────────────────────────────────────────
-const canvas = document.getElementById('game');
-const ctx = canvas.getContext('2d');
-const W = canvas.width, H = canvas.height;
-
-const LANES = 3;
-const laneX = i => 80 + i * ((W-160)/(LANES-1));
-
-// ── ESTADO ───────────────────────────────────────────────────────────────
-let player, enemies, particles, score, running, spawnTimer, roadOffset, roadScroll;
-
-function initState(){
-  player = {
-    lane:1, x:laneX(1), y:H-130,
-    w:36, h:64, speed:0, maxSpeed:12,
-    acc:0.04, tilt:0, skin:'default'
-  };
-  enemies=[]; particles=[]; score=0; running=true;
-  spawnTimer=0; roadOffset=0; roadScroll=0;
-  playerData.lives = Math.max(3, playerData.lives);
-}
-
-// ── INPUT ─────────────────────────────────────────────────────────────────
-const keys={};
-let laneChangeCooldown=0;
-addEventListener('keydown', e=>{ keys[e.key.toLowerCase()]=true; e.preventDefault(); });
-addEventListener('keyup',   e=>{ keys[e.key.toLowerCase()]=false; });
-
-// Touch controls
-let touchStartX=null;
-canvas.addEventListener('touchstart', e=>{ touchStartX=e.touches[0].clientX; }, {passive:true});
-canvas.addEventListener('touchend', e=>{
-  if(touchStartX===null) return;
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  if(Math.abs(dx)>30){
-    if(dx<0 && player.lane>0)       { player.lane--; player.x=laneX(player.lane); player.tilt=-0.5; }
-    if(dx>0 && player.lane<LANES-1) { player.lane++; player.x=laneX(player.lane); player.tilt=0.5; }
-  } else {
-    keys['arrowup']=true; setTimeout(()=>keys['arrowup']=false,200);
-  }
-  touchStartX=null;
-}, {passive:true});
-
-// ── HUD ───────────────────────────────────────────────────────────────────
-function updateHUD(){
-  document.getElementById('score').textContent  = 'P: ' + Math.floor(score);
-  document.getElementById('speed').textContent  = 'Vel: ' + player.speed.toFixed(1);
-  document.getElementById('lives').textContent  = '❤️ ' + playerData.lives;
-}
-
-// ── PARTÍCULAS ────────────────────────────────────────────────────────────
-function emit(x,y,color='rgba(200,200,200,0.85)',n=6){
-  for(let i=0;i<n;i++)
-    particles.push({x,y,vx:(Math.random()-0.5)*1.5,vy:-Math.random()*1.2-0.5,
-      life:500, age:0, color, size:5+Math.random()*5});
-}
-
-// ── SPAWN ENEMIGOS ────────────────────────────────────────────────────────
-function spawnEnemy(){
-  const lane = Math.floor(Math.random()*LANES);
-  const colors = ['#e74c3c','#e67e22','#9b59b6','#2980b9'];
-  enemies.push({lane, x:laneX(lane), y:-90, w:34, h:58,
-    spd: 2.5 + Math.random()*2 + score/1200,
-    color: colors[Math.floor(Math.random()*colors.length)]
-  });
-}
-
-// ── COLISIÓN ──────────────────────────────────────────────────────────────
-function rectsOverlap(a,b){
-  return !(a.x+a.w/2<b.x-b.w/2 || a.x-a.w/2>b.x+b.w/2 ||
-           a.y+a.h/2<b.y-b.h/2 || a.y-a.h/2>b.y+b.h/2);
-}
-
-// ── UPDATE ────────────────────────────────────────────────────────────────
-let invincible=0;
-
-function update(dt){
-  if(!running) return;
-  dt = Math.min(dt, 50); // cap delta
-
-  // accelerate
-  if(keys['arrowup']||keys['w'])
-    player.speed = Math.min(player.maxSpeed, player.speed + player.acc*dt*0.06*(1+score/3000));
-  else
-    player.speed = Math.max(0, player.speed - player.acc*dt*0.018);
-
-  // lane change
-  laneChangeCooldown = Math.max(0, laneChangeCooldown - dt);
-  if(laneChangeCooldown===0){
-    if((keys['arrowleft']||keys['a']) && player.lane>0){
-      player.lane--; player.x=laneX(player.lane); player.tilt=-0.55; laneChangeCooldown=200;
-    }
-    if((keys['arrowright']||keys['d']) && player.lane<LANES-1){
-      player.lane++; player.x=laneX(player.lane); player.tilt=0.55; laneChangeCooldown=200;
-    }
-  }
-  player.tilt *= Math.pow(0.92, dt*0.06);
-
-  // road scroll
-  roadScroll = (roadScroll + player.speed * dt * 0.08) % 80;
-  roadOffset += (Math.sin(Date.now()*0.0005)*0.5) * player.speed * 0.02;
-
-  // spawn
-  spawnTimer += dt;
-  const spawnInterval = Math.max(400, 1100 - score*0.4);
-  if(spawnTimer > spawnInterval){ spawnEnemy(); spawnTimer=0; }
-
-  // move enemies
-  for(const e of enemies) e.y += e.spd * dt * 0.06;
-
-  // skid particles
-  if(Math.abs(player.tilt)>0.2 && player.speed>3){
-    emit(player.x+(player.tilt>0?14:-14), player.y+player.h/2-4, 'rgba(180,180,160,0.7)', 2);
-  }
-  // speed particles
-  if(player.speed > 8 && Math.random()>0.7){
-    emit(player.x, player.y-player.h/2, 'rgba(0,255,200,0.5)', 1);
-  }
-
-  // collisions
-  invincible = Math.max(0, invincible - dt);
-  if(invincible===0){
-    for(const e of enemies){
-      if(rectsOverlap(player, e)){
-        playerData.lives--;
-        emit(player.x, player.y, 'rgba(255,80,60,0.9)', 12);
-        player.speed = Math.max(0, player.speed-4);
-        e.y = H+200;
-        invincible = 1200;
-        updateHUD();
-        if(playerData.lives<=0){ running=false; showEnd(); }
-        break;
-      }
-    }
-  }
-
-  // score & cleanup
-  enemies = enemies.filter(e=>{
-    if(e.y > H+100){ score += Math.round(10 + player.speed); return false; }
-    return true;
-  });
-
-  // particles
-  for(const p of particles){
-    p.age += dt; p.x += p.vx*dt*0.06; p.y += p.vy*dt*0.06;
-    p.vy += 0.02*dt*0.06; // gravity
-  }
-  particles = particles.filter(p=>p.age<p.life);
-
-  updateHUD();
-}
-
-// ── RENDER ────────────────────────────────────────────────────────────────
-function drawRoad(){
-  // sky gradient
-  const g = ctx.createLinearGradient(0,0,0,H);
-  g.addColorStop(0,'#04101a'); g.addColorStop(1,'#001417');
-  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-
-  // road surface
-  ctx.fillStyle='#0e1a1c';
-  ctx.fillRect(60,0,W-120,H);
-
-  // side curbs
-  ctx.fillStyle='#c0392b';
-  ctx.fillRect(58,0,6,H);
-  ctx.fillRect(W-64,0,6,H);
-
-  // road edge lines
-  ctx.fillStyle='#1a2e30';
-  ctx.fillRect(64,0,4,H);
-  ctx.fillRect(W-68,0,4,H);
-
-  // dashed center & lane lines
-  ctx.fillStyle='rgba(255,220,80,0.7)';
-  for(let y = -80 + roadScroll; y < H+80; y+=80){
-    ctx.fillRect(W/2-3, y, 6, 44);
-  }
-  // lane dividers (faint)
-  ctx.fillStyle='rgba(255,255,255,0.12)';
-  for(let li=1;li<LANES;li++){
-    const x = 60 + li*((W-120)/LANES);
-    for(let y=-80+roadScroll; y<H+80; y+=70) ctx.fillRect(x-1, y, 2, 36);
-  }
-}
-
-function drawCar(e, isPlayer){
-  ctx.save();
-  ctx.translate(e.x, e.y);
-  if(isPlayer){ ctx.rotate(player.tilt*0.3); }
-
-  // body
-  const col = isPlayer
-    ? (invincible>0 && Math.floor(invincible/80)%2===0 ? '#aaa' : '#00ffcc')
-    : e.color;
-
-  // shadow
-  ctx.fillStyle='rgba(0,0,0,0.3)';
-  ctx.fillRect(-e.w/2+4, -e.h/2+4, e.w, e.h);
-
-  // main body
-  ctx.fillStyle=col;
-  ctx.beginPath();
-  ctx.roundRect(-e.w/2, -e.h/2, e.w, e.h, 6);
-  ctx.fill();
-
-  // windshield
-  ctx.fillStyle= isPlayer ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.4)';
-  const wsy = isPlayer ? -e.h/2+10 : -e.h/2+8;
-  ctx.fillRect(-e.w/2+5, wsy, e.w-10, e.h*0.22);
-
-  // rear window
-  ctx.fillStyle='rgba(0,0,0,0.35)';
-  ctx.fillRect(-e.w/2+5, e.h/2-e.h*0.18-4, e.w-10, e.h*0.16);
-
-  // wheels
-  ctx.fillStyle='#111';
-  [[-e.w/2-2, -e.h/2+8],[e.w/2-4,-e.h/2+8],[-e.w/2-2,e.h/2-16],[e.w/2-4,e.h/2-16]].forEach(([wx,wy])=>{
-    ctx.fillRect(wx, wy, 6, 12);
-  });
-
-  // headlights / taillights
-  if(isPlayer){
-    ctx.fillStyle='rgba(255,255,200,0.9)';
-    ctx.fillRect(-e.w/2+4, -e.h/2, 7, 5);
-    ctx.fillRect(e.w/2-11, -e.h/2, 7, 5);
-    ctx.fillStyle='rgba(255,60,60,0.9)';
-    ctx.fillRect(-e.w/2+4, e.h/2-5, 7, 5);
-    ctx.fillRect(e.w/2-11, e.h/2-5, 7, 5);
-  } else {
-    ctx.fillStyle='rgba(255,255,200,0.7)';
-    ctx.fillRect(-e.w/2+4, e.h/2-5, 7, 4);
-    ctx.fillRect(e.w/2-11, e.h/2-5, 7, 4);
-  }
-
-  ctx.restore();
-}
-
-function render(){
-  ctx.clearRect(0,0,W,H);
-  drawRoad();
-
-  // particles
-  for(const p of particles){
-    ctx.globalAlpha = Math.max(0, 1-p.age/p.life);
-    ctx.fillStyle = p.color;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size/2, 0, Math.PI*2);
-    ctx.fill();
-  }
-  ctx.globalAlpha=1;
-
-  // enemies
-  for(const e of enemies) drawCar(e, false);
-
-  // player
-  drawCar(player, true);
-
-  // game over dim
-  if(!running){
-    ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(0,0,W,H);
-  }
-}
-
-// ── PANELES UI ────────────────────────────────────────────────────────────
-function showEnd(){
-  document.getElementById('overlay').classList.remove('hidden');
-  document.getElementById('pause-panel').classList.remove('hidden');
-  document.getElementById('code-panel').classList.add('hidden');
-  document.getElementById('pause-title').textContent = '💀 GAME OVER';
-  document.getElementById('pause-score').textContent = 'Puntuación: ' + Math.floor(score);
-}
-
-document.getElementById('btn-pause').onclick = ()=>{
-  running=false;
-  document.getElementById('overlay').classList.remove('hidden');
-  document.getElementById('pause-panel').classList.remove('hidden');
-  document.getElementById('code-panel').classList.add('hidden');
-  document.getElementById('pause-title').textContent = '⏸ PAUSA';
-  document.getElementById('pause-score').textContent = 'Puntuación: ' + Math.floor(score);
+let player={
+lane:1,
+x:240,
+speed:0,
+nitro:100
 };
-document.getElementById('resume').onclick = ()=>{
-  if(playerData.lives>0){ running=true; }
-  document.getElementById('overlay').classList.add('hidden');
-  document.getElementById('pause-panel').classList.add('hidden');
-};
-document.getElementById('restart').onclick = ()=>{
-  document.getElementById('overlay').classList.add('hidden');
-  document.getElementById('pause-panel').classList.add('hidden');
-  initState(); updateHUD();
-};
-document.getElementById('btn-codes').onclick = ()=>{
-  document.getElementById('overlay').classList.remove('hidden');
-  document.getElementById('code-panel').classList.remove('hidden');
-  document.getElementById('pause-panel').classList.add('hidden');
-  document.getElementById('code-msg').textContent='';
-  running=false;
-};
-document.getElementById('close-code').onclick = ()=>{
-  document.getElementById('overlay').classList.add('hidden');
-  document.getElementById('code-panel').classList.add('hidden');
-  if(playerData.lives>0){ running=true; }
-};
-document.getElementById('redeem').onclick = ()=>{
-  const res = redeemCode(document.getElementById('code-input').value);
-  const msg = document.getElementById('code-msg');
-  msg.textContent = res.msg;
-  msg.style.color = res.ok ? '#00ffcc' : '#ff4444';
-  if(res.ok) document.getElementById('code-input').value='';
-};
-document.getElementById('code-input').addEventListener('keypress', e=>{
-  if(e.key==='Enter') document.getElementById('redeem').click();
+
+let cars=[];
+let score=0;
+let money=0;
+let shake=0;
+
+// ================= INPUT =================
+let keys={};
+document.onkeydown=e=>keys[e.key]=true;
+document.onkeyup=e=>keys[e.key]=false;
+
+// ================= SPAWN =================
+function spawn(){
+cars.push({
+lane:Math.floor(Math.random()*3),
+y:-100,
+speed:2+Math.random()*3
 });
+}
+setInterval(spawn,800);
 
-// ── LOOP ──────────────────────────────────────────────────────────────────
-let last = performance.now();
-function loop(t){
-  const dt = t - last; last = t;
-  update(dt);
-  render();
-  requestAnimationFrame(loop);
+// ================= UPDATE =================
+function update(){
+
+// movimiento jugador
+if(keys["ArrowLeft"] && player.lane>0){
+player.lane--;
+keys["ArrowLeft"]=false;
+}
+if(keys["ArrowRight"] && player.lane<2){
+player.lane++;
+keys["ArrowRight"]=false;
 }
 
-initState();
-updateHUD();
+// nitro
+if(keys["ArrowUp"] && player.nitro>0){
+player.speed=Math.min(18,player.speed+0.4);
+player.nitro-=0.5;
+}else{
+player.speed=Math.max(0,player.speed-0.2);
+player.nitro=Math.min(100,player.nitro+0.1);
+}
+
+// posición
+player.x+= (lanes[player.lane]-player.x)*0.2;
+
+// enemigos
+for(let c of cars){
+c.y += c.speed + player.speed;
+
+// colisión
+if(Math.abs(c.y-520)<40 && c.lane==player.lane){
+shake=10;
+player.speed=0;
+}
+}
+
+// eliminar
+cars=cars.filter(c=>c.y<H+100);
+
+// score
+score+=player.speed*0.1;
+money+=0.05;
+
+// shake
+if(shake>0) shake--;
+
+document.getElementById("stats").innerText=
+"P:"+Math.floor(score)+" | 💰"+Math.floor(money)+" | ⚡"+Math.floor(player.nitro);
+}
+
+// ================= DRAW ROAD =================
+function drawRoad(){
+
+ctx.fillStyle="#001018";
+ctx.fillRect(0,0,W,H);
+
+let offset=0;
+
+for(let i=0;i<20;i++){
+
+let y=i*40+ (score*2)%40;
+let w=200 + i*5;
+
+ctx.fillStyle=i%2?"#0a1c24":"#0c2630";
+
+ctx.fillRect(240-w/2,y,w,40);
+}
+
+}
+
+// ================= DRAW =================
+function draw(){
+
+if(shake>0){
+ctx.save();
+ctx.translate(Math.random()*10-5,Math.random()*10-5);
+}
+
+drawRoad();
+
+// player
+ctx.fillStyle="#00ffd5";
+ctx.fillRect(player.x-20,520,40,60);
+
+// enemies
+for(let c of cars){
+ctx.fillStyle="#ff3b3b";
+ctx.fillRect(lanes[c.lane]-20,c.y,40,60);
+}
+
+if(shake>0) ctx.restore();
+}
+
+// ================= LOOP =================
+function loop(){
+update();
+draw();
 requestAnimationFrame(loop);
+}
+loop();
+
+// ================= CODES =================
+function toggleCode(){
+document.getElementById("codePanel").style.display="block";
+}
+
+function redeem(){
+let v=document.getElementById("codeInput").value.toUpperCase();
+
+if(v=="BOOST"){
+player.speed=20;
+msg("NITRO MAX");
+}
+else if(v=="MONEY"){
+money+=500;
+msg("+500");
+}
+else{
+msg("ERROR");
+}
+}
+
+function msg(t){
+document.getElementById("msg").innerText=t;
+}
+
 </script>
+
 </body>
 </html>
