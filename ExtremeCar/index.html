@@ -3,27 +3,22 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Extreme Car PRO</title>
+<title>Extreme Car ULTRA PRO</title>
 
 <style>
 body{
 margin:0;
 overflow:hidden;
-background:linear-gradient(#06131d,#001018);
+background:linear-gradient(#061522,#000);
 font-family:Arial;
 color:white;
-display:flex;
-flex-direction:column;
-align-items:center;
-}
-
-h1{
-color:#00ffd5;
-margin:8px;
+text-align:center;
 }
 
 canvas{
 background:#001018;
+display:block;
+margin:auto;
 border:2px solid #00ffd5;
 }
 
@@ -42,7 +37,7 @@ position:fixed;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-background:#07131b;
+background:#081824;
 padding:20px;
 border-radius:10px;
 display:none;
@@ -51,7 +46,6 @@ button{
 padding:6px 10px;
 border:0;
 border-radius:6px;
-cursor:pointer;
 background:#00ffd5;
 }
 </style>
@@ -59,37 +53,31 @@ background:#00ffd5;
 
 <body>
 
-<h1>🏎 EXTREME CAR PRO</h1>
+<h2>🏎 ULTRA CAR NEXT LEVEL</h2>
 
 <canvas id="c" width="480" height="640"></canvas>
 
 <div id="ui">
-<div id="stats">
-P:0 | 💰0 | ⚡0
-</div>
-<div>
-<button onclick="toggleCode()">🎁</button>
-</div>
+<div id="stats">P:0 | 💰0 | ⚡0</div>
+<div><button onclick="toggle()">🎁</button></div>
 </div>
 
-<div class="panel" id="codePanel">
-<input id="codeInput" placeholder="codigo"/>
+<div class="panel" id="panel">
+<input id="code" placeholder="CODE"/>
 <button onclick="redeem()">OK</button>
 <p id="msg"></p>
 </div>
 
 <script>
 
-// ================= STATE =================
 const c=document.getElementById("c");
 const ctx=c.getContext("2d");
 
 const W=480,H=640;
-const lanes=[120,240,360];
 
 let player={
-lane:1,
 x:240,
+lane:1,
 speed:0,
 nitro:100
 };
@@ -98,93 +86,107 @@ let cars=[];
 let score=0;
 let money=0;
 let shake=0;
+let slow=0;
 
-// ================= INPUT =================
-let keys={};
-document.onkeydown=e=>keys[e.key]=true;
-document.onkeyup=e=>keys[e.key]=false;
+const lanes=[120,240,360];
 
-// ================= SPAWN =================
+// spawn más inteligente
 function spawn(){
 cars.push({
 lane:Math.floor(Math.random()*3),
 y:-100,
-speed:2+Math.random()*3
+speed:2+Math.random()*4,
+change:Math.random()<0.2
 });
 }
-setInterval(spawn,800);
 
-// ================= UPDATE =================
+setInterval(spawn,700);
+
+// INPUT
+let keys={};
+onkeydown=e=>keys[e.key]=true;
+onkeyup=e=>keys[e.key]=false;
+
+// UPDATE
 function update(){
 
-// movimiento jugador
+// lane smooth
 if(keys["ArrowLeft"] && player.lane>0){
-player.lane--;
-keys["ArrowLeft"]=false;
+player.lane--; keys["ArrowLeft"]=false;
 }
 if(keys["ArrowRight"] && player.lane<2){
-player.lane++;
-keys["ArrowRight"]=false;
+player.lane++; keys["ArrowRight"]=false;
 }
+
+player.x += (lanes[player.lane]-player.x)*0.25;
 
 // nitro
 if(keys["ArrowUp"] && player.nitro>0){
-player.speed=Math.min(18,player.speed+0.4);
-player.nitro-=0.5;
+player.speed=Math.min(20,player.speed+0.5);
+player.nitro-=0.4;
 }else{
-player.speed=Math.max(0,player.speed-0.2);
-player.nitro=Math.min(100,player.nitro+0.1);
+player.speed=Math.max(0,player.speed-0.15);
+player.nitro+=0.05;
 }
 
-// posición
-player.x+= (lanes[player.lane]-player.x)*0.2;
-
-// enemigos
+// enemies AI
 for(let c of cars){
-c.y += c.speed + player.speed;
+
+// cambio de carril IA
+if(c.change && Math.random()<0.01){
+c.lane += Math.random()<0.5?-1:1;
+c.lane=Math.max(0,Math.min(2,c.lane));
+}
+
+c.y += c.speed + player.speed*0.6;
 
 // colisión
-if(Math.abs(c.y-520)<40 && c.lane==player.lane){
-shake=10;
-player.speed=0;
+if(Math.abs(c.y-520)<45 && c.lane==player.lane){
+shake=12;
+slow=10;
+player.speed*=0.3;
 }
 }
 
-// eliminar
+// remove
 cars=cars.filter(c=>c.y<H+100);
 
 // score
-score+=player.speed*0.1;
-money+=0.05;
+score += player.speed*0.12;
+money += 0.05;
 
-// shake
+// effects
 if(shake>0) shake--;
+if(slow>0) slow--;
 
+// UI
 document.getElementById("stats").innerText=
-"P:"+Math.floor(score)+" | 💰"+Math.floor(money)+" | ⚡"+Math.floor(player.nitro);
+"P:"+Math.floor(score)+" 💰"+Math.floor(money)+" ⚡"+Math.floor(player.nitro);
 }
 
-// ================= DRAW ROAD =================
-function drawRoad(){
+// ROAD (pseudo 3D real)
+function road(){
 
 ctx.fillStyle="#001018";
 ctx.fillRect(0,0,W,H);
 
-let offset=0;
+let center=240;
 
-for(let i=0;i<20;i++){
+for(let i=0;i<40;i++){
 
-let y=i*40+ (score*2)%40;
-let w=200 + i*5;
+let y=i*20;
+let perspective = y/H;
 
-ctx.fillStyle=i%2?"#0a1c24":"#0c2630";
+let width = 420 * (1-perspective);
+let x = center - width/2;
 
-ctx.fillRect(240-w/2,y,w,40);
+ctx.fillStyle=i%2?"#0a1c24":"#0c2a36";
+
+ctx.fillRect(x,y,width,20);
+}
 }
 
-}
-
-// ================= DRAW =================
+// DRAW
 function draw(){
 
 if(shake>0){
@@ -192,22 +194,22 @@ ctx.save();
 ctx.translate(Math.random()*10-5,Math.random()*10-5);
 }
 
-drawRoad();
+road();
 
 // player
 ctx.fillStyle="#00ffd5";
-ctx.fillRect(player.x-20,520,40,60);
+ctx.fillRect(player.x-18,520,36,60);
 
 // enemies
 for(let c of cars){
 ctx.fillStyle="#ff3b3b";
-ctx.fillRect(lanes[c.lane]-20,c.y,40,60);
+ctx.fillRect(lanes[c.lane]-18,c.y,36,60);
 }
 
 if(shake>0) ctx.restore();
 }
 
-// ================= LOOP =================
+// LOOP
 function loop(){
 update();
 draw();
@@ -215,24 +217,28 @@ requestAnimationFrame(loop);
 }
 loop();
 
-// ================= CODES =================
-function toggleCode(){
-document.getElementById("codePanel").style.display="block";
+// CODES
+function toggle(){
+document.getElementById("panel").style.display="block";
 }
 
 function redeem(){
-let v=document.getElementById("codeInput").value.toUpperCase();
+let v=document.getElementById("code").value.toUpperCase();
 
 if(v=="BOOST"){
-player.speed=20;
+player.speed=22;
 msg("NITRO MAX");
 }
 else if(v=="MONEY"){
-money+=500;
-msg("+500");
+money+=1000;
+msg("+1000");
+}
+else if(v=="SLOWMO"){
+slow=30;
+msg("SLOWMO!");
 }
 else{
-msg("ERROR");
+msg("FAIL");
 }
 }
 
