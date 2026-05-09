@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>MINGUELASGO GAMES</title>
 
     <style>
+
         *{
             margin:0;
             padding:0;
@@ -23,7 +25,9 @@
 
         h1{
             font-size:3.5em;
-            text-shadow:0 0 15px #00ffcc, 0 0 30px #00ffcc;
+            text-shadow:
+                0 0 15px #00ffcc,
+                0 0 30px #00ffcc;
             margin-top:40px;
             letter-spacing:2px;
         }
@@ -56,7 +60,7 @@
 
         .game-img{
             width:100%;
-            height:160px;
+            height:170px;
             object-fit:cover;
             border-radius:12px;
             margin-bottom:15px;
@@ -73,9 +77,9 @@
             color:#888;
             font-size:0.9em;
             margin-bottom:20px;
+            line-height:1.5;
         }
 
-        /* BOTONES */
         .play-btn{
             background:#00ffcc;
             color:#000;
@@ -94,7 +98,6 @@
             transform:translateY(-2px);
         }
 
-        /* BOTONES VIP */
         .vip-btn{
             background:#ffd700;
             color:#000;
@@ -104,7 +107,6 @@
             background:#fff;
         }
 
-        /* VIP BOX */
         #vipBox{
             position:fixed;
             right:20px;
@@ -166,7 +168,6 @@
             font-size:14px;
         }
 
-        /* SECCIÓN VIP */
         #vipSection{
             display:none;
             width:100%;
@@ -207,7 +208,6 @@
             font-size:0.8em;
         }
 
-        /* RESPONSIVE */
         @media(max-width:768px){
 
             h1{
@@ -226,6 +226,7 @@
                 bottom:15px;
             }
         }
+
     </style>
 </head>
 
@@ -234,12 +235,12 @@
     <h1>🎮 MINGUELASGO GAMES</h1>
 
     <!-- JUEGOS PÚBLICOS -->
-    <div class="container" id="publicGames">
+    <div class="container">
 
         <!-- BLOCK DASH -->
         <div class="game-card">
 
-            <img 
+            <img
                 src="BlockDash.jpeg"
                 class="game-img"
                 alt="Block Dash"
@@ -248,60 +249,66 @@
             <h3>🟥 BLOCK DASH</h3>
 
             <p>
-                Esquiva los bloques rojos.<br>
-                ¡Récord de velocidad!
+                Esquiva bloques rojos.<br>
+                Sobrevive el máximo tiempo posible.
             </p>
 
-            <button 
+            <button
                 class="play-btn"
                 onclick="location.href='BlockDash/index.html'"
             >
                 JUGAR AHORA
             </button>
+
         </div>
 
         <!-- CAZA PUNTOS -->
         <div class="game-card">
 
-            <img 
+            <img
                 src="e4c7eef8-b6cf-4aec-87c3-14ca8b23175c.png"
                 class="game-img"
                 alt="Caza Puntos"
             >
 
-            <h3>🎯 CAZA EL PUNTO</h3>
+            <h3>🎯 CAZA PUNTOS</h3>
 
             <p>
-                Pon a prueba tus reflejos.<br>
-                ¡Haz clic antes del tiempo!
+                Atrapa puntos antes de que desaparezcan.<br>
+                ¡Pon a prueba tus reflejos!
             </p>
 
-            <button 
+            <button
                 class="play-btn"
                 onclick="location.href='CazaPuntos/index.html'"
             >
                 JUGAR AHORA
             </button>
+
         </div>
 
         <!-- PRÓXIMAMENTE -->
-        <div class="game-card" style="opacity:0.4; cursor:not-allowed;">
+        <div
+            class="game-card"
+            style="opacity:0.45; cursor:not-allowed;"
+        >
 
-            <img 
+            <img
                 src="https://images.unsplash.com/photo-1511882150382-421056c89033?q=80&w=1200"
                 class="game-img"
-                alt="Coming Soon"
+                alt="Próximamente"
             >
 
             <h3>🚧 PRÓXIMAMENTE</h3>
 
             <p>
-                Estamos cocinando algo nuevo...
+                Nuevos juegos están en desarrollo...
             </p>
 
             <button class="play-btn" disabled>
                 BLOQUEADO
             </button>
+
         </div>
 
     </div>
@@ -309,33 +316,35 @@
     <!-- ZONA VIP -->
     <div id="vipSection">
 
-        <h2>👑 CONTENIDO VIP DESBLOQUEADO</h2>
+        <h2>👑 CONTENIDO VIP</h2>
 
         <div class="container">
 
-            <!-- SURVIVAL VIP -->
+            <!-- SURVIVAL -->
             <div class="game-card vip-card">
 
                 <span class="vip-badge">VIP</span>
 
-                <img 
+                <img
                     src="images.jpg"
                     class="game-img"
-                    alt="Survival VIP"
+                    alt="Survival Migui"
                 >
 
                 <h3>🎮 SURVIVAL MIGUI</h3>
 
                 <p>
-                    Sobrevive cuanto puedas.
+                    Aguanta hordas infinitas.<br>
+                    Solo para jugadores expertos.
                 </p>
 
-                <button 
+                <button
                     class="play-btn vip-btn"
                     onclick="location.href='SurvivalVIP/index.html'"
                 >
                     JUGAR AHORA
                 </button>
+
             </div>
 
             <!-- EXTREME CAR -->
@@ -343,7 +352,7 @@
 
                 <span class="vip-badge">VIP</span>
 
-                <img 
+                <img
                     src="carrera.jpeg"
                     class="game-img"
                     alt="Extreme Car"
@@ -352,34 +361,37 @@
                 <h3>🏎️ EXTREME CAR</h3>
 
                 <p>
-                    ¡Corre a máxima velocidad!
+                    Corre a máxima velocidad.<br>
+                    Esquiva tráfico y rompe récords.
                 </p>
 
-                <button 
+                <button
                     class="play-btn vip-btn"
                     onclick="location.href='ExtremeCar/index.html'"
                 >
                     JUGAR AHORA
                 </button>
+
             </div>
 
         </div>
+
     </div>
 
-    <!-- VIP BOX -->
+    <!-- CAJA VIP -->
     <div id="vipBox">
 
         <h2>🔐 VIP ACCESS</h2>
 
         <p>Introduce el código VIP</p>
 
-        <input 
+        <input
             type="password"
             id="vipInput"
             placeholder="Código VIP"
         >
 
-        <button id="vipBtn" onclick="checkVIP()">
+        <button id="vipBtn">
             DESBLOQUEAR
         </button>
 
@@ -395,53 +407,69 @@
 
     <script>
 
+        // CÓDIGO VIP
+        const VIP_CODE = "MINGUELASVIP";
+
+        // ELEMENTOS
+        const vipBtn = document.getElementById("vipBtn");
+        const vipInput = document.getElementById("vipInput");
+        const vipError = document.getElementById("vipError");
+        const vipSection = document.getElementById("vipSection");
+        const vipBox = document.getElementById("vipBox");
+
         // COMPROBAR VIP
         function checkVIP(){
 
-            const code = document
-                .getElementById("vipInput")
-                .value
-                .trim();
+            const code = vipInput.value.trim();
 
-            const error = document
-                .getElementById("vipError");
+            if(code === VIP_CODE){
 
-            // CÓDIGO VIP
-            if(code === "MINGUELASVIP"){
-
-                // Guardar acceso
                 localStorage.setItem(
                     "vipAccess",
                     "true"
                 );
 
-                // Mostrar VIP
-                document.getElementById(
-                    "vipSection"
-                ).style.display = "block";
+                vipSection.style.display = "block";
+                vipBox.style.display = "none";
+                vipError.style.display = "none";
 
-                // Ocultar caja
-                document.getElementById(
-                    "vipBox"
-                ).style.display = "none";
-
-                // Ocultar error
-                error.style.display = "none";
-
-                // Scroll automático
-                document.getElementById(
-                    "vipSection"
-                ).scrollIntoView({
+                vipSection.scrollIntoView({
                     behavior:"smooth"
                 });
 
             }else{
 
-                error.style.display = "block";
+                vipError.style.display = "block";
+
+                vipInput.style.borderColor = "#ff4444";
+
+                setTimeout(()=>{
+
+                    vipInput.style.borderColor = "#00ffcc";
+
+                },1000);
             }
         }
 
-        // CARGA AUTOMÁTICA
+        // BOTÓN
+        vipBtn.addEventListener(
+            "click",
+            checkVIP
+        );
+
+        // ENTER
+        vipInput.addEventListener(
+            "keypress",
+            function(e){
+
+                if(e.key === "Enter"){
+                    checkVIP();
+                }
+
+            }
+        );
+
+        // AUTOLOGIN VIP
         window.onload = function(){
 
             if(
@@ -449,25 +477,12 @@
                 === "true"
             ){
 
-                document.getElementById(
-                    "vipSection"
-                ).style.display = "block";
+                vipSection.style.display = "block";
+                vipBox.style.display = "none";
 
-                document.getElementById(
-                    "vipBox"
-                ).style.display = "none";
             }
+
         };
-
-        // ENTER PARA ENTRAR
-        document
-            .getElementById("vipInput")
-            .addEventListener("keypress", function(e){
-
-                if(e.key === "Enter"){
-                    checkVIP();
-                }
-            });
 
     </script>
 
