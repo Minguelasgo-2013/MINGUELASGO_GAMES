@@ -1,0 +1,366 @@
+!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>TETRIS - MINGUELASGO</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#0f0f0f;color:#00ffcc;font-family:'Courier New',monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;overflow:hidden;}
+  h1{font-size:2em;letter-spacing:4px;text-shadow:0 0 15px #00ffcc,0 0 30px #00ffcc;margin-bottom:6px;}
+  .subtitle{color:#444;font-size:0.75em;margin-bottom:14px;letter-spacing:2px;}
+
+  #wrapper{display:flex;gap:20px;align-items:flex-start;}
+
+  /* PANEL IZQUIERDO */
+  #left-panel{display:flex;flex-direction:column;gap:14px;width:110px;}
+  .info-box{background:#111;border:1px solid #00ffcc22;border-radius:10px;padding:12px;text-align:center;}
+  .info-label{font-size:0.65em;color:#555;letter-spacing:2px;margin-bottom:6px;}
+  .info-val{font-size:1.4em;font-weight:bold;color:#00ffcc;}
+  #next-canvas{display:block;margin:0 auto;}
+
+  /* CANVAS PRINCIPAL */
+  #game{display:block;border:2px solid #00ffcc33;background:#000;}
+
+  /* PANEL DERECHO */
+  #right-panel{display:flex;flex-direction:column;gap:10px;width:90px;font-size:0.72em;color:#444;line-height:2;}
+
+  /* OVERLAY */
+  #overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:20;}
+  .panel{background:#0a0a0a;border:2px solid #00ffcc;border-radius:14px;padding:28px 32px;text-align:center;min-width:260px;}
+  .panel h2{color:#ffd700;text-shadow:0 0 10px #ffd700;margin-bottom:8px;font-size:1.8em;}
+  .panel p{color:#666;margin-bottom:20px;font-size:0.88em;line-height:1.6;}
+  .panel button{background:#00ffcc;color:#000;border:none;padding:12px 28px;border-radius:10px;font-weight:bold;font-size:1em;cursor:pointer;font-family:'Courier New',monospace;margin:4px;}
+  .panel button:hover{background:#fff;}
+  .panel a{display:block;margin-top:14px;color:#333;font-size:0.8em;text-decoration:none;}
+  .panel a:hover{color:#666;}
+  .hidden{display:none!important;}
+
+  /* CONTROLES MÓVIL */
+  #mobile-controls{display:none;gap:8px;margin-top:12px;flex-direction:column;align-items:center;}
+  #mobile-row{display:flex;gap:8px;}
+  .ctrl-btn{background:#111;border:2px solid #00ffcc44;color:#00ffcc;width:54px;height:54px;border-radius:10px;font-size:1.4em;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .ctrl-btn:active{background:#00ffcc22;}
+  #ctrl-down{width:54px;}
+  #ctrl-drop{width:116px;font-size:0.8em;letter-spacing:1px;}
+
+  @media(max-width:600px){
+    #wrapper{gap:10px;}
+    #left-panel{width:80px;}
+    .info-val{font-size:1.1em;}
+    #right-panel{display:none;}
+    #mobile-controls{display:flex;}
+    h1{font-size:1.4em;}
+  }
+</style>
+</head>
+<body>
+
+<h1>🧱 TETRIS</h1>
+<div class="subtitle">MINGUELASGO GAMES</div>
+
+<div id="wrapper">
+  <!-- IZQUIERDA -->
+  <div id="left-panel">
+    <div class="info-box">
+      <div class="info-label">SCORE</div>
+      <div class="info-val" id="score">0</div>
+    </div>
+    <div class="info-box">
+      <div class="info-label">NIVEL</div>
+      <div class="info-val" id="level">1</div>
+    </div>
+    <div class="info-box">
+      <div class="info-label">LÍNEAS</div>
+      <div class="info-val" id="lines">0</div>
+    </div>
+    <div class="info-box">
+      <div class="info-label">SIGUIENTE</div>
+      <canvas id="next-canvas" width="80" height="80"></canvas>
+    </div>
+  </div>
+
+  <!-- TABLERO -->
+  <canvas id="game" width="300" height="600"></canvas>
+
+  <!-- DERECHA: controles -->
+  <div id="right-panel">
+    <div style="color:#00ffcc44;letter-spacing:1px;font-size:0.9em;">CONTROLES</div>
+    <div>← → Mover</div>
+    <div>↑ Rotar</div>
+    <div>↓ Bajar</div>
+    <div>ESPACIO Drop</div>
+    <div>P Pausa</div>
+  </div>
+</div>
+
+<!-- CONTROLES MÓVIL -->
+<div id="mobile-controls">
+  <div id="mobile-row">
+    <button class="ctrl-btn" id="ctrl-left">◀</button>
+    <button class="ctrl-btn" id="ctrl-rotate">🔄</button>
+    <button class="ctrl-btn" id="ctrl-right">▶</button>
+    <button class="ctrl-btn" id="ctrl-down">▼</button>
+  </div>
+  <button class="ctrl-btn" id="ctrl-drop">SOLTAR ⬇</button>
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay">
+  <div class="panel" id="startPanel">
+    <h2>🧱 TETRIS</h2>
+    <p>Completa líneas para puntuar.<br>¡No dejes que los bloques lleguen arriba!</p>
+    <button onclick="startGame()">▶ JUGAR</button>
+    <a href="../index.html">← Volver al inicio</a>
+  </div>
+  <div class="panel hidden" id="pausePanel">
+    <h2>⏸ PAUSA</h2>
+    <p id="pauseScore"></p>
+    <button onclick="resumeGame()">▶ CONTINUAR</button>
+    <button onclick="startGame()">🔄 REINICIAR</button>
+    <a href="../index.html">← Volver al inicio</a>
+  </div>
+  <div class="panel hidden" id="endPanel">
+    <h2>💀 GAME OVER</h2>
+    <p id="endMsg"></p>
+    <button onclick="startGame()">🔄 REINTENTAR</button>
+    <a href="../index.html">← Volver al inicio</a>
+  </div>
+</div>
+
+<script>
+const cv = document.getElementById('game');
+const ctx = cv.getContext('2d');
+const nv = document.getElementById('next-canvas');
+const nctx = nv.getContext('2d');
+
+const COLS=10, ROWS=20, SZ=30;
+const W=COLS*SZ, H=ROWS*SZ;
+
+// PIEZAS TETROMINO
+const PIECES = [
+  { shape:[[1,1,1,1]], color:'#00ffff' },           // I
+  { shape:[[1,1],[1,1]], color:'#ffd700' },           // O
+  { shape:[[0,1,0],[1,1,1]], color:'#cc44ff' },       // T
+  { shape:[[1,0],[1,0],[1,1]], color:'#ff9900' },     // L
+  { shape:[[0,1],[0,1],[1,1]], color:'#4488ff' },     // J
+  { shape:[[0,1,1],[1,1,0]], color:'#00ff88' },       // S
+  { shape:[[1,1,0],[0,1,1]], color:'#ff4444' },       // Z
+];
+
+let board, cur, next, score, level, lines, running, paused, dropTimer, dropInterval, best;
+
+function emptyBoard(){ return Array.from({length:ROWS},()=>Array(COLS).fill(0)); }
+
+function randPiece(){
+  const p = PIECES[Math.floor(Math.random()*PIECES.length)];
+  return { shape: p.shape.map(r=>[...r]), color: p.color,
+    x: Math.floor(COLS/2) - Math.floor(p.shape[0].length/2), y: 0 };
+}
+
+function rotate(shape){
+  const R=shape.length, C=shape[0].length;
+  const out=Array.from({length:C},()=>Array(R).fill(0));
+  for(let r=0;r<R;r++) for(let c=0;c<C;c++) out[c][R-1-r]=shape[r][c];
+  return out;
+}
+
+function valid(shape,ox,oy){
+  for(let r=0;r<shape.length;r++)
+    for(let c=0;c<shape[r].length;c++)
+      if(shape[r][c]){
+        const nx=ox+c, ny=oy+r;
+        if(nx<0||nx>=COLS||ny>=ROWS) return false;
+        if(ny>=0&&board[ny][nx]) return false;
+      }
+  return true;
+}
+
+function place(){
+  cur.shape.forEach((row,r)=>row.forEach((v,c)=>{ if(v) board[cur.y+r][cur.x+c]=cur.color; }));
+  clearLines();
+  cur=next; next=randPiece();
+  if(!valid(cur.shape,cur.x,cur.y)){ endGame(); }
+}
+
+const LINE_SCORES=[0,100,300,500,800];
+function clearLines(){
+  let cleared=0;
+  for(let r=ROWS-1;r>=0;r--){
+    if(board[r].every(c=>c)){
+      board.splice(r,1);
+      board.unshift(Array(COLS).fill(0));
+      cleared++; r++;
+    }
+  }
+  if(cleared){
+    score += LINE_SCORES[cleared]*(level);
+    lines += cleared;
+    level = Math.floor(lines/10)+1;
+    dropInterval = Math.max(80, 600 - (level-1)*55);
+    best = Math.max(best||0, score);
+    updateHUD();
+  }
+}
+
+function hardDrop(){
+  while(valid(cur.shape,cur.x,cur.y+1)) cur.y++;
+  place();
+}
+
+function startGame(){
+  board=emptyBoard(); score=0; level=1; lines=0;
+  best=best||0; dropInterval=600; dropTimer=0;
+  cur=randPiece(); next=randPiece();
+  running=true; paused=false;
+  hideAll();
+  updateHUD();
+  requestAnimationFrame(loop);
+}
+
+function resumeGame(){
+  paused=false; running=true;
+  hideAll();
+  requestAnimationFrame(loop);
+}
+
+function endGame(){
+  running=false;
+  document.getElementById('endMsg').textContent=`Puntuación: ${score} | Récord: ${best}`;
+  show('endPanel');
+}
+
+function togglePause(){
+  if(!running&&!paused) return;
+  if(paused){ resumeGame(); return; }
+  paused=true; running=false;
+  document.getElementById('pauseScore').textContent='Puntuación: '+score;
+  show('pausePanel');
+}
+
+function hideAll(){
+  document.getElementById('overlay').classList.add('hidden');
+  ['startPanel','pausePanel','endPanel'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+}
+function show(id){
+  document.getElementById('overlay').classList.remove('hidden');
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function updateHUD(){
+  document.getElementById('score').textContent=score;
+  document.getElementById('level').textContent=level;
+  document.getElementById('lines').textContent=lines;
+}
+
+// DRAW
+function drawBlock(c, x, y, sz, alpha=1){
+  ctx.globalAlpha=alpha;
+  ctx.fillStyle=c;
+  ctx.shadowColor=c; ctx.shadowBlur=6;
+  ctx.fillRect(x*sz+1,y*sz+1,sz-2,sz-2);
+  // highlight
+  ctx.fillStyle='rgba(255,255,255,0.15)';
+  ctx.fillRect(x*sz+2,y*sz+2,sz-4,6);
+  ctx.shadowBlur=0;
+  ctx.globalAlpha=1;
+}
+
+function drawGhost(){
+  let gy=cur.y;
+  while(valid(cur.shape,cur.x,gy+1)) gy++;
+  if(gy===cur.y) return;
+  cur.shape.forEach((row,r)=>row.forEach((v,c)=>{
+    if(v) drawBlock(cur.color, cur.x+c, gy+r, SZ, 0.18);
+  }));
+}
+
+function render(){
+  ctx.clearRect(0,0,W,H);
+
+  // grid
+  ctx.strokeStyle='#0a0a0a';
+  ctx.lineWidth=0.5;
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    ctx.strokeRect(c*SZ,r*SZ,SZ,SZ);
+  }
+
+  // board
+  board.forEach((row,r)=>row.forEach((col,c)=>{ if(col) drawBlock(col,c,r,SZ); }));
+
+  // ghost
+  drawGhost();
+
+  // current piece
+  cur.shape.forEach((row,r)=>row.forEach((v,c)=>{
+    if(v) drawBlock(cur.color, cur.x+c, cur.y+r, SZ);
+  }));
+
+  // next piece preview
+  nctx.clearRect(0,0,80,80);
+  const ns=next.shape, nc=next.color;
+  const offX=Math.floor((4-ns[0].length)/2), offY=Math.floor((4-ns.length)/2);
+  ns.forEach((row,r)=>row.forEach((v,c)=>{
+    if(v){
+      nctx.fillStyle=nc; nctx.shadowColor=nc; nctx.shadowBlur=5;
+      nctx.fillRect((offX+c)*18+4,(offY+r)*18+4,16,16);
+      nctx.shadowBlur=0;
+    }
+  }));
+}
+
+// GAME LOOP
+let last=0;
+function loop(ts){
+  if(!running) return;
+  const dt=ts-last; last=ts;
+  dropTimer+=dt;
+  if(dropTimer>=dropInterval){
+    if(valid(cur.shape,cur.x,cur.y+1)) cur.y++;
+    else place();
+    dropTimer=0;
+  }
+  render();
+  requestAnimationFrame(loop);
+}
+
+// TECLADO
+const keys={};
+let moveTimer=0, moveDir=0;
+addEventListener('keydown',e=>{
+  if(!running&&!paused) return;
+  switch(e.code){
+    case'ArrowLeft':  if(valid(cur.shape,cur.x-1,cur.y)) cur.x--; break;
+    case'ArrowRight': if(valid(cur.shape,cur.x+1,cur.y)) cur.x++; break;
+    case'ArrowDown':  if(valid(cur.shape,cur.x,cur.y+1)) cur.y++; else place(); dropTimer=0; break;
+    case'ArrowUp': case'KeyX':{ const r=rotate(cur.shape); if(valid(r,cur.x,cur.y)) cur.shape=r; break; }
+    case'Space': hardDrop(); e.preventDefault(); break;
+    case'KeyP': case'Escape': togglePause(); break;
+  }
+});
+
+// MÓVIL
+document.getElementById('ctrl-left').addEventListener('click',()=>{ if(valid(cur.shape,cur.x-1,cur.y)) cur.x--; });
+document.getElementById('ctrl-right').addEventListener('click',()=>{ if(valid(cur.shape,cur.x+1,cur.y)) cur.x++; });
+document.getElementById('ctrl-rotate').addEventListener('click',()=>{ const r=rotate(cur.shape); if(valid(r,cur.x,cur.y)) cur.shape=r; });
+document.getElementById('ctrl-down').addEventListener('click',()=>{ if(valid(cur.shape,cur.x,cur.y+1)) cur.y++; dropTimer=0; });
+document.getElementById('ctrl-drop').addEventListener('click',()=>hardDrop());
+
+// SWIPE MÓVIL
+let tx=null,ty=null;
+cv.addEventListener('touchstart',e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
+cv.addEventListener('touchend',e=>{
+  if(tx===null) return;
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>Math.abs(dy)){
+    if(dx<-20&&valid(cur.shape,cur.x-1,cur.y)) cur.x--;
+    if(dx>20&&valid(cur.shape,cur.x+1,cur.y)) cur.x++;
+  } else {
+    if(dy>20){ if(valid(cur.shape,cur.x,cur.y+1)) cur.y++; }
+    if(dy<-20){ const r=rotate(cur.shape); if(valid(r,cur.x,cur.y)) cur.shape=r; }
+  }
+  tx=null; ty=null;
+},{passive:true});
+</script>
+</body>
+</html>
