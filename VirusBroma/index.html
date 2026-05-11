@@ -1,0 +1,70 @@
+import tkinter as tk
+]
+
+label = tk.Label(
+    root,
+    text="INICIALIZANDO...",
+    fg="lime",
+    bg="black",
+    font=("Consolas", 28, "bold")
+)
+label.pack(pady=80)
+
+progress = ttk.Progressbar(root, orient="horizontal", length=800, mode="determinate")
+progress.pack(pady=40)
+
+console = tk.Text(
+    root,
+    height=15,
+    width=90,
+    bg="black",
+    fg="lime",
+    font=("Consolas", 14),
+    bd=0
+)
+console.pack()
+
+final_label = tk.Label(
+    root,
+    text="",
+    fg="red",
+    bg="black",
+    font=("Consolas", 34, "bold")
+)
+final_label.pack(pady=50)
+
+
+def fake_scan():
+    for i in range(101):
+        progress['value'] = i
+
+        if i % 10 == 0:
+            msg = random.choice(messages)
+            console.insert(tk.END, f"> {msg}\n")
+            console.see(tk.END)
+            label.config(text=msg)
+
+        root.update()
+        time.sleep(0.08)
+
+    final_label.config(
+        text="😂 TRANQUILO, ERA UNA BROMA 😂\nNO HA PASADO NADA",
+        fg="red"
+    )
+
+    console.insert(tk.END, "\n>>> Sistema completamente seguro.\n")
+    console.insert(tk.END, ">>> Has sido troleado 😎\n")
+
+    exit_button = tk.Button(
+        root,
+        text="SALIR",
+        font=("Arial", 20, "bold"),
+        bg="red",
+        fg="white",
+        command=root.destroy
+    )
+    exit_button.pack(pady=20)
+
+
+root.after(1000, fake_scan)
+root.mainloop()
