@@ -1,70 +1,190 @@
-import tkinter as tk
-]
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Security Alert</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Consolas, monospace;
+    }
 
-label = tk.Label(
-    root,
-    text="INICIALIZANDO...",
-    fg="lime",
-    bg="black",
-    font=("Consolas", 28, "bold")
-)
-label.pack(pady=80)
+    body {
+      background: black;
+      color: #00ff00;
+      overflow: hidden;
+      cursor: none;
+    }
 
-progress = ttk.Progressbar(root, orient="horizontal", length=800, mode="determinate")
-progress.pack(pady=40)
+    .container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 50px;
+    }
 
-console = tk.Text(
-    root,
-    height=15,
-    width=90,
-    bg="black",
-    fg="lime",
-    font=("Consolas", 14),
-    bd=0
-)
-console.pack()
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 40px;
+      text-shadow: 0 0 10px lime;
+      animation: blink 1s infinite;
+    }
 
-final_label = tk.Label(
-    root,
-    text="",
-    fg="red",
-    bg="black",
-    font=("Consolas", 34, "bold")
-)
-final_label.pack(pady=50)
+    .progress-box {
+      width: 70%;
+      height: 40px;
+      border: 2px solid lime;
+      margin-bottom: 30px;
+    }
 
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: lime;
+      transition: width 0.2s;
+      box-shadow: 0 0 15px lime;
+    }
 
-def fake_scan():
-    for i in range(101):
-        progress['value'] = i
+    .console {
+      width: 80%;
+      height: 400px;
+      border: 1px solid lime;
+      padding: 20px;
+      overflow-y: auto;
+      background: rgba(0,255,0,0.03);
+      font-size: 1rem;
+      line-height: 1.6;
+      box-shadow: 0 0 20px rgba(0,255,0,0.3);
+    }
 
-        if i % 10 == 0:
-            msg = random.choice(messages)
-            console.insert(tk.END, f"> {msg}\n")
-            console.see(tk.END)
-            label.config(text=msg)
+    .final {
+      margin-top: 30px;
+      font-size: 2rem;
+      color: red;
+      text-align: center;
+      display: none;
+      text-shadow: 0 0 20px red;
+    }
 
-        root.update()
-        time.sleep(0.08)
+    button {
+      margin-top: 20px;
+      padding: 15px 40px;
+      background: red;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border-radius: 10px;
+      display: none;
+    }
 
-    final_label.config(
-        text="😂 TRANQUILO, ERA UNA BROMA 😂\nNO HA PASADO NADA",
-        fg="red"
-    )
+    @keyframes blink {
+      50% {
+        opacity: 0.6;
+      }
+    }
 
-    console.insert(tk.END, "\n>>> Sistema completamente seguro.\n")
-    console.insert(tk.END, ">>> Has sido troleado 😎\n")
+    .flash {
+      animation: flashBg 0.2s infinite;
+    }
 
-    exit_button = tk.Button(
-        root,
-        text="SALIR",
-        font=("Arial", 20, "bold"),
-        bg="red",
-        fg="white",
-        command=root.destroy
-    )
-    exit_button.pack(pady=20)
+    @keyframes flashBg {
+      0% { background: black; }
+      50% { background: #120000; }
+      100% { background: black; }
+    }
+  </style>
+</head>
+<body>
 
+<div class="container">
+  <h1 id="title">INICIALIZANDO SISTEMA...</h1>
 
-root.after(1000, fake_scan)
-root.mainloop()
+  <div class="progress-box">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <div class="console" id="console"></div>
+
+  <div class="final" id="finalMessage">
+    😂 TRANQUILO 😂<br>
+    ERA SOLO UNA BROMA<br><br>
+    TU PC ESTÁ PERFECTAMENTE BIEN 😎
+  </div>
+
+  <button id="exitBtn" onclick="location.reload()">SALIR</button>
+</div>
+
+<script>
+  const messages = [
+    "Detectando actividad sospechosa...",
+    "Accediendo a archivos privados...",
+    "Robando contraseñas guardadas...",
+    "Desactivando antivirus...",
+    "Subiendo datos a servidor remoto...",
+    "Instalando módulo secreto...",
+    "Copiando memes clasificados...",
+    "Interceptando conexión WiFi...",
+    "Escalando privilegios de administrador...",
+    "Hackeando la NASA..."
+  ];
+
+  const progress = document.getElementById('progress');
+  const consoleBox = document.getElementById('console');
+  const title = document.getElementById('title');
+  const finalMessage = document.getElementById('finalMessage');
+  const exitBtn = document.getElementById('exitBtn');
+
+  let percent = 0;
+
+  function addMessage(text) {
+    const line = document.createElement('div');
+    line.innerHTML = `> ${text}`;
+    consoleBox.appendChild(line);
+    consoleBox.scrollTop = consoleBox.scrollHeight;
+  }
+
+  function randomMessage() {
+    return messages[Math.floor(Math.random() * messages.length)];
+  }
+
+  function fakeVirus() {
+    const interval = setInterval(() => {
+      percent++;
+      progress.style.width = percent + '%';
+
+      if (percent % 5 === 0) {
+        const msg = randomMessage();
+        title.innerText = msg;
+        addMessage(msg);
+      }
+
+      if (percent > 70) {
+        document.body.classList.add('flash');
+      }
+
+      if (percent >= 100) {
+        clearInterval(interval);
+
+        title.innerText = 'SISTEMA COMPROMETIDO';
+
+        setTimeout(() => {
+          finalMessage.style.display = 'block';
+          exitBtn.style.display = 'block';
+          addMessage('>>> Has sido troleado 😎');
+          addMessage('>>> No se ha dañado ningún archivo');
+        }, 1500);
+      }
+    }, 120);
+  }
+
+  setTimeout(fakeVirus, 1000);
+</script>
+
+</body>
+</html>
