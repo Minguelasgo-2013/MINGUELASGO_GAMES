@@ -1,0 +1,668 @@
+!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>WASTELAND COMMAND — DEV</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#0a0a0a;color:#cc44ff;font-family:'Courier New',monospace;min-height:100vh;overflow-x:hidden;}
+
+/* HEADER */
+#header{background:#0d0015;border-bottom:2px solid #cc44ff33;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+#header h1{font-size:1.3em;letter-spacing:4px;color:#cc44ff;text-shadow:0 0 12px #cc44ff;}
+.dev-tag{background:linear-gradient(135deg,#cc44ff,#8800cc);color:#fff;padding:2px 12px;border-radius:20px;font-size:0.65em;font-weight:bold;}
+#day-info{font-size:0.78em;color:#664466;}
+
+/* RECURSOS HUD */
+#res-bar{background:#0d0015;border-bottom:1px solid #cc44ff22;padding:8px 12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.res{background:#110020;border:1px solid #cc44ff33;border-radius:8px;padding:5px 12px;font-size:0.72em;text-align:center;min-width:80px;}
+.res .rval{font-size:1.3em;font-weight:bold;color:#ee88ff;}
+.res .rlbl{color:#664466;font-size:0.7em;letter-spacing:1px;}
+.res.danger .rval{color:#ff4444;}
+.res.warning .rval{color:#ff9900;}
+
+/* MAIN LAYOUT */
+#main{display:flex;gap:0;max-width:1100px;margin:0 auto;padding:12px;flex-wrap:wrap;gap:12px;}
+
+/* PANEL IZQUIERDO — MAPA */
+#map-panel{flex:1;min-width:280px;}
+#map-panel h2{font-size:0.82em;letter-spacing:3px;color:#cc44ff;margin-bottom:8px;}
+#map-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;margin-bottom:10px;}
+.tile{aspect-ratio:1;background:#110020;border:1px solid #cc44ff11;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1.1em;cursor:pointer;transition:0.15s;position:relative;}
+.tile:hover{border-color:#cc44ff88;background:#1a0030;}
+.tile.selected{border-color:#cc44ff;box-shadow:0 0 8px #cc44ff;}
+.tile.base{background:#1a0030;border-color:#cc44ff66;}
+.tile.ruin{background:#0f0f0f;}
+.tile.forest{background:#0a150a;}
+.tile.water{background:#0a0a1a;}
+.tile.mine{background:#1a1000;}
+.tile.farm{background:#0a1a00;}
+.tile.hostile{background:#1a0000;border-color:#ff444422;}
+.tile-hp{position:absolute;bottom:1px;left:1px;right:1px;height:3px;background:#333;border-radius:2px;overflow:hidden;}
+.tile-hp-fill{height:100%;background:#cc44ff;border-radius:2px;}
+
+/* PANEL CENTRAL — ACCIONES */
+#action-panel{width:220px;min-width:200px;}
+#action-panel h2{font-size:0.82em;letter-spacing:3px;color:#cc44ff;margin-bottom:8px;}
+#tile-info{background:#110020;border:1px solid #cc44ff22;border-radius:10px;padding:12px;margin-bottom:10px;min-height:80px;font-size:0.78em;color:#886688;}
+#tile-info b{color:#ee88ff;display:block;margin-bottom:4px;font-size:1em;}
+#tile-info .ti-stat{color:#cc44ff;margin-top:2px;}
+.act-btn{display:block;width:100%;background:transparent;border:2px solid #cc44ff33;color:#cc44ff;padding:9px 12px;border-radius:9px;cursor:pointer;font-family:'Courier New',monospace;font-size:0.78em;margin-bottom:6px;text-align:left;transition:0.2s;}
+.act-btn:hover:not(:disabled){background:#cc44ff15;border-color:#cc44ff;}
+.act-btn:disabled{opacity:.3;cursor:default;}
+.act-btn .cost{display:block;color:#664466;font-size:0.7em;margin-top:1px;}
+.act-btn.danger{border-color:#ff444433;color:#ff4444;}
+.act-btn.danger:hover:not(:disabled){background:#ff444415;border-color:#ff4444;}
+
+/* PANEL DERECHO — LOG + EVENTOS */
+#right-panel{flex:1;min-width:240px;display:flex;flex-direction:column;gap:10px;}
+#right-panel h2{font-size:0.82em;letter-spacing:3px;color:#cc44ff;margin-bottom:0;}
+
+/* EDIFICIOS */
+#buildings-panel{background:#110020;border:1px solid #cc44ff22;border-radius:10px;padding:10px;}
+.bld{display:flex;justify-content:space-between;align-items:center;font-size:0.75em;padding:5px 0;border-bottom:1px solid #cc44ff11;}
+.bld:last-child{border-bottom:none;}
+.bld-name{color:#ee88ff;}
+.bld-stat{color:#664466;}
+
+/* LOG */
+#log-panel{background:#110020;border:1px solid #cc44ff22;border-radius:10px;padding:10px;max-height:180px;overflow-y:auto;}
+.log-entry{font-size:0.72em;padding:3px 0;border-bottom:1px solid #cc44ff0a;line-height:1.5;}
+.log-entry.good{color:#00ffcc;}
+.log-entry.bad{color:#ff4444;}
+.log-entry.info{color:#cc44ff;}
+.log-entry.warn{color:#ff9900;}
+.log-entry.day{color:#ffd700;font-weight:bold;}
+
+/* EVENTOS */
+#event-panel{background:#110020;border:2px solid #cc44ff33;border-radius:10px;padding:12px;display:none;}
+#event-panel h3{color:#ffd700;font-size:0.85em;margin-bottom:6px;}
+#event-text{color:#886688;font-size:0.78em;line-height:1.6;margin-bottom:10px;}
+#event-choices{display:flex;flex-direction:column;gap:6px;}
+.ev-choice{background:transparent;border:1px solid #cc44ff44;color:#cc44ff;padding:8px 10px;border-radius:8px;cursor:pointer;font-family:'Courier New',monospace;font-size:0.75em;text-align:left;transition:0.2s;}
+.ev-choice:hover{background:#cc44ff15;}
+
+/* NEXT DAY */
+#bottom-bar{background:#0d0015;border-top:1px solid #cc44ff22;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;bottom:0;}
+#next-day-btn{background:linear-gradient(135deg,#cc44ff,#8800cc);color:#fff;border:none;padding:12px 28px;border-radius:10px;cursor:pointer;font-family:'Courier New',monospace;font-size:0.9em;font-weight:bold;letter-spacing:2px;transition:0.2s;}
+#next-day-btn:hover{background:linear-gradient(135deg,#ee88ff,#aa22ee);box-shadow:0 0 18px #cc44ff;}
+#threat-bar{display:flex;align-items:center;gap:8px;font-size:0.75em;color:#664466;}
+#threat-fill-wrap{width:120px;height:8px;background:#1a0000;border-radius:4px;overflow:hidden;}
+#threat-fill{height:8px;background:#ff4444;border-radius:4px;transition:width 0.5s;}
+
+/* OVERLAY */
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:50;display:flex;align-items:center;justify-content:center;}
+.ov-panel{background:#0d0015;border:2px solid #cc44ff;border-radius:16px;padding:28px 32px;text-align:center;max-width:360px;width:90%;}
+.ov-panel h2{color:#cc44ff;text-shadow:0 0 12px #cc44ff;margin-bottom:8px;font-size:1.6em;}
+.ov-panel p{color:#664466;font-size:0.85em;line-height:1.7;margin-bottom:18px;}
+.ov-btn{background:linear-gradient(135deg,#cc44ff,#8800cc);color:#fff;border:none;padding:12px 28px;border-radius:10px;cursor:pointer;font-family:'Courier New',monospace;font-size:0.9em;font-weight:bold;margin:4px;}
+.ov-btn:hover{background:linear-gradient(135deg,#ee88ff,#aa22ee);}
+.ov-btn.sec{background:transparent;border:2px solid #cc44ff44;color:#cc44ff;}
+.ov-btn.sec:hover{background:#cc44ff15;}
+#overlay.hidden{display:none;}
+.hidden{display:none!important;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:#0a0a0a;}
+::-webkit-scrollbar-thumb{background:#cc44ff33;}
+
+/* FLOAT */
+.ft{position:fixed;font-weight:bold;font-family:'Courier New',monospace;pointer-events:none;animation:fup 1.3s forwards;z-index:70;font-size:0.95em;}
+@keyframes fup{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-50px);}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div id="header-h1">☢️ WASTELAND COMMAND</div>
+    <span class="dev-tag">⚙️ DEV EXCLUSIVE</span>
+  </div>
+  <div id="day-info">Día <b id="hday" style="color:#ee88ff">1</b> &nbsp;|&nbsp; Supervivientes: <b id="hpop" style="color:#ee88ff">20</b> &nbsp;|&nbsp; <span id="hseason" style="color:#ffd700">☀️ VERANO</span></div>
+</div>
+
+<!-- RECURSOS -->
+<div id="res-bar">
+  <div class="res" id="r-food"><div class="rval" id="v-food">50</div><div class="rlbl">🍞 COMIDA</div></div>
+  <div class="res" id="r-water"><div class="rval" id="v-water">40</div><div class="rlbl">💧 AGUA</div></div>
+  <div class="res" id="r-scrap"><div class="rval" id="v-scrap">30</div><div class="rlbl">🔩 CHATARRA</div></div>
+  <div class="res" id="r-med"><div class="rval" id="v-med">10</div><div class="rlbl">💊 MEDICINA</div></div>
+  <div class="res" id="r-fuel"><div class="rval" id="v-fuel">20</div><div class="rlbl">⛽ COMBUSTIBLE</div></div>
+  <div class="res" id="r-morale"><div class="rval" id="v-morale">70</div><div class="rlbl">💜 MORAL</div></div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- MAPA -->
+  <div id="map-panel">
+    <h2>🗺️ MAPA DEL YERMO</h2>
+    <div id="map-grid"></div>
+  </div>
+
+  <!-- ACCIONES -->
+  <div id="action-panel">
+    <h2>⚙️ ACCIONES</h2>
+    <div id="tile-info">Selecciona una casilla del mapa para ver acciones.</div>
+    <div id="action-btns"></div>
+
+    <h2 style="margin-top:12px;">🏗️ CONSTRUIR</h2>
+    <button class="act-btn" onclick="buildStructure('farm')">🌿 Cultivar granja<span class="cost">40🔩 + 10💧 → +6🍞/día</span></button>
+    <button class="act-btn" onclick="buildStructure('well')">💧 Pozo purif.<span class="cost">30🔩 → +8💧/día</span></button>
+    <button class="act-btn" onclick="buildStructure('workshop')">🔧 Taller<span class="cost">50🔩 → +5🔩/día</span></button>
+    <button class="act-btn" onclick="buildStructure('clinic')">🏥 Clínica<span class="cost">40🔩 + 5💊 → +2💊/día</span></button>
+    <button class="act-btn" onclick="buildStructure('tower')">🗼 Torre vigía<span class="cost">35🔩 → -15% amenaza</span></button>
+    <button class="act-btn" onclick="buildStructure('radio')">📻 Radio<span class="cost">60🔩 + 10⛽ → +3 supervivientes</span></button>
+  </div>
+
+  <!-- DERECHA -->
+  <div id="right-panel">
+    <h2>🏗️ INFRAESTRUCTURA</h2>
+    <div id="buildings-panel">
+      <div id="bld-list"><div style="color:#664466;font-size:0.78em;">Sin construcciones aún.</div></div>
+    </div>
+
+    <!-- EVENTO -->
+    <div id="event-panel">
+      <h3 id="event-title">⚠️ EVENTO</h3>
+      <div id="event-text"></div>
+      <div id="event-choices"></div>
+    </div>
+
+    <h2>📋 REGISTRO</h2>
+    <div id="log-panel"><div class="log-entry day">☢️ Día 1 — La humanidad cayó. Solo quedan los fuertes.</div></div>
+  </div>
+
+</div>
+
+<!-- BOTTOM BAR -->
+<div id="bottom-bar">
+  <div id="threat-bar">
+    ☠️ AMENAZA:
+    <div id="threat-fill-wrap"><div id="threat-fill" style="width:10%;"></div></div>
+    <span id="threat-val">10%</span>
+  </div>
+  <button id="next-day-btn" onclick="nextDay()">⏭ SIGUIENTE DÍA</button>
+  <a href="../index.html" style="color:#442244;font-size:0.7em;text-decoration:none;">← Volver</a>
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay">
+  <div class="ov-panel" id="ov-content">
+    <h2>☢️ WASTELAND COMMAND</h2>
+    <p>La civilización colapsó hace 12 años.<br>Eres el líder de los últimos supervivientes.<br><br>Gestiona recursos, construye estructuras, explora el yermo y sobrevive el máximo de días posible.</p>
+    <button class="ov-btn" onclick="startGame()">▶ COMENZAR</button><br>
+    <button class="ov-btn sec" onclick="loadGame()">📂 CARGAR PARTIDA</button>
+    <div style="margin-top:10px;"><a href="../index.html" style="color:#442244;font-size:0.7em;text-decoration:none;">← Volver al inicio</a></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  WASTELAND COMMAND — DEV GAME 1
+// ═══════════════════════════════════════════════════
+
+const $ = id => document.getElementById(id);
+
+// ── ESTADO ─────────────────────────────────────────
+let G = {};
+
+function defaultState(){
+  return {
+    day:1, season:0, // 0=verano,1=otoño,2=invierno,3=primavera
+    pop:20,
+    res:{ food:50, water:40, scrap:30, med:10, fuel:20, morale:70 },
+    buildings:[], // {type, x, y, hp, maxHp}
+    map:generateMap(),
+    threat:10,
+    selectedTile:null,
+    events:[],
+    dead:false,
+    wins:0
+  };
+}
+
+const SEASONS=['☀️ VERANO','🍂 OTOÑO','❄️ INVIERNO','🌸 PRIMAVERA'];
+const SEASON_EFFECTS=[
+  {food:+2,water:-2,fuel:0,morale:+1},
+  {food:-1,water:0,fuel:-1,morale:-1},
+  {food:-3,water:-1,fuel:-3,morale:-3},
+  {food:+1,water:+2,fuel:0,morale:+2},
+];
+
+// ── MAPA ───────────────────────────────────────────
+const TILE_TYPES=[
+  {id:'base',   icon:'🏚️', label:'Base',    freq:0},
+  {id:'ruin',   icon:'🏗️', label:'Ruinas',  freq:18},
+  {id:'forest', icon:'🌵', label:'Páramo',  freq:15},
+  {id:'water',  icon:'💧', label:'Laguna',  freq:8},
+  {id:'mine',   icon:'⛏️', label:'Mina',    freq:8},
+  {id:'farm',   icon:'🌿', label:'Campo',   freq:8},
+  {id:'hostile',icon:'💀', label:'Zona hostil',freq:10},
+  {id:'empty',  icon:'',   label:'Vacío',   freq:33},
+];
+
+function generateMap(){
+  const tiles=[];
+  for(let i=0;i<64;i++){
+    if(i===27||i===28||i===35||i===36){
+      tiles.push({type:'base',explored:true,building:null});
+      continue;
+    }
+    const r=Math.random()*100;
+    let acc=0;
+    let type='empty';
+    for(const t of TILE_TYPES){
+      if(t.id==='base') continue;
+      acc+=t.freq;
+      if(r<acc){type=t.id;break;}
+    }
+    tiles.push({type,explored:i>=19&&i<=44,building:null});
+  }
+  return tiles;
+}
+
+function tileInfo(t){
+  const info={
+    base:   {desc:'Tu base de operaciones.',  actions:['defend','rest']},
+    ruin:   {desc:'Ruinas llenas de chatarra y peligros.',actions:['scavenge','clear']},
+    forest: {desc:'Páramo árido. Algo de comida.',       actions:['forage']},
+    water:  {desc:'Laguna contaminada. Agua purificable.',actions:['collect_water']},
+    mine:   {desc:'Mina abandonada. Rica en chatarra.',   actions:['mine_scrap']},
+    farm:   {desc:'Campo abandonado. Cultivable.',        actions:['harvest']},
+    hostile:{desc:'⚠️ Zona hostil. Bandidos presentes.',  actions:['raid','avoid']},
+    empty:  {desc:'Terreno baldío.',                      actions:[]},
+  };
+  return info[t.type]||{desc:'Desconocido.',actions:[]};
+}
+
+// ── ACCIONES DE CASILLA ─────────────────────────────
+const TILE_ACTIONS={
+  scavenge:{ label:'🔍 Saquear ruinas', cost:{fuel:3}, fn(t){
+    const gain=rnd(8,20); G.res.scrap=Math.min(999,G.res.scrap+gain);
+    const food=rnd(0,5); G.res.food=Math.min(999,G.res.food+food);
+    addLog(`Saqueo: +${gain}🔩${food>0?' +'+food+'🍞':''}`, 'good');
+    floatTxt(`+${gain}🔩`,'#ee88ff');
+    if(Math.random()<0.2){ G.res.med=Math.min(99,G.res.med+rnd(1,3)); addLog('¡Encontraste medicina!','good'); }
+    if(Math.random()<0.15){ const dmg=rnd(3,8); G.pop=Math.max(1,G.pop-dmg); addLog(`Emboscada. -${dmg} supervivientes.`,'bad'); }
+  }},
+  clear:{ label:'🔨 Limpiar zona',cost:{scrap:10},fn(t){
+    t.type='empty'; t.explored=true;
+    addLog('Zona despejada. Terreno libre.','info');
+  }},
+  forage:{ label:'🌿 Buscar comida',cost:{fuel:2},fn(){
+    const g=rnd(4,12); G.res.food=Math.min(999,G.res.food+g);
+    addLog(`Forrajeo: +${g}🍞`,'good'); floatTxt(`+${g}🍞`,'#00ffcc');
+  }},
+  collect_water:{ label:'💧 Recoger agua',cost:{fuel:2},fn(){
+    const g=rnd(8,18); G.res.water=Math.min(999,G.res.water+g);
+    addLog(`Agua recogida: +${g}💧`,'good'); floatTxt(`+${g}💧`,'#4488ff');
+  }},
+  mine_scrap:{ label:'⛏️ Extraer chatarra',cost:{fuel:3},fn(){
+    const g=rnd(10,22); G.res.scrap=Math.min(999,G.res.scrap+g);
+    addLog(`Extracción: +${g}🔩`,'good'); floatTxt(`+${g}🔩`,'#ee88ff');
+    if(Math.random()<0.1){ G.res.fuel=Math.min(99,G.res.fuel+rnd(2,5)); addLog('¡Combustible encontrado!','good'); }
+  }},
+  harvest:{ label:'🌾 Cosechar campo',cost:{water:5},fn(){
+    const g=rnd(10,20); G.res.food=Math.min(999,G.res.food+g);
+    addLog(`Cosecha: +${g}🍞`,'good'); floatTxt(`+${g}🍞`,'#00ffcc');
+  }},
+  raid:{ label:'⚔️ Asaltar bandidos',cost:{fuel:5},fn(){
+    if(Math.random()<0.55){
+      const loot=rnd(15,35); G.res.scrap+=loot;
+      const food=rnd(5,15); G.res.food+=food;
+      const loss=rnd(1,4); G.pop=Math.max(1,G.pop-loss);
+      addLog(`Victoria. +${loot}🔩 +${food}🍞 -${loss} supervivientes.`,'warn');
+      G.threat=Math.max(0,G.threat-5);
+    } else {
+      const loss=rnd(3,8); G.pop=Math.max(1,G.pop-loss);
+      addLog(`Derrota. -${loss} supervivientes.`,'bad');
+      G.threat=Math.min(100,G.threat+8);
+    }
+  }},
+  avoid:{ label:'🚫 Evitar zona',cost:{},fn(){
+    addLog('Zona evitada. Prudencia ante todo.','info');
+  }},
+  defend:{ label:'🛡️ Reforzar base',cost:{scrap:15},fn(){
+    G.threat=Math.max(0,G.threat-10);
+    addLog('Defensas reforzadas. -10% amenaza.','good');
+  }},
+  rest:{ label:'😴 Descanso colectivo',cost:{food:10,water:5},fn(){
+    G.res.morale=Math.min(100,G.res.morale+15);
+    addLog('Descanso: +15💜 moral.','good');
+  }},
+};
+
+// ── ESTRUCTURAS ────────────────────────────────────
+const BUILDINGS={
+  farm:     {label:'🌿 Granja',     cost:{scrap:40,water:10}, prod:{food:6},         hp:30},
+  well:     {label:'💧 Pozo',       cost:{scrap:30},          prod:{water:8},        hp:40},
+  workshop: {label:'🔧 Taller',     cost:{scrap:50},          prod:{scrap:5},        hp:50},
+  clinic:   {label:'🏥 Clínica',    cost:{scrap:40,med:5},    prod:{med:2},          hp:35},
+  tower:    {label:'🗼 Torre vigía',cost:{scrap:35},          prod:{threat:-3},      hp:60},
+  radio:    {label:'📻 Radio',      cost:{scrap:60,fuel:10},  prod:{pop:3},          hp:25},
+};
+
+function buildStructure(type){
+  const b=BUILDINGS[type];
+  if(!b) return;
+  for(const[k,v]of Object.entries(b.cost)){
+    if((G.res[k]||0)<v){ addLog(`Sin recursos: necesitas ${v}${resIcon(k)} de ${k}.`,'bad'); return; }
+  }
+  for(const[k,v]of Object.entries(b.cost)) G.res[k]-=v;
+  const idx=G.buildings.filter(x=>x.type===type).length;
+  G.buildings.push({type,hp:b.hp,maxHp:b.hp,level:1});
+  addLog(`${b.label} construida.`,'good');
+  floatTxt(b.label,'#ee88ff');
+  renderBuildings();
+  renderResources();
+}
+
+function resIcon(k){return{food:'🍞',water:'💧',scrap:'🔩',med:'💊',fuel:'⛽',morale:'💜',pop:'👥'}[k]||'';}
+
+// ── EVENTOS ALEATORIOS ─────────────────────────────
+const RANDOM_EVENTS=[
+  {title:'⚠️ ATAQUE DE BANDIDOS',text:'Una banda armada rodea el campamento. ¿Qué hacéis?',
+   choices:[
+    {label:'⚔️ Combatir', fn(){
+      if(Math.random()<0.6){addLog('Victoria. Bandidos repelidos.','good');G.res.scrap+=rnd(10,20);}
+      else{const l=rnd(2,6);G.pop=Math.max(1,G.pop-l);addLog(`Derrota. -${l} supervivientes.`,'bad');}
+    }},
+    {label:'🚪 Huir',fn(){
+      const l=rnd(1,3);G.pop=Math.max(1,G.pop-l);
+      addLog(`Huida. -${l} supervivientes, -10💜.`,'warn');
+      G.res.morale=Math.max(0,G.res.morale-10);
+    }},
+    {label:'💰 Negociar',fn(){
+      if(G.res.scrap>=15){G.res.scrap-=15;addLog('Negociación: -15🔩. Bandidos se van.','info');}
+      else{addLog('Sin recursos para negociar. Atacan.','bad');const l=rnd(3,5);G.pop=Math.max(1,G.pop-l);}
+    }},
+  ]},
+  {title:'🌧️ LLUVIA ÁCIDA',text:'Una tormenta de lluvia ácida se acerca rápidamente.',
+   choices:[
+    {label:'🏚️ Refugiarse',fn(){addLog('Refugio a tiempo. Estructura dañada levemente.','warn');if(G.buildings.length)G.buildings[0].hp=Math.max(1,G.buildings[0].hp-5);}},
+    {label:'💧 Recoger agua',fn(){G.res.water+=rnd(5,15);const l=rnd(0,2);G.pop=Math.max(1,G.pop-l);addLog(`+${rnd(5,15)}💧 recogida. ${l>0?'-'+l+' supervivientes heridos':''}`.trim(),'warn');}},
+  ]},
+  {title:'👥 REFUGIADOS',text:'Un grupo de 5 supervivientes pide unirse a vuestra base.',
+   choices:[
+    {label:'✅ Aceptarlos',fn(){
+      if(G.res.food>=10&&G.res.water>=10){G.pop+=5;G.res.food-=5;G.res.water-=5;addLog('+5 supervivientes se unen.','good');}
+      else{addLog('Sin recursos suficientes para aceptarlos.','bad');}
+    }},
+    {label:'❌ Rechazarlos',fn(){G.res.morale=Math.max(0,G.res.morale-10);addLog('Refugiados rechazados. -10💜 moral.','warn');}},
+  ]},
+  {title:'🔩 CARAVAN COMERCIANTE',text:'Un comerciante ofrece intercambiar recursos.',
+   choices:[
+    {label:'🍞→🔩 Comida por chatarra',fn(){if(G.res.food>=15){G.res.food-=15;G.res.scrap+=20;addLog('-15🍞 +20🔩','info');}else addLog('Sin comida suficiente.','bad');}},
+    {label:'🔩→💊 Chatarra por medicina',fn(){if(G.res.scrap>=20){G.res.scrap-=20;G.res.med+=8;addLog('-20🔩 +8💊','info');}else addLog('Sin chatarra suficiente.','bad');}},
+    {label:'🚫 Ignorar',fn(){addLog('Comerciante ignorado.','info');}},
+  ]},
+  {title:'☢️ ZONA RADIACTIVA',text:'Se detecta una zona altamente radiactiva con posibles suministros.',
+   choices:[
+    {label:'⚠️ Explorar con protección',fn(){
+      if(G.res.scrap>=10){G.res.scrap-=10;const g=rnd(20,40);G.res.scrap+=g;addLog(`Exploración exitosa: +${g}🔩`,'good');}
+      else{addLog('Sin equipo de protección.','bad');}
+    }},
+    {label:'🚫 Demasiado peligroso',fn(){addLog('Zona ignorada por seguridad.','info');}},
+  ]},
+  {title:'🏥 ENFERMEDAD',text:'Una enfermedad misteriosa se extiende por el campamento.',
+   choices:[
+    {label:'💊 Usar medicina',fn(){if(G.res.med>=8){G.res.med-=8;addLog('Enfermedad controlada con -8💊.','good');}else{const l=rnd(2,5);G.pop=Math.max(1,G.pop-l);addLog(`Sin medicina. -${l} supervivientes muertos.`,'bad');}}},
+    {label:'🔒 Cuarentena',fn(){G.res.morale=Math.max(0,G.res.morale-15);addLog('Cuarentena. -15💜 pero contenida.','warn');}},
+  ]},
+  {title:'⛽ DEPÓSITO DE COMBUSTIBLE',text:'Se descubrió un depósito abandonado cerca de la base.',
+   choices:[
+    {label:'⛽ Extraer combustible',fn(){const g=rnd(10,25);G.res.fuel+=g;addLog(`+${g}⛽ combustible.`,'good');}},
+    {label:'🔩 Desmantelar por chatarra',fn(){const g=rnd(15,30);G.res.scrap+=g;addLog(`+${g}🔩 de desmantelamiento.`,'good');}},
+  ]},
+];
+
+// ── SIGUIENTE DÍA ──────────────────────────────────
+function nextDay(){
+  if(G.dead) return;
+  if($('event-panel').style.display!=='none') return;
+
+  G.day++;
+  const s=Math.floor(((G.day-1)%80)/20); // cada 20 días cambia estación
+  G.season=s;
+
+  // producción de edificios
+  for(const b of G.buildings){
+    const def=BUILDINGS[b.type];
+    if(!def) continue;
+    for(const[k,v]of Object.entries(def.prod)){
+      if(k==='threat') G.threat=Math.max(0,G.threat+v);
+      else if(k==='pop') G.pop+=v;
+      else G.res[k]=Math.min(999,(G.res[k]||0)+v);
+    }
+  }
+
+  // consumo por población
+  const eff=SEASON_EFFECTS[s];
+  const foodNeeded=Math.ceil(G.pop*0.4)+Math.abs(Math.min(0,eff.food));
+  const waterNeeded=Math.ceil(G.pop*0.3)+Math.abs(Math.min(0,eff.water));
+  const fuelNeeded=Math.ceil(G.pop*0.05)+Math.abs(Math.min(0,eff.fuel));
+
+  G.res.food-=foodNeeded;
+  G.res.water-=waterNeeded;
+  G.res.fuel=Math.max(0,G.res.fuel-fuelNeeded);
+
+  // efectos de escasez
+  if(G.res.food<=0){ G.res.food=0; const d=rnd(1,3); G.pop=Math.max(0,G.pop-d); addLog(`Hambre: -${d} supervivientes.`,'bad'); G.res.morale=Math.max(0,G.res.morale-10); }
+  if(G.res.water<=0){ G.res.water=0; const d=rnd(1,2); G.pop=Math.max(0,G.pop-d); addLog(`Sed: -${d} supervivientes.`,'bad'); G.res.morale=Math.max(0,G.res.morale-8); }
+
+  // moral
+  G.res.morale=Math.min(100,G.res.morale+eff.morale);
+  if(G.res.morale<=20){ const d=Math.floor(rnd(1,2)); G.pop=Math.max(0,G.pop-d); addLog(`Deserción por baja moral: -${d}.`,'warn'); }
+
+  // amenaza crece
+  G.threat=Math.min(100,G.threat+rnd(2,5));
+  if(G.threat>=80){
+    const atk=rnd(3,8); G.pop=Math.max(0,G.pop-atk);
+    addLog(`¡ASALTO MASIVO! -${atk} supervivientes.`,'bad');
+    G.threat=Math.max(0,G.threat-30);
+    for(const b of G.buildings){ b.hp=Math.max(0,b.hp-rnd(5,15)); }
+  }
+
+  addLog(`─── Día ${G.day} (${SEASONS[s]}) ───`,'day');
+
+  // evento aleatorio (30% cada día)
+  if(Math.random()<0.30){
+    const ev=RANDOM_EVENTS[rnd(0,RANDOM_EVENTS.length-1)];
+    showEvent(ev);
+  }
+
+  // victoria cada 100 días
+  if(G.day%100===0&&G.pop>0){
+    G.wins++;
+    addLog(`🏆 ¡Supervivencia de ${G.day} días!`,'good');
+  }
+
+  // muerte
+  if(G.pop<=0){ gameover(); return; }
+
+  autoSave();
+  renderAll();
+}
+
+function showEvent(ev){
+  $('event-panel').style.display='block';
+  $('event-title').textContent=ev.title;
+  $('event-text').textContent=ev.text;
+  $('event-choices').innerHTML='';
+  ev.choices.forEach(ch=>{
+    const btn=document.createElement('button');
+    btn.className='ev-choice';
+    btn.textContent=ch.label;
+    btn.onclick=()=>{
+      ch.fn();
+      $('event-panel').style.display='none';
+      renderAll();
+    };
+    $('event-choices').appendChild(btn);
+  });
+}
+
+// ── MAPA RENDER ────────────────────────────────────
+function renderMap(){
+  const grid=$('map-grid');
+  grid.innerHTML='';
+  G.map.forEach((t,i)=>{
+    const div=document.createElement('div');
+    div.className=`tile ${t.type}`;
+    if(!t.explored){ div.textContent='🌫️'; div.style.opacity='0.4'; }
+    else {
+      const info=TILE_TYPES.find(x=>x.id===t.type);
+      div.textContent=info?.icon||'';
+    }
+    if(G.selectedTile===i) div.classList.add('selected');
+    div.onclick=()=>selectTile(i);
+    grid.appendChild(div);
+  });
+}
+
+function selectTile(i){
+  G.selectedTile=i;
+  const t=G.map[i];
+  // explorar casillas adyacentes
+  [i-1,i+1,i-8,i+8,i-9,i+9,i-7,i+7].forEach(j=>{
+    if(G.map[j]) G.map[j].explored=true;
+  });
+  t.explored=true;
+
+  const info=tileInfo(t);
+  const tdef=TILE_TYPES.find(x=>x.id===t.type);
+  $('tile-info').innerHTML=`<b>${tdef?.icon||''} ${tdef?.label||'?'}</b>${info.desc}<br><span class="ti-stat">Casilla #${i+1}</span>`;
+
+  // botones de acción
+  const ab=$('action-btns');
+  ab.innerHTML='';
+  info.actions.forEach(act=>{
+    const a=TILE_ACTIONS[act];
+    if(!a) return;
+    const btn=document.createElement('button');
+    btn.className='act-btn';
+    const costStr=Object.entries(a.cost||{}).map(([k,v])=>`${v}${resIcon(k)}`).join(' ');
+    btn.innerHTML=`${a.label}<span class="cost">${costStr||'Gratis'}</span>`;
+    btn.onclick=()=>{
+      for(const[k,v]of Object.entries(a.cost||{})){
+        if((G.res[k]||0)<v){ addLog(`Sin ${k} suficiente.`,'bad'); return; }
+      }
+      for(const[k,v]of Object.entries(a.cost||{})) G.res[k]-=v;
+      a.fn(t);
+      renderAll();
+    };
+    ab.appendChild(btn);
+  });
+
+  renderMap();
+}
+
+// ── EDIFICIOS RENDER ───────────────────────────────
+function renderBuildings(){
+  const list=$('bld-list');
+  if(G.buildings.length===0){
+    list.innerHTML='<div style="color:#664466;font-size:0.78em;">Sin construcciones aún.</div>';
+    return;
+  }
+  const counts={};
+  for(const b of G.buildings) counts[b.type]=(counts[b.type]||0)+1;
+  list.innerHTML='';
+  for(const[type,count]of Object.entries(counts)){
+    const def=BUILDINGS[type];
+    const prod=Object.entries(def.prod).map(([k,v])=>`${v>0?'+':''}${v}${resIcon(k)}/día`).join(' ');
+    const div=document.createElement('div');
+    div.className='bld';
+    div.innerHTML=`<span class="bld-name">${def.label} x${count}</span><span class="bld-stat">${prod}</span>`;
+    list.appendChild(div);
+  }
+}
+
+// ── RECURSOS RENDER ────────────────────────────────
+function renderResources(){
+  const rkeys=['food','water','scrap','med','fuel','morale'];
+  rkeys.forEach(k=>{
+    const el=$(`v-${k}`);
+    const wrap=$(`r-${k}`);
+    if(!el||!wrap) return;
+    el.textContent=Math.max(0,Math.floor(G.res[k]||0));
+    wrap.className='res';
+    if((G.res[k]||0)<10) wrap.classList.add('danger');
+    else if((G.res[k]||0)<25) wrap.classList.add('warning');
+  });
+  $('hday').textContent=G.day;
+  $('hpop').textContent=G.pop;
+  $('hseason').textContent=SEASONS[G.season];
+  const t=Math.round(G.threat);
+  $('threat-fill').style.width=t+'%';
+  $('threat-val').textContent=t+'%';
+  $('threat-fill').style.background=t>70?'#ff4444':t>40?'#ff9900':'#cc44ff';
+}
+
+// ── LOG ────────────────────────────────────────────
+function addLog(msg,cls='info'){
+  const log=$('log-panel');
+  const div=document.createElement('div');
+  div.className=`log-entry ${cls}`;
+  div.textContent=`Día ${G.day}: ${msg}`;
+  log.prepend(div);
+  while(log.children.length>40) log.removeChild(log.lastChild);
+}
+
+// ── FLOAT TEXT ─────────────────────────────────────
+function floatTxt(txt,col='#ee88ff'){
+  const el=document.createElement('div');
+  el.className='ft'; el.textContent=txt; el.style.color=col;
+  el.style.left=rnd(30,70)+'vw'; el.style.top=rnd(30,60)+'vh';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1400);
+}
+
+// ── GAME OVER ──────────────────────────────────────
+function gameover(){
+  G.dead=true;
+  $('overlay').classList.remove('hidden');
+  $('ov-content').innerHTML=`
+    <h2>💀 FIN DE LA COLONIA</h2>
+    <p>Sobrevivisteis <b style="color:#ee88ff">${G.day} días</b> antes de que la última persona cayera.<br><br>
+    El yermo reclama lo que era suyo.</p>
+    <button class="ov-btn" onclick="startGame()">🔄 NUEVA PARTIDA</button>
+    <button class="ov-btn sec" onclick="closeOverlay()">📋 VER RUINAS</button>
+    <div style="margin-top:10px;"><a href="../index.html" style="color:#442244;font-size:0.7em;text-decoration:none;">← Volver al inicio</a></div>`;
+}
+
+function closeOverlay(){ $('overlay').classList.add('hidden'); }
+
+// ── SAVE / LOAD ────────────────────────────────────
+function autoSave(){ try{ localStorage.setItem('wc_save',JSON.stringify(G)); }catch(e){} }
+function loadGame(){
+  const s=localStorage.getItem('wc_save');
+  if(!s){alert('No hay partida guardada.');return;}
+  G=JSON.parse(s);
+  closeOverlay();
+  renderAll();
+  addLog('Partida cargada.','info');
+}
+
+// ── RENDER ALL ──────────────────────────────────────
+function renderAll(){
+  renderMap();
+  renderResources();
+  renderBuildings();
+}
+
+// ── START ──────────────────────────────────────────
+function startGame(){
+  G=defaultState();
+  closeOverlay();
+  renderAll();
+  addLog('La colonia se establece. Sobrevive a toda costa.','info');
+}
+
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+</script>
+</body>
+</html>
