@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎭 EL HEIST VIP - The Grand Heist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #0f3460;
+            --gold: #e94560;
+            --success: #00d4aa;
+            --warning: #ffa500;
+            --danger: #ff4757;
+            --text: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Orbitron', 'Arial', sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* MENÚ PRINCIPAL */
+        .main-menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+        }
+
+        .title-game {
+            font-size: 4em;
+            color: var(--gold);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px var(--gold);
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px var(--gold); }
+            50% { text-shadow: 0 0 40px var(--gold); }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: var(--success);
+            margin-bottom: 50px;
+            letter-spacing: 3px;
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border: 2px solid var(--gold);
+            background: var(--accent);
+            color: var(--text);
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn:hover {
+            background: var(--gold);
+            color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--gold);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        /* JUEGO PRINCIPAL */
+        .game-container {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .game-container.active {
+            display: flex;
+        }
+
+        .header {
+            background: var(--secondary);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--gold);
+        }
+
+        .game-title {
+            font-size: 1.5em;
+            color: var(--gold);
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-label {
+            color: var(--success);
+            font-size: 0.9em;
+        }
+
+        .stat-value {
+            font-size: 1.3em;
+            color: var(--gold);
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR IZQUIERDO */
+        .sidebar {
+            width: 300px;
+            background: var(--accent);
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 2px solid var(--gold);
+        }
+
+        .team-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: var(--gold);
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 10px;
+        }
+
+        .team-member {
+            background: var(--primary);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid var(--gold);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .team-member:hover {
+            background: var(--secondary);
+            transform: translateX(5px);
+        }
+
+        .team-member.selected {
+            background: var(--gold);
+            color: var(--primary);
+        }
+
+        .member-name {
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .member-name.selected {
+            color: var(--primary);
+        }
+
+        .member-skill {
+            font-size: 0.8em;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .member-skill.selected {
+            color: var(--primary);
+        }
+
+        .member-pa {
+            font-size: 0.9em;
+            color: var(--gold);
+            margin-top: 5px;
+        }
+
+        .member-pa.selected {
+            color: var(--primary);
+        }
+
+        /* ÁREA CENTRAL */
+        .game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            background: var(--secondary);
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            color: var(--text);
+            border: none;
+            background: transparent;
+            font-size: 1em;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .tab:hover {
+            background: var(--accent);
+        }
+
+        .tab.active {
+            background: var(--gold);
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* MAPA */
+        .map-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .map-level {
+            background: var(--secondary);
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid var(--accent);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .map-level:hover {
+            background: var(--accent);
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+
+        .map-level.cleared {
+            border-color: var(--success);
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        .level-name {
+            color: var(--gold);
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .level-info {
+            color: var(--text);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .level-security {
+            color: var(--danger);
+            font-size: 0.85em;
+        }
+
+        /* ACCIONES */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .action-card {
+            background: var(--secondary);
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid var(--accent);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-card:hover {
+            background: var(--accent);
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
+
+        .action-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .action-name {
+            color: var(--gold);
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .action-cost {
+            color: var(--warning);
+            font-size: 0.9em;
+        }
+
+        .action-desc {
+            color: var(--text);
+            font-size: 0.85em;
+            margin-top: 8px;
+        }
+
+        /* MISIONES */
+        .mission-item {
+            background: var(--secondary);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--gold);
+        }
+
+        .mission-item.completed {
+            border-left-color: var(--success);
+            opacity: 0.7;
+        }
+
+        .mission-title {
+            color: var(--gold);
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .mission-desc {
+            color: var(--text);
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .mission-reward {
+            color: var(--success);
+            font-size: 0.85em;
+        }
+
+        /* BARRA LATERAL DERECHA */
+        .right-sidebar {
+            width: 280px;
+            background: var(--accent);
+            padding: 20px;
+            overflow-y: auto;
+            border-left: 2px solid var(--gold);
+        }
+
+        .progress-bar {
+            background: var(--primary);
+            height: 25px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            border: 2px solid var(--gold);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--gold));
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+
+        .progress-fill.danger {
+            background: linear-gradient(90deg, var(--danger), var(--gold));
+        }
+
+        .meter-label {
+            color: var(--text);
+            font-size: 0.85em;
+            margin-bottom: 15px;
+        }
+
+        .log-section {
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            background: var(--primary);
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            border-left: 3px solid var(--gold);
+        }
+
+        .log-entry.success {
+            border-left-color: var(--success);
+            color: var(--success);
+        }
+
+        .log-entry.danger {
+            border-left-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--secondary);
+            padding: 30px;
+            border-radius: 10px;
+            border: 3px solid var(--gold);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 2em;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .modal-text {
+            color: var(--text);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-buttons .btn {
+            flex: 1;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .right-sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                flex-direction: column;
+            }
+
+            .sidebar, .right-sidebar {
+                width: 100%;
+                max-height: 150px;
+                border: none;
+            }
+        }
+
+        .turn-indicator {
+            padding: 10px 20px;
+            background: var(--danger);
+            border-radius: 5px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <!-- MENÚ PRINCIPAL -->
+    <div class="main-menu" id="mainMenu">
+        <h1 class="title-game">🎭 EL HEIST VIP</h1>
+        <p class="subtitle">The Grand Lunar Casino Heist</p>
+        <div class="menu-buttons">
+            <button class="btn" onclick="startGame()">INICIAR JUEGO</button>
+            <button class="btn" onclick="showInstructions()">INSTRUCCIONES</button>
+        </div>
+    </div>
+
+    <!-- JUEGO PRINCIPAL -->
+    <div class="game-container" id="gameContainer">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="game-title">🎭 EL HEIST VIP</div>
+            <div class="game-stats">
+                <div class="stat">
+                    <span class="stat-label">TURNO:</span>
+                    <span class="stat-value" id="turnDisplay">1/12</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">PA DISPONIBLES:</span>
+                    <span class="stat-value" id="paDisplay">25</span>
+                </div>
+                <div class="stat turn-indicator" id="alertLevel">SEGURO</div>
+            </div>
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <div class="main-content">
+            <!-- SIDEBAR IZQUIERDO -->
+            <div class="sidebar">
+                <div class="team-section">
+                    <div class="section-title">👥 Tu Equipo</div>
+                    <div id="teamList"></div>
+                </div>
+                <button class="btn" onclick="advanceTurn()" style="width: 100%; margin-top: 20px;">
+                    ⏭️ SIGUIENTE TURNO
+                </button>
+            </div>
+
+            <!-- ÁREA CENTRAL -->
+            <div class="game-area">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('map
+
