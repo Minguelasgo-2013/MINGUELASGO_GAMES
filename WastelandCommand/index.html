@@ -155,6 +155,7 @@ body{background:#0a0a0a;color:#cc44ff;font-family:'Courier New',monospace;min-he
     <button class="act-btn" onclick="buildStructure('workshop')">🔧 Taller<span class="cost">50🔩 → +5🔩/día</span></button>
     <button class="act-btn" onclick="buildStructure('clinic')">🏥 Clínica<span class="cost">40🔩 + 5💊 → +2💊/día</span></button>
     <button class="act-btn" onclick="buildStructure('tower')">🗼 Torre vigía<span class="cost">35🔩 → -15% amenaza</span></button>
+    <button class="act-btn" onclick="buildStructure('generator')">⚡ Generador<span class="cost">45🔩 → +4⛽/día</span></button>
     <button class="act-btn" onclick="buildStructure('radio')">📻 Radio<span class="cost">60🔩 + 10⛽ → +3 supervivientes</span></button>
   </div>
 
@@ -242,7 +243,8 @@ const TILE_TYPES=[
   {id:'mine',   icon:'MIN',  label:'Mina',       freq:8,  col:'#2a1a00'},
   {id:'farm',   icon:'CAM',  label:'Campo',      freq:8,  col:'#0a2a00'},
   {id:'hostile',icon:'HOT',  label:'Zona hostil',freq:10, col:'#2a0000'},
-  {id:'empty',  icon:'',     label:'Vacío',      freq:33, col:'#0d0015'},
+  {id:'refinery',icon:'REF',  label:'Refinería',  freq:6,  col:'#1a0f00'},
+  {id:'empty',  icon:'',     label:'Vacío',      freq:27, col:'#0d0015'},
 ];
 
 function generateMap(){
@@ -267,14 +269,14 @@ function generateMap(){
 
 function tileInfo(t){
   const info={
-    base:   {desc:'Tu base de operaciones.',  actions:['defend','rest']},
+    base:   {desc:'Tu base de operaciones.',  actions:['defend','rest','distill']},
     ruin:   {desc:'Ruinas llenas de chatarra y peligros.',actions:['scavenge','clear']},
     forest: {desc:'Páramo árido. Algo de comida.',       actions:['forage']},
     water:  {desc:'Laguna contaminada. Agua purificable.',actions:['collect_water']},
     mine:   {desc:'Mina abandonada. Rica en chatarra.',   actions:['mine_scrap']},
     farm:   {desc:'Campo abandonado. Cultivable.',        actions:['harvest']},
     hostile:{desc:'⚠️ Zona hostil. Bandidos presentes.',  actions:['raid','avoid']},
-    empty:  {desc:'Terreno baldío.',                      actions:[]},
+    refinery:{desc:'Refinería abandonada. Rica en combustible.',actions:['extract_fuel','scavenge']},
   };
   return info[t.type]||{desc:'Desconocido.',actions:[]};
 }
@@ -326,7 +328,15 @@ const TILE_ACTIONS={
   avoid:{ label:'🚫 Evitar zona',cost:{},fn(){
     addLog('Zona evitada. Prudencia ante todo.','info');
   }},
-  defend:{ label:'🛡️ Reforzar base',cost:{scrap:15},fn(){
+  extract_fuel:{ label:'⛽ Extraer combustible', cost:{scrap:5}, fn(){
+    const g=rnd(12,25); G.res.fuel=Math.min(999,G.res.fuel+g);
+    addLog(`Extracción: +${g}⛽ combustible.`,'good'); floatTxt(`+${g}⛽`,'#ff9900');
+    if(Math.random()<0.15){ const bonus=rnd(5,10); G.res.scrap+=bonus; addLog(`Bonus: +${bonus}🔩`,'good'); }
+  }},
+  distill:{ label:'⛽ Destilar combustible', cost:{food:8,water:5}, fn(){
+    const g=rnd(8,16); G.res.fuel=Math.min(999,G.res.fuel+g);
+    addLog(`Destilación: +${g}⛽ combustible.`,'good'); floatTxt(`+${g}⛽`,'#ff9900');
+  }},
     G.threat=Math.max(0,G.threat-10);
     addLog('Defensas reforzadas. -10% amenaza.','good');
   }},
@@ -343,7 +353,7 @@ const BUILDINGS={
   workshop: {label:'🔧 Taller',     cost:{scrap:50},          prod:{scrap:5},        hp:50},
   clinic:   {label:'🏥 Clínica',    cost:{scrap:40,med:5},    prod:{med:2},          hp:35},
   tower:    {label:'🗼 Torre vigía',cost:{scrap:35},          prod:{threat:-3},      hp:60},
-  radio:    {label:'📻 Radio',      cost:{scrap:60,fuel:10},  prod:{pop:3},          hp:25},
+  generator: {label:'⚡ Generador',    cost:{scrap:45,med:0},    prod:{fuel:4},         hp:40},
 };
 
 function buildStructure(type){
@@ -398,7 +408,7 @@ const RANDOM_EVENTS=[
    choices:[
     {label:'🍞→🔩 Comida por chatarra',fn(){if(G.res.food>=15){G.res.food-=15;G.res.scrap+=20;addLog('-15🍞 +20🔩','info');}else addLog('Sin comida suficiente.','bad');}},
     {label:'🔩→💊 Chatarra por medicina',fn(){if(G.res.scrap>=20){G.res.scrap-=20;G.res.med+=8;addLog('-20🔩 +8💊','info');}else addLog('Sin chatarra suficiente.','bad');}},
-    {label:'🚫 Ignorar',fn(){addLog('Comerciante ignorado.','info');}},
+    {label:'🔩→⛽ Chatarra por combustible',fn(){if(G.res.scrap>=20){G.res.scrap-=20;G.res.fuel+=15;addLog('-20🔩 +15⛽','info');}else addLog('Sin chatarra suficiente.','bad');}},
   ]},
   {title:'☢️ ZONA RADIACTIVA',text:'Se detecta una zona altamente radiactiva con posibles suministros.',
    choices:[
