@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
@@ -235,14 +235,14 @@ const SEASON_EFFECTS=[
 
 // ── MAPA ───────────────────────────────────────────
 const TILE_TYPES=[
-  {id:'base',   icon:'🏚️', label:'Base',    freq:0},
-  {id:'ruin',   icon:'🏗️', label:'Ruinas',  freq:18},
-  {id:'forest', icon:'🌵', label:'Páramo',  freq:15},
-  {id:'water',  icon:'💧', label:'Laguna',  freq:8},
-  {id:'mine',   icon:'⛏️', label:'Mina',    freq:8},
-  {id:'farm',   icon:'🌿', label:'Campo',   freq:8},
-  {id:'hostile',icon:'💀', label:'Zona hostil',freq:10},
-  {id:'empty',  icon:'',   label:'Vacío',   freq:33},
+  {id:'base',   icon:'BASE', label:'Base',       freq:0,  col:'#3a1a5a'},
+  {id:'ruin',   icon:'RUI',  label:'Ruinas',     freq:18, col:'#2a1a0a'},
+  {id:'forest', icon:'PAR',  label:'Páramo',     freq:15, col:'#0a1a0a'},
+  {id:'water',  icon:'AGU',  label:'Laguna',     freq:8,  col:'#0a0a2a'},
+  {id:'mine',   icon:'MIN',  label:'Mina',       freq:8,  col:'#2a1a00'},
+  {id:'farm',   icon:'CAM',  label:'Campo',      freq:8,  col:'#0a2a00'},
+  {id:'hostile',icon:'HOT',  label:'Zona hostil',freq:10, col:'#2a0000'},
+  {id:'empty',  icon:'',     label:'Vacío',      freq:33, col:'#0d0015'},
 ];
 
 function generateMap(){
@@ -513,9 +513,21 @@ function renderMap(){
   G.map.forEach((t,i)=>{
     const div=document.createElement('div');
     div.className=`tile ${t.type}`;
-    if(!t.explored){ div.textContent='🌫️'; div.style.opacity='0.4'; }
-    else {
-      const info=TILE_TYPES.find(x=>x.id===t.type);
+    const info=TILE_TYPES.find(x=>x.id===t.type);
+    if(!t.explored){
+      div.style.background='#080010';
+      div.style.opacity='0.5';
+      div.textContent='';
+    } else {
+      div.style.background=info?.col||'#0d0015';
+      div.style.fontSize='0.55em';
+      div.style.letterSpacing='0px';
+      div.style.color= t.type==='hostile'?'#ff4444':
+                       t.type==='base'   ?'#cc44ff':
+                       t.type==='water'  ?'#4488ff':
+                       t.type==='mine'   ?'#ffd700':
+                       t.type==='farm'   ?'#00ff88':
+                       t.type==='ruin'   ?'#ff9900':'#666';
       div.textContent=info?.icon||'';
     }
     if(G.selectedTile===i) div.classList.add('selected');
