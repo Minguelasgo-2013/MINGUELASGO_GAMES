@@ -6,220 +6,203 @@
 <title>WASTELAND COMMAND — DEV</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-    background:#0a0a0a;
-    color:#cc44ff;
-    font-family:'Courier New',monospace;
-    min-height:100vh;
-    overflow-x:hidden;
+background:#0a0a0a;
+color:#cc44ff;
+font-family:'Courier New',monospace;
+min-height:100vh;
+overflow-x:hidden;
 }
 
 /* HEADER */
 #header{
-    background:#0d0015;
-    border-bottom:2px solid #cc44ff33;
-    padding:10px 16px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:8px;
+background:#0d0015;
+border-bottom:2px solid #cc44ff33;
+padding:10px 16px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+flex-wrap:wrap;
+gap:8px;
 }
 
 #header-h1{
-    font-size:1.3em;
-    letter-spacing:4px;
-    color:#cc44ff;
-    text-shadow:0 0 12px #cc44ff;
+font-size:1.3em;
+letter-spacing:4px;
+color:#cc44ff;
+text-shadow:0 0 12px #cc44ff;
 }
 
 .dev-tag{
-    background:linear-gradient(135deg,#cc44ff,#8800cc);
-    color:#fff;
-    padding:2px 12px;
-    border-radius:20px;
-    font-size:0.65em;
-    font-weight:bold;
+background:linear-gradient(135deg,#cc44ff,#8800cc);
+color:#fff;
+padding:2px 12px;
+border-radius:20px;
+font-size:0.65em;
+font-weight:bold;
 }
 
 #day-info{
-    font-size:0.78em;
-    color:#664466;
+font-size:0.78em;
+color:#664466;
 }
 
 /* RECURSOS */
 #res-bar{
-    background:#0d0015;
-    border-bottom:1px solid #cc44ff22;
-    padding:8px 12px;
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    justify-content:center;
+background:#0d0015;
+border-bottom:1px solid #cc44ff22;
+padding:8px 12px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:center;
 }
 
 .res{
-    background:#110020;
-    border:1px solid #cc44ff33;
-    border-radius:8px;
-    padding:5px 12px;
-    font-size:0.72em;
-    text-align:center;
-    min-width:80px;
+background:#110020;
+border:1px solid #cc44ff33;
+border-radius:8px;
+padding:5px 12px;
+font-size:0.72em;
+text-align:center;
+min-width:80px;
 }
 
 .res .rval{
-    font-size:1.3em;
-    font-weight:bold;
-    color:#ee88ff;
+font-size:1.3em;
+font-weight:bold;
+color:#ee88ff;
 }
 
 .res .rlbl{
-    color:#664466;
-    font-size:0.7em;
-}
-
-.res.danger .rval{
-    color:#ff4444;
-}
-
-.res.warning .rval{
-    color:#ff9900;
+color:#664466;
+font-size:0.7em;
 }
 
 /* MAIN */
 #main{
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-    max-width:1100px;
-    margin:0 auto;
-    padding:12px;
+display:flex;
+gap:12px;
+max-width:1100px;
+margin:0 auto;
+padding:12px;
+flex-wrap:wrap;
 }
 
 /* MAPA */
 #map-panel{
-    flex:1;
-    min-width:280px;
+flex:1;
+min-width:280px;
 }
 
 #map-panel h2{
-    font-size:0.82em;
-    letter-spacing:3px;
-    color:#cc44ff;
-    margin-bottom:8px;
+font-size:0.82em;
+letter-spacing:3px;
+color:#cc44ff;
+margin-bottom:8px;
 }
 
 #map-grid{
-    display:grid;
-    grid-template-columns:repeat(8,1fr);
-    gap:3px;
+display:grid;
+grid-template-columns:repeat(8,1fr);
+gap:3px;
 }
 
 .tile{
-    aspect-ratio:1;
-    background:#110020;
-    border:1px solid #cc44ff11;
-    border-radius:4px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    transition:.15s;
-    font-size:.55em;
+aspect-ratio:1;
+background:#110020;
+border:1px solid #cc44ff11;
+border-radius:4px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:0.55em;
+cursor:pointer;
+transition:0.15s;
 }
 
 .tile:hover{
-    border-color:#cc44ff88;
+border-color:#cc44ff88;
 }
 
 .tile.selected{
-    border-color:#cc44ff;
-    box-shadow:0 0 8px #cc44ff;
+border-color:#cc44ff;
+box-shadow:0 0 8px #cc44ff;
 }
 
-/* PANEL */
+/* PANEL ACCIONES */
 #action-panel{
-    width:220px;
-    min-width:200px;
+width:220px;
+min-width:200px;
 }
 
 #action-panel h2{
-    font-size:0.82em;
-    letter-spacing:3px;
-    color:#cc44ff;
-    margin-bottom:8px;
+font-size:0.82em;
+letter-spacing:3px;
+color:#cc44ff;
+margin-bottom:8px;
 }
 
 #tile-info{
-    background:#110020;
-    border:1px solid #cc44ff22;
-    border-radius:10px;
-    padding:12px;
-    margin-bottom:10px;
-    min-height:80px;
-    font-size:0.78em;
-    color:#886688;
+background:#110020;
+border:1px solid #cc44ff22;
+border-radius:10px;
+padding:12px;
+margin-bottom:10px;
+min-height:80px;
+font-size:0.78em;
+color:#886688;
 }
 
 .act-btn{
-    display:block;
-    width:100%;
-    background:transparent;
-    border:2px solid #cc44ff33;
-    color:#cc44ff;
-    padding:9px 12px;
-    border-radius:9px;
-    cursor:pointer;
-    font-family:'Courier New',monospace;
-    font-size:0.78em;
-    margin-bottom:6px;
-    text-align:left;
+display:block;
+width:100%;
+background:transparent;
+border:2px solid #cc44ff33;
+color:#cc44ff;
+padding:9px 12px;
+border-radius:9px;
+cursor:pointer;
+font-family:'Courier New',monospace;
+font-size:0.78em;
+margin-bottom:6px;
+text-align:left;
 }
 
 .act-btn:hover{
-    background:#cc44ff15;
+background:#cc44ff15;
 }
 
 .cost{
-    display:block;
-    color:#664466;
-    font-size:0.7em;
-    margin-top:2px;
+display:block;
+color:#664466;
+font-size:0.7em;
+margin-top:2px;
 }
 
-/* DERECHA */
+/* PANEL DERECHO */
 #right-panel{
-    flex:1;
-    min-width:240px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-#buildings-panel,
-#event-panel,
-#log-panel{
-    background:#110020;
-    border:1px solid #cc44ff22;
-    border-radius:10px;
-    padding:10px;
+flex:1;
+min-width:240px;
+display:flex;
+flex-direction:column;
+gap:10px;
 }
 
 #log-panel{
-    max-height:220px;
-    overflow-y:auto;
+background:#110020;
+border:1px solid #cc44ff22;
+border-radius:10px;
+padding:10px;
+max-height:220px;
+overflow-y:auto;
 }
 
 .log-entry{
-    font-size:0.72em;
-    padding:3px 0;
+font-size:0.72em;
+padding:3px 0;
 }
 
 .good{color:#00ffcc;}
@@ -230,80 +213,80 @@ body{
 
 /* BOTTOM */
 #bottom-bar{
-    background:#0d0015;
-    border-top:1px solid #cc44ff22;
-    padding:10px 16px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:8px;
-    position:sticky;
-    bottom:0;
+background:#0d0015;
+border-top:1px solid #cc44ff22;
+padding:10px 16px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+flex-wrap:wrap;
+gap:8px;
+position:sticky;
+bottom:0;
 }
 
 #next-day-btn{
-    background:linear-gradient(135deg,#cc44ff,#8800cc);
-    color:#fff;
-    border:none;
-    padding:12px 28px;
-    border-radius:10px;
-    cursor:pointer;
-    font-family:'Courier New',monospace;
-    font-size:0.9em;
-    font-weight:bold;
+background:linear-gradient(135deg,#cc44ff,#8800cc);
+color:#fff;
+border:none;
+padding:12px 28px;
+border-radius:10px;
+cursor:pointer;
+font-family:'Courier New',monospace;
+font-size:0.9em;
+font-weight:bold;
 }
 
 #next-day-btn:hover{
-    box-shadow:0 0 18px #cc44ff;
+box-shadow:0 0 18px #cc44ff;
 }
 
 #threat-fill-wrap{
-    width:120px;
-    height:8px;
-    background:#1a0000;
-    border-radius:4px;
-    overflow:hidden;
+width:120px;
+height:8px;
+background:#1a0000;
+border-radius:4px;
+overflow:hidden;
 }
 
 #threat-fill{
-    height:8px;
-    background:#ff4444;
+height:8px;
+background:#ff4444;
 }
 
 /* OVERLAY */
 #overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.92);
-    z-index:50;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.92);
+z-index:50;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 .ov-panel{
-    background:#0d0015;
-    border:2px solid #cc44ff;
-    border-radius:16px;
-    padding:28px 32px;
-    text-align:center;
-    max-width:360px;
-    width:90%;
+background:#0d0015;
+border:2px solid #cc44ff;
+border-radius:16px;
+padding:28px 32px;
+text-align:center;
+max-width:360px;
+width:90%;
 }
 
 .ov-btn{
-    background:linear-gradient(135deg,#cc44ff,#8800cc);
-    color:#fff;
-    border:none;
-    padding:12px 28px;
-    border-radius:10px;
-    cursor:pointer;
-    margin:4px;
+background:linear-gradient(135deg,#cc44ff,#8800cc);
+color:#fff;
+border:none;
+padding:12px 28px;
+border-radius:10px;
+cursor:pointer;
+margin:4px;
 }
 
 .hidden{
-    display:none !important;
+display:none!important;
 }
 </style>
 </head>
@@ -311,83 +294,79 @@ body{
 <body>
 
 <div id="header">
-    <div style="display:flex;align-items:center;gap:10px;">
-        <div id="header-h1">☢️ WASTELAND COMMAND</div>
-        <span class="dev-tag">⚙️ DEV EXCLUSIVE</span>
-    </div>
+<div style="display:flex;align-items:center;gap:10px;">
+<div id="header-h1">☢️ WASTELAND COMMAND</div>
+<span class="dev-tag">⚙️ DEV EXCLUSIVE</span>
+</div>
 
-    <div id="day-info">
-        Día <b id="hday" style="color:#ee88ff">1</b>
-        |
-        Supervivientes:
-        <b id="hpop" style="color:#ee88ff">20</b>
-    </div>
+<div id="day-info">
+Día <b id="hday" style="color:#ee88ff">1</b>
+|
+Supervivientes:
+<b id="hpop" style="color:#ee88ff">20</b>
+</div>
 </div>
 
 <div id="res-bar">
-    <div class="res" id="r-food">
-        <div class="rval" id="v-food">50</div>
-        <div class="rlbl">🍞 COMIDA</div>
-    </div>
 
-    <div class="res" id="r-water">
-        <div class="rval" id="v-water">40</div>
-        <div class="rlbl">💧 AGUA</div>
-    </div>
+<div class="res">
+<div class="rval" id="v-food">50</div>
+<div class="rlbl">🍞 COMIDA</div>
+</div>
 
-    <div class="res" id="r-scrap">
-        <div class="rval" id="v-scrap">30</div>
-        <div class="rlbl">🔩 CHATARRA</div>
-    </div>
+<div class="res">
+<div class="rval" id="v-water">40</div>
+<div class="rlbl">💧 AGUA</div>
+</div>
 
-    <div class="res" id="r-med">
-        <div class="rval" id="v-med">10</div>
-        <div class="rlbl">💊 MEDICINA</div>
-    </div>
+<div class="res">
+<div class="rval" id="v-scrap">30</div>
+<div class="rlbl">🔩 CHATARRA</div>
+</div>
 
-    <div class="res" id="r-fuel">
-        <div class="rval" id="v-fuel">20</div>
-        <div class="rlbl">⛽ COMBUSTIBLE</div>
-    </div>
+<div class="res">
+<div class="rval" id="v-med">10</div>
+<div class="rlbl">💊 MEDICINA</div>
+</div>
 
-    <div class="res" id="r-morale">
-        <div class="rval" id="v-morale">70</div>
-        <div class="rlbl">💜 MORAL</div>
-    </div>
+<div class="res">
+<div class="rval" id="v-fuel">20</div>
+<div class="rlbl">⛽ COMBUSTIBLE</div>
+</div>
+
+<div class="res">
+<div class="rval" id="v-morale">70</div>
+<div class="rlbl">💜 MORAL</div>
+</div>
+
 </div>
 
 <div id="main">
 
 <div id="map-panel">
-    <h2>🗺️ MAPA DEL YERMO</h2>
-    <div id="map-grid"></div>
+<h2>🗺️ MAPA DEL YERMO</h2>
+<div id="map-grid"></div>
 </div>
 
 <div id="action-panel">
-    <h2>⚙️ ACCIONES</h2>
+<h2>⚙️ ACCIONES</h2>
 
-    <div id="tile-info">
-        Selecciona una casilla.
-    </div>
+<div id="tile-info">
+Selecciona una casilla del mapa.
+</div>
 
-    <div id="action-btns"></div>
+<div id="action-btns"></div>
 </div>
 
 <div id="right-panel">
 
-    <div id="event-panel" style="display:none;">
-        <h3 id="event-title">EVENTO</h3>
-        <div id="event-text"></div>
-        <div id="event-choices"></div>
-    </div>
+<h2>📋 REGISTRO</h2>
 
-    <h2>📋 REGISTRO</h2>
-
-    <div id="log-panel">
-        <div class="log-entry day">
-            ☢️ Día 1 — La humanidad cayó.
-        </div>
-    </div>
+<div id="log-panel">
+<div class="log-entry day">
+☢️ Día 1 — La humanidad cayó.
+</div>
+</div>
 
 </div>
 
@@ -395,34 +374,38 @@ body{
 
 <div id="bottom-bar">
 
-    <div>
-        ☠️ AMENAZA
-        <div id="threat-fill-wrap">
-            <div id="threat-fill" style="width:10%;"></div>
-        </div>
-        <span id="threat-val">10%</span>
-    </div>
+<div>
+☠️ AMENAZA
 
-    <button id="next-day-btn" onclick="nextDay()">
-        ⏭ SIGUIENTE DÍA
-    </button>
+<div id="threat-fill-wrap">
+<div id="threat-fill" style="width:10%;"></div>
+</div>
+
+<span id="threat-val">10%</span>
+</div>
+
+<button id="next-day-btn" onclick="nextDay()">
+⏭ SIGUIENTE DÍA
+</button>
 
 </div>
 
 <div id="overlay">
-    <div class="ov-panel">
 
-        <h2>☢️ WASTELAND COMMAND</h2>
+<div class="ov-panel">
 
-        <p>
-            Gestiona recursos y sobrevive.
-        </p>
+<h2>☢️ WASTELAND COMMAND</h2>
 
-        <button class="ov-btn" onclick="startGame()">
-            ▶ COMENZAR
-        </button>
+<p>
+Gestiona recursos y sobrevive.
+</p>
 
-    </div>
+<button class="ov-btn" onclick="startGame()">
+▶ COMENZAR
+</button>
+
+</div>
+
 </div>
 
 <script>
@@ -432,357 +415,457 @@ const $ = id => document.getElementById(id);
 let G = {};
 
 function defaultState(){
-    return {
-        day:1,
-        pop:20,
-        threat:10,
 
-        res:{
-            food:50,
-            water:40,
-            scrap:30,
-            med:10,
-            fuel:20,
-            morale:70
-        },
+return{
+day:1,
+pop:20,
+threat:10,
 
-        map:generateMap(),
+res:{
+food:50,
+water:40,
+scrap:30,
+med:10,
+fuel:20,
+morale:70
+},
 
-        selectedTile:null,
+map:generateMap(),
+selectedTile:null,
+dead:false
+};
 
-        dead:false
-    };
 }
 
 const TILE_TYPES=[
-    {id:'base',icon:'BASE',freq:0,col:'#3a1a5a'},
-    {id:'ruin',icon:'RUI',freq:18,col:'#2a1a0a'},
-    {id:'forest',icon:'PAR',freq:15,col:'#0a1a0a'},
-    {id:'water',icon:'AGU',freq:8,col:'#0a0a2a'},
-    {id:'mine',icon:'MIN',freq:8,col:'#2a1a00'},
-    {id:'farm',icon:'CAM',freq:8,col:'#0a2a00'},
-    {id:'hostile',icon:'HOT',freq:10,col:'#2a0000'},
-    {id:'empty',icon:'',freq:33,col:'#0d0015'}
+{id:'base',icon:'BASE',freq:0,col:'#3a1a5a'},
+{id:'ruin',icon:'RUI',freq:18,col:'#2a1a0a'},
+{id:'forest',icon:'PAR',freq:15,col:'#0a1a0a'},
+{id:'water',icon:'AGU',freq:8,col:'#0a0a2a'},
+{id:'mine',icon:'MIN',freq:8,col:'#2a1a00'},
+{id:'farm',icon:'CAM',freq:8,col:'#0a2a00'},
+{id:'hostile',icon:'HOT',freq:10,col:'#2a0000'},
+{id:'empty',icon:'',freq:33,col:'#0d0015'}
 ];
 
 function generateMap(){
 
-    const tiles=[];
+const tiles=[];
 
-    for(let i=0;i<64;i++){
+for(let i=0;i<64;i++){
 
-        if(i===27||i===28||i===35||i===36){
-            tiles.push({
-                type:'base',
-                explored:true
-            });
+if(i===27||i===28||i===35||i===36){
 
-            continue;
-        }
+tiles.push({
+type:'base',
+explored:true
+});
 
-        const r=Math.random()*100;
-
-        let acc=0;
-        let type='empty';
-
-        for(const t of TILE_TYPES){
-
-            if(t.id==='base') continue;
-
-            acc+=t.freq;
-
-            if(r<acc){
-                type=t.id;
-                break;
-            }
-        }
-
-        tiles.push({
-            type,
-            explored:true
-        });
-    }
-
-    return tiles;
+continue;
 }
 
+const r=Math.random()*100;
+
+let acc=0;
+let type='empty';
+
+for(const t of TILE_TYPES){
+
+if(t.id==='base') continue;
+
+acc+=t.freq;
+
+if(r<acc){
+type=t.id;
+break;
+}
+
+}
+
+tiles.push({
+type,
+explored:true
+});
+
+}
+
+return tiles;
+}
+
+/* ACCIONES COMPLETAS CORREGIDAS */
 const TILE_ACTIONS={
 
-    forage:{
-        label:'🌿 Buscar comida',
-        cost:{fuel:2},
+forage:{
+label:'🌿 Buscar comida',
+cost:{fuel:2},
 
-        fn(){
+fn(){
 
-            const g=rnd(4,12);
+const g=rnd(4,12);
 
-            G.res.food+=g;
+G.res.food+=g;
 
-            addLog(`+${g} comida`,'good');
-        }
-    },
+addLog(`+${g} comida`,'good');
+}
+},
 
-    collect_water:{
-        label:'💧 Recoger agua',
-        cost:{fuel:2},
+collect_water:{
+label:'💧 Recoger agua',
+cost:{fuel:2},
 
-        fn(){
+fn(){
 
-            const g=rnd(8,18);
+const g=rnd(8,18);
 
-            G.res.water+=g;
+G.res.water+=g;
 
-            addLog(`+${g} agua`,'good');
-        }
-    },
+addLog(`+${g} agua`,'good');
+}
+},
 
-    mine_scrap:{
-        label:'⛏️ Extraer chatarra',
-        cost:{fuel:3},
+mine_scrap:{
+label:'⛏️ Extraer chatarra',
+cost:{fuel:3},
 
-        fn(){
+fn(){
 
-            const g=rnd(10,22);
+const g=rnd(10,22);
 
-            G.res.scrap+=g;
+G.res.scrap+=g;
 
-            addLog(`+${g} chatarra`,'good');
-        }
-    },
+addLog(`+${g} chatarra`,'good');
+}
+},
 
-    defend:{
-        label:'🛡️ Reforzar defensas',
-        cost:{scrap:15},
+scavenge:{
+label:'🔍 Saquear ruinas',
+cost:{fuel:3},
 
-        fn(){
+fn(){
 
-            G.threat=Math.max(0,G.threat-10);
+const g=rnd(8,20);
 
-            addLog('Defensas reforzadas','good');
-        }
-    },
+G.res.scrap+=g;
 
-    rest:{
-        label:'😴 Descansar',
-        cost:{food:10,water:5},
+addLog(`+${g} chatarra encontrada`,'good');
+}
+},
 
-        fn(){
+harvest:{
+label:'🌾 Cosechar',
+cost:{water:5},
 
-            G.res.morale=Math.min(100,G.res.morale+15);
+fn(){
 
-            addLog('+15 moral','good');
-        }
-    }
+const g=rnd(10,20);
+
+G.res.food+=g;
+
+addLog(`+${g} comida`,'good');
+}
+},
+
+raid:{
+label:'⚔️ Asaltar zona',
+cost:{fuel:5},
+
+fn(){
+
+if(Math.random()<0.55){
+
+const loot=rnd(15,35);
+
+G.res.scrap+=loot;
+
+addLog(`Victoria +${loot} chatarra`,'good');
+
+}else{
+
+const loss=rnd(1,4);
+
+G.pop=Math.max(1,G.pop-loss);
+
+addLog(`Derrota -${loss} supervivientes`,'bad');
+}
+}
+},
+
+avoid:{
+label:'🚫 Evitar zona',
+cost:{},
+
+fn(){
+
+addLog('Zona evitada','info');
+}
+},
+
+defend:{
+label:'🛡️ Reforzar defensas',
+cost:{scrap:15},
+
+fn(){
+
+G.threat=Math.max(0,G.threat-10);
+
+addLog('Defensas reforzadas','good');
+}
+},
+
+rest:{
+label:'😴 Descansar',
+cost:{food:10,water:5},
+
+fn(){
+
+G.res.morale=Math.min(100,G.res.morale+15);
+
+addLog('+15 moral','good');
+}
+}
+
 };
 
 function selectTile(i){
 
-    G.selectedTile=i;
+G.selectedTile=i;
 
-    const t=G.map[i];
+const t=G.map[i];
 
-    $('tile-info').innerHTML=`
-        Casilla #${i+1}<br>
-        Tipo: ${t.type}
-    `;
+$('tile-info').innerHTML=`
+<b>Casilla #${i+1}</b><br>
+Tipo: ${t.type}
+`;
 
-    const ab=$('action-btns');
+const ab=$('action-btns');
 
-    ab.innerHTML='';
+ab.innerHTML='';
 
-    let acts=[];
+let acts=[];
 
-    if(t.type==='forest') acts=['forage'];
-    if(t.type==='water') acts=['collect_water'];
-    if(t.type==='mine') acts=['mine_scrap'];
-    if(t.type==='base') acts=['defend','rest'];
+switch(t.type){
 
-    acts.forEach(act=>{
+case 'forest':
+acts=['forage'];
+break;
 
-        const a=TILE_ACTIONS[act];
+case 'water':
+acts=['collect_water'];
+break;
 
-        const btn=document.createElement('button');
+case 'mine':
+acts=['mine_scrap'];
+break;
 
-        btn.className='act-btn';
+case 'ruin':
+acts=['scavenge'];
+break;
 
-        btn.innerHTML=`
-            ${a.label}
-            <span class="cost">
-                ${Object.entries(a.cost)
-                    .map(([k,v])=>`${v} ${k}`)
-                    .join(' | ')
-                }
-            </span>
-        `;
+case 'farm':
+acts=['harvest'];
+break;
 
-        btn.onclick=()=>{
+case 'hostile':
+acts=['raid','avoid'];
+break;
 
-            for(const[k,v]of Object.entries(a.cost)){
+case 'base':
+acts=['defend','rest'];
+break;
 
-                if(G.res[k]<v){
+}
 
-                    addLog(`No hay suficiente ${k}`,'bad');
+acts.forEach(act=>{
 
-                    return;
-                }
-            }
+const a=TILE_ACTIONS[act];
 
-            for(const[k,v]of Object.entries(a.cost)){
-                G.res[k]-=v;
-            }
+if(!a) return;
 
-            a.fn();
+const btn=document.createElement('button');
 
-            renderAll();
-        };
+btn.className='act-btn';
 
-        ab.appendChild(btn);
-    });
+const costText=Object.entries(a.cost||{})
+.map(([k,v])=>`${v} ${k}`)
+.join(' | ');
 
-    renderMap();
+btn.innerHTML=`
+${a.label}
+<span class="cost">
+${costText || 'Gratis'}
+</span>
+`;
+
+btn.onclick=()=>{
+
+for(const[k,v]of Object.entries(a.cost||{})){
+
+if((G.res[k]||0)<v){
+
+addLog(`No hay suficiente ${k}`,'bad');
+
+return;
+}
+}
+
+for(const[k,v]of Object.entries(a.cost||{})){
+
+G.res[k]-=v;
+}
+
+a.fn();
+
+renderAll();
+};
+
+ab.appendChild(btn);
+
+});
+
+renderMap();
 }
 
 function renderMap(){
 
-    const grid=$('map-grid');
+const grid=$('map-grid');
 
-    grid.innerHTML='';
+grid.innerHTML='';
 
-    G.map.forEach((t,i)=>{
+G.map.forEach((t,i)=>{
 
-        const div=document.createElement('div');
+const div=document.createElement('div');
 
-        div.className='tile';
+div.className='tile';
 
-        if(G.selectedTile===i){
-            div.classList.add('selected');
-        }
+if(G.selectedTile===i){
+div.classList.add('selected');
+}
 
-        const info=TILE_TYPES.find(x=>x.id===t.type);
+const info=TILE_TYPES.find(x=>x.id===t.type);
 
-        div.style.background=info.col;
+div.style.background=info.col;
 
-        div.textContent=info.icon;
+div.textContent=info.icon;
 
-        div.onclick=()=>selectTile(i);
+div.onclick=()=>selectTile(i);
 
-        grid.appendChild(div);
-    });
+grid.appendChild(div);
+
+});
 }
 
 function renderResources(){
 
-    for(const k in G.res){
+$('v-food').textContent=Math.floor(G.res.food);
+$('v-water').textContent=Math.floor(G.res.water);
+$('v-scrap').textContent=Math.floor(G.res.scrap);
+$('v-med').textContent=Math.floor(G.res.med);
+$('v-fuel').textContent=Math.floor(G.res.fuel);
+$('v-morale').textContent=Math.floor(G.res.morale);
 
-        const el=$(`v-${k}`);
+$('hday').textContent=G.day;
+$('hpop').textContent=G.pop;
 
-        if(el){
-            el.textContent=Math.floor(G.res[k]);
-        }
-    }
-
-    $('hday').textContent=G.day;
-    $('hpop').textContent=G.pop;
-
-    $('threat-fill').style.width=G.threat+'%';
-    $('threat-val').textContent=G.threat+'%';
+$('threat-fill').style.width=G.threat+'%';
+$('threat-val').textContent=G.threat+'%';
 }
 
 function renderAll(){
 
-    renderMap();
-
-    renderResources();
+renderMap();
+renderResources();
 }
 
 function addLog(msg,cls='info'){
 
-    const log=$('log-panel');
+const log=$('log-panel');
 
-    const div=document.createElement('div');
+const div=document.createElement('div');
 
-    div.className=`log-entry ${cls}`;
+div.className=`log-entry ${cls}`;
 
-    div.textContent=`Día ${G.day}: ${msg}`;
+div.textContent=`Día ${G.day}: ${msg}`;
 
-    log.prepend(div);
+log.prepend(div);
 }
 
 function nextDay(){
 
-    if(G.dead) return;
+if(G.dead) return;
 
-    G.day++;
+G.day++;
 
-    G.res.food-=Math.ceil(G.pop*0.4);
+G.res.food-=Math.ceil(G.pop*0.4);
+G.res.water-=Math.ceil(G.pop*0.3);
 
-    G.res.water-=Math.ceil(G.pop*0.3);
+if(G.res.food<=0){
 
-    if(G.res.food<=0){
+G.res.food=0;
 
-        G.res.food=0;
+G.pop--;
 
-        G.pop--;
+addLog('Hambre','bad');
+}
 
-        addLog('Hambre','bad');
-    }
+if(G.res.water<=0){
 
-    if(G.res.water<=0){
+G.res.water=0;
 
-        G.res.water=0;
+G.pop--;
 
-        G.pop--;
+addLog('Sed','bad');
+}
 
-        addLog('Sed','bad');
-    }
+G.threat=Math.min(100,G.threat+rnd(2,5));
 
-    G.threat=Math.min(100,G.threat+rnd(2,5));
+if(G.pop<=0){
 
-    if(G.pop<=0){
+gameover();
 
-        gameover();
+return;
+}
 
-        return;
-    }
-
-    renderAll();
+renderAll();
 }
 
 function gameover(){
 
-    G.dead=true;
+G.dead=true;
 
-    $('overlay').classList.remove('hidden');
+$('overlay').classList.remove('hidden');
 
-    $('overlay').innerHTML=`
-        <div class="ov-panel">
-            <h2>💀 GAME OVER</h2>
+$('overlay').innerHTML=`
 
-            <p>
-                Sobreviviste ${G.day} días
-            </p>
+<div class="ov-panel">
 
-            <button class="ov-btn" onclick="startGame()">
-                🔄 REINICIAR
-            </button>
-        </div>
-    `;
+<h2>💀 GAME OVER</h2>
+
+<p>
+Sobreviviste ${G.day} días
+</p>
+
+<button class="ov-btn" onclick="startGame()">
+🔄 REINICIAR
+</button>
+
+</div>
+`;
 }
 
 function startGame(){
 
-    G=defaultState();
+G=defaultState();
 
-    $('overlay').classList.add('hidden');
+$('overlay').classList.add('hidden');
 
-    renderAll();
+renderAll();
 
-    addLog('La colonia comienza','info');
+addLog('La colonia comienza','info');
 }
 
 function rnd(a,b){
 
-    return Math.floor(Math.random()*(b-a+1))+a;
+return Math.floor(Math.random()*(b-a+1))+a;
 }
 
 </script>
