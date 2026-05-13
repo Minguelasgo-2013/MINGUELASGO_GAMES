@@ -1,559 +1,360 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BLOCK DASH X - MINGUELASGO</title>
+/* =========================
+   NUEVAS SKINS CAÓTICAS
+========================= */
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+const skinData = {
+    cyan:      { color:"#00ffcc", glow:"#00ffcc", price:0 },
+    inferno:   { color:"#ff0055", glow:"#ff2255", price:25 },
+    gold:      { color:"#ffd700", glow:"#ffee00", price:50 },
+    void:      { color:"#7a00ff", glow:"#bb66ff", price:80 },
 
-body{
-    background:
-    radial-gradient(circle at top,#111,#050505 70%);
-    color:#00ffcc;
-    font-family:'Segoe UI',sans-serif;
-    overflow:hidden;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
+    matrix:    { color:"#00ff00", glow:"#66ff66", price:120 },
+    blood:     { color:"#990000", glow:"#ff0000", price:140 },
+    ocean:     { color:"#0088ff", glow:"#00ccff", price:160 },
+    toxic:     { color:"#99ff00", glow:"#ccff00", price:180 },
+    galaxy:    { color:"#6633ff", glow:"#9966ff", price:220 },
+    lava:      { color:"#ff4400", glow:"#ff8800", price:260 },
+    diamond:   { color:"#8be9fd", glow:"#ffffff", price:320 },
+    glitch:    { color:"#ff00ff", glow:"#00ffff", price:400 },
+    shadow:    { color:"#111111", glow:"#666666", price:450 },
+    rainbow:   { color:"rainbow", glow:"#ffffff", price:600 },
+    godmode:   { color:"#ffffff", glow:"#ffd700", price:1000 },
+    cursed:    { color:"#550000", glow:"#ff0000", price:1300 },
+    cyber:     { color:"#00ffff", glow:"#00ffff", price:1600 },
+    plasma:    { color:"#ff00aa", glow:"#ff55cc", price:2000 },
+    ice:       { color:"#88e0ff", glow:"#ccffff", price:2300 },
+    darkmatter:{ color:"#220022", glow:"#aa00ff", price:3000 }
+};
 
-/* ================= MAIN UI ================= */
 
-.game-container{
-    display:flex;
-    gap:20px;
-    align-items:flex-start;
-}
+/* =========================
+   TIENDA AUTOMÁTICA
+========================= */
 
-.side-panel{
-    width:250px;
-    background:rgba(0,0,0,0.85);
-    border:2px solid #00ffcc;
-    border-radius:18px;
-    padding:15px;
-    box-shadow:0 0 25px rgba(0,255,204,0.25);
-}
+const shopContainer = document.getElementById("shopMenu");
 
-.panel-title{
-    font-size:20px;
-    margin-bottom:12px;
-    text-align:center;
-    color:white;
-    text-shadow:0 0 10px #00ffcc;
-}
+function generateShop(){
 
-.stat{
-    margin:10px 0;
-    padding:10px;
-    background:#111;
-    border-radius:10px;
-    border:1px solid #00ffcc55;
-}
+    shopContainer.innerHTML = `
+        <h2>TIENDA EXTREMA</h2>
+    `;
 
-.stat span{
-    color:white;
-}
+    for(let skin in skinData){
 
-canvas{
-    background:#000;
-    border:3px solid #00ffcc;
-    border-radius:18px;
-    box-shadow:0 0 30px rgba(0,255,204,0.4);
-}
+        const data = skinData[skin];
 
-/* ================= BUTTONS ================= */
+        const div = document.createElement("div");
 
-button{
-    width:100%;
-    margin-top:10px;
-    padding:12px;
-    background:transparent;
-    border:1px solid #00ffcc;
-    color:#00ffcc;
-    border-radius:10px;
-    cursor:pointer;
-    transition:0.25s;
-    font-weight:bold;
-}
+        div.className = "shop-item";
 
-button:hover{
-    background:#00ffcc;
-    color:black;
-    transform:scale(1.03);
-    box-shadow:0 0 20px #00ffcc;
-}
-
-/* ================= MODALS ================= */
-
-.modal{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    background:rgba(0,0,0,0.95);
-    border:2px solid #00ffcc;
-    border-radius:20px;
-    padding:30px;
-    width:340px;
-    z-index:50;
-    display:none;
-    box-shadow:0 0 40px rgba(0,255,204,0.4);
-}
-
-.modal h2{
-    text-align:center;
-    margin-bottom:20px;
-    color:white;
-    text-shadow:0 0 10px #00ffcc;
-}
-
-.shop-item{
-    background:#111;
-    border:1px solid #00ffcc55;
-    padding:12px;
-    border-radius:10px;
-    margin-bottom:12px;
-}
-
-.skin-preview{
-    width:35px;
-    height:35px;
-    border-radius:6px;
-    margin-bottom:8px;
-}
-
-.close-btn{
-    border-color:#ff4444;
-    color:#ff4444;
-}
-
-.close-btn:hover{
-    background:#ff4444;
-    color:white;
-    box-shadow:0 0 20px #ff4444;
-}
-
-/* ================= GAME OVER ================= */
-
-#gameOverScreen{
-    text-align:center;
-}
-
-.big-score{
-    font-size:32px;
-    color:white;
-    margin:15px 0;
-}
-
-/* ================= XP BAR ================= */
-
-.xp-bar{
-    width:100%;
-    height:14px;
-    background:#111;
-    border-radius:20px;
-    overflow:hidden;
-    margin-top:8px;
-}
-
-.xp-fill{
-    height:100%;
-    width:0%;
-    background:#00ffcc;
-    box-shadow:0 0 15px #00ffcc;
-}
-
-/* ================= EFFECTS ================= */
-
-.flash{
-    animation:flash 0.4s;
-}
-
-@keyframes flash{
-    0%{transform:scale(1);}
-    50%{transform:scale(1.08);}
-    100%{transform:scale(1);}
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="game-container">
-
-    <!-- LEFT PANEL -->
-    <div class="side-panel">
-
-        <div class="panel-title">BLOCK DASH X</div>
-
-        <div class="stat">
-            SCORE: <span id="score">0</span>
-        </div>
-
-        <div class="stat">
-            MONEDAS: <span id="coins">0</span>
-        </div>
-
-        <div class="stat">
-            NIVEL: <span id="level">1</span>
-
-            <div class="xp-bar">
-                <div class="xp-fill" id="xpFill"></div>
+        div.innerHTML = `
+            <div class="skin-preview"
+                 style="
+                 background:${data.color === "rainbow"
+                 ? "linear-gradient(45deg,red,orange,yellow,lime,cyan,blue,purple)"
+                 : data.color};
+                 box-shadow:0 0 20px ${data.glow};
+                 ">
             </div>
-        </div>
 
-        <div class="stat">
-            MODIFICADOR:
-            <span id="modifierName">NORMAL</span>
-        </div>
+            <b>${skin.toUpperCase()}</b><br>
+            ${data.price} monedas
 
-        <button onclick="togglePause()">PAUSA</button>
-        <button onclick="openShop()">TIENDA</button>
+            <button onclick="
+            ${ownedSkins.includes(skin)
+            ? `equipSkin('${skin}')`
+            : `buySkin('${skin}',${data.price})`}
+            ">
+            ${ownedSkins.includes(skin)
+            ? "EQUIPAR"
+            : "COMPRAR"}
+            </button>
+        `;
 
-    </div>
+        shopContainer.appendChild(div);
+    }
 
-    <!-- GAME -->
-    <canvas id="game" width="420" height="520"></canvas>
+    const closeBtn = document.createElement("button");
 
-</div>
+    closeBtn.className = "close-btn";
+    closeBtn.innerText = "CERRAR";
 
-<!-- PAUSE -->
-<div class="modal" id="pauseMenu">
-    <h2>PAUSA</h2>
+    closeBtn.onclick = closeShop;
 
-    <button onclick="togglePause()">REANUDAR</button>
-    <button onclick="restartGame()">REINICIAR</button>
-</div>
+    shopContainer.appendChild(closeBtn);
+}
 
-<!-- SHOP -->
-<div class="modal" id="shopMenu">
+generateShop();
 
-    <h2>TIENDA DE SKINS</h2>
 
-    <div class="shop-item">
-        <div class="skin-preview" style="background:#00ffcc"></div>
-        Skin NEÓN — GRATIS
-        <button onclick="equipSkin('cyan')">EQUIPAR</button>
-    </div>
+/* =========================
+   SKINS ANIMADAS
+========================= */
 
-    <div class="shop-item">
-        <div class="skin-preview" style="background:#ff0066"></div>
-        Skin INFERNO — 25 monedas
-        <button onclick="buySkin('inferno',25)">COMPRAR</button>
-    </div>
+let rainbowHue = 0;
 
-    <div class="shop-item">
-        <div class="skin-preview" style="background:#ffee00"></div>
-        Skin GOLD — 50 monedas
-        <button onclick="buySkin('gold',50)">COMPRAR</button>
-    </div>
+function drawPlayer(){
 
-    <div class="shop-item">
-        <div class="skin-preview" style="background:#8a2eff"></div>
-        Skin VOID — 80 monedas
-        <button onclick="buySkin('void',80)">COMPRAR</button>
-    </div>
+    let skin = skinData[currentSkin];
 
-    <button class="close-btn" onclick="closeShop()">CERRAR</button>
+    let color = skin.color;
 
-</div>
+    if(color === "rainbow"){
 
-<!-- GAME OVER -->
-<div class="modal" id="gameOverScreen">
+        rainbowHue += 4;
 
-    <h2>GAME OVER</h2>
+        color = `hsl(${rainbowHue},100%,50%)`;
+    }
 
-    <div class="big-score">
-        SCORE: <span id="finalScore">0</span>
-    </div>
+    if(currentSkin === "glitch"){
 
-    <div id="rewardText"></div>
+        player.x += Math.random()*4-2;
+        player.y += Math.random()*2-1;
+    }
 
-    <button onclick="restartGame()">JUGAR OTRA VEZ</button>
+    if(currentSkin === "godmode"){
 
-</div>
+        ctx.shadowBlur = 40;
+    }else{
 
-<script>
+        ctx.shadowBlur = 20;
+    }
 
-/* ================= ELEMENTOS ================= */
+    ctx.fillStyle = color;
+    ctx.shadowColor = skin.glow;
 
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+    ctx.fillRect(
+        player.x,
+        player.y,
+        player.w,
+        player.h
+    );
+}
 
-const scoreEl = document.getElementById("score");
-const coinsEl = document.getElementById("coins");
-const levelEl = document.getElementById("level");
-const xpFill = document.getElementById("xpFill");
-const modifierName = document.getElementById("modifierName");
 
-const pauseMenu = document.getElementById("pauseMenu");
-const shopMenu = document.getElementById("shopMenu");
-const gameOverScreen = document.getElementById("gameOverScreen");
-
-const finalScore = document.getElementById("finalScore");
-const rewardText = document.getElementById("rewardText");
-
-/* ================= SAVE ================= */
-
-let coins = Number(localStorage.getItem("bd_coins")) || 0;
-let ownedSkins = JSON.parse(localStorage.getItem("bd_skins")) || ["cyan"];
-let currentSkin = localStorage.getItem("bd_skin") || "cyan";
-
-coinsEl.textContent = coins;
-
-/* ================= GAME ================= */
-
-let score = 0;
-let level = 1;
-let xp = 0;
-
-let gameOver = false;
-let paused = false;
-
-const keys = {};
-
-const player = {
-    x:180,
-    y:450,
-    w:40,
-    h:40,
-    speed:8
-};
-
-const enemy = {
-    x:100,
-    y:-40,
-    w:40,
-    h:40,
-    speed:4
-};
-
-/* ================= MODIFIERS ================= */
+/* =========================
+   MODIFICADORES CAÓTICOS
+========================= */
 
 const modifiers = [
-    {
-        name:"NORMAL",
-        enemyBoost:1,
-        coinBoost:1
-    },
-    {
-        name:"INSANE",
-        enemyBoost:1.5,
-        coinBoost:2
-    },
-    {
-        name:"TURBO",
-        enemyBoost:2,
-        coinBoost:3
+
+{
+    name:"NORMAL",
+    apply(){
+        enemy.speedMultiplier = 1;
+        player.speed = 8;
+        canvas.style.transform = "rotate(0deg)";
     }
+},
+
+{
+    name:"TURBO HELL",
+    apply(){
+        enemy.speedMultiplier = 3;
+    }
+},
+
+{
+    name:"SLOW MOTION",
+    apply(){
+        enemy.speedMultiplier = 0.5;
+    }
+},
+
+{
+    name:"MICRO PLAYER",
+    apply(){
+        player.w = 20;
+        player.h = 20;
+    }
+},
+
+{
+    name:"MEGA PLAYER",
+    apply(){
+        player.w = 70;
+        player.h = 70;
+    }
+},
+
+{
+    name:"EARTHQUAKE",
+    apply(){
+
+        canvas.style.transform =
+        `translate(
+        ${Math.random()*12-6}px,
+        ${Math.random()*12-6}px
+        )`;
+    }
+},
+
+{
+    name:"REVERSE CONTROLS",
+    apply(){
+
+        reverseControls = true;
+    }
+},
+
+{
+    name:"HYPER SPEED",
+    apply(){
+
+        player.speed = 15;
+    }
+},
+
+{
+    name:"DARKNESS",
+    apply(){
+
+        ctx.fillStyle = "rgba(0,0,0,0.2)";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+    }
+},
+
+{
+    name:"FLASHBANG",
+    apply(){
+
+        document.body.style.filter =
+        `brightness(${1 + Math.random()*2})`;
+    }
+},
+
+{
+    name:"SPINNING SCREEN",
+    apply(){
+
+        canvas.style.transform =
+        `rotate(${Math.sin(Date.now()/300)*3}deg)`;
+    }
+},
+
+{
+    name:"CHAOS MODE",
+    apply(){
+
+        enemy.speedMultiplier =
+        1 + Math.random()*4;
+
+        player.speed =
+        5 + Math.random()*10;
+    }
+}
+
 ];
 
-let currentModifier = modifiers[0];
 
-/* ================= EVENTS ================= */
+/* =========================
+   VARIABLES EXTRA
+========================= */
 
-window.addEventListener("keydown",(e)=>{
+let reverseControls = false;
+enemy.speedMultiplier = 1;
 
-    keys[e.key] = true;
 
-    if(e.key === "Escape" || e.key.toLowerCase() === "p"){
-        togglePause();
-    }
-
-});
-
-window.addEventListener("keyup",(e)=>{
-    keys[e.key] = false;
-});
-
-/* ================= FUNCTIONS ================= */
-
-function updateUI(){
-
-    scoreEl.textContent = score;
-    coinsEl.textContent = coins;
-    levelEl.textContent = level;
-
-    xpFill.style.width = xp + "%";
-}
+/* =========================
+   CONTROLES LOCOS
+========================= */
 
 function movePlayer(){
 
-    if(keys["ArrowLeft"] || keys["a"] || keys["A"]){
-        player.x -= player.speed;
+    let left =
+    keys["ArrowLeft"] ||
+    keys["a"] ||
+    keys["A"];
+
+    let right =
+    keys["ArrowRight"] ||
+    keys["d"] ||
+    keys["D"];
+
+    if(reverseControls){
+
+        [left,right] = [right,left];
     }
 
-    if(keys["ArrowRight"] || keys["d"] || keys["D"]){
-        player.x += player.speed;
-    }
+    if(left) player.x -= player.speed;
+    if(right) player.x += player.speed;
 
     if(player.x < 0) player.x = 0;
 
-    if(player.x > canvas.width - player.w){
-        player.x = canvas.width - player.w;
+    if(player.x > canvas.width-player.w){
+
+        player.x = canvas.width-player.w;
     }
 }
 
+
+/* =========================
+   ENEMIGO CAÓTICO
+========================= */
+
 function moveEnemy(){
 
-    enemy.y += enemy.speed * currentModifier.enemyBoost;
+    enemy.y +=
+    enemy.speed *
+    enemy.speedMultiplier;
+
+    if(score > 50){
+
+        enemy.x += Math.sin(Date.now()/100)*5;
+    }
 
     if(enemy.y > canvas.height){
 
         enemy.y = -40;
-        enemy.x = Math.random() * (canvas.width - enemy.w);
+
+        enemy.x =
+        Math.random() *
+        (canvas.width-enemy.w);
 
         score++;
 
-        xp += 10;
+        xp += 8;
+
+        /* ACTIVAR MODIFICADOR */
+
+        if(score % 5 === 0){
+
+            reverseControls = false;
+
+            player.w = 40;
+            player.h = 40;
+
+            canvas.style.transform = "";
+
+            document.body.style.filter = "";
+
+            currentModifier =
+            modifiers[
+                Math.floor(
+                    Math.random()*modifiers.length
+                )
+            ];
+
+            modifierName.textContent =
+            currentModifier.name;
+
+            currentModifier.apply();
+        }
 
         if(xp >= 100){
 
             xp = 0;
             level++;
-
-            canvas.classList.add("flash");
-
-            setTimeout(()=>{
-                canvas.classList.remove("flash");
-            },300);
-
-            if(level % 3 === 0){
-
-                currentModifier =
-                modifiers[Math.floor(Math.random()*modifiers.length)];
-
-                modifierName.textContent =
-                currentModifier.name;
-            }
-
         }
 
-        enemy.speed += 0.15;
-
         updateUI();
     }
 }
 
-function drawPlayer(){
 
-    let color = "#00ffcc";
-
-    if(currentSkin === "inferno") color = "#ff0066";
-    if(currentSkin === "gold") color = "#ffee00";
-    if(currentSkin === "void") color = "#8a2eff";
-
-    ctx.fillStyle = color;
-
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = color;
-
-    ctx.fillRect(player.x,player.y,player.w,player.h);
-}
-
-function drawEnemy(){
-
-    ctx.fillStyle = "#ff3333";
-
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = "#ff3333";
-
-    ctx.fillRect(enemy.x,enemy.y,enemy.w,enemy.h);
-}
-
-function collision(){
-
-    return (
-        player.x < enemy.x + enemy.w &&
-        player.x + player.w > enemy.x &&
-        player.y < enemy.y + enemy.h &&
-        player.y + player.h > enemy.y
-    );
-}
-
-function togglePause(){
-
-    if(gameOver) return;
-
-    paused = !paused;
-
-    pauseMenu.style.display =
-    paused ? "block" : "none";
-
-    if(!paused){
-        loop();
-    }
-}
-
-function restartGame(){
-    location.reload();
-}
-
-/* ================= SHOP ================= */
-
-function openShop(){
-
-    paused = true;
-    shopMenu.style.display = "block";
-}
-
-function closeShop(){
-
-    paused = false;
-    shopMenu.style.display = "none";
-
-    loop();
-}
-
-function buySkin(name,price){
-
-    if(ownedSkins.includes(name)){
-
-        equipSkin(name);
-        return;
-    }
-
-    if(coins >= price){
-
-        coins -= price;
-
-        ownedSkins.push(name);
-
-        localStorage.setItem("bd_skins",
-        JSON.stringify(ownedSkins));
-
-        localStorage.setItem("bd_coins",coins);
-
-        equipSkin(name);
-
-        updateUI();
-
-        alert("¡SKIN DESBLOQUEADA!");
-
-    }else{
-
-        alert("NO TIENES SUFICIENTES MONEDAS");
-    }
-}
-
-function equipSkin(name){
-
-    currentSkin = name;
-
-    localStorage.setItem("bd_skin",name);
-
-    alert("Skin equipada");
-}
-
-/* ================= GAME OVER ================= */
+/* =========================
+   RECOMPENSAS ÉPICAS
+========================= */
 
 function endGame(){
 
@@ -563,59 +364,37 @@ function endGame(){
 
     if(score >= 30){
 
-        reward = Math.floor(score / 3)
-        * currentModifier.coinBoost;
+        reward =
+        Math.floor(score * 1.5);
+
+        if(score >= 100){
+
+            reward += 500;
+        }
+
+        if(score >= 200){
+
+            reward += 1500;
+        }
 
         coins += reward;
 
-        localStorage.setItem("bd_coins",coins);
+        localStorage.setItem(
+            "bd_coins",
+            coins
+        );
     }
 
     finalScore.textContent = score;
 
-    rewardText.innerHTML =
-    reward > 0
-    ?
-    `+${reward} MONEDAS GANADAS`
-    :
-    `LLEGA A 30 SCORE PARA GANAR MONEDAS`;
+    rewardText.innerHTML = `
+        +${reward} MONEDAS<br><br>
+        MODIFICADOR FINAL:
+        <b>${currentModifier.name}</b>
+    `;
 
-    gameOverScreen.style.display = "block";
+    gameOverScreen.style.display =
+    "block";
 
     updateUI();
 }
-
-/* ================= LOOP ================= */
-
-function loop(){
-
-    if(paused || gameOver) return;
-
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    movePlayer();
-    moveEnemy();
-
-    drawPlayer();
-    drawEnemy();
-
-    ctx.shadowBlur = 0;
-
-    if(collision()){
-
-        endGame();
-        return;
-    }
-
-    requestAnimationFrame(loop);
-}
-
-/* ================= START ================= */
-
-updateUI();
-loop();
-
-</script>
-
-</body>
-</html>
