@@ -1,511 +1,971 @@
-<!-- =========================
-NUEVOS DATOS SAVE
-========================= -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BLOCK DASH CHAOS X</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:
+    radial-gradient(circle at top,#111,#000 70%);
+    color:#00ffcc;
+    font-family:Segoe UI,sans-serif;
+    overflow:hidden;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.game-wrapper{
+    display:flex;
+    gap:20px;
+}
+
+.side-ui{
+    width:280px;
+    background:rgba(0,0,0,0.92);
+    border:2px solid #00ffcc;
+    border-radius:20px;
+    padding:15px;
+    box-shadow:0 0 30px rgba(0,255,204,0.3);
+}
+
+.title{
+    text-align:center;
+    font-size:28px;
+    color:white;
+    margin-bottom:20px;
+    text-shadow:0 0 20px #00ffcc;
+}
+
+.card{
+    background:#111;
+    border:1px solid #00ffcc55;
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:12px;
+}
+
+.card span{
+    color:white;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:12px;
+    background:#00ffcc;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.25s;
+}
+
+button:hover{
+    transform:scale(1.03);
+    box-shadow:0 0 20px #00ffcc;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:12px;
+    background:#111;
+    color:#00ffcc;
+}
+
+canvas{
+    border:3px solid #00ffcc;
+    border-radius:20px;
+    background:black;
+    box-shadow:0 0 35px rgba(0,255,204,0.4);
+}
+
+.modal{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:rgba(0,0,0,0.97);
+    border:2px solid #00ffcc;
+    border-radius:20px;
+    width:420px;
+    max-height:80vh;
+    overflow-y:auto;
+    padding:20px;
+    display:none;
+    z-index:100;
+}
+
+.shop-item{
+    background:#111;
+    border:1px solid #00ffcc33;
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:14px;
+}
+
+.skin-preview{
+    width:40px;
+    height:40px;
+    border-radius:10px;
+    margin-bottom:8px;
+}
+
+#modifierText{
+    color:#ffcc00;
+    font-size:18px;
+}
+
+.xp-bar{
+    width:100%;
+    height:14px;
+    background:#222;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:8px;
+}
+
+.xp-fill{
+    width:0%;
+    height:100%;
+    background:#00ffcc;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="game-wrapper">
+
+<div class="side-ui">
+
+<div class="title">
+BLOCK DASH<br>CHAOS X
+</div>
+
+<div class="card">
+SCORE: <span id="score">0</span>
+</div>
+
+<div class="card">
+MONEDAS: <span id="coins">0</span>
+</div>
+
+<div class="card">
+NIVEL: <span id="level">1</span>
+
+<div class="xp-bar">
+<div class="xp-fill" id="xpFill"></div>
+</div>
+</div>
+
+<div class="card">
+MODIFICADOR:
+<div id="modifierText">NORMAL</div>
+</div>
+
+<button onclick="togglePause()">
+PAUSA
+</button>
+
+<button onclick="openShop()">
+TIENDA
+</button>
+
+<input
+id="codeInput"
+placeholder="Código secreto"
+/>
+
+<button onclick="redeemCode()">
+CANJEAR CÓDIGO
+</button>
+
+</div>
+
+<canvas id="game" width="450" height="550"></canvas>
+
+</div>
+
+<!-- TIENDA -->
+
+<div class="modal" id="shopMenu">
+
+<h2>TIENDA EXTREMA</h2>
+
+<div id="shopContainer"></div>
+
+<button onclick="closeShop()">
+CERRAR
+</button>
+
+</div>
+
+<!-- GAME OVER -->
+
+<div class="modal" id="gameOverMenu">
+
+<h2>GAME OVER</h2>
+
+<h1 id="finalScore">0</h1>
+
+<p id="rewardText"></p>
+
+<button onclick="restartGame()">
+REINICIAR
+</button>
+
+</div>
 
 <script>
 
 /* =========================
-   CÓDIGOS DE RECOMPENSA
+ELEMENTOS
 ========================= */
 
-const rewardCodes = {
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-    "CHAOS2026":{
-        coins:500,
-        skin:"galaxy",
-        reward:"500 monedas + skin GALAXY"
-    },
+const scoreEl = document.getElementById("score");
+const coinsEl = document.getElementById("coins");
+const levelEl = document.getElementById("level");
+const modifierText = document.getElementById("modifierText");
+const xpFill = document.getElementById("xpFill");
 
-    "GODMODE":{
-        coins:1500,
-        skin:"god",
-        reward:"1500 monedas + skin GOD"
-    },
+const shopMenu = document.getElementById("shopMenu");
+const gameOverMenu = document.getElementById("gameOverMenu");
 
-    "RAINBOWX":{
-        coins:800,
-        skin:"rainbow",
-        reward:"800 monedas + skin RAINBOW"
-    },
+const finalScore = document.getElementById("finalScore");
+const rewardText = document.getElementById("rewardText");
 
-    "VOIDPOWER":{
-        coins:1000,
-        skin:"void",
-        reward:"1000 monedas + skin VOID"
-    },
+const shopContainer = document.getElementById("shopContainer");
 
-    "CYBERX":{
-        coins:1200,
-        skin:"cyber",
-        reward:"1200 monedas + skin CYBER"
-    }
+/* =========================
+SAVE
+========================= */
 
-};
+let coins =
+Number(localStorage.getItem("chaosCoins"))
+|| 0;
+
+let ownedSkins =
+JSON.parse(localStorage.getItem("ownedSkins"))
+|| ["cyan"];
+
+let currentSkin =
+localStorage.getItem("currentSkin")
+|| "cyan";
 
 let usedCodes =
 JSON.parse(localStorage.getItem("usedCodes"))
 || [];
 
-
 /* =========================
-   NUEVOS MODIFICADORES
+CÓDIGOS
 ========================= */
 
-modifiers.push(
-    "LASER MODE",
-    "DOUBLE ENEMY",
-    "INVISIBLE PLAYER",
-    "MAGNET MODE",
-    "BOUNCY MODE",
-    "ULTRA CHAOS",
-    "PIXEL MODE",
-    "RANDOM SIZE",
-    "DISCO MODE",
-    "FROZEN SCREEN"
-);
+const rewardCodes = {
 
+CHAOS2026:{
+coins:500,
+skin:"galaxy"
+},
 
-/* =========================
-   POWERUPS COMPRABLES
-========================= */
+GODMODE:{
+coins:2000,
+skin:"god"
+},
 
-const powerups = {
+CYBERX:{
+coins:1000,
+skin:"cyber"
+},
 
-    shield:{
-        name:"ESCUDO",
-        price:250,
-        description:"Te salva de 1 choque"
-    },
-
-    slow:{
-        name:"RALENTIZADOR",
-        price:180,
-        description:"Reduce velocidad enemiga"
-    },
-
-    tiny:{
-        name:"MINI PLAYER",
-        price:220,
-        description:"Jugador pequeño"
-    },
-
-    rich:{
-        name:"X2 MONEDAS",
-        price:400,
-        description:"Duplica recompensas"
-    }
+RAINBOWX:{
+coins:1500,
+skin:"rainbow"
+}
 
 };
 
-let inventory =
-JSON.parse(localStorage.getItem("inventory"))
-|| [];
-
-
 /* =========================
-   ESCUDO
+STATS
 ========================= */
 
-let shieldActive = false;
-let doubleCoins = false;
+let score = 0;
+let level = 1;
+let xp = 0;
 
+let paused = false;
+let gameOver = false;
+
+let reverseControls = false;
+let rainbowHue = 0;
 
 /* =========================
-   INPUT CÓDIGOS
+PLAYER
 ========================= */
 
-const codeDiv = document.createElement("div");
+const player = {
+x:190,
+y:470,
+w:40,
+h:40,
+speed:8
+};
 
-codeDiv.className = "card";
+const enemy = {
+x:100,
+y:-40,
+w:40,
+h:40,
+speed:5,
+multiplier:1
+};
 
-codeDiv.innerHTML = `
+const keys = {};
 
-<b>CANJEAR CÓDIGO</b>
+/* =========================
+SKINS
+========================= */
 
-<input
-id="rewardCode"
-placeholder="Escribe un código"
+const skins = {
+
+cyan:{color:"#00ffcc",glow:"#00ffcc",price:0},
+inferno:{color:"#ff0044",glow:"#ff3355",price:50},
+gold:{color:"#ffcc00",glow:"#ffee00",price:100},
+void:{color:"#7700ff",glow:"#aa55ff",price:150},
+matrix:{color:"#00ff00",glow:"#66ff66",price:250},
+blood:{color:"#990000",glow:"#ff0000",price:300},
+ocean:{color:"#0099ff",glow:"#33ccff",price:350},
+toxic:{color:"#99ff00",glow:"#ccff00",price:400},
+lava:{color:"#ff5500",glow:"#ff8800",price:500},
+ice:{color:"#88eeff",glow:"#ccffff",price:600},
+galaxy:{color:"#6633ff",glow:"#9966ff",price:800},
+cyber:{color:"#00ffff",glow:"#00ffff",price:1000},
+shadow:{color:"#111",glow:"#777",price:1300},
+plasma:{color:"#ff00aa",glow:"#ff55cc",price:1600},
+glitch:{color:"#ff00ff",glow:"#00ffff",price:2000},
+rainbow:{color:"rainbow",glow:"#fff",price:3000},
+god:{color:"#ffffff",glow:"#ffd700",price:5000}
+
+};
+
+/* =========================
+MODIFICADORES
+========================= */
+
+const modifiers = [
+
+"NORMAL",
+"TURBO",
+"SLOW MOTION",
+"MICRO PLAYER",
+"MEGA PLAYER",
+"REVERSE CONTROLS",
+"EARTHQUAKE",
+"HYPER SPEED",
+"FLASH",
+"DARKNESS",
+"CHAOS MODE",
+"SPINNING SCREEN",
+
+"LASER MODE",
+"FROZEN MODE",
+"DISCO MODE",
+"GHOST MODE",
+"RANDOM SIZE"
+
+];
+
+let currentModifier = "NORMAL";
+
+/* =========================
+TIENDA
+========================= */
+
+function generateShop(){
+
+shopContainer.innerHTML = "";
+
+for(let skin in skins){
+
+const data = skins[skin];
+
+const div =
+document.createElement("div");
+
+div.className = "shop-item";
+
+div.innerHTML = `
+
+<div class="skin-preview"
 style="
-width:100%;
-padding:10px;
-margin-top:10px;
-border-radius:10px;
-border:none;
-background:#111;
-color:#00ffcc;
-"
-/>
+background:
+${data.color === "rainbow"
+? "linear-gradient(45deg,red,orange,yellow,lime,cyan,blue,purple)"
+: data.color};
 
-<button onclick="redeemCode()">
-CANJEAR
+box-shadow:0 0 20px ${data.glow};
+">
+</div>
+
+<b>${skin.toUpperCase()}</b><br>
+${data.price} monedas
+
+<button onclick="
+${ownedSkins.includes(skin)
+? `equipSkin('${skin}')`
+: `buySkin('${skin}',${data.price})`}
+">
+
+${ownedSkins.includes(skin)
+? "EQUIPAR"
+: "COMPRAR"}
+
 </button>
-
 `;
 
-document.querySelector(".side-ui")
-.appendChild(codeDiv);
+shopContainer.appendChild(div);
 
+}
+
+}
+
+generateShop();
 
 /* =========================
-   CANJEAR CÓDIGOS
+CÓDIGOS
 ========================= */
 
 function redeemCode(){
 
-    const input =
-    document.getElementById("rewardCode");
+const input =
+document.getElementById("codeInput");
 
-    const code =
-    input.value.toUpperCase().trim();
+const code =
+input.value.toUpperCase().trim();
 
-    if(!rewardCodes[code]){
+if(!rewardCodes[code]){
 
-        alert("CÓDIGO INVÁLIDO");
-        return;
-    }
+alert("CÓDIGO INVÁLIDO");
+return;
 
-    if(usedCodes.includes(code)){
-
-        alert("YA USASTE ESTE CÓDIGO");
-        return;
-    }
-
-    const reward = rewardCodes[code];
-
-    coins += reward.coins;
-
-    if(reward.skin &&
-    !ownedSkins.includes(reward.skin)){
-
-        ownedSkins.push(reward.skin);
-    }
-
-    usedCodes.push(code);
-
-    localStorage.setItem(
-        "usedCodes",
-        JSON.stringify(usedCodes)
-    );
-
-    localStorage.setItem(
-        "ownedSkins",
-        JSON.stringify(ownedSkins)
-    );
-
-    localStorage.setItem(
-        "chaosCoins",
-        coins
-    );
-
-    updateUI();
-    generateShop();
-
-    alert("RECOMPENSA:\n" + reward.reward);
-
-    input.value = "";
 }
 
+if(usedCodes.includes(code)){
 
-/* =========================
-   TIENDA MEJORADA
-========================= */
+alert("YA USADO");
+return;
 
-const oldGenerateShop = generateShop;
-
-generateShop = function(){
-
-    shopContainer.innerHTML = "";
-
-    /* ========= SKINS ========= */
-
-    for(let skin in skins){
-
-        const data = skins[skin];
-
-        const div =
-        document.createElement("div");
-
-        div.className = "shop-item";
-
-        div.innerHTML = `
-
-        <div class="skin-preview"
-        style="
-        background:
-        ${data.color === "rainbow"
-        ? "linear-gradient(45deg,red,orange,yellow,lime,cyan,blue,purple)"
-        : data.color};
-
-        box-shadow:0 0 20px ${data.glow};
-        ">
-        </div>
-
-        <b>${skin.toUpperCase()}</b><br>
-        ${data.price} monedas
-
-        <button onclick="
-        ${ownedSkins.includes(skin)
-        ? `equipSkin('${skin}')`
-        : `buySkin('${skin}',${data.price})`}
-        ">
-        ${ownedSkins.includes(skin)
-        ? "EQUIPAR"
-        : "COMPRAR"}
-        </button>
-        `;
-
-        shopContainer.appendChild(div);
-    }
-
-    /* ========= POWERUPS ========= */
-
-    const title =
-    document.createElement("h2");
-
-    title.innerHTML =
-    "MODIFICADORES ESPECIALES";
-
-    shopContainer.appendChild(title);
-
-    for(let key in powerups){
-
-        const item = powerups[key];
-
-        const div =
-        document.createElement("div");
-
-        div.className = "shop-item";
-
-        div.innerHTML = `
-
-        <b>${item.name}</b><br>
-        ${item.description}<br><br>
-
-        ${item.price} monedas
-
-        <button onclick="
-        buyPowerup('${key}',${item.price})
-        ">
-        COMPRAR
-        </button>
-
-        `;
-
-        shopContainer.appendChild(div);
-    }
-};
-
-
-/* =========================
-   COMPRAR POWERUPS
-========================= */
-
-function buyPowerup(name,price){
-
-    if(coins < price){
-
-        alert("NO TIENES MONEDAS");
-        return;
-    }
-
-    coins -= price;
-
-    inventory.push(name);
-
-    localStorage.setItem(
-        "inventory",
-        JSON.stringify(inventory)
-    );
-
-    localStorage.setItem(
-        "chaosCoins",
-        coins
-    );
-
-    updateUI();
-
-    alert("COMPRADO");
 }
 
+const reward =
+rewardCodes[code];
 
-/* =========================
-   ACTIVAR POWERUPS
-========================= */
+coins += reward.coins;
 
-function activateInventory(){
+if(
+reward.skin &&
+!ownedSkins.includes(reward.skin)
+){
 
-    shieldActive = false;
-    doubleCoins = false;
+ownedSkins.push(reward.skin);
 
-    if(inventory.includes("shield")){
+localStorage.setItem(
+"ownedSkins",
+JSON.stringify(ownedSkins)
+);
 
-        shieldActive = true;
-    }
-
-    if(inventory.includes("slow")){
-
-        enemy.multiplier *= 0.7;
-    }
-
-    if(inventory.includes("tiny")){
-
-        player.w = 25;
-        player.h = 25;
-    }
-
-    if(inventory.includes("rich")){
-
-        doubleCoins = true;
-    }
 }
 
-activateInventory();
+usedCodes.push(code);
 
+localStorage.setItem(
+"usedCodes",
+JSON.stringify(usedCodes)
+);
 
-/* =========================
-   NUEVOS EFECTOS MODIFICADOR
-========================= */
+localStorage.setItem(
+"chaosCoins",
+coins
+);
 
-const oldActivateModifier =
-activateModifier;
+updateUI();
+generateShop();
 
-activateModifier = function(){
+alert(
+"RECOMPENSA:\n+" +
+reward.coins +
+" monedas"
+);
 
-    oldActivateModifier();
+input.value = "";
 
-    switch(currentModifier){
-
-        case "LASER MODE":
-
-            document.body.style.boxShadow =
-            "inset 0 0 100px red";
-
-        break;
-
-        case "DOUBLE ENEMY":
-
-            enemy.multiplier = 3;
-
-        break;
-
-        case "INVISIBLE PLAYER":
-
-            ctx.globalAlpha = 0.2;
-
-        break;
-
-        case "MAGNET MODE":
-
-            player.speed = 14;
-
-        break;
-
-        case "BOUNCY MODE":
-
-            enemy.x +=
-            Math.sin(Date.now()/50)*15;
-
-        break;
-
-        case "ULTRA CHAOS":
-
-            player.speed = 20;
-            enemy.multiplier = 5;
-
-        break;
-
-        case "PIXEL MODE":
-
-            canvas.style.imageRendering =
-            "pixelated";
-
-        break;
-
-        case "RANDOM SIZE":
-
-            player.w =
-            20 + Math.random()*80;
-
-            player.h =
-            player.w;
-
-        break;
-
-        case "DISCO MODE":
-
-            document.body.style.filter =
-            `hue-rotate(${Math.random()*360}deg)`;
-
-        break;
-
-        case "FROZEN SCREEN":
-
-            enemy.multiplier = 0.2;
-
-        break;
-    }
-};
-
+}
 
 /* =========================
-   ESCUDO EN COLISIÓN
+CONTROLES
 ========================= */
 
-const oldCollision = collision;
+window.addEventListener("keydown",(e)=>{
 
-collision = function(){
+keys[e.key]=true;
 
-    if(oldCollision()){
+if(e.key==="Escape"){
+togglePause();
+}
 
-        if(shieldActive){
+});
 
-            shieldActive = false;
-
-            inventory =
-            inventory.filter(
-            i => i !== "shield"
-            );
-
-            localStorage.setItem(
-                "inventory",
-                JSON.stringify(inventory)
-            );
-
-            enemy.y = -100;
-
-            alert("ESCUDO ACTIVADO");
-
-            return false;
-        }
-
-        return true;
-    }
-
-    return false;
-};
-
+window.addEventListener("keyup",(e)=>{
+keys[e.key]=false;
+});
 
 /* =========================
-   DOBLE MONEDAS
+MOVIMIENTO
 ========================= */
 
-const oldEndGame = endGame;
+function movePlayer(){
 
-endGame = function(){
+let left =
+keys["ArrowLeft"] ||
+keys["a"];
 
-    if(doubleCoins){
+let right =
+keys["ArrowRight"] ||
+keys["d"];
 
-        score *= 2;
-    }
+if(reverseControls){
 
-    oldEndGame();
-};
+[left,right] = [right,left];
 
+}
+
+if(left){
+player.x -= player.speed;
+}
+
+if(right){
+player.x += player.speed;
+}
+
+if(player.x<0) player.x=0;
+
+if(player.x>canvas.width-player.w){
+
+player.x=canvas.width-player.w;
+
+}
+
+}
+
+function moveEnemy(){
+
+enemy.y += enemy.speed * enemy.multiplier;
+
+if(score > 40){
+
+enemy.x +=
+Math.sin(Date.now()/100)*4;
+
+}
+
+if(enemy.y > canvas.height){
+
+enemy.y = -40;
+
+enemy.x =
+Math.random() *
+(canvas.width-enemy.w);
+
+score++;
+
+xp += 8;
+
+if(score % 5 === 0){
+
+activateModifier();
+
+}
+
+if(xp >= 100){
+
+xp = 0;
+level++;
+
+}
+
+updateUI();
+
+}
+
+}
 
 /* =========================
-   GENERAR TIENDA NUEVA
+MODIFICADORES
 ========================= */
+
+function activateModifier(){
+
+reverseControls = false;
+
+player.w = 40;
+player.h = 40;
+
+player.speed = 8;
+
+enemy.multiplier = 1;
+
+document.body.style.filter = "";
+canvas.style.transform = "";
+
+currentModifier =
+modifiers[
+Math.floor(
+Math.random() *
+modifiers.length
+)
+];
+
+modifierText.textContent =
+currentModifier;
+
+switch(currentModifier){
+
+case "TURBO":
+enemy.multiplier = 2.5;
+break;
+
+case "SLOW MOTION":
+enemy.multiplier = 0.5;
+break;
+
+case "MICRO PLAYER":
+player.w = 20;
+player.h = 20;
+break;
+
+case "MEGA PLAYER":
+player.w = 80;
+player.h = 80;
+break;
+
+case "REVERSE CONTROLS":
+reverseControls = true;
+break;
+
+case "HYPER SPEED":
+player.speed = 16;
+break;
+
+case "LASER MODE":
+document.body.style.boxShadow =
+"inset 0 0 120px red";
+break;
+
+case "FROZEN MODE":
+enemy.multiplier = 0.2;
+break;
+
+case "DISCO MODE":
+document.body.style.filter =
+`hue-rotate(${Math.random()*360}deg)`;
+break;
+
+case "GHOST MODE":
+player.speed = 20;
+break;
+
+case "RANDOM SIZE":
+player.w =
+20 + Math.random()*70;
+player.h = player.w;
+break;
+
+}
+
+}
+
+/* =========================
+DIBUJO
+========================= */
+
+function drawPlayer(){
+
+let skin = skins[currentSkin];
+
+let color = skin.color;
+
+if(color === "rainbow"){
+
+rainbowHue += 4;
+
+color =
+`hsl(${rainbowHue},100%,50%)`;
+
+}
+
+ctx.fillStyle = color;
+
+ctx.shadowBlur = 20;
+ctx.shadowColor = skin.glow;
+
+ctx.fillRect(
+player.x,
+player.y,
+player.w,
+player.h
+);
+
+}
+
+function drawEnemy(){
+
+ctx.fillStyle = "#ff3333";
+
+ctx.shadowBlur = 20;
+ctx.shadowColor = "#ff3333";
+
+ctx.fillRect(
+enemy.x,
+enemy.y,
+enemy.w,
+enemy.h
+);
+
+}
+
+/* =========================
+COLISIÓN
+========================= */
+
+function collision(){
+
+return (
+
+player.x <
+enemy.x + enemy.w &&
+
+player.x + player.w >
+enemy.x &&
+
+player.y <
+enemy.y + enemy.h &&
+
+player.y + player.h >
+enemy.y
+
+);
+
+}
+
+/* =========================
+UI
+========================= */
+
+function updateUI(){
+
+scoreEl.textContent = score;
+coinsEl.textContent = coins;
+levelEl.textContent = level;
+
+xpFill.style.width =
+xp + "%";
+
+}
+
+/* =========================
+SHOP
+========================= */
+
+function openShop(){
+
+paused = true;
+
+shopMenu.style.display =
+"block";
+
+}
+
+function closeShop(){
+
+paused = false;
+
+shopMenu.style.display =
+"none";
+
+loop();
+
+}
+
+function buySkin(name,price){
+
+if(coins >= price){
+
+coins -= price;
+
+ownedSkins.push(name);
+
+localStorage.setItem(
+"ownedSkins",
+JSON.stringify(ownedSkins)
+);
+
+localStorage.setItem(
+"chaosCoins",
+coins
+);
+
+equipSkin(name);
 
 generateShop();
 
+updateUI();
+
+}else{
+
+alert("NO TIENES MONEDAS");
+
+}
+
+}
+
+function equipSkin(name){
+
+currentSkin = name;
+
+localStorage.setItem(
+"currentSkin",
+name
+);
+
+}
+
+/* =========================
+GAME OVER
+========================= */
+
+function endGame(){
+
+gameOver = true;
+
+let reward = 0;
+
+if(score >= 30){
+
+reward =
+Math.floor(score * 1.5);
+
+coins += reward;
+
+localStorage.setItem(
+"chaosCoins",
+coins
+);
+
+}
+
+finalScore.textContent =
+score;
+
+rewardText.innerHTML = `
++${reward} MONEDAS
+`;
+
+gameOverMenu.style.display =
+"block";
+
+updateUI();
+
+}
+
+/* =========================
+PAUSA
+========================= */
+
+function togglePause(){
+
+paused = !paused;
+
+if(!paused){
+
+loop();
+
+}
+
+}
+
+/* =========================
+RESTART
+========================= */
+
+function restartGame(){
+
+location.reload();
+
+}
+
+/* =========================
+LOOP
+========================= */
+
+function loop(){
+
+if(paused || gameOver){
+return;
+}
+
+ctx.clearRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+movePlayer();
+moveEnemy();
+
+drawPlayer();
+drawEnemy();
+
+ctx.shadowBlur = 0;
+
+if(collision()){
+
+endGame();
+return;
+
+}
+
+requestAnimationFrame(loop);
+
+}
+
+/* =========================
+START
+========================= */
+
+updateUI();
+loop();
+
 </script>
+
+</body>
+</html>
