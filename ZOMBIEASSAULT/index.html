@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZOMBIE ASSAULT</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Oswald:wght@400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --red:#ff2222;--green:#44ff44;--yellow:#ffdd00;--orange:#ff8800;
+  --purple:#cc44ff;--bg:#0a0a0a;--panel:#111;--border:#333;
+  --text:#eee;--dim:#777;
+}
+body{background:var(--bg);color:var(--text);font-family:'Oswald',sans-serif;overflow:hidden;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;user-select:none;}
+ 
+/* ─── LAYOUT ─── */
+#gameWrap{display:flex;gap:16px;align-items:flex-start;}
+#leftPanel{width:200px;display:flex;flex-direction:column;gap:10px;}
+#rightPanel{width:200px;display:flex;flex-direction:column;gap:10px;}
+canvas{border:2px solid #ff2222;border-radius:4px;box-shadow:0 0 30px #ff222266;display:block;}
+ 
+/* ─── PANELS ─── */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px;}
+.panel-title{font-family:'Creepster',cursive;font-size:13px;color:var(--red);letter-spacing:2px;margin-bottom:8px;text-transform:uppercase;}
+.stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:13px;}
+.stat-val{color:var(--yellow);font-weight:700;}
+ 
+/* ─── BARS ─── */
+.bar-wrap{width:100%;height:10px;background:#222;border-radius:10px;overflow:hidden;margin-top:3px;}
+.bar-fill{height:100%;border-radius:10px;transition:width 0.2s;}
+#hpBar{background:linear-gradient(90deg,#ff2222,#ff6666);}
+#xpBar{background:linear-gradient(90deg,#4466ff,#88aaff);}
+#ammoBar{background:linear-gradient(90deg,#ffaa00,#ffdd44);}
+ 
+/* ─── WEAPON SLOTS ─── */
+#weaponSlots{display:flex;flex-direction:column;gap:6px;}
+.wslot{padding:8px 10px;border-radius:6px;border:1px solid #333;cursor:pointer;transition:0.2s;font-size:12px;display:flex;justify-content:space-between;align-items:center;}
+.wslot.active{border-color:var(--yellow);background:#1a1800;box-shadow:0 0 8px #ffdd0055;}
+.wslot:hover{border-color:#555;}
+.wslot .wname{font-weight:700;color:var(--text);}
+.wslot .wammo{color:var(--dim);font-size:11px;}
+ 
+/* ─── KILL LOG ─── */
+#killLog{height:100px;overflow:hidden;display:flex;flex-direction:column-reverse;gap:3px;}
+.klog{font-size:11px;color:var(--dim);animation:fadeLog 4s forwards;}
+@keyframes fadeLog{0%{color:#ffaa44}80%{color:#777}100%{color:#333;}}
+ 
+/* ─── MODALS ─── */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.88);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);}
+.modal.show{display:flex;}
+.modal-box{background:#111;border:2px solid var(--border);border-radius:16px;padding:28px;max-width:600px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 0 60px rgba(0,0,0,0.8);}
+.modal-box h2{font-family:'Creepster',cursive;font-size:2.2em;text-align:center;margin-bottom:20px;}
+ 
+/* ─── SHOP ─── */
+#shopGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.shop-item{background:#0d0d0d;border:1px solid #2a2a2a;border-radius:10px;padding:14px;cursor:pointer;transition:0.2s;position:relative;}
+.shop-item:hover{border-color:#555;transform:translateY(-2px);}
+.shop-item.owned{border-color:#44ff4466;background:#001a00;}
+.shop-item.cantafford{opacity:0.4;cursor:not-allowed;}
+.shop-item h4{font-size:14px;margin-bottom:4px;color:var(--text);}
+.shop-item p{font-size:11px;color:var(--dim);line-height:1.4;margin-bottom:8px;}
+.shop-price{font-size:13px;font-weight:700;color:var(--yellow);}
+.shop-owned-badge{position:absolute;top:8px;right:8px;background:#44ff44;color:#000;font-size:9px;padding:2px 6px;border-radius:10px;font-weight:700;}
+ 
+/* ─── BUTTONS ─── */
+.btn{padding:12px 24px;border:none;border-radius:8px;font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:0.2s;letter-spacing:1px;}
+.btn:hover{transform:scale(1.04);}
+.btn-red{background:var(--red);color:#fff;}
+.btn-green{background:#22aa22;color:#fff;}
+.btn-yellow{background:var(--yellow);color:#000;}
+.btn-purple{background:var(--purple);color:#fff;}
+.btn-gray{background:#333;color:#aaa;}
+.btn-row{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+ 
+/* ─── HUD TOP ─── */
+#hudTop{display:flex;gap:16px;margin-bottom:10px;width:100%;max-width:900px;justify-content:center;align-items:center;}
+.hud-chip{background:#111;border:1px solid #2a2a2a;border-radius:20px;padding:6px 16px;font-size:13px;display:flex;align-items:center;gap:8px;}
+.hud-chip span{color:var(--yellow);font-weight:700;}
+ 
+/* ─── WAVE BANNER ─── */
+#waveBanner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Creepster',cursive;font-size:60px;color:var(--red);text-shadow:0 0 30px var(--red);pointer-events:none;opacity:0;transition:opacity 0.4s;z-index:50;white-space:nowrap;}
+ 
+/* ─── BOSS HP ─── */
+#bossHpWrap{display:none;position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:280px;text-align:center;}
+#bossHpWrap .boss-name{font-family:'Creepster',cursive;font-size:16px;color:var(--purple);margin-bottom:4px;text-shadow:0 0 10px var(--purple);}
+#bossHpBar-wrap{width:100%;height:12px;background:#1a0020;border-radius:10px;overflow:hidden;border:1px solid var(--purple);}
+#bossHpFill{height:100%;background:linear-gradient(90deg,#8800cc,#cc44ff);transition:width 0.15s;}
+ 
+/* ─── DAMAGE NUMBERS ─── */
+.dmg-num{position:absolute;font-family:'Oswald',sans-serif;font-weight:700;font-size:16px;pointer-events:none;animation:floatUp 0.9s forwards;z-index:40;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-50px)}}
+ 
+/* ─── GAME OVER / WIN ─── */
+#gameOverTitle{font-family:'Creepster',cursive;font-size:3em;color:var(--red);text-align:center;text-shadow:0 0 20px var(--red);}
+#victoryTitle{font-family:'Creepster',cursive;font-size:3em;color:var(--yellow);text-align:center;text-shadow:0 0 20px var(--yellow);}
+.stat-summary{background:#0d0d0d;border-radius:10px;padding:14px;margin:12px 0;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.stat-summary div{font-size:13px;color:var(--dim);}
+.stat-summary span{color:var(--text);font-weight:700;}
+ 
+/* ─── BOSS INTRO ─── */
+#bossIntro{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:60;border-radius:2px;}
+#bossIntro h1{font-family:'Creepster',cursive;font-size:52px;color:var(--purple);text-shadow:0 0 30px var(--purple),0 0 60px #8800cc;animation:bossShake 0.3s infinite;}
+#bossIntro p{font-size:16px;color:#bbb;margin-top:10px;}
+@keyframes bossShake{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+ 
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:6px;} ::-webkit-scrollbar-track{background:#111;} ::-webkit-scrollbar-thumb{background:#333;border-radius:3px;}
+ 
+/* ─── CANVAS WRAP ─── */
+#canvasWrap{position:relative;}
+ 
+/* ─── PERK MODAL ─── */
+.perk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px;}
+.perk-card{background:#0d0d0d;border:1px solid #2a2a2a;border-radius:10px;padding:14px;cursor:pointer;transition:0.2s;text-align:center;}
+.perk-card:hover{border-color:var(--yellow);background:#1a1800;transform:scale(1.04);}
+.perk-card .perk-icon{font-size:32px;margin-bottom:8px;}
+.perk-card h4{font-size:13px;color:var(--text);margin-bottom:4px;}
+.perk-card p{font-size:11px;color:var(--dim);line-height:1.4;}
+</style>
+</head>
+<body>
+ 
+<!-- HUD TOP -->
+<div id="hudTop">
+  <div class="hud-chip">⚔️ OLEADA <span id="hudWave">1</span></div>
+  <div class="hud-chip">💀 NIVEL <span id="hudLevel">1</span></div>
+  <div class="hud-chip">💰 <span id="hudCoins">0</span></div>
+  <div class="hud-chip">🏆 PUNTOS <span id="hudScore">0</span></div>
+  <button class="btn btn-gray" style="padding:6px 14px;font-size:12px;" onclick="openShop()">🛒 TIENDA</button>
+  <button class="btn btn-gray" style="padding:6px 14px;font-size:12px;" onclick="togglePause()">⏸</button>
+</div>
+ 
+<div id="gameWrap">
+ 
+<!-- LEFT -->
+<div id="leftPanel">
+  <div class="panel">
+    <div class="panel-title">❤️ Vida</div>
+    <div class="stat-row"><span>HP</span><span class="stat-val" id="hpVal">100/100</span></div>
+    <div class="bar-wrap"><div class="bar-fill" id="hpBar" style="width:100%"></div></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">⚡ Experiencia</div>
+    <div class="stat-row"><span>XP</span><span class="stat-val" id="xpVal">0/100</span></div>
+    <div class="bar-wrap"><div class="bar-fill" id="xpBar" style="width:0%"></div></div>
+    <div class="stat-row" style="margin-top:6px;"><span>Nivel</span><span class="stat-val" id="lvlVal">1</span></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">🔫 Armas</div>
+    <div id="weaponSlots"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">📦 Munición</div>
+    <div class="stat-row"><span id="ammoLabel">Pistola</span><span class="stat-val" id="ammoVal">∞</span></div>
+    <div class="bar-wrap"><div class="bar-fill" id="ammoBar" style="width:100%"></div></div>
+  </div>
+</div>
+ 
+<!-- CANVAS -->
+<div id="canvasWrap">
+  <canvas id="game" width="480" height="520"></canvas>
+  <div id="waveBanner">OLEADA 1</div>
+  <div id="bossIntro"><h1 id="bossIntroName">JEFE FINAL</h1><p id="bossIntroSub">Prepárate para morir...</p></div>
+  <div id="bossHpWrap">
+    <div class="boss-name" id="bossNameLabel">???</div>
+    <div id="bossHpBar-wrap"><div id="bossHpFill" style="width:100%"></div></div>
+  </div>
+</div>
+ 
+<!-- RIGHT -->
+<div id="rightPanel">
+  <div class="panel">
+    <div class="panel-title">📊 Stats</div>
+    <div class="stat-row"><span>Zombis</span><span class="stat-val" id="statKills">0</span></div>
+    <div class="stat-row"><span>Daño</span><span class="stat-val" id="statDmg">0</span></div>
+    <div class="stat-row"><span>Oleadas</span><span class="stat-val" id="statWaves">0</span></div>
+    <div class="stat-row"><span>Jefes</span><span class="stat-val" id="statBosses">0</span></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">⚡ Perks</div>
+    <div id="perkList" style="font-size:11px;color:var(--dim);min-height:40px;">Sin perks aún</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">📜 Log</div>
+    <div id="killLog"></div>
+  </div>
+</div>
+ 
+</div>
+ 
+<!-- ═══════ MODALS ═══════ -->
+ 
+<!-- SHOP -->
+<div class="modal" id="shopModal">
+<div class="modal-box">
+  <h2 style="color:var(--yellow);">🛒 ARMERÍA</h2>
+  <div style="text-align:center;margin-bottom:14px;font-size:13px;color:var(--dim);">Monedas: <span style="color:var(--yellow);font-weight:700;" id="shopCoins">0</span></div>
+  <div style="font-family:'Creepster',cursive;font-size:14px;color:#888;letter-spacing:2px;margin-bottom:8px;">— ARMAS —</div>
+  <div id="shopGrid"></div>
+  <div style="font-family:'Creepster',cursive;font-size:14px;color:#888;letter-spacing:2px;margin:14px 0 8px;">— MEJORAS —</div>
+  <div id="upgradeGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"></div>
+  <div style="font-family:'Creepster',cursive;font-size:14px;color:#888;letter-spacing:2px;margin:14px 0 8px;">— CONSUMIBLES —</div>
+  <div id="consumableGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"></div>
+  <div class="btn-row"><button class="btn btn-gray" onclick="closeShop()">CERRAR</button></div>
+</div>
+</div>
+ 
+<!-- PERK CHOICE -->
+<div class="modal" id="perkModal">
+<div class="modal-box">
+  <h2 style="color:var(--green);">⬆️ ¡SUBISTE DE NIVEL!</h2>
+  <p style="text-align:center;color:var(--dim);font-size:13px;margin-bottom:4px;">Elige una mejora permanente:</p>
+  <div class="perk-grid" id="perkChoices"></div>
+</div>
+</div>
+ 
+<!-- WAVE COMPLETE -->
+<div class="modal" id="waveModal">
+<div class="modal-box" style="text-align:center;">
+  <h2 style="color:var(--green);" id="waveCompleteTitle">✅ ¡OLEADA COMPLETADA!</h2>
+  <div class="stat-summary" id="waveSummary"></div>
+  <div class="btn-row">
+    <button class="btn btn-green" onclick="nextWave()">SIGUIENTE OLEADA ▶</button>
+    <button class="btn btn-yellow" onclick="openShop();closeWaveModal()">🛒 TIENDA</button>
+  </div>
+</div>
+</div>
+ 
+<!-- GAME OVER -->
+<div class="modal" id="gameOverModal">
+<div class="modal-box" style="text-align:center;">
+  <div id="gameOverTitle">☠️ GAME OVER</div>
+  <div class="stat-summary" id="goSummary"></div>
+  <div class="btn-row">
+    <button class="btn btn-red" onclick="restartGame()">🔄 REINICIAR</button>
+  </div>
+</div>
+</div>
+ 
+<!-- PAUSE -->
+<div class="modal" id="pauseModal">
+<div class="modal-box" style="text-align:center;">
+  <h2 style="color:var(--yellow);">⏸ PAUSA</h2>
+  <div class="btn-row">
+    <button class="btn btn-green" onclick="togglePause()">▶ CONTINUAR</button>
+    <button class="btn btn-yellow" onclick="openShop();closePause()">🛒 TIENDA</button>
+    <button class="btn btn-red" onclick="restartGame()">🔄 REINICIAR</button>
+  </div>
+</div>
+</div>
+ 
+<script>
+// ══════════════════════════════════════
+//  CONSTANTES & CONFIG
+// ══════════════════════════════════════
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+ 
+// ══════════════════════════════════════
+//  ARMAS
+// ══════════════════════════════════════
+const WEAPONS = {
+  pistol:   {name:'🔫 Pistola',    dmg:18,  rof:400,  range:280, spread:0.08, pierce:0, ammo:-1,     reload:0,    speed:10, color:'#ffdd44', price:0,    unlock:1,  desc:'Infinita, confiable. Sin fallos.'},
+  shotgun:  {name:'💥 Escopeta',   dmg:22,  rof:700,  range:160, spread:0.25, pierce:0, ammo:30,     reload:1800, speed:8,  color:'#ff8800', price:80,   unlock:1,  desc:'6 perdigones. Devastadora a corta distancia.'},
+  smg:      {name:'⚡ SMG',        dmg:10,  rof:120,  range:220, spread:0.12, pierce:0, ammo:90,     reload:1400, speed:12, color:'#44aaff', price:120,  unlock:2,  desc:'Cadencia extrema. Lluvia de balas.'},
+  rifle:    {name:'🎯 Rifle',      dmg:55,  rof:900,  range:480, spread:0.01, pierce:2, ammo:20,     reload:2000, speed:16, color:'#44ff44', price:200,  unlock:3,  desc:'Penetra hasta 3 zombis. Alta precisión.'},
+  rl:       {name:'🚀 Lanzacohetes',dmg:130, rof:2000, range:400, spread:0.04, pierce:99,ammo:6,     reload:3000, speed:7,  color:'#ff4444', price:350,  unlock:5,  desc:'Explosión en área. Destruye oleadas.'},
+  minigun:  {name:'🌀 Minigun',    dmg:14,  rof:60,   range:300, spread:0.18, pierce:0, ammo:200,    reload:2500, speed:14, color:'#ff44ff', price:500,  unlock:7,  desc:'Cadencia brutal. 200 balas de inferno.'},
+  sniper:   {name:'🔭 Francotirador',dmg:200,rof:1800,range:999, spread:0.005,pierce:5, ammo:10,     reload:2500, speed:20, color:'#88ffff', price:600,  unlock:9,  desc:'Un disparo, una muerte. Atraviesa todo.'},
+  flamethr: {name:'🔥 Lanzallamas', dmg:8,  rof:80,   range:130, spread:0.4,  pierce:99,ammo:120,    reload:2000, speed:5,  color:'#ff6600', price:450,  unlock:6,  desc:'Daño continuo en cono. Quema masas.'},
+};
+ 
+// ══════════════════════════════════════
+//  ZOMBIS
+// ══════════════════════════════════════
+const ZOMBIE_TYPES = {
+  walker:  {name:'Caminante', hp:40,  spd:0.8, dmg:8,  size:18, color:'#55aa55', xp:10, coins:2,  score:10},
+  runner:  {name:'Corredor',  hp:25,  spd:2.2, dmg:5,  size:14, color:'#aadd22', xp:15, coins:3,  score:15},
+  tank:    {name:'Tanque',    hp:200, spd:0.5, dmg:20, size:30, color:'#226622', xp:40, coins:8,  score:40},
+  spitter: {name:'Escupidor', hp:50,  spd:1.0, dmg:12, size:16, color:'#88ff44', xp:20, coins:5,  score:20},
+  exploder:{name:'Suicida',   hp:35,  spd:1.6, dmg:50, size:20, color:'#ff8800', xp:25, coins:6,  score:25},
+  armored: {name:'Blindado',  hp:150, spd:0.7, dmg:15, size:24, color:'#8888aa', xp:35, coins:7,  score:35},
+};
+ 
+const BOSSES = [
+  {name:'EL CARNICERO',   sub:'Se alimenta del caos',   hp:800,  spd:0.9, dmg:25, size:55, color:'#cc2222', xp:300, coins:80,  score:500,  atk:'charge'},
+  {name:'LA PLAGA',       sub:'Madre de mil infectados',hp:1200, spd:0.7, dmg:18, size:60, color:'#44aa22', xp:500, coins:120, score:800,  atk:'spawn'},
+  {name:'EL COLOSSO',     sub:'Monstruo de acero y carne',hp:2000,spd:0.5,dmg:35, size:72, color:'#5555cc', xp:800, coins:180, score:1200, atk:'stomp'},
+  {name:'CEREBRO MAESTRO',sub:'Controla a los muertos', hp:1600, spd:1.1, dmg:20, size:52, color:'#cc44ff', xp:700, coins:160, score:1100, atk:'mindControl'},
+  {name:'EL APOCALIPSIS', sub:'El fin de todo',         hp:3500, spd:0.8, dmg:40, size:80, color:'#ff2200', xp:1500,coins:300, score:2000, atk:'all'},
+];
+ 
+// ══════════════════════════════════════
+//  PERKS
+// ══════════════════════════════════════
+const ALL_PERKS = [
+  {id:'hp_up',     icon:'❤️',  name:'Corazón Duro',   desc:'+25 HP máximo',           apply:g=>{g.maxHp+=25;g.hp=Math.min(g.hp+25,g.maxHp);}},
+  {id:'dmg_up',    icon:'💪',  name:'Músculo',        desc:'+15% daño todas las armas',apply:g=>{g.dmgMult+=0.15;}},
+  {id:'speed_up',  icon:'👟',  name:'Pies Rápidos',   desc:'+12% velocidad movimiento', apply:g=>{g.speed*=1.12;}},
+  {id:'rof_up',    icon:'⚡',  name:'Gatillo Rápido', desc:'-12% tiempo entre disparos',apply:g=>{g.rofMult*=0.88;}},
+  {id:'ammo_up',   icon:'📦',  name:'Mochila Extra',  desc:'+40% capacidad de munición',apply:g=>{g.ammoMult+=0.4;}},
+  {id:'regen',     icon:'🌿',  name:'Regeneración',   desc:'+1 HP/s constante',         apply:g=>{g.regen+=1;}},
+  {id:'pierce',    icon:'🗡️',  name:'Bala Perforante',desc:'+1 penetración a todas',   apply:g=>{g.pierceMult+=1;}},
+  {id:'range_up',  icon:'🔭',  name:'Ojo de Águila',  desc:'+20% alcance',             apply:g=>{g.rangeMult+=0.2;}},
+  {id:'coins_up',  icon:'💰',  name:'Saqueador',      desc:'+50% monedas al matar',    apply:g=>{g.coinMult+=0.5;}},
+  {id:'lifesteal', icon:'🩸',  name:'Vampiro',        desc:'5% de daño devuelto como HP',apply:g=>{g.lifesteal+=0.05;}},
+  {id:'explosive', icon:'💥',  name:'Balas Explosivas',desc:'10% chance de mini-explosión',apply:g=>{g.explodeChance+=0.10;}},
+  {id:'shield',    icon:'🛡️',  name:'Escudo',         desc:'Bloquea el siguiente golpe cada 8s',apply:g=>{g.shieldCooldown=8000;g.shieldTimer=0;}},
+];
+ 
+// ══════════════════════════════════════
+//  UPGRADES & CONSUMIBLES
+// ══════════════════════════════════════
+const UPGRADES = [
+  {id:'dmg1',  name:'💪 Daño +20%',     desc:'Aumenta todo el daño',      price:60,  maxLevel:3, effect:g=>{g.dmgMult+=0.2;}},
+  {id:'rof1',  name:'⚡ Cadencia +15%', desc:'Dispara más rápido',        price:70,  maxLevel:3, effect:g=>{g.rofMult*=0.85;}},
+  {id:'hp1',   name:'❤️ +30 HP Máx',   desc:'Aumenta vida máxima',       price:50,  maxLevel:5, effect:g=>{g.maxHp+=30;g.hp+=30;}},
+  {id:'range1',name:'🔭 Alcance +20%',  desc:'Balas viajan más lejos',    price:80,  maxLevel:3, effect:g=>{g.rangeMult+=0.2;}},
+  {id:'reload1',name:'🔄 Recarga -20%', desc:'Recargas más rápidas',      price:90,  maxLevel:3, effect:g=>{g.reloadMult*=0.8;}},
+  {id:'speed1',name:'👟 Velocidad +15%',desc:'Te mueves más rápido',      price:60,  maxLevel:4, effect:g=>{g.speed*=1.15;}},
+];
+ 
+const CONSUMABLES = [
+  {id:'medkit',  name:'💊 Botiquín',    desc:'Restaura 50 HP',            price:40,  effect:g=>{g.hp=Math.min(g.hp+50,g.maxHp);}},
+  {id:'megakit', name:'🩺 Medkit',      desc:'Restaura 100 HP',           price:70,  effect:g=>{g.hp=Math.min(g.hp+100,g.maxHp);}},
+  {id:'ammobox', name:'📦 Caja Munición',desc:'Recarga todo al máximo',   price:50,  effect:g=>{Object.values(g.inventory).forEach(w=>{if(w&&w.ammo>0)w.ammo=w.maxAmmo;});}},
+  {id:'nuke',    name:'☢️ Bomba Nuclear',desc:'Elimina todos los zombis',  price:200, effect:g=>{zombies.forEach(z=>killZombie(z,true));zombies.length=0;}},
+];
+ 
+// ══════════════════════════════════════
+//  ESTADO DEL JUEGO
+// ══════════════════════════════════════
+let G, zombies, bullets, particles, floatTexts, boss, keys, mouse, shooting, lastShot, reloading, reloadTimer, lastTime, raf, waveActive, waveNum, pausedFlag, totalKills, totalDmg, totalBosses;
+ 
+function initGame(){
+  G = {
+    hp:100, maxHp:100, x:W/2, y:H/2, speed:2.8,
+    level:1, xp:0, xpNeeded:100,
+    coins:0, score:0,
+    dmgMult:1, rofMult:1, rangeMult:1, reloadMult:1, ammoMult:1,
+    pierceMult:0, regen:0, lifesteal:0, coinMult:1,
+    explodeChance:0, shieldActive:false, shieldCooldown:0, shieldTimer:9999,
+    facing:0,
+    currentWeapon:'pistol',
+    inventory:{pistol:{...WEAPONS.pistol, ammo:-1, maxAmmo:-1}},
+    activePerks:[],
+    upgradeLevel:{},
+  };
+  zombies=[]; bullets=[]; particles=[]; floatTexts=[];
+  boss=null; keys={}; mouse={x:W/2,y:H/2}; shooting=false;
+  lastShot=0; reloading=false; reloadTimer=0;
+  lastTime=0; waveActive=false; waveNum=0;
+  pausedFlag=false;
+  totalKills=0; totalDmg=0; totalBosses=0;
+  buildWeaponSlots();
+  buildShop();
+  startWave();
+}
+ 
+// ══════════════════════════════════════
+//  OLEADAS
+// ══════════════════════════════════════
+let spawnQueue=[], spawnInterval=0, spawnTimer=0, zombiesLeft=0, zombiesSpawned=0;
+ 
+function startWave(){
+  waveNum++;
+  waveActive=true;
+  const isBoss = waveNum%5===0;
+ 
+  document.getElementById('hudWave').textContent=waveNum;
+  showWaveBanner(isBoss?`⚠️ JEFE NIVEL ${waveNum}`:`OLEADA ${waveNum}`);
+ 
+  if(isBoss){
+    const bossIdx = Math.floor((waveNum/5)-1) % BOSSES.length;
+    spawnBoss(BOSSES[bossIdx]);
+    return;
+  }
+ 
+  // Genera oleada normal
+  spawnQueue=[];
+  const difficulty = 1 + (waveNum-1)*0.18;
+  const count = Math.floor(6 + waveNum*2.2);
+  zombiesLeft = count;
+  zombiesSpawned = 0;
+ 
+  for(let i=0;i<count;i++){
+    const roll = Math.random();
+    let type;
+    if(waveNum<=2)      type='walker';
+    else if(waveNum<=4) type = roll<0.7?'walker':'runner';
+    else if(waveNum<=7) type = ['walker','runner','spitter'][Math.floor(roll*3)];
+    else if(waveNum<=10)type = ['walker','runner','spitter','tank','exploder'][Math.floor(roll*5)];
+    else                type = Object.keys(ZOMBIE_TYPES)[Math.floor(roll*Object.keys(ZOMBIE_TYPES).length)];
+    const base = ZOMBIE_TYPES[type];
+    spawnQueue.push({
+      ...base,
+      hp: Math.ceil(base.hp * difficulty),
+      maxHp: Math.ceil(base.hp * difficulty),
+      spd: base.spd * (1+waveNum*0.01),
+      dmg: Math.ceil(base.dmg * (1+(waveNum-1)*0.06)),
+    });
+  }
+  spawnInterval = Math.max(300, 1200 - waveNum*40);
+  spawnTimer = 0;
+  if(!raf) loop(0);
+}
+ 
+function spawnBoss(data){
+  const bIdx = Math.floor((waveNum/5)-1) % BOSSES.length;
+  boss = {
+    ...data,
+    hp: data.hp * (1 + Math.floor(waveNum/5-1)*0.4),
+    maxHp: data.hp * (1 + Math.floor(waveNum/5-1)*0.4),
+    x: W/2, y: 60, vx:0, vy:0,
+    phase: 0, atkTimer:0, spawnTimer:0,
+    angle:0,
+  };
+  boss.maxHp = boss.hp;
+  document.getElementById('bossHpWrap').style.display='block';
+  document.getElementById('bossNameLabel').textContent=boss.name;
+  document.getElementById('bossHpFill').style.width='100%';
+  const intro = document.getElementById('bossIntro');
+  document.getElementById('bossIntroName').textContent=boss.name;
+  document.getElementById('bossIntroSub').textContent=boss.sub;
+  intro.style.display='flex';
+  setTimeout(()=>{intro.style.display='none'; if(!raf)loop(0);},2200);
+  spawnQueue=[]; zombiesLeft=0;
+  addLog(`⚠️ ${boss.name} ha aparecido!`,'#cc44ff');
+}
+ 
+// ══════════════════════════════════════
+//  GAME LOOP
+// ══════════════════════════════════════
+function loop(ts){
+  if(pausedFlag){raf=null;return;}
+  const dt = Math.min(ts - lastTime, 50);
+  lastTime = ts;
+  update(dt);
+  draw();
+  raf = requestAnimationFrame(loop);
+}
+ 
+function update(dt){
+  if(!waveActive) return;
+  updatePlayer(dt);
+  updateShooting(dt);
+  updateSpawn(dt);
+  updateZombies(dt);
+  updateBoss(dt);
+  updateBullets(dt);
+  updateParticles(dt);
+  updateFloatTexts(dt);
+  updateRegen(dt);
+  updateShield(dt);
+  updateHUD();
+  checkWaveEnd();
+}
+ 
+// ══════════════════════════════════════
+//  JUGADOR
+// ══════════════════════════════════════
+let regenAcc=0;
+function updateRegen(dt){
+  if(G.regen<=0) return;
+  regenAcc+=dt;
+  if(regenAcc>=1000){regenAcc=0;G.hp=Math.min(G.hp+G.regen,G.maxHp);}
+}
+function updateShield(dt){
+  if(G.shieldCooldown<=0) return;
+  G.shieldTimer+=dt;
+  if(G.shieldTimer>=G.shieldCooldown){G.shieldTimer=0;G.shieldActive=true;addLog('🛡️ Escudo recargado','#88aaff');}
+}
+ 
+function updatePlayer(dt){
+  let dx=0, dy=0;
+  if(keys['ArrowLeft']||keys['a']||keys['A']) dx-=1;
+  if(keys['ArrowRight']||keys['d']||keys['D']) dx+=1;
+  if(keys['ArrowUp']||keys['w']||keys['W']) dy-=1;
+  if(keys['ArrowDown']||keys['s']||keys['S']) dy+=1;
+  const len=Math.sqrt(dx*dx+dy*dy)||1;
+  if(dx||dy){dx/=len;dy/=len;}
+  G.x=Math.max(20,Math.min(W-20,G.x+dx*G.speed*(dt/16)));
+  G.y=Math.max(20,Math.min(H-20,G.y+dy*G.speed*(dt/16)));
+  G.facing=Math.atan2(mouse.y-G.y,mouse.x-G.x);
+}
+ 
+// ══════════════════════════════════════
+//  DISPARO
+// ══════════════════════════════════════
+function updateShooting(dt){
+  if(reloading){
+    reloadTimer-=dt;
+    if(reloadTimer<=0){reloading=false;reloadCurrentWeapon();}
+    return;
+  }
+  const wData = getWeaponData();
+  if(!wData) return;
+  if((shooting||keys[' ']||keys['Enter']) && (ts_now()-lastShot)>=wData.rof*G.rofMult){
+    fireWeapon(wData);
+    lastShot=ts_now();
+  }
+}
+let _now=0;
+function ts_now(){return performance.now();}
+ 
+function fireWeapon(wData){
+  const invW = G.inventory[G.currentWeapon];
+  if(!invW) return;
+  if(invW.ammo===0){startReload(wData);return;}
+ 
+  const shots = G.currentWeapon==='shotgun'?6:1;
+  for(let i=0;i<shots;i++){
+    const ang = G.facing + (Math.random()-0.5)*wData.spread*2;
+    const dmg = Math.ceil(wData.dmg * G.dmgMult);
+    bullets.push({
+      x:G.x, y:G.y, vx:Math.cos(ang)*wData.speed, vy:Math.sin(ang)*wData.speed,
+      dmg, color:wData.color, range:wData.range*G.rangeMult,
+      pierce:wData.pierce+G.pierceMult, dist:0, hits:0,
+      explosive: G.explodeChance>0 && Math.random()<G.explodeChance,
+      flame: G.currentWeapon==='flamethr',
+    });
+  }
+  if(invW.ammo>0){
+    invW.ammo--;
+    if(invW.ammo===0) startReload(wData);
+  }
+  // Muzzle flash
+  spawnParticles(G.x,G.y,3,wData.color,2,60);
+}
+ 
+function startReload(wData){
+  if(reloading) return;
+  const invW=G.inventory[G.currentWeapon];
+  if(!invW||invW.ammo<0) return;
+  reloading=true;
+  reloadTimer=wData.reload*G.reloadMult;
+  addLog(`🔄 Recargando ${wData.name}...`,'#aaa');
+}
+ 
+function reloadCurrentWeapon(){
+  const invW=G.inventory[G.currentWeapon];
+  const wData=WEAPONS[G.currentWeapon];
+  if(!invW||!wData) return;
+  invW.ammo=Math.ceil(wData.ammo*(1+G.ammoMult-1));
+  invW.maxAmmo=invW.ammo;
+}
+ 
+function getWeaponData(){return WEAPONS[G.currentWeapon];}
+ 
+// ══════════════════════════════════════
+//  SPAWN ZOMBIS
+// ══════════════════════════════════════
+function updateSpawn(dt){
+  if(spawnQueue.length===0) return;
+  spawnTimer+=dt;
+  if(spawnTimer>=spawnInterval){
+    spawnTimer=0;
+    if(spawnQueue.length>0){
+      const data=spawnQueue.shift();
+      spawnZombie(data);
+    }
+  }
+}
+ 
+function spawnZombie(data){
+  const edge=Math.floor(Math.random()*4);
+  let x,y;
+  if(edge===0){x=Math.random()*W;y=-30;}
+  else if(edge===1){x=W+30;y=Math.random()*H;}
+  else if(edge===2){x=Math.random()*W;y=H+30;}
+  else{x=-30;y=Math.random()*H;}
+  zombies.push({...data, x, y, angle:0, hitTimer:0, alive:true, id:Math.random()});
+}
+ 
+// ══════════════════════════════════════
+//  ZOMBIS
+// ══════════════════════════════════════
+function updateZombies(dt){
+  for(let i=zombies.length-1;i>=0;i--){
+    const z=zombies[i];
+    if(!z.alive){zombies.splice(i,1);continue;}
+    // Move toward player
+    const dx=G.x-z.x, dy=G.y-z.y;
+    const dist=Math.sqrt(dx*dx+dy*dy)||1;
+ 
+    // Special: exploder rushes fast at close range
+    let spd=z.spd;
+    if(z.name==='Suicida'&&dist<120) spd*=2;
+ 
+    z.x+=dx/dist*spd*(dt/16);
+    z.y+=dy/dist*spd*(dt/16);
+    z.angle=Math.atan2(dy,dx);
+    if(z.hitTimer>0) z.hitTimer-=dt;
+ 
+    // Collision with player
+    if(dist<z.size/2+16){
+      if(z.name==='Suicida'){
+        // explodes
+        takeDamage(z.dmg,z.x,z.y);
+        spawnParticles(z.x,z.y,12,'#ff8800',4,200);
+        z.alive=false;
+        totalKills++;
+        G.coins+=Math.ceil(z.coins*G.coinMult);
+        G.xp+=z.xp;
+        G.score+=z.score;
+        checkLevelUp();
+        continue;
+      }
+      takeDamage(z.dmg*(dt/1000)*3,z.x,z.y);
+    }
+  }
+}
+ 
+function takeDamage(amt,ox,oy){
+  if(G.shieldActive){
+    G.shieldActive=false;
+    G.shieldTimer=0;
+    spawnParticles(G.x,G.y,10,'#88aaff',3,300);
+    addLog('🛡️ Escudo absorbió el golpe','#88aaff');
+    return;
+  }
+  G.hp-=amt;
+  spawnParticles(G.x,G.y,5,'#ff2222',2,150);
+  if(G.hp<=0){G.hp=0;gameOver();}
+}
+ 
+function killZombie(z,nuke){
+  z.alive=false;
+  totalKills++;
+  spawnParticles(z.x,z.y,8,z.color,3,180);
+  const cm=nuke?1:G.coinMult;
+  G.coins+=Math.ceil(z.coins*cm);
+  G.score+=z.score;
+  if(!nuke){G.xp+=z.xp; checkLevelUp();}
+  totalDmg+=z.maxHp;
+  addLog(`💀 ${z.name} eliminado (+${z.coins}💰)`,z.color);
+}
+ 
+// ══════════════════════════════════════
+//  JEFE
+// ══════════════════════════════════════
+function updateBoss(dt){
+  if(!boss) return;
+  const dx=G.x-boss.x, dy=G.y-boss.y;
+  const dist=Math.sqrt(dx*dx+dy*dy)||1;
+ 
+  // Movement
+  const bspd = boss.spd*(1+boss.phase*0.2)*(dt/16);
+  boss.x+=dx/dist*bspd;
+  boss.y+=dy/dist*bspd;
+ 
+  boss.atkTimer+=dt;
+  boss.spawnTimer+=dt;
+  boss.angle=Math.atan2(dy,dx);
+ 
+  // Phase escalation
+  const hpPct=boss.hp/boss.maxHp;
+  if(hpPct<0.5&&boss.phase<1){boss.phase=1;addLog(`⚠️ ${boss.name}: ¡FASE 2!`,'#ff4444');}
+  if(hpPct<0.25&&boss.phase<2){boss.phase=2;addLog(`⚠️ ${boss.name}: ¡FASE FINAL!`,'#ff0000');}
+ 
+  // Attack patterns
+  const atkCd = Math.max(1200, 2500-boss.phase*600);
+  if(boss.atkTimer>=atkCd){
+    boss.atkTimer=0;
+    bossAttack();
+  }
+ 
+  // Spawn minions
+  if((boss.atk==='spawn'||boss.atk==='all')&&boss.spawnTimer>3000){
+    boss.spawnTimer=0;
+    for(let i=0;i<3+boss.phase;i++){
+      const ang=Math.random()*Math.PI*2;
+      spawnZombie({...ZOMBIE_TYPES.runner,x:boss.x+Math.cos(ang)*80,y:boss.y+Math.sin(ang)*80,hp:30,maxHp:30,alive:true,id:Math.random()});
+    }
+  }
+ 
+  // Melee
+  if(dist<boss.size/2+18){
+    takeDamage(boss.dmg*(dt/1000)*2,boss.x,boss.y);
+  }
+ 
+  // Update boss HP bar
+  document.getElementById('bossHpFill').style.width=(boss.hp/boss.maxHp*100)+'%';
+}
+ 
+function bossAttack(){
+  if(!boss) return;
+  if(boss.atk==='charge'||boss.atk==='all'){
+    // Shoot 8 bullets radially
+    for(let i=0;i<8;i++){
+      const ang=(i/8)*Math.PI*2;
+      bullets.push({x:boss.x,y:boss.y,vx:Math.cos(ang)*5,vy:Math.sin(ang)*5,dmg:boss.dmg,color:boss.color,range:350,pierce:0,dist:0,hits:0,explosive:false,flame:false,isBoss:true});
+    }
+  }
+  if(boss.atk==='stomp'||boss.atk==='all'){
+    spawnParticles(boss.x,boss.y,20,boss.color,5,400);
+    const dx=G.x-boss.x,dy=G.y-boss.y;
+    if(Math.sqrt(dx*dx+dy*dy)<160) takeDamage(boss.dmg*0.5,boss.x,boss.y);
+  }
+  if(boss.atk==='mindControl'||boss.atk==='all'){
+    // Reverse player controls briefly — just disorient with flash
+    addLog(`${boss.name}: ¡CONTROL MENTAL!`,'#cc44ff');
+    spawnParticles(G.x,G.y,15,'#cc44ff',4,300);
+  }
+}
+ 
+// ══════════════════════════════════════
+//  BALAS
+// ══════════════════════════════════════
+function updateBullets(dt){
+  for(let i=bullets.length-1;i>=0;i--){
+    const b=bullets[i];
+    b.x+=b.vx*(dt/16);
+    b.y+=b.vy*(dt/16);
+    b.dist+=Math.sqrt(b.vx*b.vx+b.vy*b.vy)*(dt/16);
+    if(b.dist>b.range||b.x<-20||b.x>W+20||b.y<-20||b.y>H+20){bullets.splice(i,1);continue;}
+ 
+    // Boss bullet hits player
+    if(b.isBoss){
+      if(Math.hypot(b.x-G.x,b.y-G.y)<18){takeDamage(b.dmg,b.x,b.y);bullets.splice(i,1);}
+      continue;
+    }
+ 
+    // Player bullet hits boss
+    if(boss){
+      if(Math.hypot(b.x-boss.x,b.y-boss.y)<boss.size/2){
+        const dmg=b.dmg;
+        boss.hp-=dmg;
+        totalDmg+=dmg;
+        G.hp=Math.min(G.maxHp,G.hp+dmg*G.lifesteal);
+        spawnFloat(boss.x+(Math.random()-0.5)*40,boss.y-20,'-'+dmg,b.color);
+        spawnParticles(b.x,b.y,4,b.color,2,100);
+        if(b.explosive) spawnExplosion(b.x,b.y);
+        if(boss.hp<=0){killBoss();bullets.splice(i,1);continue;}
+        if(b.hits>=b.pierce){bullets.splice(i,1);}
+        else b.hits++;
+        continue;
+      }
+    }
+ 
+    // Player bullet hits zombie
+    let hit=false;
+    for(let j=zombies.length-1;j>=0;j--){
+      const z=zombies[j];
+      if(!z.alive) continue;
+      if(Math.hypot(b.x-z.x,b.y-z.y)<z.size/2){
+        const dmg=b.dmg;
+        z.hp-=dmg;
+        totalDmg+=dmg;
+        G.hp=Math.min(G.maxHp,G.hp+dmg*G.lifesteal);
+        z.hitTimer=120;
+        spawnFloat(z.x+(Math.random()-0.5)*20,z.y-z.size,'-'+dmg,b.color);
+        spawnParticles(b.x,b.y,3,b.color,2,80);
+        if(b.explosive) spawnExplosion(b.x,b.y);
+        if(z.hp<=0) killZombie(z,false);
+        if(b.hits>=b.pierce){hit=true;break;}
+        else b.hits++;
+      }
+    }
+    if(hit) bullets.splice(i,1);
+  }
+}
+ 
+function spawnExplosion(x,y){
+  spawnParticles(x,y,15,'#ff8800',5,250);
+  for(let i=zombies.length-1;i>=0;i--){
+    const z=zombies[i];
+    if(!z.alive) continue;
+    if(Math.hypot(x-z.x,y-z.y)<60){
+      z.hp-=30;
+      if(z.hp<=0) killZombie(z,false);
+    }
+  }
+  if(boss&&Math.hypot(x-boss.x,y-boss.y)<80){boss.hp-=30;if(boss.hp<=0)killBoss();}
+}
+ 
+function killBoss(){
+  if(!boss) return;
+  totalBosses++;
+  totalKills++;
+  G.coins+=boss.coins;
+  G.score+=boss.score;
+  G.xp+=boss.xp;
+  spawnParticles(boss.x,boss.y,40,boss.color,6,600);
+  spawnFloat(boss.x,boss.y-40,`+${boss.coins}💰 JEFE MUERTO!`,'#ffdd00');
+  addLog(`🏆 ¡${boss.name} derrotado!`,'#ffdd00');
+  boss=null;
+  document.getElementById('bossHpWrap').style.display='none';
+  checkLevelUp();
+  endWave();
+}
+ 
+// ══════════════════════════════════════
+//  PARTÍCULAS & FLOTANTES
+// ══════════════════════════════════════
+function spawnParticles(x,y,count,color,speed,life){
+  for(let i=0;i<count;i++){
+    const ang=Math.random()*Math.PI*2;
+    const spd=(Math.random()*0.5+0.5)*speed;
+    particles.push({x,y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,color,life,maxLife:life,size:Math.random()*3+1});
+  }
+}
+function updateParticles(dt){
+  for(let i=particles.length-1;i>=0;i--){
+    const p=particles[i];
+    p.x+=p.vx*(dt/16); p.y+=p.vy*(dt/16);
+    p.vy+=0.05*(dt/16);
+    p.life-=dt;
+    if(p.life<=0) particles.splice(i,1);
+  }
+}
+ 
+function spawnFloat(x,y,text,color){
+  floatTexts.push({x,y,text,color,life:900,maxLife:900});
+}
+function updateFloatTexts(dt){
+  for(let i=floatTexts.length-1;i>=0;i--){
+    const f=floatTexts[i];
+    f.y-=0.8*(dt/16);
+    f.life-=dt;
+    if(f.life<=0) floatTexts.splice(i,1);
+  }
+}
+ 
+// ══════════════════════════════════════
+//  DRAW
+// ══════════════════════════════════════
+const GROUND_COLOR='#0d1a0d';
+const GRID_COLOR='#112211';
+function draw(){
+  // Background grid
+  ctx.fillStyle=GROUND_COLOR;
+  ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle=GRID_COLOR;
+  ctx.lineWidth=1;
+  for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+ 
+  drawZombies();
+  drawBoss();
+  drawBullets();
+  drawParticles();
+  drawFloats();
+  drawPlayer();
+ 
+  // Reload bar
+  if(reloading){
+    const wData=getWeaponData();
+    const pct=1-(reloadTimer/(wData.reload*G.reloadMult));
+    ctx.fillStyle='#333';
+    ctx.fillRect(G.x-25,G.y+22,50,6);
+    ctx.fillStyle='#ffdd44';
+    ctx.fillRect(G.x-25,G.y+22,50*pct,6);
+    ctx.fillStyle='#aaa';
+    ctx.font='9px Oswald';
+    ctx.textAlign='center';
+    ctx.fillText('RECARGANDO',G.x,G.y+38);
+  }
+}
+ 
+function drawPlayer(){
+  ctx.save();
+  ctx.translate(G.x,G.y);
+  // Shield glow
+  if(G.shieldActive){
+    ctx.beginPath();
+    ctx.arc(0,0,26,0,Math.PI*2);
+    ctx.strokeStyle='#88aaff';
+    ctx.lineWidth=3;
+    ctx.shadowColor='#88aaff';
+    ctx.shadowBlur=15;
+    ctx.stroke();
+    ctx.shadowBlur=0;
+  }
+  // Body
+  ctx.fillStyle='#3399ff';
+  ctx.shadowColor='#3399ff';
+  ctx.shadowBlur=10;
+  ctx.beginPath();
+  ctx.arc(0,0,14,0,Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur=0;
+  // Weapon direction
+  ctx.rotate(G.facing);
+  const wData=getWeaponData();
+  ctx.fillStyle=wData?wData.color:'#ffdd44';
+  ctx.fillRect(8,-4,22,8);
+  ctx.restore();
+}
+ 
+function drawZombies(){
+  for(const z of zombies){
+    if(!z.alive) continue;
+    ctx.save();
+    ctx.translate(z.x,z.y);
+    ctx.rotate(z.angle);
+    // Hit flash
+    if(z.hitTimer>0){ctx.shadowColor='#fff';ctx.shadowBlur=12;}
+    ctx.fillStyle=z.color;
+    ctx.beginPath();
+    ctx.arc(0,0,z.size/2,0,Math.PI*2);
+    ctx.fill();
+    // Eyes
+    ctx.fillStyle='#ff2222';
+    ctx.beginPath();ctx.arc(z.size/4,-z.size/5,2,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(z.size/4,z.size/5,2,0,Math.PI*2);ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.restore();
+    // HP bar
+    if(z.hp<z.maxHp){
+      const bw=z.size*1.2, bx=z.x-bw/2, by=z.y-z.size/2-8;
+      ctx.fillStyle='#330000';ctx.fillRect(bx,by,bw,4);
+      ctx.fillStyle='#ff4444';ctx.fillRect(bx,by,bw*(z.hp/z.maxHp),4);
+    }
+  }
+}
+ 
+function drawBoss(){
+  if(!boss) return;
+  ctx.save();
+  ctx.translate(boss.x,boss.y);
+  ctx.rotate(boss.angle);
+  ctx.shadowColor=boss.color;
+  ctx.shadowBlur=25+(boss.phase*10);
+  ctx.fillStyle=boss.color;
+  ctx.beginPath();
+  ctx.arc(0,0,boss.size/2,0,Math.PI*2);
+  ctx.fill();
+  // Inner dark
+  ctx.fillStyle='#110011';
+  ctx.beginPath();
+  ctx.arc(0,0,boss.size/3,0,Math.PI*2);
+  ctx.fill();
+  // Eyes (red glowing)
+  ctx.shadowColor='#ff0000';
+  ctx.shadowBlur=15;
+  ctx.fillStyle='#ff0000';
+  ctx.beginPath();ctx.arc(boss.size/5,-boss.size/8,4,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(boss.size/5,boss.size/8,4,0,Math.PI*2);ctx.fill();
+  ctx.shadowBlur=0;
+  ctx.restore();
+  // Name above
+  ctx.fillStyle=boss.color;
+  ctx.font='bold 12px Oswald';
+  ctx.textAlign='center';
+  ctx.fillText(boss.name,boss.x,boss.y-boss.size/2-10);
+}
+ 
+function drawBullets(){
+  for(const b of bullets){
+    ctx.save();
+    if(b.flame){
+      ctx.fillStyle=`rgba(255,${100+Math.random()*100},0,0.7)`;
+      ctx.beginPath();
+      ctx.arc(b.x,b.y,5+Math.random()*4,0,Math.PI*2);
+      ctx.fill();
+    } else {
+      ctx.fillStyle=b.isBoss?b.color:'#fff';
+      ctx.shadowColor=b.color;
+      ctx.shadowBlur=b.explosive?10:4;
+      ctx.beginPath();
+      ctx.arc(b.x,b.y,b.isBoss?5:3,0,Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+ 
+function drawParticles(){
+  for(const p of particles){
+    const alpha=p.life/p.maxLife;
+    ctx.globalAlpha=alpha;
+    ctx.fillStyle=p.color;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;
+}
+ 
+function drawFloats(){
+  for(const f of floatTexts){
+    const alpha=f.life/f.maxLife;
+    ctx.globalAlpha=alpha;
+    ctx.fillStyle=f.color;
+    ctx.font='bold 14px Oswald';
+    ctx.textAlign='center';
+    ctx.fillText(f.text,f.x,f.y);
+  }
+  ctx.globalAlpha=1;
+  ctx.textAlign='left';
+}
+ 
+// ══════════════════════════════════════
+//  HUD
+// ══════════════════════════════════════
+function updateHUD(){
+  document.getElementById('hpVal').textContent=Math.ceil(G.hp)+'/'+G.maxHp;
+  document.getElementById('hpBar').style.width=(G.hp/G.maxHp*100)+'%';
+  document.getElementById('xpVal').textContent=G.xp+'/'+G.xpNeeded;
+  document.getElementById('xpBar').style.width=(G.xp/G.xpNeeded*100)+'%';
+  document.getElementById('lvlVal').textContent=G.level;
+  document.getElementById('hudCoins').textContent=G.coins;
+  document.getElementById('hudScore').textContent=G.score;
+  document.getElementById('hudLevel').textContent=G.level;
+  document.getElementById('statKills').textContent=totalKills;
+  document.getElementById('statDmg').textContent=totalDmg;
+  document.getElementById('statWaves').textContent=waveNum;
+  document.getElementById('statBosses').textContent=totalBosses;
+  // Ammo
+  const invW=G.inventory[G.currentWeapon];
+  const wData=WEAPONS[G.currentWeapon];
+  if(invW){
+    document.getElementById('ammoLabel').textContent=wData.name;
+    document.getElementById('ammoVal').textContent=invW.ammo<0?'∞':invW.ammo+'/'+invW.maxAmmo;
+    document.getElementById('ammoBar').style.width=(invW.ammo<0?100:invW.ammo/invW.maxAmmo*100)+'%';
+  }
+}
+ 
+// ══════════════════════════════════════
+//  LEVEL UP
+// ══════════════════════════════════════
+function checkLevelUp(){
+  while(G.xp>=G.xpNeeded){
+    G.xp-=G.xpNeeded;
+    G.level++;
+    G.xpNeeded=Math.ceil(G.xpNeeded*1.25);
+    pauseForPerk();
+  }
+}
+ 
+function pauseForPerk(){
+  pausedFlag=true;
+  raf=null;
+  const choices=[];
+  const pool=[...ALL_PERKS];
+  while(choices.length<3&&pool.length>0){
+    const idx=Math.floor(Math.random()*pool.length);
+    choices.push(pool.splice(idx,1)[0]);
+  }
+  const grid=document.getElementById('perkChoices');
+  grid.innerHTML='';
+  choices.forEach(p=>{
+    const div=document.createElement('div');
+    div.className='perk-card';
+    div.innerHTML=`<div class="perk-icon">${p.icon}</div><h4>${p.name}</h4><p>${p.desc}</p>`;
+    div.onclick=()=>{
+      p.apply(G);
+      G.activePerks.push(p.name+' '+p.icon);
+      updatePerkList();
+      document.getElementById('perkModal').classList.remove('show');
+      pausedFlag=false;
+      raf=requestAnimationFrame(loop);
+    };
+    grid.appendChild(div);
+  });
+  document.getElementById('perkModal').classList.add('show');
+}
+ 
+function updatePerkList(){
+  const el=document.getElementById('perkList');
+  if(G.activePerks.length===0){el.textContent='Sin perks aún';return;}
+  el.innerHTML=G.activePerks.slice(-6).map(p=>`<div style="margin-bottom:3px;">${p}</div>`).join('');
+}
+ 
+// ══════════════════════════════════════
+//  FIN DE OLEADA
+// ══════════════════════════════════════
+function checkWaveEnd(){
+  if(!waveActive) return;
+  if(boss) return;
+  if(zombies.length===0&&spawnQueue.length===0&&zombiesLeft>0) endWave();
+  // Also end if all zombies dead
+  const alive=zombies.filter(z=>z.alive);
+  if(alive.length===0&&spawnQueue.length===0&&!boss&&waveActive) endWave();
+}
+ 
+function endWave(){
+  waveActive=false;
+  if(raf){cancelAnimationFrame(raf);raf=null;}
+  // Coins bonus
+  const bonus=Math.ceil(waveNum*15*(waveNum%5===0?3:1));
+  G.coins+=bonus;
+  // Show wave complete modal
+  const isBoss=waveNum%5===0;
+  document.getElementById('waveCompleteTitle').textContent=isBoss?`🏆 ¡JEFE DERROTADO!`:`✅ ¡OLEADA ${waveNum} COMPLETADA!`;
+  const sum=document.getElementById('waveSummary');
+  sum.innerHTML=`
+    <div>Zombis: <span>${totalKills}</span></div>
+    <div>Daño total: <span>${totalDmg}</span></div>
+    <div>Bonus oleada: <span>+${bonus}💰</span></div>
+    <div>Puntuación: <span>${G.score}</span></div>
+    <div>Nivel: <span>${G.level}</span></div>
+    <div>Monedas: <span>${G.coins}💰</span></div>
+  `;
+  document.getElementById('waveModal').classList.add('show');
+}
+ 
+function nextWave(){
+  document.getElementById('waveModal').classList.remove('show');
+  startWave();
+}
+function closeWaveModal(){document.getElementById('waveModal').classList.remove('show');}
+ 
+// ══════════════════════════════════════
+//  GAME OVER
+// ══════════════════════════════════════
+function gameOver(){
+  waveActive=false;
+  if(raf){cancelAnimationFrame(raf);raf=null;}
+  const sum=document.getElementById('goSummary');
+  sum.innerHTML=`
+    <div>Oleada llegada: <span>${waveNum}</span></div>
+    <div>Zombis muertos: <span>${totalKills}</span></div>
+    <div>Daño infligido: <span>${totalDmg}</span></div>
+    <div>Jefes derrotados: <span>${totalBosses}</span></div>
+    <div>Nivel alcanzado: <span>${G.level}</span></div>
+    <div>Puntuación final: <span>${G.score}</span></div>
+  `;
+  document.getElementById('gameOverModal').classList.add('show');
+}
+ 
+function restartGame(){
+  document.querySelectorAll('.modal').forEach(m=>m.classList.remove('show'));
+  if(raf){cancelAnimationFrame(raf);raf=null;}
+  initGame();
+}
+ 
+// ══════════════════════════════════════
+//  TIENDA
+// ══════════════════════════════════════
+function buildShop(){
+  // Weapons
+  const sg=document.getElementById('shopGrid');
+  sg.innerHTML='';
+  for(const [id,w] of Object.entries(WEAPONS)){
+    if(id==='pistol') continue;
+    const owned=!!G.inventory[id];
+    const affordable=G.coins>=w.price;
+    const levelOk=G.level>=w.unlock;
+    const div=document.createElement('div');
+    div.className='shop-item'+(owned?' owned':!affordable||!levelOk?' cantafford':'');
+    div.innerHTML=`
+      ${owned?'<div class="shop-owned-badge">✓ COMPRADO</div>':''}
+      <h4>${w.name}</h4>
+      <p>${w.desc}</p>
+      <p style="font-size:10px;color:#555;">Nivel mínimo: ${w.unlock} | Daño: ${w.dmg} | RF: ${w.rof}ms</p>
+      <div class="shop-price">${owned?'EQUIPAR':'💰 '+w.price}</div>
+    `;
+    if(!owned&&affordable&&levelOk){
+      div.onclick=()=>{buyWeapon(id,w.price);};
+    } else if(owned){
+      div.onclick=()=>{equipWeapon(id);buildShop();};
+    } else if(!levelOk){
+      div.innerHTML+=`<p style="color:#ff4444;font-size:11px;margin-top:6px;">🔒 Requiere nivel ${w.unlock}</p>`;
+    }
+    sg.appendChild(div);
+  }
+  // Upgrades
+  const ug=document.getElementById('upgradeGrid');
+  ug.innerHTML='';
+  UPGRADES.forEach(u=>{
+    const lvl=G.upgradeLevel[u.id]||0;
+    const maxed=lvl>=u.maxLevel;
+    const canAfford=G.coins>=u.price;
+    const div=document.createElement('div');
+    div.className='shop-item'+(maxed?' owned':!canAfford?' cantafford':'');
+    div.innerHTML=`
+      <h4>${u.name} ${lvl>0?'('.repeat(0)+Array(lvl+1).join('★')+'':''}</h4>
+      <p>${u.desc}</p>
+      <div class="shop-price">${maxed?'MAX':'💰 '+u.price} (${lvl}/${u.maxLevel})</div>
+    `;
+    if(!maxed&&canAfford){
+      div.onclick=()=>{G.coins-=u.price;u.effect(G);G.upgradeLevel[u.id]=(G.upgradeLevel[u.id]||0)+1;buildShop();updateHUD();addLog('⬆️ '+u.name,'#44ff44');};
+    }
+    ug.appendChild(div);
+  });
+  // Consumables
+  const cg=document.getElementById('consumableGrid');
+  cg.innerHTML='';
+  CONSUMABLES.forEach(c=>{
+    const canAfford=G.coins>=c.price;
+    const div=document.createElement('div');
+    div.className='shop-item'+(!canAfford?' cantafford':'');
+    div.innerHTML=`<h4>${c.name}</h4><p>${c.desc}</p><div class="shop-price">💰 ${c.price}</div>`;
+    if(canAfford){
+      div.onclick=()=>{G.coins-=c.price;c.effect(G);buildShop();updateHUD();addLog('✅ '+c.name+' usado','#44ff44');};
+    }
+    cg.appendChild(div);
+  });
+  document.getElementById('shopCoins').textContent=G.coins;
+}
+ 
+function buyWeapon(id,price){
+  if(G.coins<price){addLog('❌ Sin monedas suficientes','#ff4444');return;}
+  G.coins-=price;
+  const w=WEAPONS[id];
+  G.inventory[id]={...w,ammo:Math.ceil(w.ammo*(1+G.ammoMult-1)),maxAmmo:Math.ceil(w.ammo*(1+G.ammoMult-1))};
+  equipWeapon(id);
+  buildShop();
+  buildWeaponSlots();
+  addLog('🛒 '+w.name+' comprada','#ffdd00');
+}
+ 
+function equipWeapon(id){
+  if(!G.inventory[id]) return;
+  G.currentWeapon=id;
+  reloading=false;
+  buildWeaponSlots();
+  updateHUD();
+}
+ 
+function buildWeaponSlots(){
+  const el=document.getElementById('weaponSlots');
+  el.innerHTML='';
+  Object.keys(G.inventory).forEach((id,i)=>{
+    const w=WEAPONS[id];
+    const inv=G.inventory[id];
+    const div=document.createElement('div');
+    div.className='wslot'+(G.currentWeapon===id?' active':'');
+    div.innerHTML=`<span class="wname">${w.name}</span><span class="wammo">${inv.ammo<0?'∞':inv.ammo}</span>`;
+    div.onclick=()=>{equipWeapon(id);};
+    el.appendChild(div);
+  });
+}
+ 
+function openShop(){
+  pausedFlag=true; raf=null;
+  buildShop();
+  document.getElementById('shopModal').classList.add('show');
+}
+function closeShop(){
+  document.getElementById('shopModal').classList.remove('show');
+  pausedFlag=false;
+  raf=requestAnimationFrame(loop);
+}
+ 
+// ══════════════════════════════════════
+//  PAUSA
+// ══════════════════════════════════════
+function togglePause(){
+  if(document.getElementById('shopModal').classList.contains('show')) return;
+  pausedFlag=!pausedFlag;
+  if(pausedFlag){raf=null;document.getElementById('pauseModal').classList.add('show');}
+  else{document.getElementById('pauseModal').classList.remove('show');raf=requestAnimationFrame(loop);}
+}
+function closePause(){document.getElementById('pauseModal').classList.remove('show');}
+ 
+// ══════════════════════════════════════
+//  WAVE BANNER
+// ══════════════════════════════════════
+function showWaveBanner(text){
+  const b=document.getElementById('waveBanner');
+  b.textContent=text;
+  b.style.opacity='1';
+  b.style.color=text.includes('JEFE')||text.includes('⚠️')?'#cc44ff':'#ff2222';
+  setTimeout(()=>{b.style.opacity='0';},2000);
+}
+ 
+// ══════════════════════════════════════
+//  LOG
+// ══════════════════════════════════════
+function addLog(text,color){
+  const el=document.getElementById('killLog');
+  const div=document.createElement('div');
+  div.className='klog';
+  div.textContent=text;
+  div.style.color=color||'#aaa';
+  el.prepend(div);
+  while(el.children.length>12) el.removeChild(el.lastChild);
+}
+ 
+// ══════════════════════════════════════
+//  CONTROLES
+// ══════════════════════════════════════
+window.addEventListener('keydown',e=>{
+  keys[e.key]=true;
+  if(e.key==='Escape') togglePause();
+  if(e.key==='r'||e.key==='R'){const wData=getWeaponData();if(wData) startReload(wData);}
+  // Weapon switch 1-8
+  const nums=['1','2','3','4','5','6','7','8'];
+  const idx=nums.indexOf(e.key);
+  if(idx>=0){
+    const wkeys=Object.keys(G.inventory);
+    if(wkeys[idx]) equipWeapon(wkeys[idx]);
+  }
+});
+window.addEventListener('keyup',e=>{keys[e.key]=false;});
+ 
+canvas.addEventListener('mousemove',e=>{
+  const rect=canvas.getBoundingClientRect();
+  mouse.x=e.clientX-rect.left;
+  mouse.y=e.clientY-rect.top;
+});
+canvas.addEventListener('mousedown',e=>{if(e.button===0)shooting=true;});
+canvas.addEventListener('mouseup',e=>{if(e.button===0)shooting=false;});
+canvas.addEventListener('contextmenu',e=>{e.preventDefault();const wData=getWeaponData();if(wData) startReload(wData);});
+ 
+// ══════════════════════════════════════
+//  INICIO
+// ══════════════════════════════════════
+initGame();
+</script>
+</body>
+</html>
+ 
