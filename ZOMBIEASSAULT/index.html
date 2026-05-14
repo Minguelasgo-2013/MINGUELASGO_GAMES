@@ -262,7 +262,7 @@ const W = canvas.width, H = canvas.height;
 //  ARMAS
 // ══════════════════════════════════════
 const WEAPONS = {
-  pistol:   {name:'🔫 Pistola',    dmg:18,  rof:400,  range:280, spread:0.08, pierce:0, ammo:-1,     reload:0,    speed:10, color:'#ffdd44', price:0,    unlock:1,  desc:'Infinita, confiable. Sin fallos.'},
+  pistol:   {name:'🔫 Pistola',    dmg:28,  rof:180,  range:300, spread:0.07, pierce:0, ammo:-1,     reload:0,    speed:12, color:'#ffdd44', price:0,    unlock:1,  desc:'Infinita, confiable. Sin fallos.'},
   shotgun:  {name:'💥 Escopeta',   dmg:22,  rof:700,  range:160, spread:0.25, pierce:0, ammo:30,     reload:1800, speed:8,  color:'#ff8800', price:80,   unlock:1,  desc:'6 perdigones. Devastadora a corta distancia.'},
   smg:      {name:'⚡ SMG',        dmg:10,  rof:120,  range:220, spread:0.12, pierce:0, ammo:90,     reload:1400, speed:12, color:'#44aaff', price:120,  unlock:2,  desc:'Cadencia extrema. Lluvia de balas.'},
   rifle:    {name:'🎯 Rifle',      dmg:55,  rof:900,  range:480, spread:0.01, pierce:2, ammo:20,     reload:2000, speed:16, color:'#44ff44', price:200,  unlock:3,  desc:'Penetra hasta 3 zombis. Alta precisión.'},
@@ -380,8 +380,8 @@ function startWave(){
  
   // Genera oleada normal
   spawnQueue=[];
-  const difficulty = 1 + (waveNum-1)*0.18;
-  const count = Math.floor(6 + waveNum*2.2);
+  const difficulty = 1 + (waveNum-1)*0.10;
+  const count = Math.floor(4 + waveNum*1.4);
   zombiesLeft = count;
   zombiesSpawned = 0;
  
@@ -402,7 +402,7 @@ function startWave(){
       dmg: Math.ceil(base.dmg * (1+(waveNum-1)*0.06)),
     });
   }
-  spawnInterval = Math.max(300, 1200 - waveNum*40);
+  spawnInterval = Math.max(500, 1800 - waveNum*40);
   spawnTimer = 0;
   if(!raf) loop(0);
 }
