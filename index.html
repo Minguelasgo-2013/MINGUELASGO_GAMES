@@ -284,7 +284,7 @@
  
             <div class="game-card vip-card">
                 <span class="vip-badge">VIP</span>
-                <img src="" class="game-img" alt="Extreme Car">
+                <img src="" class="game-img" alt="Plague Ninc">
                 <h3>🏎️ PLAGUE ÑINC.</h3>
                 <p>Crea o destrulle virus</p>
                 <button class="play-btn vip-btn" onclick="location.href='PlagueÑinck/index.html'">JUGAR AHORA</button>
@@ -348,10 +348,9 @@
  
     <script>
  
-        const VIP_HASH = "bda9368faafaea011e17d44c69993d74f3936ede9a723d3cc9623588fac60ebc";
-        const DEV_HASH = "bda9368faafaea011e17d44c69993d74f3936ede9a723d3cc9623588fac60ebc";
+        const VIP_HASH = "047364b9be67f665eca384b8061d688b8642a8b47b3de35c22a012ed6fe69242";
+        const DEV_HASH = "047364b9be67f665eca384b8061d688b8642a8b47b3de35c22a012ed6fe69242";
  
-        // Convierte texto a hash SHA-256 (función nativa del navegador)
         async function sha256(text) {
             const encoded = new TextEncoder().encode(text);
             const buffer = await crypto.subtle.digest("SHA-256", encoded);
@@ -366,7 +365,6 @@
             const hash  = await sha256(input);
  
             if (hash === VIP_HASH) {
-                // Guardamos el HASH (no la contraseña) en localStorage
                 localStorage.setItem("vipAccess", VIP_HASH);
                 grantVIP();
             } else {
@@ -421,9 +419,7 @@
             if (e.key === "Enter") checkDEV();
         });
  
-        // ── AUTOLOGIN — valida contra el hash actual ──────────────────
-        // Si alguien tenía acceso con una contraseña ANTIGUA (hash distinto),
-        // localStorage no coincidirá y perderá el acceso automáticamente.
+        // ── AUTOLOGIN ──────────────────────────────────────────────
         window.onload = function () {
             if (localStorage.getItem("vipAccess") === VIP_HASH) {
                 grantVIP();
@@ -436,3 +432,4 @@
  
 </body>
 </html>
+ 
