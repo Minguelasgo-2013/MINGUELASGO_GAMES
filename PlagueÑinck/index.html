@@ -1,670 +1,1014 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bio-Infección Global: Cepa Balanceada</title>
-    <style>
-        :root {
-            --bg-color: #06090e;
-            --panel-color: #121824;
-            --text-color: #ffc107;
-            --adn-color: #00f0ff;
-            --infect-color: #ff3838;
-            --heal-color: #2ed573;
-            --border-color: #232d42;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bio-Infección Global: Ultimate Edition</title>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: #ffffff;
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+<style>
+:root{
+    --bg:#05070d;
+    --panel:#101826;
+    --panel2:#151f30;
+    --line:#23314a;
+    --text:#f5f7ff;
+    --mut:#00f0ff;
+    --danger:#ff3d5e;
+    --heal:#2ed573;
+    --gold:#ffcc00;
+}
 
-        h1 {
-            color: var(--infect-color);
-            margin: 5px 0;
-            font-size: 2.2em;
-            text-shadow: 0 0 15px rgba(255, 56, 56, 0.5);
-            letter-spacing: 1px;
-            font-weight: 800;
-        }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        .subtitle {
-            color: #718096;
-            margin-bottom: 15px;
-            font-size: 0.85em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+body{
+    background:
+        radial-gradient(circle at top,#182033 0%,#05070d 60%);
+    color:var(--text);
+    font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;
+    min-height:100vh;
+    padding:15px;
+    overflow-x:hidden;
+}
 
-        #pantalla-inicio {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(5, 7, 10, 0.95);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
+h1{
+    text-align:center;
+    color:var(--danger);
+    font-size:3em;
+    margin-top:10px;
+    text-shadow:0 0 20px rgba(255,61,94,.6);
+    letter-spacing:3px;
+}
 
-        .selector-box {
-            background: var(--panel-color);
-            border: 2px solid var(--border-color);
-            padding: 30px;
-            border-radius: 8px;
-            text-align: center;
-            max-width: 500px;
-        }
+.subtitle{
+    text-align:center;
+    color:#91a4c2;
+    margin-bottom:18px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+}
 
-        .pathogen-btn {
-            background: #1a2333;
-            border: 1px solid var(--border-color);
-            color: white;
-            padding: 12px 20px;
-            margin: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 80%;
-            transition: 0.2s;
-        }
+#pantalla-inicio{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.95);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
 
-        .pathogen-btn:hover {
-            border-color: var(--adn-color);
-            background: #243147;
-        }
+.selector-box{
+    width:520px;
+    background:linear-gradient(180deg,#141d2e,#0c111c);
+    border:2px solid var(--line);
+    border-radius:15px;
+    padding:35px;
+    box-shadow:0 0 40px rgba(0,240,255,.15);
+    animation:spawn .6s ease;
+}
 
-        .ticker {
-            background: #000000;
-            border: 1px solid var(--border-color);
-            color: #ffcc00;
-            padding: 12px;
-            width: 100%;
-            max-width: 1200px;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            font-size: 0.9em;
-            font-family: monospace;
-        }
+@keyframes spawn{
+    from{
+        transform:scale(.8);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px;
-            width: 100%;
-            max-width: 1200px;
-            margin-bottom: 15px;
-        }
+.selector-box h2{
+    text-align:center;
+    margin-bottom:20px;
+    color:var(--danger);
+}
 
-        .stat-card {
-            background: var(--panel-color);
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-        }
+.pathogen-btn{
+    width:100%;
+    padding:15px;
+    margin-top:12px;
+    background:#1a2740;
+    border:1px solid var(--line);
+    color:white;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.25s;
+    font-size:1em;
+    font-weight:bold;
+}
 
-        .stat-card.adn { border-top: 4px solid var(--adn-color); }
-        .stat-card.inf { border-top: 4px solid var(--infect-color); }
-        .stat-card.cur { border-top: 4px solid var(--heal-color); }
+.pathogen-btn:hover{
+    background:#223555;
+    border-color:var(--mut);
+    transform:translateY(-2px);
+    box-shadow:0 0 20px rgba(0,240,255,.2);
+}
 
-        .stat-val {
-            font-size: 1.7em;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-        .adn .stat-val { color: var(--adn-color); }
-        .inf .stat-val { color: var(--infect-color); }
-        .cur .stat-val { color: var(--heal-color); }
+.ticker{
+    width:100%;
+    max-width:1350px;
+    margin:auto;
+    background:#080c13;
+    border:1px solid var(--line);
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:15px;
+    color:var(--gold);
+    font-family:monospace;
+    overflow:hidden;
+}
 
-        .map-container {
-            width: 100%;
-            max-width: 1200px;
-            background: #090d16;
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:12px;
+    max-width:1350px;
+    width:100%;
+    margin:auto;
+}
 
-        .map-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
-            gap: 10px;
-        }
+.stat-card{
+    background:linear-gradient(180deg,var(--panel),#0f1520);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px;
+    position:relative;
+    overflow:hidden;
+    transition:.25s;
+}
 
-        .map-node {
-            background: #121721;
-            border: 1px solid #2d3748;
-            padding: 10px;
-            border-radius: 4px;
-            text-align: center;
-            font-size: 0.8em;
-            transition: all 0.4s ease;
-        }
+.stat-card:hover{
+    transform:translateY(-4px);
+}
 
-        .main-container {
-            display: grid;
-            grid-template-columns: 1fr 450px;
-            gap: 15px;
-            width: 100%;
-            max-width: 1200px;
-        }
+.stat-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);
+    transform:translateX(-100%);
+    animation:shine 6s infinite;
+}
 
-        @media (max-width: 950px) {
-            .main-container { grid-template-columns: 1fr; }
-        }
+@keyframes shine{
+    to{
+        transform:translateX(100%);
+    }
+}
 
-        .panel {
-            background-color: var(--panel-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 18px;
-        }
+.stat-title{
+    color:#a8b8d0;
+    font-size:.9em;
+}
 
-        .panel h3 {
-            margin-top: 0;
-            font-size: 1.2em;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 8px;
-            color: #e2e8f0;
-        }
+.stat-value{
+    margin-top:10px;
+    font-size:2em;
+    font-weight:900;
+}
 
-        .countries-list {
-            max-height: 380px;
-            overflow-y: auto;
-        }
+.adn .stat-value{color:var(--mut);}
+.inf .stat-value{color:var(--danger);}
+.dead .stat-value{color:#ff6b81;}
+.cure .stat-value{color:var(--heal);}
 
-        .country-row {
-            display: flex;
-            justify-content: space-between;
-            background: #172030;
-            padding: 8px 12px;
-            margin-top: 6px;
-            border-radius: 4px;
-            font-size: 0.85em;
-        }
+.progress-container{
+    width:100%;
+    height:16px;
+    background:#0c1118;
+    border-radius:20px;
+    overflow:hidden;
+    border:1px solid #24334f;
+    margin-top:10px;
+}
 
-        .country-bar {
-            height: 4px;
-            background: var(--infect-color);
-            width: 0%;
-            transition: width 0.4s;
-            border-radius: 2px;
-            margin-top: 2px;
-        }
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#00f0ff,#00ffaa);
+    transition:.4s;
+}
 
-        .tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 15px;
-        }
+.main-layout{
+    width:100%;
+    max-width:1350px;
+    margin:auto;
+    margin-top:15px;
+    display:grid;
+    grid-template-columns:1fr 420px;
+    gap:15px;
+}
 
-        .tab-btn {
-            flex: 1;
-            background: #1a2333;
-            border: 1px solid var(--border-color);
-            color: #a0aec0;
-            padding: 10px;
-            cursor: pointer;
-            font-size: 0.85em;
-            font-weight: bold;
-            border-radius: 4px;
-        }
+@media(max-width:1100px){
+    .main-layout{
+        grid-template-columns:1fr;
+    }
+}
 
-        .tab-btn.active {
-            background: var(--text-color);
-            color: #000000;
-            border-color: var(--text-color);
-        }
+.panel{
+    background:linear-gradient(180deg,var(--panel),#0e1521);
+    border:1px solid var(--line);
+    border-radius:15px;
+    padding:18px;
+}
 
-        .upgrade-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 380px;
-            overflow-y: auto;
-        }
+.panel h3{
+    margin-bottom:15px;
+    color:#dce7ff;
+    border-bottom:1px solid var(--line);
+    padding-bottom:10px;
+}
 
-        .upgrade-item {
-            background: #161f30;
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-        }
+.map-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:10px;
+}
 
-        .upgrade-item.bought {
-            border-left: 4px solid var(--heal-color);
-            background: #111824;
-            opacity: 0.7;
-        }
+.map-node{
+    background:#141d2c;
+    border:1px solid #263650;
+    border-radius:10px;
+    padding:12px;
+    text-align:center;
+    transition:.4s;
+    position:relative;
+    overflow:hidden;
+}
 
-        .upgrade-info h4 {
-            margin: 0 0 4px 0;
-            font-size: 0.95em;
-            color: #ffffff;
-        }
+.map-node:hover{
+    transform:scale(1.03);
+}
 
-        .upgrade-info p {
-            margin: 0;
-            font-size: 0.8em;
-            color: #a0aec0;
-            line-height: 1.2;
-        }
+.map-node strong{
+    display:block;
+    margin-bottom:6px;
+}
 
-        .buy-btn {
-            background: var(--adn-color);
-            color: #000000;
-            border: none;
-            padding: 10px 14px;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.8em;
-            min-width: 85px;
-        }
+.country-list{
+    max-height:480px;
+    overflow:auto;
+    padding-right:4px;
+}
 
-        .buy-btn:disabled {
-            background: #2d3748;
-            color: #718096;
-            cursor: not-allowed;
-        }
+.country{
+    background:#151f30;
+    border:1px solid #22324d;
+    border-radius:10px;
+    padding:10px;
+    margin-bottom:10px;
+}
 
-        .control-btn {
-            width: 100%;
-            padding: 12px;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            background: #3182ce;
-            color: white;
-            margin-top: 15px;
-            font-size: 0.9em;
-        }
-    </style>
+.country-top{
+    display:flex;
+    justify-content:space-between;
+    font-size:.9em;
+    margin-bottom:8px;
+}
+
+.country-bar{
+    width:100%;
+    height:10px;
+    background:#0b1119;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.country-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#ff3d5e,#ff7b7b);
+}
+
+.tabs{
+    display:flex;
+    gap:8px;
+    margin-bottom:12px;
+}
+
+.tab{
+    flex:1;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    background:#1a2740;
+    color:#a8b8d0;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.tab.active{
+    background:var(--gold);
+    color:black;
+}
+
+.upgrades{
+    max-height:500px;
+    overflow:auto;
+}
+
+.upgrade{
+    background:#161f31;
+    border:1px solid #243552;
+    border-radius:12px;
+    padding:12px;
+    margin-bottom:10px;
+    transition:.25s;
+}
+
+.upgrade:hover{
+    transform:translateY(-2px);
+}
+
+.upgrade-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.upgrade h4{
+    margin-bottom:5px;
+}
+
+.upgrade p{
+    color:#9cb0cb;
+    font-size:.83em;
+}
+
+.buy-btn{
+    min-width:90px;
+    border:none;
+    border-radius:10px;
+    background:var(--mut);
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+    padding:10px;
+}
+
+.buy-btn:disabled{
+    background:#34445e;
+    color:#7e8ca3;
+    cursor:not-allowed;
+}
+
+.control-btn{
+    width:100%;
+    margin-top:12px;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    background:#2574ff;
+    color:white;
+    font-weight:bold;
+    font-size:1em;
+}
+
+.control-btn:hover{
+    filter:brightness(1.1);
+}
+
+.flash{
+    animation:flash .5s;
+}
+
+@keyframes flash{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.08);}
+    100%{transform:scale(1);}
+}
+
+#gameOver{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.94);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:10000;
+}
+
+.gameover-box{
+    width:600px;
+    max-width:90%;
+    background:#111827;
+    border:2px solid var(--danger);
+    border-radius:20px;
+    padding:35px;
+    text-align:center;
+    animation:spawn .5s ease;
+}
+
+.gameover-box h2{
+    font-size:2.4em;
+    margin-bottom:15px;
+}
+
+.gameover-box p{
+    color:#bcc8dd;
+    margin-bottom:20px;
+}
+
+.restart-btn{
+    padding:15px 25px;
+    border:none;
+    border-radius:12px;
+    background:var(--danger);
+    color:white;
+    font-size:1em;
+    cursor:pointer;
+    font-weight:bold;
+}
+</style>
 </head>
+
 <body>
 
-    <div id="pantalla-inicio">
-        <div class="selector-box">
-            <h2 style="color: var(--infect-color); margin-top:0;">SELECCIONA TU PATÓGENO</h2>
-            <button class="pathogen-btn" onclick="seleccionarPatogeno('Bacteria')">🧫 Bacteria (+ADN inicial)</button>
-            <button class="pathogen-btn" onclick="seleccionarPatogeno('Virus')">🧬 Virus (Mutaciones automáticas)</button>
-            <button class="pathogen-btn" onclick="seleccionarPatogeno('Parásito')">🐛 Parásito (Ocultación OMS)</button>
+<div id="pantalla-inicio">
+    <div class="selector-box">
+        <h2>☣️ SELECCIONA TU PATÓGENO</h2>
+
+        <button class="pathogen-btn" onclick="seleccionarPatogeno('Bacteria')">
+            🧫 Bacteria — Mucho ADN inicial
+        </button>
+
+        <button class="pathogen-btn" onclick="seleccionarPatogeno('Virus')">
+            🧬 Virus — Mutaciones aleatorias
+        </button>
+
+        <button class="pathogen-btn" onclick="seleccionarPatogeno('Parásito')">
+            🐛 Parásito — Baja detección
+        </button>
+    </div>
+</div>
+
+<div id="gameOver">
+    <div class="gameover-box">
+        <h2 id="gameOverTitle"></h2>
+        <p id="gameOverText"></p>
+        <button class="restart-btn" onclick="location.reload()">
+            🔄 REINICIAR PARTIDA
+        </button>
+    </div>
+</div>
+
+<h1>BIO-INFECCIÓN GLOBAL</h1>
+<div class="subtitle" id="tipoPatogenoTexto">
+    Inicializando cepa...
+</div>
+
+<div class="ticker" id="newsTicker">
+📡 Preparando simulación pandémica...
+</div>
+
+<div class="stats-grid">
+
+    <div class="stat-card adn">
+        <div class="stat-title">🧬 PUNTOS ADN</div>
+        <div class="stat-value" id="statAdn">0</div>
+    </div>
+
+    <div class="stat-card inf">
+        <div class="stat-title">🦠 INFECTADOS</div>
+        <div class="stat-value" id="statInf">1</div>
+    </div>
+
+    <div class="stat-card dead">
+        <div class="stat-title">💀 MUERTES</div>
+        <div class="stat-value" id="statDead">0</div>
+    </div>
+
+    <div class="stat-card cure">
+        <div class="stat-title">🧪 CURA GLOBAL</div>
+        <div class="stat-value" id="statCure">0%</div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="cureBar"></div>
         </div>
     </div>
 
-    <h1>BIO-INFECCIÓN GLOBAL</h1>
-    <div class="subtitle" id="tipoPatogenoTexto">Cargando genoma...</div>
+</div>
 
-    <div class="ticker" id="newsTicker">Iniciando cepa biológica...</div>
+<div class="main-layout">
 
-    <div class="stats-grid">
-        <div class="stat-card adn">🧬 PUNTOS ADN<div class="stat-val" id="statAdn">12</div></div>
-        <div class="stat-card inf">🦠 INFECTADOS VIVOS<div class="stat-val" id="statInfected">1</div></div>
-        <div class="stat-card">💀 BAJAS CONFIRMADAS<div class="stat-val" id="statDead" style="color:var(--infect-color);">0</div></div>
-        <div class="stat-card cur">🧪 PROGRESO DE LA CURA<div class="stat-val" id="statCura">0%</div></div>
+    <div class="panel">
+
+        <h3>🌍 MAPA MUNDIAL</h3>
+
+        <div class="map-grid" id="mapGrid"></div>
+
+        <br>
+
+        <h3>📊 ESTADOS DE PAÍSES</h3>
+
+        <div class="country-list" id="countryList"></div>
+
+        <button class="control-btn" id="pauseBtn">
+            ⏸️ PAUSAR SIMULACIÓN
+        </button>
+
     </div>
 
-    <div class="map-container">
-        <div class="map-grid" id="mapGridContainer"></div>
-    </div>
+    <div class="panel">
 
-    <div class="main-container">
-        <div class="panel">
-            <h3>🌍 Geo-Análisis Territorial</h3>
-            <div class="countries-list" id="countriesContainer"></div>
-            <button class="control-btn" id="pauseResumeBtn">⏸️ PAUSAR SIMULACIÓN</button>
+        <h3>🧬 MUTACIONES</h3>
+
+        <div class="tabs">
+            <button class="tab active" onclick="setTab('trans')" id="tab-trans">
+                Transmisión
+            </button>
+
+            <button class="tab" onclick="setTab('sintoma')" id="tab-sintoma">
+                Síntomas
+            </button>
+
+            <button class="tab" onclick="setTab('res')" id="tab-res">
+                Resistencias
+            </button>
         </div>
 
-        <div class="panel">
-            <h3>🧬 Ingeniería de Mutación</h3>
-            <div class="tabs">
-                <button class="tab-btn active" id="tab-trans">Transmisión</button>
-                <button class="tab-btn" id="tab-sintoma">Síntomas</button>
-                <button class="tab-btn" id="tab-habilidad">Resistencias</button>
+        <div class="upgrades" id="upgrades"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+const paises = [
+{ id:"esp",nombre:"España",pob:47000000,inf:1,dead:0,clima:"templado",rico:true },
+{ id:"usa",nombre:"EE.UU",pob:331000000,inf:0,dead:0,clima:"templado",rico:true },
+{ id:"bra",nombre:"Brasil",pob:214000000,inf:0,dead:0,clima:"calido",rico:false },
+{ id:"rus",nombre:"Rusia",pob:144000000,inf:0,dead:0,clima:"frio",rico:false },
+{ id:"chn",nombre:"China",pob:1412000000,inf:0,dead:0,clima:"templado",rico:true },
+{ id:"ind",nombre:"India",pob:1390000000,inf:0,dead:0,clima:"calido",rico:false },
+{ id:"jpn",nombre:"Japón",pob:125000000,inf:0,dead:0,clima:"templado",rico:true },
+{ id:"can",nombre:"Canadá",pob:38000000,inf:0,dead:0,clima:"frio",rico:true },
+{ id:"aus",nombre:"Australia",pob:26000000,inf:0,dead:0,clima:"calido",rico:true },
+{ id:"grl",nombre:"Groenlandia",pob:56000,inf:0,dead:0,clima:"frio",rico:true }
+];
+
+const mejoras = [
+
+{ id:"t1",cat:"trans",nombre:"Aerosoles",desc:"Contagio aéreo avanzado.",cost:6 },
+{ id:"t2",cat:"trans",nombre:"Transmisión Marina",desc:"Expansión por barcos.",cost:8 },
+{ id:"t3",cat:"trans",nombre:"Mutación Aviar",desc:"Salta fronteras.",cost:12 },
+
+{ id:"s1",cat:"sintoma",nombre:"Tos",desc:"Más transmisión.",cost:5 },
+{ id:"s2",cat:"sintoma",nombre:"Hemorragia",desc:"Aumenta letalidad.",cost:15 },
+{ id:"s3",cat:"sintoma",nombre:"Fallo Orgánico",desc:"Letalidad extrema.",cost:30 },
+
+{ id:"r1",cat:"res",nombre:"Resistencia Frío",desc:"Mejor expansión en países fríos.",cost:8 },
+{ id:"r2",cat:"res",nombre:"Resistencia Medicamentos",desc:"Reduce eficacia médica.",cost:14 }
+
+];
+
+let adn = 15;
+let cura = 0;
+let pausado = false;
+let tab = "trans";
+let tipo = "Bacteria";
+
+const totalMundial = paises.reduce((a,b)=>a+b.pob,0);
+
+function seleccionarPatogeno(t){
+
+    tipo = t;
+
+    if(tipo==="Bacteria") adn = 25;
+    if(tipo==="Virus") adn = 12;
+    if(tipo==="Parásito") adn = 18;
+
+    document.getElementById("pantalla-inicio").style.display="none";
+
+    document.getElementById("tipoPatogenoTexto").innerText =
+    "Patógeno activo: "+tipo;
+
+    iniciar();
+}
+
+function iniciar(){
+
+    renderMapa();
+    renderPaises();
+    renderMejoras();
+
+    document.getElementById("pauseBtn").onclick=()=>{
+        pausado=!pausado;
+
+        document.getElementById("pauseBtn").innerText=
+        pausado ?
+        "▶️ REANUDAR SIMULACIÓN":
+        "⏸️ PAUSAR SIMULACIÓN";
+    };
+
+    setInterval(loop,1000);
+}
+
+function renderMapa(){
+
+    const map=document.getElementById("mapGrid");
+    map.innerHTML="";
+
+    paises.forEach(p=>{
+
+        const div=document.createElement("div");
+        div.className="map-node";
+        div.id="map-"+p.id;
+
+        div.innerHTML=`
+        <strong>${p.nombre}</strong>
+        <div id="status-${p.id}">Sano</div>
+        `;
+
+        map.appendChild(div);
+
+    });
+
+}
+
+function renderPaises(){
+
+    const c=document.getElementById("countryList");
+    c.innerHTML="";
+
+    paises.forEach(p=>{
+
+        const infectPct=
+        ((p.inf+p.dead)/p.pob)*100;
+
+        const div=document.createElement("div");
+        div.className="country";
+
+        div.innerHTML=`
+        <div class="country-top">
+            <span>${p.nombre}</span>
+            <span>🦠 ${format(p.inf)} | 💀 ${format(p.dead)}</span>
+        </div>
+
+        <div class="country-bar">
+            <div class="country-fill"
+            style="width:${Math.min(infectPct,100)}%"></div>
+        </div>
+        `;
+
+        c.appendChild(div);
+
+        const node=document.getElementById("map-"+p.id);
+        const status=document.getElementById("status-"+p.id);
+
+        if(p.dead>=p.pob*0.95){
+
+            node.style.background="#2a0a12";
+            node.style.borderColor="#ff3d5e";
+
+            status.innerHTML="☠️ Colapsado";
+            status.style.color="#ff6b81";
+
+        }else if(p.inf>0){
+
+            node.style.background="rgba(255,61,94,.2)";
+            node.style.borderColor="#ff3d5e";
+
+            status.innerHTML=
+            "🦠 "+infectPct.toFixed(1)+"%";
+
+            status.style.color="#ffb0b9";
+
+        }else{
+
+            node.style.background="#141d2c";
+            node.style.borderColor="#263650";
+
+            status.innerHTML="🟢 Sano";
+            status.style.color="#8ea3bf";
+
+        }
+
+    });
+
+}
+
+function renderMejoras(){
+
+    const up=document.getElementById("upgrades");
+    up.innerHTML="";
+
+    mejoras.filter(m=>m.cat===tab)
+    .forEach(m=>{
+
+        const comprado=m.buy;
+
+        const div=document.createElement("div");
+        div.className="upgrade";
+
+        div.innerHTML=`
+        <div class="upgrade-top">
+
+            <div>
+                <h4>${m.nombre}</h4>
+                <p>${m.desc}</p>
             </div>
-            <div class="upgrade-list" id="upgradesContainer"></div>
+
+            <button class="buy-btn"
+            ${comprado||adn<m.cost?"disabled":""}
+            onclick="comprar('${m.id}')">
+
+            ${comprado?"MUTADO":m.cost+" ADN"}
+
+            </button>
+
         </div>
-    </div>
+        `;
 
-    <script>
-        const paises = [
-            { id: "esp", nombre: "España", pob: 47000000, inf: 1, muertos: 0, clima: "templado", rico: true, con: 8 },
-            { id: "gbr", nombre: "Reino Unido", pob: 67000000, inf: 0, muertos: 0, clima: "frio", rico: true, con: 9 },
-            { id: "rws", nombre: "Rusia", pob: 144000000, inf: 0, muertos: 0, clima: "frio", rico: false, con: 5 },
-            { id: "bra", nombre: "Brasil", pob: 214000000, inf: 0, muertos: 0, clima: "calido", rico: false, con: 6 },
-            { id: "zaf", nombre: "Sudáfrica", pob: 60000000, inf: 0, muertos: 0, clima: "calido", rico: false, con: 5 },
-            { id: "usa", nombre: "EE.UU.", pob: 332000000, inf: 0, muertos: 0, clima: "templado", rico: true, con: 10 },
-            { id: "chn", nombre: "China", pob: 1412000000, inf: 0, muertos: 0, clima: "templado", rico: true, con: 9 },
-            { id: "grl", nombre: "Groenlandia", pob: 56000, inf: 0, muertos: 0, clima: "frio", rico: true, con: 1 }
-        ];
+        up.appendChild(div);
 
-        const mejoras = [
-            { id: "t1", cat: "trans", nombre: "Aerosoles I", desc: "Aumenta drásticamente los contagios por aire.", adn: 6, comprado: false },
-            { id: "t2", cat: "trans", nombre: "Intercambio Pluvial", desc: "Permite saltar a otros continentes por barcos.", adn: 6, comprado: false },
-            { id: "t3", cat: "trans", nombre: "Mutación Aves", desc: "El virus se salta bloqueos fronterizos.", adn: 10, comprado: false },
-            
-            // CORRECCIÓN: Tos sutil ahora tiene 0 letalidad real
-            { id: "s1", cat: "sintoma", nombre: "Tos sutil", desc: "Transmisión limpia y rápida sin letalidad.", adn: 4, comprado: false, letalidad: 0, visibilidad: 2 },
-            { id: "s2", cat: "sintoma", nombre: "Quistes Internos", desc: "Provoca bultos. Añade letalidad moderada.", adn: 10, comprado: false, letalidad: 3, visibilidad: 15 },
-            { id: "s3", cat: "sintoma", nombre: "Fallo de Órganos", desc: "Letalidad masiva. Paraliza por completo los laboratorios.", adn: 25, comprado: false, letalidad: 30, visibilidad: 75 },
-            
-            { id: "h1", cat: "habilidad", nombre: "Criadaptación", desc: "Requisito para avanzar eficazmente en zonas frías.", adn: 8, comprado: false },
-            { id: "h2", cat: "habilidad", nombre: "Resistencia Química", desc: "Neutraliza las defensas médicas de países ricos.", adn: 12, comprado: false }
-        ];
+    });
 
-        let adnActual = 12;
-        let curaProgreso = 0;
-        let curaActiva = false;
-        let juegoPausado = false;
-        let currentTab = 'trans';
-        let tipoPatogeno = 'Bacteria';
-        const totalMundial = paises.reduce((acc, p) => acc + p.pob, 0);
+}
 
-        function seleccionarPatogeno(tipo) {
-            tipoPatogeno = tipo;
-            document.getElementById("pantalla-inicio").style.display = "none";
-            document.getElementById("tipoPatogenoTexto").innerText = `Cepa activa: ${tipoPatogeno}`;
-            if(tipo === 'Bacteria') adnActual = 24; 
-            init();
-        }
+function setTab(t){
 
-        function init() {
-            renderMapaInicial();
-            renderPaises();
-            renderMejoras();
-            
-            document.getElementById("pauseResumeBtn").onclick = togglePausa;
-            document.getElementById("tab-trans").onclick = () => switchTab('trans');
-            document.getElementById("tab-sintoma").onclick = () => switchTab('sintoma');
-            document.getElementById("tab-habilidad").onclick = () => switchTab('habilidad');
+    tab=t;
 
-            setInterval(bucleJuego, 1000);
-        }
+    ["trans","sintoma","res"]
+    .forEach(x=>{
+        document
+        .getElementById("tab-"+x)
+        .classList.remove("active");
+    });
 
-        function renderMapaInicial() {
-            const container = document.getElementById("mapGridContainer");
-            container.innerHTML = "";
-            paises.forEach(p => {
-                const node = document.createElement("div");
-                node.className = "map-node";
-                node.id = `map-node-${p.id}`;
-                node.innerHTML = `<strong>${p.nombre}</strong><br><span id="map-status-${p.id}">Sano</span>`;
-                container.appendChild(node);
-            });
-        }
+    document
+    .getElementById("tab-"+t)
+    .classList.add("active");
 
-        function renderPaises() {
-            const container = document.getElementById("countriesContainer");
-            container.innerHTML = "";
-            paises.forEach(p => {
-                let pct = p.pob > 0 ? (((p.inf + p.muertos) / p.pob) * 100).toFixed(2) : 0;
-                const row = document.createElement("div");
-                row.innerHTML = `
-                    <div class="country-row">
-                        <span><strong>${p.nombre}</strong> <span style="color:#718096; font-size:0.85em;">(${p.clima})</span></span>
-                        <span>🦠 ${formatNum(p.inf)} | 💀 ${formatNum(p.muertos)}</span>
-                    </div>
-                    <div class="country-bar" style="width: ${Math.min(pct, 100)}%"></div>
-                `;
-                container.appendChild(row);
+    renderMejoras();
+}
 
-                const mapNode = document.getElementById(`map-node-${p.id}`);
-                const mapStatus = document.getElementById(`map-status-${p.id}`);
-                if (mapNode && mapStatus) {
-                    if (p.muertos >= p.pob * 0.995 || (p.inf === 0 && p.muertos > 0 && (p.pob - p.muertos) < 100)) {
-                        mapNode.style.background = "#2a0808";
-                        mapNode.style.borderColor = "var(--infect-color)";
-                        mapStatus.innerText = "🟥 Colapsado";
-                        mapStatus.style.color = "var(--infect-color)";
-                    } else if (p.inf > 0) {
-                        let opacidad = Math.min((p.inf / p.pob) + 0.2, 1);
-                        mapNode.style.background = `rgba(229, 62, 62, ${opacidad * 0.4})`;
-                        mapNode.style.borderColor = "#e53e3e";
-                        mapStatus.innerText = `Infectado ${pct}%`;
-                        mapStatus.style.color = "#ff8a8a";
-                    } else {
-                        mapNode.style.background = "#121721";
-                        mapNode.style.borderColor = "#2d3748";
-                        mapStatus.innerText = "Sano";
-                        mapStatus.style.color = "#718096";
-                    }
-                }
-            });
-        }
+function comprar(id){
 
-        function renderMejoras() {
-            const container = document.getElementById("upgradesContainer");
-            container.innerHTML = "";
-            
-            const filtradas = mejoras.filter(m => m.cat === currentTab);
-            filtradas.forEach(m => {
-                const item = document.createElement("div");
-                item.className = `upgrade-item ${m.comprado ? 'bought' : ''}`;
-                
-                item.innerHTML = `
-                    <div class="upgrade-info">
-                        <h4>${m.nombre}</h4>
-                        <p>${m.desc}</p>
-                    </div>
-                    <button class="buy-btn" ${m.comprado || adnActual < m.adn ? 'disabled' : ''} id="btn-${m.id}">
-                        ${m.comprado ? 'MUTADO' : `${m.adn} ADN`}
-                    </button>
-                `;
-                container.appendChild(item);
+    const m=mejoras.find(x=>x.id===id);
 
-                const btn = document.getElementById(`btn-${m.id}`);
-                if (!m.comprado && adnActual >= m.adn) {
-                    btn.onclick = () => comprarMejora(m.id);
-                }
-            });
-        }
+    if(adn>=m.cost&&!m.buy){
 
-        function switchTab(tab) {
-            currentTab = tab;
-            ['trans', 'sintoma', 'habilidad'].forEach(t => {
-                document.getElementById(`tab-${t}`).classList.remove("active");
-            });
-            document.getElementById(`tab-${tab}`).classList.add("active");
-            renderMejoras();
-        }
+        adn-=m.cost;
+        m.buy=true;
 
-        function comprarMejora(id) {
-            const m = mejoras.find(x => x.id === id);
-            if (m && adnActual >= m.adn && !m.comprado) {
-                adnActual -= m.adn;
-                m.comprado = true;
-                pushNoticia(`Cepa modificada: ${m.nombre}`);
-                renderMejoras();
-                renderPaises();
-                actualizarInterfazGlobal(0, 0);
+        noticia("🧬 Nueva mutación: "+m.nombre);
+
+        renderMejoras();
+        actualizarStats();
+    }
+}
+
+function loop(){
+
+    if(pausado) return;
+
+    let totalInf=0;
+    let totalDead=0;
+
+    const tos=check("s1");
+    const hemo=check("s2");
+    const organos=check("s3");
+
+    const aire=check("t1");
+    const mar=check("t2");
+    const aves=check("t3");
+
+    const frio=check("r1");
+    const med=check("r2");
+
+    paises.forEach(p=>{
+
+        const vivos=p.pob-(p.inf+p.dead);
+
+        if(p.inf>0&&vivos>0){
+
+            let spread=.30;
+
+            if(tos) spread+=.22;
+            if(aire) spread+=.28;
+            if(mar) spread+=.10;
+            if(aves) spread+=.15;
+
+            if(p.clima==="frio"&&!frio)
+                spread*=.25;
+
+            if(p.rico&&!med)
+                spread*=.45;
+
+            const nuevos=Math.min(
+                vivos,
+                Math.ceil(p.inf*spread)
+            );
+
+            p.inf+=nuevos;
+
+            if(Math.random()<.22){
+                adn++;
+                animStat("statAdn");
             }
         }
 
-        function actualizarInterfazGlobal(totalInf, totalMuertos) {
-            document.getElementById("statAdn").innerText = adnActual;
-            document.getElementById("statInfected").innerText = formatNum(totalInf);
-            document.getElementById("statDead").innerText = formatNum(totalMuertos);
-            document.getElementById("statCura").innerText = Math.floor(curaProgreso) + "%";
+        let lethality=0;
+
+        if(hemo) lethality+=.015;
+        if(organos) lethality+=.12;
+
+        if(p.inf>0&&lethality>0){
+
+            const muertes=
+            Math.min(
+                p.inf,
+                Math.ceil(p.inf*lethality)
+            );
+
+            p.inf-=muertes;
+            p.dead+=muertes;
         }
 
-        function pushNoticia(texto) {
-            document.getElementById("newsTicker").innerText = "📡 " + texto;
-        }
+        totalInf+=p.inf;
+        totalDead+=p.dead;
 
-        function togglePausa() {
-            juegoPausado = !juegoPausado;
-            document.getElementById("pauseResumeBtn").innerText = juegoPausado ? "▶️ REANUDAR SIMULACIÓN" : "⏸️ PAUSAR SIMULACIÓN";
-        }
+    });
 
-        function formatNum(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
+    if(totalInf>500){
 
-        function bucleJuego() {
-            if (juegoPausado) return;
+        paises.forEach(a=>{
 
-            let totalInfectadosGlobal = 0;
-            let totalMuertosGlobal = 0;
-            let visibilidadTotal = 0;
-            let laboratoriosActivos = 0;
+            if(a.inf>500){
 
-            const tAire = mejoras.find(m => m.id === "t1").comprado;
-            const tAgua = mejoras.find(m => m.id === "t2").comprado;
-            const tAves = mejoras.find(m => m.id === "t3").comprado;
-            const sTos = mejoras.find(m => m.id === "s1").comprado;
-            const sQuistes = mejoras.find(m => m.id === "s2").comprado;
-            const sFallo = mejoras.find(m => m.id === "s3").comprado;
-            const hFrio = mejoras.find(m => m.id === "h1").comprado;
-            const hFarmacos = mejoras.find(m => m.id === "h2").comprado;
+                paises.forEach(b=>{
 
-            if (sTos) visibilidadTotal += 2;
-            if (sQuistes) visibilidadTotal += 12;
-            if (sFallo) visibilidadTotal += 70;
+                    if(b.inf===0){
 
-            if (tipoPatogeno === 'Parásito') visibilidadTotal *= 0.50;
+                        let chance=.003;
 
-            if (tipoPatogeno === 'Virus' && Math.random() < 0.04) {
-                let noCompradas = mejoras.filter(m => !m.comprado);
-                if(noCompradas.length > 0) {
-                    let aleatoria = noCompradas[Math.floor(Math.random() * noCompradas.length)];
-                    aleatoria.comprado = true;
-                    pushNoticia(`⚠️ MUTACIÓN ESPONTÁNEA: El virus mutó '${aleatoria.nombre}' de forma autónoma.`);
-                }
-            }
+                        if(aire) chance+=.03;
+                        if(mar) chance+=.03;
+                        if(aves) chance+=.05;
 
-            paises.forEach(p => {
-                let sanos = p.pob - (p.inf + p.muertos);
+                        if(Math.random()<chance){
 
-                // Solo si el país retiene supervivientes, sus científicos aportan a la cura
-                if (p.muertos < p.pob * 0.99) {
-                    laboratoriosActivos++;
-                }
+                            b.inf=10;
 
-                // Infección interna corregida exponencialmente
-                if (p.inf > 0 && sanos > 0) {
-                    let tasaBase = 0.50; 
-                    if (p.clima === "frio" && !hFrio) tasaBase *= 0.20;
-                    if (p.rico && !hFarmacos) tasaBase *= 0.15;
-                    if (sTos) tasaBase += 0.35;
-                    if (sQuistes) tasaBase += 0.45;
+                            noticia(
+                            "✈️ Infección detectada en "+
+                            b.nombre
+                            );
 
-                    let infectadosNuevos = Math.ceil(p.inf * tasaBase);
-                    if (infectadosNuevos > sanos || sanos < 5000) {
-                        infectadosNuevos = sanos; 
-                    }
-                    
-                    p.inf += infectadosNuevos;
-                    if (Math.random() < 0.16) adnActual += 1;
-                }
-
-                // Letalidad interna regulada (EVITA EL ERROR DE LA CAPTURA)
-                if (p.inf > 0) {
-                    let factorLetalidad = 0;
-                    if (sQuistes) factorLetalidad += 0.02;
-                    if (sFallo) factorLetalidad += 0.22;
-
-                    // FRENO DE SEGURIDAD: Si quedan pocos sanos sin infectar, el virus frena el asesinato para no quemar el país
-                    if (sanos > 0 && sanos < 100000 && factorLetalidad > 0) {
-                        factorLetalidad *= 0.1; 
-                    }
-
-                    if (factorLetalidad > 0) {
-                        let muertesNuevas = Math.ceil(p.inf * factorLetalidad);
-                        
-                        // Si los infectados vivos bajan de un umbral crítico, se limpian directamente
-                        if (p.inf < 100 || muertesNuevas > p.inf) {
-                            muertesNuevas = p.inf;
+                            adn+=4;
                         }
-
-                        p.muertos += muertesNuevas;
-                        p.inf -= muertesNuevas;
-                    }
-                }
-
-                if (p.muertos > p.pob) p.muertos = p.pob;
-
-                totalInfectadosGlobal += p.inf;
-                totalMuertosGlobal += p.muertos;
-            });
-
-            // Expansión internacional fluida
-            if (totalInfectadosGlobal > 5) {
-                paises.forEach(origen => {
-                    if (origen.inf > 300) {
-                        paises.forEach(destino => {
-                            if (destino.inf === 0 && (destino.pob - destino.muertos) > 0) {
-                                let vectorCamino = 0.008; 
-                                if (tAire) vectorCamino += 0.05;
-                                if (tAgua) vectorCamino += 0.05;
-                                if (tAves) vectorCamino += 0.08;
-
-                                if (Math.random() < vectorCamino) {
-                                    destino.inf = 15; 
-                                    pushNoticia(`✈️ Vector internacional: Infección detectada en ${destino.nombre}.`);
-                                    adnActual += 4;
-                                }
-                            }
-                        });
                     }
                 });
             }
+        });
+    }
 
-            // Desarrollo de la Cura
-            if (laboratoriosActivos === 0) {
-                if (curaActiva) {
-                    pushNoticia("🛑 COLAPSO CIENTÍFICO GLOBAL: No quedan laboratorios activos. Desarrollo de la cura congelado.");
-                }
-            } else if (visibilidadTotal > 8 || totalInfectadosGlobal > (totalMundial * 0.05)) {
-                if (!curaActiva) {
-                    curaActiva = true;
-                    pushNoticia("🚨 ALERTA GLOBAL: La OMS ha catalogado el patógeno e inicia el desarrollo de la cura.");
-                }
-                
-                let factorLaboratorios = laboratoriosActivos / paises.length;
-                let avanceCura = (0.14 + (visibilidadTotal * 0.014)) * factorLaboratorios;
-                if (sFallo) avanceCura *= 0.4; 
-                
-                curaProgreso += avanceCura;
-            }
+    let vis=0;
 
-            actualizarInterfazGlobal(totalInfectadosGlobal, totalMuertosGlobal);
-            renderPaises();
+    if(tos) vis+=8;
+    if(hemo) vis+=30;
+    if(organos) vis+=70;
+
+    if(tipo==="Parásito")
+        vis*=0.5;
+
+    if(vis>5||totalInf>5000000){
+
+        let speed=.08+(vis*.008);
+
+        if(organos) speed*=0.45;
+
+        cura+=speed;
+    }
+
+    if(tipo==="Virus"&&Math.random()<0.03){
+
+        const libres=
+        mejoras.filter(x=>!x.buy);
+
+        if(libres.length){
+
+            const random=
+            libres[
+                Math.floor(Math.random()*libres.length)
+            ];
+
+            random.buy=true;
+
+            noticia(
+            "⚠️ Mutación espontánea: "+
+            random.nombre
+            );
+
             renderMejoras();
-
-            // REGLAS CLARAS DE FIN DE PARTIDA
-            let personasVivasSanas = paises.reduce((acc, p) => acc + (p.pob - (p.inf + p.muertos)), 0);
-
-            // CORRECCIÓN 3: Si no quedan sanos y los infectados son mínimos con laboratorios destruidos, forzar victoria
-            if (totalMuertosGlobal >= totalMundial * 0.999 || (personasVivasSanas === 0 && totalInfectadosGlobal < 500 && laboratoriosActivos === 0)) {
-                juegoPausado = true;
-                alert("☣️ ¡VICTORIA ABSOLUTA! Has extinguido toda la vida humana en el planeta.");
-            } else if (curaProgreso >= 100) {
-                juegoPausado = true;
-                alert("🛡️ DERROTA: La cura fue completada y distribuida. Tu cepa ha sido erradicada.");
-            } else if (totalInfectadosGlobal === 0 && personasVivasSanas > 0) {
-                juegoPausado = true;
-                alert("💀 CEPA EXTINGUIDA: El patógeno se quedó sin infectados activos. La cadena de transmisión se rompió.");
-            }
         }
-    </script>
+    }
+
+    actualizarStats(
+        totalInf,
+        totalDead
+    );
+
+    renderPaises();
+
+    const vivos=
+    totalMundial-totalDead;
+
+    if(totalDead>=totalMundial*.99){
+
+        endGame(
+        "☣️ VICTORIA TOTAL",
+        "La humanidad ha sido erradicada."
+        );
+
+    }else if(cura>=100){
+
+        endGame(
+        "🛡️ DERROTA",
+        "La cura mundial fue completada."
+        );
+
+    }else if(totalInf===0&&vivos>0){
+
+        endGame(
+        "💀 CEPA EXTINGUIDA",
+        "La infección desapareció."
+        );
+    }
+}
+
+function actualizarStats(
+inf=0,
+dead=0
+){
+
+    document.getElementById("statAdn").innerText=
+    format(adn);
+
+    document.getElementById("statInf").innerText=
+    format(inf);
+
+    document.getElementById("statDead").innerText=
+    format(dead);
+
+    document.getElementById("statCure").innerText=
+    Math.floor(cura)+"%";
+
+    document.getElementById("cureBar")
+    .style.width=
+    Math.min(cura,100)+"%";
+}
+
+function noticia(t){
+
+    document.getElementById("newsTicker")
+    .innerHTML="📡 "+t;
+}
+
+function check(id){
+    return mejoras.find(x=>x.id===id)?.buy;
+}
+
+function format(n){
+    return n.toLocaleString("es-ES");
+}
+
+function animStat(id){
+
+    const el=document.getElementById(id);
+
+    el.classList.add("flash");
+
+    setTimeout(()=>{
+        el.classList.remove("flash");
+    },500);
+}
+
+function endGame(title,text){
+
+    pausado=true;
+
+    document.getElementById("gameOver")
+    .style.display="flex";
+
+    document.getElementById("gameOverTitle")
+    .innerText=title;
+
+    document.getElementById("gameOverText")
+    .innerText=text;
+}
+
+</script>
+
 </body>
 </html>
