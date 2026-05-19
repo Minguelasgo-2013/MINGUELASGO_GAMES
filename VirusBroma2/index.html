@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Alerta del Sistema</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #0d0d0d;
+            color: #ff3333;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #bloqueo {
+            width: 90%;
+            max-width: 600px;
+            background: #1a1a1a;
+            border: 2px solid #ff3333;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.5);
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        p {
+            color: #cccccc;
+            font-size: 14px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .alerta-txt {
+            color: #ff3333;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        input[type="password"] {
+            background: #000;
+            border: 1px solid #ff3333;
+            color: #00ff00;
+            padding: 10px;
+            width: 80%;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        button {
+            background: #ff3333;
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #cc0000;
+            color: #fff;
+        }
+        #contador {
+            font-size: 18px;
+            color: #ffcc00;
+            margin-top: 15px;
+        }
+        /* Pantalla de Error de Linux (Kernel Panic) */
+        .linux-panic {
+            background-color: #000000 !important;
+            color: #ffffff !important;
+            font-family: 'Courier New', Courier, monospace !important;
+            display: block !important;
+            padding: 20px !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            text-align: left !important;
+            overflow: hidden;
+        }
+        .linux-panic p {
+            color: #ffffff !important;
+            font-size: 15px !important;
+            margin-bottom: 4px !important;
+            font-weight: bold !important;
+        }
+    </style>
+</head>
+<body>
+
+<div id="pantalla-principal">
+    <div id="bloqueo">
+        <h1 id="titulo">⚠️ SISTEMA COMPROMETIDO ⚠️</h1>
+        <div id="contenido">
+            <p>Se ha detectado una intrusión en el sector de arranque.</p>
+            <p>Los archivos locales se han congelado de forma preventiva para proteger la integridad del disco duro.</p>
+            <p class="alerta-txt">ADVERTENCIA: Si agota los intentos, se colapsará el núcleo del sistema.</p>
+            
+            <input type="password" id="clave" placeholder="Introduce el código de desbloqueo" autocomplete="off">
+            <br>
+            <button onclick="verificarClave()">Desbloquear</button>
+            
+            <div id="contador">Intentos fallidos: <span id="intentos-num">0</span>/3</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let intentos = 0;
+    const claveCorrecta = "1234";
+
+    function verificarClave() {
+        const inputClave = document.getElementById("clave");
+        const contenedor = document.getElementById("contenido");
+        const titulo = document.getElementById("titulo");
+        const textoIntentos = document.getElementById("intentos-num");
+        const cuerpo = document.body;
+
+        if (inputClave.value === claveCorrecta) {
+            // Caso de éxito
+            titulo.innerHTML = "🔓 SISTEMA RESTAURADO";
+            titulo.style.color = "#00ff00";
+            document.getElementById("bloqueo").style.borderColor = "#00ff00";
+            document.getElementById("bloqueo").style.boxShadow = "0 0 20px rgba(0, 255, 0, 0.5)";
+            contenedor.innerHTML = "<p style='color:#00ff00; font-size:18px;'><b>¡Clave aceptada!</b></p><br><p>Todo ha sido un simulador inofensivo. Tu ordenador está 100% seguro.</p>";
+        } else {
+            // Caso de fallo
+            intentos++;
+            inputClave.value = "";
+            textoIntentos.innerText = intentos;
+
+            if (intentos >= 3) {
+                // Activar el Kernel Panic de Linux
+                cuerpo.className = "linux-panic";
+                cuerpo.innerHTML = `
+                    <p>[    0.000000] Linux version 5.15.0-generic (gcc version 11.2.0)</p>
+                    <p>[    0.004123] CPU0: Intel(R) Core(TM) PC-Broma CPU @ 2.50GHz</p>
+                    <p>[    0.124512] ACPI: Core revision 20210105</p>
+                    <p>[    1.845120] sd 0:0:0:0: [sda] Fast formatting drive sectors...</p>
+                    <p>[    2.102485] CRITICAL ERROR: Unauthorized access attempt detected.</p>
+                    <p>[    2.102490] BUG: unable to handle kernel paging request at 000000000000ff3c</p>
+                    <p>[    2.102512] OOPar: 0002 [#1] SMP PTI</p>
+                    <p>[    2.102530] CPU: 2 PID: 1204 Comm: systemd-udevd Not tainted</p>
+                    <p>[    2.102555] RIP: 0010:error_code_validation+0x42/0x90</p>
+                    <p>[    2.102600] Call Trace:</p>
+                    <p>[    2.102615]  [&lt;ffffffff8106a210&gt;] do_user_failure_attempt+0x30/0x70</p>
+                    <p>[    2.102634]  [&lt;ffffffff81a01c42&gt;] sys_unlock_eval+0x142/0x260</p>
+                    <p>[    2.102650]  [&lt;ffffffff8100234a&gt;] do_syscall_64+0x5a/0x110</p>
+                    <p>[    2.102670]  [&lt;ffffffff8200002f&gt;] entry_SYSCALL_64_after_hwframe+0x44/0xae</p>
+                    <p>[    2.102700] ---[ end trace 4bf821a89c032a11 ]---</p>
+                    <p>[    2.102715] Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)</p>
+                    <p>[    2.102730] CPU0: stopping</p>
+                    <p>[    2.102745] Kernel Offset: disabled</p>
+                    <p>---[ CRITICAL ]--- REINICIE EL EQUIPO ---</p>
+                    <br><br>
+                    <p style="color: #00ff00 !important; font-size: 18px !important;">¡CAÍSTE! 🐧 Proceso detenido. Esto es solo una pestaña web. Tus archivos están a salvo.</p>
+                `;
+            } else {
+                alert("Código incorrecto. Error de coincidencia de hash.");
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
