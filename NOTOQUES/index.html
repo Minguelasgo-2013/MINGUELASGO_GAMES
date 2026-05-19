@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>You Are An Idiot!</title>
+    <style>
+        body {
+            background-color: white;
+            color: black;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.05s;
+            cursor: none; /* Esconde el cursor para desesperar más */
+        }
+        /* El recuadro del virus */
+        #ventana-broma {
+            position: absolute;
+            width: 400px;
+            height: 300px;
+            background: #f0f0f0;
+            border: 4px solid #000;
+            box-shadow: 15px 15px 0px #555555;
+            text-align: center;
+            user-select: none;
+        }
+        h1 { 
+            font-size: 32px; 
+            margin-top: 60px; 
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .caritas {
+            font-size: 40px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ventana-broma">
+        <h1>you are an idiot!</h1>
+        <div class="caritas">☺ ☺ ☺</div>
+    </div>
+
+    <script>
+        const ventana = document.getElementById('ventana-broma');
+
+        // Configuración de posiciones iniciales y velocidad extrema
+        let x = Math.random() * (window.innerWidth - 420);
+        let y = Math.random() * (window.innerHeight - 320);
+        let dx = 12; 
+        let dy = 9; 
+        const anchoVentana = 420; 
+        const altoVentana = 320;
+
+        // 1. Inicio inmediato del parpadeo agresivo (Blanco y Negro)
+        setInterval(() => {
+            if (document.body.style.backgroundColor === 'white') {
+                document.body.style.backgroundColor = 'black';
+                document.body.style.color = 'white';
+                ventana.style.backgroundColor = 'black';
+                ventana.style.color = 'white';
+                ventana.style.borderColor = 'white';
+            } else {
+                document.body.style.backgroundColor = 'white';
+                document.body.style.color = 'black';
+                ventana.style.backgroundColor = '#f0f0f0';
+                ventana.style.color = 'black';
+                ventana.style.borderColor = 'black';
+            }
+        }, 80); // Más rápido que el anterior para mayor impacto
+
+        // 2. Movimiento automático y continuo por la pantalla
+        setInterval(() => {
+            const limiteX = window.innerWidth - anchoVentana;
+            const limiteY = window.innerHeight - altoVentana;
+
+            x += dx;
+            y += dy;
+
+            if (x <= 0 || x >= limiteX) dx = -dx;
+            if (y <= 0 || y >= limiteY) dy = -dy;
+
+            ventana.style.left = x + 'px';
+            ventana.style.top = y + 'px';
+        }, 10);
+    </script>
+</body>
+</html>
