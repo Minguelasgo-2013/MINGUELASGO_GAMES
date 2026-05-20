@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coin Clicker — MINGUELASGO GAMES</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0a0b10;
+    --surface: #111420;
+    --surface2: #181c2e;
+    --border: #1e2340;
+    --accent: #00e5ff;
+    --accent2: #ff9500;
+    --text: #e8ecff;
+    --muted: #5a607a;
+    --success: #00e676;
+    --danger: #ff3d57;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  header h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+  header span {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .game-wrap {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 16px;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  /* LEFT PANEL */
+  .left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .coin-area {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+  }
+
+  .prestige-crown {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--accent2);
+    display: none;
+  }
+
+  .coin-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--accent);
+    text-align: center;
+    letter-spacing: -0.02em;
+  }
+
+  .coin-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: -10px;
+    text-align: center;
+  }
+
+  .coin-btn {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 3px solid var(--border);
+    font-size: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.07s, border-color 0.2s;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .coin-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.07), transparent 60%);
+    pointer-events: none;
+  }
+  .coin-btn:hover { border-color: var(--accent); }
+  .coin-btn:active { transform: scale(0.88); }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+  .stat {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 10px;
+  }
+  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .stat-val { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; color: var(--text); margin-top: 2px; }
+
+  .multiplier-bar {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    display: none;
+  }
+  .multiplier-bar span { color: var(--accent2); font-weight: 700; }
+
+  /* RIGHT PANEL */
+  .right {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 620px;
+  }
+
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 12px 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+    letter-spacing: 0.03em;
+  }
+  .tab-btn.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  .tab-panel { display: none; overflow-y: auto; flex: 1; padding: 14px; }
+  .tab-panel.active { display: block; }
+
+  .section-hd {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 14px 0 8px;
+  }
+  .section-hd:first-child { margin-top: 0; }
+
+  /* SHOP ITEMS */
+  .shop-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 7px;
+    transition: border-color 0.2s;
+  }
+  .shop-item:hover { border-color: #2d3360; }
+  .item-icon { font-size: 22px; width: 32px; text-align: center; flex-shrink: 0; }
+  .item-info { flex: 1; min-width: 0; }
+  .item-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .item-qty { font-size: 11px; color: var(--accent); margin-left: 5px; }
+  .item-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .buy-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .buy-btn:hover:not(:disabled) { background: var(--border); border-color: var(--accent); color: var(--accent); }
+  .buy-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* SKINS */
+  .skin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .skin-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .skin-card:hover { border-color: #2d3360; }
+  .skin-card.active { border-color: var(--accent); }
+  .skin-card.locked { opacity: 0.45; filter: grayscale(0.6); }
+  .skin-emoji { font-size: 36px; }
+  .skin-name { font-size: 11px; font-weight: 600; margin-top: 6px; color: var(--text); }
+  .skin-price { font-size: 10px; color: var(--muted); margin-top: 3px; font-family: 'Space Mono', monospace; }
+
+  /* PRESTIGE */
+  .prestige-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .prestige-card h3 { font-size: 14px; font-weight: 700; color: var(--accent2); margin-bottom: 8px; }
+  .prestige-card p { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+  .prestige-card .highlight { color: var(--text); font-weight: 600; }
+  .prestige-do-btn {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--accent2);
+    border-radius: 8px;
+    padding: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent2);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .prestige-do-btn:hover:not(:disabled) { background: rgba(255,149,0,0.1); }
+  .prestige-do-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .mult-table {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+  .mult-cell {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 11px;
+  }
+  .mult-cell .lv { color: var(--muted); font-size: 10px; }
+  .mult-cell .mx { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--accent2); font-size: 13px; }
+  .mult-cell.current { border-color: var(--accent2); }
+
+  /* ACHIEVEMENTS */
+  .ach-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 7px;
+  }
+  .ach-item.locked { opacity: 0.35; filter: grayscale(0.8); }
+  .ach-icon { font-size: 24px; width: 30px; text-align: center; }
+  .ach-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .ach-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .ach-check { margin-left: auto; color: var(--success); font-size: 16px; }
+
+  /* FLOAT TEXT */
+  .float-text {
+    position: fixed;
+    pointer-events: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    animation: floatUp 0.9s ease-out forwards;
+    z-index: 9999;
+  }
+  @keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-55px) scale(0.8); }
+  }
+
+  /* RESET */
+  .reset-bar {
+    border-top: 1px solid var(--border);
+    padding: 0;
+  }
+  .reset-bar button {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 10px;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: color 0.2s;
+  }
+  .reset-bar button:hover { color: var(--danger); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>COIN CLICKER</h1>
+  <span>Minguelasgo Games</span>
+</header>
+
+<div class="game-wrap">
+  <!-- LEFT -->
+  <div class="left">
+    <div class="coin-area">
+      <div class="prestige-crown" id="prestige-crown">★ ×<span id="crown-val">1</span></div>
+      <div class="coin-count" id="coin-count">0</div>
+      <div class="coin-sub">monedas</div>
+      <div class="coin-btn" id="coin-btn" onclick="doClick(event)">🪙</div>
+      <div class="stats-grid">
+        <div class="stat"><div class="stat-label">Por segundo</div><div class="stat-val" id="s-mps">0</div></div>
+        <div class="stat"><div class="stat-label">Por clic</div><div class="stat-val" id="s-cpc">1</div></div>
+        <div class="stat"><div class="stat-label">Total ganadas</div><div class="stat-val" id="s-total">0</div></div>
+        <div class="stat"><div class="stat-label">Prestigios</div><div class="stat-val" id="s-pres">0</div></div>
+      </div>
+    </div>
+    <div class="multiplier-bar" id="mult-bar">
+      Multiplicador de prestigio: <span id="mult-val">1×</span>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('shop',this)">🛒 Tienda</button>
+      <button class="tab-btn" onclick="switchTab('skins',this)">🎨 Skins</button>
+      <button class="tab-btn" onclick="switchTab('prestige',this)">⭐ Prestigio</button>
+      <button class="tab-btn" onclick="switchTab('ach',this)">🏆 Logros</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-shop"></div>
+    <div class="tab-panel" id="tab-skins"></div>
+    <div class="tab-panel" id="tab-prestige"></div>
+    <div class="tab-panel" id="tab-ach"></div>
+
+    <div class="reset-bar">
+      <button onclick="resetGame()">⚠️ Reiniciar todo el progreso</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+
+const UPGRADES = [
+  // MPS
+  {id:0, name:"Auto-Clic Base",      icon:"🤖", priceBase:15,     mps:0.5,  desc:"+0.5 mon/seg"},
+  {id:1, name:"Robot Minero",        icon:"⛏️", priceBase:100,    mps:4,    desc:"+4 mon/seg"},
+  {id:2, name:"Fábrica Cuántica",    icon:"🏭", priceBase:1100,   mps:32,   desc:"+32 mon/seg"},
+  {id:3, name:"Servidor Nexo",       icon:"🖥️", priceBase:8000,   mps:120,  desc:"+120 mon/seg"},
+  {id:4, name:"Portal Dimensional",  icon:"🌀", priceBase:50000,  mps:500,  desc:"+500 mon/seg"},
+  {id:5, name:"Singularidad IA",     icon:"🧠", priceBase:300000, mps:2000, desc:"+2.000 mon/seg"},
+  {id:6, name:"Red Neuronal Galáctica", icon:"🌌", priceBase:2000000, mps:10000, desc:"+10.000 mon/seg"},
+  // CPC
+  {id:7,  name:"Poder del Clic",     icon:"👆", priceBase:50,    cpc:1,   desc:"+1 por clic"},
+  {id:8,  name:"Guante de Plasma",   icon:"⚡", priceBase:500,   cpc:5,   desc:"+5 por clic"},
+  {id:9,  name:"Mano Cósmica",       icon:"🌟", priceBase:5000,  cpc:20,  desc:"+20 por clic"},
+  {id:10, name:"Dedo Cuántico",      icon:"💠", priceBase:40000, cpc:100, desc:"+100 por clic"},
+  {id:11, name:"Puño del Nexo",      icon:"🔮", priceBase:250000, cpc:500, desc:"+500 por clic"},
+];
+
+const SKINS = [
+  {id:"classic", emoji:"🪙", name:"Clásica",     cost:0},
+  {id:"gem",     emoji:"💎", name:"Diamante",    cost:500},
+  {id:"fire",    emoji:"🔥", name:"Llamas",      cost:2000},
+  {id:"star",    emoji:"⭐", name:"Estrella",    cost:5000},
+  {id:"alien",   emoji:"👾", name:"Alienígena",  cost:15000},
+  {id:"nuke",    emoji:"☢️", name:"Nuclear",     cost:40000},
+  {id:"galaxy",  emoji:"🌌", name:"Galaxia",     cost:100000},
+  {id:"rainbow", emoji:"🌈", name:"Arcoíris",    cost:300000},
+  {id:"void",    emoji:"🕳️", name:"El Vacío",    cost:800000},
+  {id:"dragon",  emoji:"🐉", name:"Dragón",      cost:2500000},
+  {id:"god",     emoji:"⚜️", name:"Divina",      cost:10000000},
+  {id:"glitch",  emoji:"📟", name:"Glitch",      cost:50000000},
+];
+
+const ACHIEVEMENTS = [
+  {id:"click1",    name:"Primer Clic",      desc:"Haz tu primer clic manual",         icon:"👆", check:g=>g.totalClicks>=1},
+  {id:"click50",   name:"Dedos Ágiles",     desc:"Haz 50 clics manuales",             icon:"✌️", check:g=>g.totalClicks>=50},
+  {id:"click500",  name:"Maratonista",      desc:"Haz 500 clics manuales",            icon:"🏅", check:g=>g.totalClicks>=500},
+  {id:"click5000", name:"Robot Humano",     desc:"Haz 5.000 clics manuales",          icon:"🦾", check:g=>g.totalClicks>=5000},
+  {id:"c100",      name:"Centenar",         desc:"Acumula 100 monedas",               icon:"💰", check:g=>g.totalCoins>=100},
+  {id:"c10k",      name:"Primer Millar",    desc:"Gana 10.000 monedas en total",      icon:"💵", check:g=>g.totalCoins>=10000},
+  {id:"c1m",       name:"Millonario",       desc:"Gana 1.000.000 en total",           icon:"🤑", check:g=>g.totalCoins>=1000000},
+  {id:"c1b",       name:"Billonario",       desc:"Gana 1.000.000.000 en total",       icon:"🏦", check:g=>g.totalCoins>=1000000000},
+  {id:"mps10",     name:"Ingresos Pasivos", desc:"Alcanza 10 monedas/seg",            icon:"🌊", check:g=>g.mps>=10},
+  {id:"mps500",    name:"Tormenta",         desc:"Alcanza 500 monedas/seg",           icon:"⚡", check:g=>g.mps>=500},
+  {id:"mps5000",   name:"Huracán de Oro",   desc:"Alcanza 5.000 monedas/seg",         icon:"🌪️", check:g=>g.mps>=5000},
+  {id:"buy5",      name:"Comprador",        desc:"Compra 5 tipos de mejoras distintas",icon:"🛒",check:g=>g.upgrades.filter(u=>u.qty>0).length>=5},
+  {id:"buy10",     name:"Adicto a Gastar",  desc:"Compra 10 tipos de mejoras distintas",icon:"💳",check:g=>g.upgrades.filter(u=>u.qty>0).length>=10},
+  {id:"skin3",     name:"Moda Nexo",        desc:"Desbloquea 3 skins",                icon:"🎨", check:g=>g.unlockedSkins.length>=3},
+  {id:"skinall",   name:"Coleccionista",    desc:"Desbloquea todas las skins",        icon:"👑", check:g=>SKINS.every(s=>g.unlockedSkins.includes(s.id))},
+  {id:"prestige1", name:"Renacimiento",     desc:"Consigue tu primer prestigio",      icon:"✨", check:g=>g.prestiges>=1},
+  {id:"prestige5", name:"Eterno Retorno",   desc:"Consigue 5 prestigios",             icon:"♾️", check:g=>g.prestiges>=5},
+];
+
+const PRESTIGE_MULT = [1, 1.5, 2, 3, 5, 8, 13, 21, 34, 55];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+
+function defaultState() {
+  return {
+    coins: 0, mps: 0, cpc: 1,
+    totalCoins: 0, totalClicks: 0,
+    prestiges: 0, prestigeBonus: 1,
+    upgrades: UPGRADES.map(u => ({id:u.id, qty:0, price:u.priceBase})),
+    unlockedSkins: ["classic"], activeSkin: "classic",
+    achievements: []
+  };
+}
+
+let G = (() => {
+  try {
+    const raw = localStorage.getItem("clicker_mg_v3");
+    return raw ? {...defaultState(), ...JSON.parse(raw)} : defaultState();
+  } catch(e) { return defaultState(); }
+})();
+
+function save() { localStorage.setItem("clicker_mg_v3", JSON.stringify(G)); }
+
+// ─── FORMAT ───────────────────────────────────────────────────────────────────
+
+function fmt(n) {
+  n = Math.floor(n);
+  if (n >= 1e12) return (n/1e12).toFixed(2)+"T";
+  if (n >= 1e9)  return (n/1e9).toFixed(2)+"B";
+  if (n >= 1e6)  return (n/1e6).toFixed(2)+"M";
+  if (n >= 1e3)  return (n/1e3).toFixed(1)+"K";
+  return n.toString();
+}
+
+// ─── CLICK ────────────────────────────────────────────────────────────────────
+
+function doClick(e) {
+  const gain = G.cpc * G.prestigeBonus;
+  G.coins += gain;
+  G.totalCoins += gain;
+  G.totalClicks++;
+  spawnFloat(e.clientX, e.clientY, "+" + fmt(gain));
+  checkAch();
+  updateUI();
+}
+
+function spawnFloat(x, y, text) {
+  const el = document.createElement("div");
+  el.className = "float-text";
+  el.textContent = text;
+  el.style.left = x + "px";
+  el.style.top  = (y - 10) + "px";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+// ─── SHOP ─────────────────────────────────────────────────────────────────────
+
+function buyUpgrade(idx) {
+  const s = G.upgrades[idx];
+  const def = UPGRADES[idx];
+  if (G.coins < s.price) return;
+  G.coins -= s.price;
+  s.qty++;
+  s.price = Math.round(def.priceBase * Math.pow(1.15, s.qty));
+  if (def.mps) G.mps += def.mps * G.prestigeBonus;
+  if (def.cpc) G.cpc += def.cpc;
+  checkAch();
+  renderShop();
+  updateUI();
+  save();
+}
+
+// ─── SKINS ────────────────────────────────────────────────────────────────────
+
+function buySkin(id) {
+  const skin = SKINS.find(s => s.id === id);
+  if (!skin) return;
+  if (!G.unlockedSkins.includes(id)) {
+    if (G.coins < skin.cost) return;
+    G.coins -= skin.cost;
+    G.unlockedSkins.push(id);
+  }
+  G.activeSkin = id;
+  document.getElementById("coin-btn").textContent = skin.emoji;
+  checkAch();
+  renderSkins();
+  updateUI();
+  save();
+}
+
+// ─── PRESTIGE ─────────────────────────────────────────────────────────────────
+
+function prestigeReq() { return Math.pow(10, 5 + G.prestiges); }
+
+function doPrestige() {
+  if (G.totalCoins < prestigeReq()) return;
+  if (!confirm("¿Reiniciar la partida a cambio de un bonus permanente?\n\nConservarás skins, logros y el multiplicador se aplicará siempre.")) return;
+  G.prestiges++;
+  G.prestigeBonus = PRESTIGE_MULT[Math.min(G.prestiges, PRESTIGE_MULT.length - 1)];
+  const kept = {
+    prestiges: G.prestiges, prestigeBonus: G.prestigeBonus,
+    unlockedSkins: G.unlockedSkins, activeSkin: G.activeSkin,
+    achievements: G.achievements, totalCoins: G.totalCoins, totalClicks: G.totalClicks
+  };
+  G = {...defaultState(), ...kept};
+  checkAch();
+  renderAll();
+  save();
+}
+
+// ─── ACHIEVEMENTS ─────────────────────────────────────────────────────────────
+
+function checkAch() {
+  ACHIEVEMENTS.forEach(a => {
+    if (!G.achievements.includes(a.id) && a.check(G)) {
+      G.achievements.push(a.id);
+    }
+  });
+}
+
+// ─── UI ───────────────────────────────────────────────────────────────────────
+
+function updateUI() {
+  document.getElementById("coin-count").textContent = fmt(G.coins);
+  document.getElementById("s-mps").textContent = fmt(G.mps);
+  document.getElementById("s-cpc").textContent = fmt(G.cpc * G.prestigeBonus);
+  document.getElementById("s-total").textContent = fmt(G.totalCoins);
+  document.getElementById("s-pres").textContent = G.prestiges;
+
+  if (G.prestiges > 0) {
+    document.getElementById("prestige-crown").style.display = "";
+    document.getElementById("crown-val").textContent = G.prestigeBonus;
+    document.getElementById("mult-bar").style.display = "";
+    document.getElementById("mult-val").textContent = G.prestigeBonus + "×";
+  }
+
+  // Update buy buttons
+  G.upgrades.forEach((s, i) => {
+    const btn = document.getElementById("ubtn-" + i);
+    const qty = document.getElementById("uqty-" + i);
+    if (btn) btn.disabled = G.coins < s.price;
+    if (qty) qty.textContent = s.qty > 0 ? "×" + s.qty : "";
+  });
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("tab-" + name).classList.add("active");
+  btn.classList.add("active");
+  if (name === "skins") renderSkins();
+  if (name === "prestige") renderPrestige();
+  if (name === "ach") renderAch();
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+
+function renderShop() {
+  const el = document.getElementById("tab-shop");
+  let html = "";
+
+  html += '<div class="section-hd">Producción automática</div>';
+  [0,1,2,3,4,5,6].forEach(i => {
+    const u = UPGRADES[i]; const s = G.upgrades[i];
+    html += `<div class="shop-item">
+      <div class="item-icon">${u.icon}</div>
+      <div class="item-info">
+        <div class="item-name">${u.name}<span class="item-qty" id="uqty-${i}">${s.qty>0?"×"+s.qty:""}</span></div>
+        <div class="item-desc">${u.desc}${G.prestigeBonus>1?" · ×"+G.prestigeBonus+" bonus":""}</div>
+      </div>
+      <button class="buy-btn" id="ubtn-${i}" onclick="buyUpgrade(${i})" ${G.coins<s.price?"disabled":""}>${fmt(s.price)} 🪙</button>
+    </div>`;
+  });
+
+  html += '<div class="section-hd">Mejoras de clic</div>';
+  [7,8,9,10,11].forEach(i => {
+    const u = UPGRADES[i]; const s = G.upgrades[i];
+    html += `<div class="shop-item">
+      <div class="item-icon">${u.icon}</div>
+      <div class="item-info">
+        <div class="item-name">${u.name}<span class="item-qty" id="uqty-${i}">${s.qty>0?"×"+s.qty:""}</span></div>
+        <div class="item-desc">${u.desc}</div>
+      </div>
+      <button class="buy-btn" id="ubtn-${i}" onclick="buyUpgrade(${i})" ${G.coins<s.price?"disabled":""}>${fmt(s.price)} 🪙</button>
+    </div>`;
+  });
+
+  el.innerHTML = html;
+}
+
+function renderSkins() {
+  const el = document.getElementById("tab-skins");
+  let html = '<div class="section-hd">Elige tu moneda</div><div class="skin-grid">';
+  SKINS.forEach(s => {
+    const unlocked = G.unlockedSkins.includes(s.id);
+    const active = G.activeSkin === s.id;
+    html += `<div class="skin-card${active?" active":""}${unlocked?"":" locked"}" onclick="buySkin('${s.id}')">
+      <div class="skin-emoji">${s.emoji}</div>
+      <div class="skin-name">${s.name}</div>
+      <div class="skin-price">${unlocked?(active?"Equipada":"Equipar"):(fmt(s.cost)+" 🪙")}</div>
+    </div>`;
+  });
+  html += "</div>";
+  el.innerHTML = html;
+}
+
+function renderPrestige() {
+  const req = prestigeReq();
+  const nextMult = PRESTIGE_MULT[Math.min(G.prestiges + 1, PRESTIGE_MULT.length - 1)];
+  let html = `<div class="prestige-card">
+    <h3>⭐ Sistema de Prestigio</h3>
+    <p>Reinicia tu partida pero conservas skins, logros y obtienes un multiplicador permanente que afecta a toda la producción.</p>
+    <p>Multiplicador actual: <span class="highlight">${G.prestigeBonus}×</span> &nbsp;·&nbsp; Siguiente nivel: <span class="highlight">${nextMult}×</span></p>
+    <p style="margin-bottom:12px">Requisito: <span class="highlight">${fmt(req)}</span> monedas ganadas en total &nbsp;(tienes <span class="highlight">${fmt(G.totalCoins)}</span>)</p>
+    <button class="prestige-do-btn" ${G.totalCoins < req ? "disabled" : ""} onclick="doPrestige()">
+      ✨ Prestigiar Ahora (Prestigio ${G.prestiges + 1})
+    </button>
+  </div>
+  <div class="prestige-card">
+    <h3>Tabla de Multiplicadores</h3>
+    <div class="mult-table">`;
+  PRESTIGE_MULT.forEach((m, i) => {
+    html += `<div class="mult-cell${i===G.prestiges?" current":""}"><div class="lv">Lv ${i}</div><div class="mx">${m}×</div></div>`;
+  });
+  html += `</div></div>`;
+  document.getElementById("tab-prestige").innerHTML = html;
+}
+
+function renderAch() {
+  const el = document.getElementById("tab-ach");
+  const done = G.achievements.length;
+  let html = `<div class="section-hd">${done} / ${ACHIEVEMENTS.length} desbloqueados</div>`;
+  ACHIEVEMENTS.forEach(a => {
+    const unlocked = G.achievements.includes(a.id);
+    html += `<div class="ach-item${unlocked?"":" locked"}">
+      <div class="ach-icon">${a.icon}</div>
+      <div>
+        <div class="ach-name">${a.name}</div>
+        <div class="ach-desc">${a.desc}</div>
+      </div>
+      ${unlocked ? '<div class="ach-check">✓</div>' : ""}
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function renderAll() {
+  renderShop(); renderSkins(); renderPrestige(); renderAch();
+  const skin = SKINS.find(s => s.id === G.activeSkin);
+  if (skin) document.getElementById("coin-btn").textContent = skin.emoji;
+  updateUI();
+}
+
+// ─── RESET ────────────────────────────────────────────────────────────────────
+
+function resetGame() {
+  if (!confirm("¿Seguro? Perderás todo el progreso, incluyendo prestigios y skins.")) return;
+  localStorage.removeItem("clicker_mg_v3");
+  G = defaultState();
+  renderAll();
+}
+
+// ─── LOOPS ────────────────────────────────────────────────────────────────────
+
+// Passive income (10 ticks/sec)
+setInterval(() => {
+  if (G.mps > 0) {
+    const gain = G.mps / 10;
+    G.coins += gain;
+    G.totalCoins += gain;
+    checkAch();
+    updateUI();
+  }
+}, 100);
+
+// Autosave every 8s
+setInterval(() => { save(); }, 8000);
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderAll();
+</script>
+</body>
+</html>
