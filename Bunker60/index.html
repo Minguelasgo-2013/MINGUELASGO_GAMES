@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EL BÚNKER — MINGUELASGO GAMES</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0a0806;
+  --surface:#14100d;
+  --surface2:#1e1812;
+  --surface3:#2a211a;
+  --border:#3d312a;
+  --border2:#564540;
+  --text:#e8d9b8;
+  --text2:#a89070;
+  --text3:#6e5a48;
+  --red:#c94428;
+  --red2:#e05535;
+  --amber:#c87820;
+  --amber2:#e89030;
+  --green:#3d7a44;
+  --green2:#52a05c;
+  --blue:#2a6080;
+  --blue2:#3a80a8;
+  --paper:#f0e8cc;
+  --paper2:#e0d4b0;
+  --ink:#2a1e14;
+  --ink2:#4a3828;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Share Tech Mono',monospace;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  overflow-x:hidden;
+}
+
+/* ── SCREENS ── */
+.screen{display:none;width:100%;max-width:720px;animation:fadeIn 0.4s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── NOISE OVERLAY ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:999;opacity:0.4;
+}
+
+/* ═══════════════════════════════════════════
+   PANTALLA DE INICIO
+═══════════════════════════════════════════ */
+#screen-menu{
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  min-height:100vh;
+  padding:40px 20px;
+  position:relative;
+}
+#screen-menu.active{display:flex}
+
+.menu-bg-text{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  font-family:'Special Elite',serif;
+  font-size:clamp(80px,18vw,180px);
+  color:rgba(255,255,255,0.012);
+  white-space:nowrap;
+  pointer-events:none;
+  user-select:none;
+  letter-spacing:-4px;
+}
+
+.menu-logo{
+  text-align:center;
+  margin-bottom:40px;
+  position:relative;
+}
+
+.menu-logo-sub{
+  font-size:11px;
+  color:var(--text3);
+  letter-spacing:6px;
+  text-transform:uppercase;
+  margin-bottom:16px;
+}
+
+.menu-logo-title{
+  font-family:'Special Elite',serif;
+  font-size:clamp(36px,8vw,72px);
+  color:var(--red2);
+  line-height:1;
+  text-shadow:0 0 40px rgba(201,68,40,0.3);
+  letter-spacing:2px;
+}
+
+.menu-logo-title span{
+  color:var(--text);
+  font-size:0.55em;
+  display:block;
+  letter-spacing:10px;
+  text-transform:uppercase;
+  margin-top:8px;
+  text-shadow:none;
+}
+
+.menu-logo-divider{
+  width:180px;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--red),transparent);
+  margin:20px auto;
+}
+
+.menu-logo-tagline{
+  font-size:12px;
+  color:var(--text3);
+  letter-spacing:3px;
+  text-transform:uppercase;
+}
+
+/* Decoración skull/warning */
+.menu-warning{
+  border:1px solid var(--border);
+  padding:10px 20px;
+  font-size:11px;
+  color:var(--text3);
+  letter-spacing:2px;
+  text-align:center;
+  margin-bottom:40px;
+  position:relative;
+}
+.menu-warning::before{content:'⚠';margin-right:8px;color:var(--amber)}
+.menu-warning::after{content:'⚠';margin-left:8px;color:var(--amber)}
+
+/* BOTONES MENÚ */
+.menu-nav{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  width:100%;
+  max-width:320px;
+  margin-bottom:40px;
+}
+
+.menu-btn{
+  background:none;
+  border:1px solid var(--border);
+  color:var(--text);
+  font-family:'Share Tech Mono',monospace;
+  font-size:16px;
+  padding:14px 32px;
+  cursor:pointer;
+  text-transform:uppercase;
+  letter-spacing:3px;
+  transition:all 0.15s;
+  position:relative;
+  overflow:hidden;
+}
+.menu-btn::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:0;
+  background:var(--red);
+  transition:width 0.2s;
+  z-index:0;
+}
+.menu-btn:hover::before{width:4px}
+.menu-btn:hover{border-color:var(--red2);color:var(--red2);padding-left:40px}
+.menu-btn span{position:relative;z-index:1}
+
+.menu-btn.primary{
+  border-color:var(--red);
+  color:var(--red2);
+  font-size:18px;
+  padding:18px 32px;
+}
+.menu-btn.primary::before{background:var(--red2)}
+.menu-btn.primary:hover{background:rgba(201,68,40,0.1);color:var(--text)}
+
+.menu-footer{
+  font-size:10px;
+  color:var(--text3);
+  letter-spacing:2px;
+  text-align:center;
+  margin-top:auto;
+}
+
+/* Stats pantalla inicio */
+.menu-stats-row{
+  display:flex;
+  gap:24px;
+  margin-bottom:32px;
+  font-size:11px;
+  color:var(--text3);
+}
+.menu-stat{text-align:center}
+.menu-stat strong{display:block;font-size:16px;color:var(--text2);margin-bottom:2px}
+
+/* ═══════════════════════════════════════════
+   PANTALLA OPCIONES
+═══════════════════════════════════════════ */
+#screen-options{
+  background:var(--surface);
+  border:2px solid var(--border);
+  padding:30px;
+}
+
+.options-title{
+  font-family:'Special Elite',serif;
+  font-size:24px;
+  color:var(--red2);
+  letter-spacing:3px;
+  text-transform:uppercase;
+  margin-bottom:24px;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+
+.opt-section{margin-bottom:28px}
+
+.opt-section-title{
+  font-size:11px;
+  color:var(--text3);
+  letter-spacing:4px;
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+.opt-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid rgba(61,49,42,0.4);
+  font-size:13px;
+  gap:16px;
+}
+
+.opt-label{color:var(--text2);flex:1}
+.opt-hint{font-size:10px;color:var(--text3);margin-top:2px}
+
+.opt-control select,
+.opt-control input[type=range]{
+  background:var(--surface3);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-family:'Share Tech Mono',monospace;
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:2px;
+  cursor:pointer;
+}
+
+.opt-control input[type=range]{
+  width:120px;
+  padding:0;
+  accent-color:var(--red2);
+}
+
+.opt-toggle{
+  display:flex;
+  gap:0;
+}
+.opt-toggle button{
+  background:var(--surface3);
+  border:1px solid var(--border);
+  color:var(--text3);
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;
+  padding:6px 14px;
+  cursor:pointer;
+  letter-spacing:1px;
+  transition:all 0.15s;
+}
+.opt-toggle button:first-child{border-right:none}
+.opt-toggle button.active{background:var(--red);border-color:var(--red2);color:var(--text)}
+
+.opt-val{font-size:13px;color:var(--amber2);min-width:32px;text-align:right}
+
+.btn-back{
+  background:none;
+  border:1px solid var(--border);
+  color:var(--text2);
+  font-family:'Share Tech Mono',monospace;
+  font-size:13px;
+  padding:10px 24px;
+  cursor:pointer;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  transition:all 0.15s;
+  margin-top:8px;
+}
+.btn-back:hover{border-color:var(--red2);color:var(--red2)}
+
+/* ═══════════════════════════════════════════
+   PANTALLA HISTORIA / CÓMO JUGAR
+═══════════════════════════════════════════ */
+#screen-story{
+  background:var(--surface);
+  border:2px solid var(--border);
+  padding:30px;
+}
+
+.story-paper{
+  background:var(--paper);
+  color:var(--ink);
+  padding:24px;
+  font-family:'Special Elite',serif;
+  font-size:14px;
+  line-height:1.8;
+  border:1px solid #c8b890;
+  box-shadow:inset 0 0 20px rgba(0,0,0,0.08);
+  margin-bottom:24px;
+  position:relative;
+}
+.story-paper::before{
+  content:'';
+  position:absolute;
+  left:36px;top:0;bottom:0;
+  width:1px;
+  background:rgba(180,100,100,0.3);
+}
+.story-paper h3{
+  font-size:18px;
+  margin-bottom:12px;
+  color:var(--red);
+  text-align:center;
+  letter-spacing:2px;
+}
+.story-paper p{margin-bottom:12px;padding-left:16px}
+.story-paper ul{padding-left:32px;margin-bottom:12px}
+.story-paper li{margin-bottom:6px}
+
+/* ═══════════════════════════════════════════
+   PANTALLA DE JUEGO
+═══════════════════════════════════════════ */
+#screen-game{
+  background:var(--surface);
+  border:2px solid var(--border);
+  padding:0;
+  overflow:hidden;
+}
+
+.game-topbar{
+  background:var(--surface2);
+  border-bottom:2px solid var(--border);
+  padding:10px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.game-title-bar{
+  font-family:'Special Elite',serif;
+  font-size:18px;
+  color:var(--red2);
+  letter-spacing:2px;
+}
+
+.game-day-badge{
+  background:var(--red);
+  color:var(--text);
+  font-size:11px;
+  font-weight:bold;
+  padding:4px 12px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+.game-menu-btn{
+  background:none;
+  border:1px solid var(--border);
+  color:var(--text3);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  padding:4px 10px;
+  cursor:pointer;
+  letter-spacing:1px;
+  transition:all 0.15s;
+}
+.game-menu-btn:hover{border-color:var(--red2);color:var(--red2)}
+
+.game-body{padding:20px}
+
+/* Suministros */
+.supplies-bar{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-bottom:16px;
+}
+.supply-cell{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  padding:8px 10px;
+  text-align:center;
+  font-size:11px;
+  color:var(--text2);
+}
+.supply-cell .sup-icon{font-size:16px;display:block;margin-bottom:2px}
+.supply-cell .sup-val{font-size:18px;color:var(--text);font-weight:bold;display:block}
+.supply-cell .sup-label{font-size:10px;color:var(--text3);letter-spacing:1px}
+.supply-cell.danger .sup-val{color:var(--red2)}
+.supply-cell.warning .sup-val{color:var(--amber2)}
+
+/* Fichas personajes */
+.chars-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:16px;
+}
+.char-card{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  padding:12px;
+  position:relative;
+  overflow:hidden;
+}
+.char-card::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:3px;
+  background:var(--green2);
+}
+.char-card.status-warning::before{background:var(--amber2)}
+.char-card.status-danger::before{background:var(--red2)}
+.char-card.status-dead::before{background:var(--text3)}
+.char-card.status-away::before{background:var(--blue2)}
+
+.char-name{font-size:13px;font-weight:bold;color:var(--text);margin-bottom:4px}
+.char-role{font-size:10px;color:var(--text3);letter-spacing:1px;margin-bottom:6px}
+.char-status-text{font-size:11px;color:var(--text2);line-height:1.4}
+.char-status-text .alert{color:var(--red2);font-weight:bold}
+.char-status-text .warn{color:var(--amber2)}
+.char-status-text .good{color:var(--green2)}
+.char-status-text .away{color:var(--blue2)}
+
+/* Barra de stats */
+.char-bars{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.char-bar-row{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text3)}
+.char-bar-track{flex:1;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.char-bar-fill{height:100%;border-radius:2px;transition:width 0.3s}
+.bar-hunger{background:var(--amber2)}
+.bar-thirst{background:var(--blue2)}
+
+/* Diario */
+.journal-wrap{
+  background:var(--paper);
+  border:1px solid #c8b890;
+  margin-bottom:16px;
+  box-shadow:inset 0 0 15px rgba(0,0,0,0.1);
+  position:relative;
+}
+.journal-header{
+  background:#e0d090;
+  padding:6px 12px;
+  font-family:'Special Elite',serif;
+  font-size:11px;
+  color:var(--ink2);
+  letter-spacing:3px;
+  text-transform:uppercase;
+  border-bottom:1px solid #c8b890;
+}
+.journal-body{
+  height:160px;
+  overflow-y:auto;
+  padding:14px 14px 14px 40px;
+  font-family:'Special Elite',serif;
+  font-size:13px;
+  color:var(--ink);
+  line-height:1.7;
+  position:relative;
+}
+.journal-body::before{
+  content:'';
+  position:absolute;
+  left:32px;top:0;bottom:0;
+  width:1px;
+  background:rgba(180,80,80,0.25);
+}
+.journal-entry{margin-bottom:8px}
+.journal-entry strong{color:var(--red);font-size:12px;letter-spacing:1px}
+
+/* Decisiones */
+.decisions-wrap{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  margin-bottom:16px;
+}
+.decisions-header{
+  background:var(--surface3);
+  padding:8px 14px;
+  font-size:10px;
+  color:var(--text3);
+  letter-spacing:4px;
+  text-transform:uppercase;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.decisions-body{padding:14px}
+
+.decision-group{margin-bottom:14px}
+.decision-group-title{
+  font-size:10px;
+  color:var(--amber2);
+  letter-spacing:3px;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.opt-label{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  font-size:12px;
+  color:var(--text2);
+  cursor:pointer;
+  padding:5px 0;
+  line-height:1.4;
+  transition:color 0.15s;
+}
+.opt-label:hover{color:var(--text)}
+.opt-label input{cursor:pointer;accent-color:var(--red2);margin-top:2px;flex-shrink:0}
+
+.event-box{
+  border:1px solid var(--amber);
+  background:rgba(200,120,32,0.05);
+  padding:10px 12px;
+  margin-top:12px;
+  font-size:11px;
+}
+.event-title{color:var(--amber2);letter-spacing:2px;font-size:10px;text-transform:uppercase;margin-bottom:6px}
+.event-desc{color:var(--text2);margin-bottom:8px;line-height:1.5}
+
+/* Días separados */
+.hr-dashed{
+  border:none;
+  border-top:1px dashed var(--border);
+  margin:12px 0;
+}
+
+/* Footer del juego */
+.game-footer{
+  padding:0 20px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.btn-advance{
+  background:var(--red);
+  color:var(--text);
+  border:2px solid #8f2015;
+  padding:14px 32px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:14px;
+  font-weight:bold;
+  cursor:pointer;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  transition:all 0.15s;
+  flex:1;
+  max-width:300px;
+}
+.btn-advance:hover{background:var(--red2);box-shadow:0 0 20px rgba(224,85,53,0.3)}
+.btn-advance:disabled{background:var(--surface3);border-color:var(--border);color:var(--text3);cursor:not-allowed;box-shadow:none}
+
+.game-info-pills{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.pill{
+  font-size:10px;
+  padding:4px 8px;
+  border:1px solid var(--border);
+  color:var(--text3);
+  letter-spacing:1px;
+}
+
+/* ═══════════════════════════════════════════
+   PANTALLA GAME OVER / VICTORIA
+═══════════════════════════════════════════ */
+#screen-end{
+  background:var(--surface);
+  border:2px solid var(--border);
+  padding:40px 30px;
+  text-align:center;
+}
+
+.end-icon{font-size:64px;margin-bottom:20px;display:block}
+.end-title{
+  font-family:'Special Elite',serif;
+  font-size:36px;
+  letter-spacing:4px;
+  margin-bottom:12px;
+}
+.end-title.defeat{color:var(--red2)}
+.end-title.victory{color:var(--amber2)}
+
+.end-subtitle{font-size:13px;color:var(--text2);letter-spacing:2px;margin-bottom:32px}
+
+.end-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  max-width:400px;
+  margin:0 auto 32px;
+}
+.end-stat{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  padding:12px 8px;
+}
+.end-stat strong{display:block;font-size:22px;color:var(--text);margin-bottom:4px}
+.end-stat span{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase}
+
+.end-log{
+  background:var(--paper);
+  color:var(--ink);
+  padding:20px;
+  font-family:'Special Elite',serif;
+  font-size:13px;
+  line-height:1.8;
+  text-align:left;
+  max-height:200px;
+  overflow-y:auto;
+  margin-bottom:28px;
+  border:1px solid #c8b890;
+}
+
+/* Dificultad badge */
+.diff-badge{
+  display:inline-block;
+  padding:3px 10px;
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  border:1px solid;
+  margin-bottom:8px;
+}
+.diff-badge.facil{color:var(--green2);border-color:var(--green)}
+.diff-badge.normal{color:var(--amber2);border-color:var(--amber)}
+.diff-badge.dificil{color:var(--red2);border-color:var(--red)}
+.diff-badge.apocaliptico{color:#ff44aa;border-color:#aa2266}
+
+/* Scrollbar custom */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--surface2)}
+::-webkit-scrollbar-thumb{background:var(--border2)}
+
+/* Flicker animation para efectos */
+@keyframes flicker{0%,100%{opacity:1}50%{opacity:0.85}75%{opacity:0.95}}
+.flicker{animation:flicker 4s infinite}
+
+/* Radio button style */
+input[type=radio]{accent-color:var(--blue2)}
+
+/* Responsive */
+@media(max-width:500px){
+  .supplies-bar{grid-template-columns:repeat(2,1fr)}
+  .end-stats{grid-template-columns:repeat(2,1fr)}
+  .menu-stats-row{gap:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ MENÚ PRINCIPAL ══════════════ -->
+<div class="screen" id="screen-menu">
+  <div class="menu-bg-text">BUNKER</div>
+
+  <div class="menu-logo">
+    <div class="menu-logo-sub">Minguelasgo Games VIP presenta</div>
+    <div class="menu-logo-title flicker">
+      EL BÚNKER
+      <span>Supervivencia bajo tierra</span>
+    </div>
+    <div class="menu-logo-divider"></div>
+    <div class="menu-logo-tagline">¿Cuántos días resistiréis?</div>
+  </div>
+
+  <div class="menu-warning">RADIACIÓN EXTERIOR LETAL — PERMANECER EN EL BÚNKER</div>
+
+  <div class="menu-stats-row" id="menu-stats-row" style="display:none">
+    <div class="menu-stat"><strong id="stat-partidas">0</strong>partidas</div>
+    <div class="menu-stat"><strong id="stat-max-dias">—</strong>días máx.</div>
+    <div class="menu-stat"><strong id="stat-victorias">0</strong>victorias</div>
+  </div>
+
+  <nav class="menu-nav">
+    <button class="menu-btn primary" onclick="startNewGame()"><span>▶  Nueva Partida</span></button>
+    <button class="menu-btn" onclick="showScreen('screen-story')"><span>📋  Cómo Jugar</span></button>
+    <button class="menu-btn" onclick="showScreen('screen-options')"><span>⚙  Opciones</span></button>
+  </nav>
+
+  <div class="menu-footer">
+    MINGUELASGO GAMES VIP · v2.0 · Inspirado en 60 Seconds!
+  </div>
+</div>
+
+<!-- ══════════════ OPCIONES ══════════════ -->
+<div class="screen" id="screen-options">
+  <div class="options-title">⚙ Opciones</div>
+
+  <div class="opt-section">
+    <div class="opt-section-title">Dificultad</div>
+    <div class="opt-row">
+      <div class="opt-label">
+        Modo de juego
+        <div class="opt-hint">Afecta al consumo de recursos y eventos</div>
+      </div>
+      <div class="opt-control">
+        <select id="opt-difficulty" onchange="updateDiffLabel()">
+          <option value="easy">Fácil — Superviviente</option>
+          <option value="normal" selected>Normal — Aprendiz</option>
+          <option value="hard">Difícil — Veterano</option>
+          <option value="apocalypse">Apocalíptico — Sin esperanza</option>
+        </select>
+      </div>
+    </div>
+    <div class="opt-row">
+      <div class="opt-label">
+        Días para el rescate
+        <div class="opt-hint">Cuántos días hay que sobrevivir</div>
+      </div>
+      <div class="opt-control" style="display:flex;align-items:center;gap:8px">
+        <input type="range" id="opt-days" min="7" max="20" value="12" oninput="document.getElementById('opt-days-val').innerText=this.value">
+        <span class="opt-val" id="opt-days-val">12</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="opt-section">
+    <div class="opt-section-title">Personajes</div>
+    <div class="opt-row">
+      <div class="opt-label">
+        Número de supervivientes
+        <div class="opt-hint">Con cuántos miembros empiezas</div>
+      </div>
+      <div class="opt-control">
+        <div class="opt-toggle">
+          <button onclick="selectToggle(this,'opt-survivors')" data-val="2" class="active">2</button>
+          <button onclick="selectToggle(this,'opt-survivors')" data-val="3">3</button>
+          <button onclick="selectToggle(this,'opt-survivors')" data-val="4">4</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="opt-section">
+    <div class="opt-section-title">Suministros iniciales</div>
+    <div class="opt-row">
+      <div class="opt-label">Raciones de comida</div>
+      <div class="opt-control" style="display:flex;align-items:center;gap:8px">
+        <input type="range" id="opt-food" min="1" max="8" value="4" oninput="document.getElementById('opt-food-val').innerText=this.value">
+        <span class="opt-val" id="opt-food-val">4</span>
+      </div>
+    </div>
+    <div class="opt-row">
+      <div class="opt-label">Botellas de agua</div>
+      <div class="opt-control" style="display:flex;align-items:center;gap:8px">
+        <input type="range" id="opt-water" min="1" max="8" value="4" oninput="document.getElementById('opt-water-val').innerText=this.value">
+        <span class="opt-val" id="opt-water-val">4</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="opt-section">
+    <div class="opt-section-title">Accesibilidad</div>
+    <div class="opt-row">
+      <div class="opt-label">Velocidad de texto</div>
+      <div class="opt-control">
+        <div class="opt-toggle">
+          <button onclick="selectToggle(this,'opt-textspeed')" data-val="fast">Rápido</button>
+          <button onclick="selectToggle(this,'opt-textspeed')" data-val="normal" class="active">Normal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-back" onclick="showScreen('screen-menu')">← Volver al Menú</button>
+</div>
+
+<!-- ══════════════ CÓMO JUGAR ══════════════ -->
+<div class="screen" id="screen-story">
+  <div class="options-title">📋 Cómo Jugar</div>
+
+  <div class="story-paper">
+    <h3>— Diario del Comandante del Búnker —</h3>
+    <p>La bomba ha caído. El mundo de arriba ya no existe tal como lo conocíamos. Ahora solo queda sobrevivir aquí abajo, en este búnker con recursos limitados.</p>
+
+    <p><strong>TU MISIÓN:</strong> Mantener a tu familia con vida hasta que llegue el equipo de rescate. Cada día tomas decisiones cruciales que pueden significar la diferencia entre vivir y morir.</p>
+
+    <ul>
+      <li><strong>Cada día</strong> tienes que decidir si das comida y agua a cada superviviente.</li>
+      <li><strong>Sin comida</strong> durante muchos días, los personajes enfermarán y morirán de hambre.</li>
+      <li><strong>Sin agua</strong> la deshidratación llega mucho antes que el hambre.</li>
+      <li><strong>Expediciones:</strong> Puedes enviar a alguien al exterior a buscar recursos. Tardará varios días en volver... si vuelve.</li>
+      <li><strong>Eventos aleatorios</strong> ocurren cada ciertos días: extraños en la puerta, señales de radio, fauna mutante...</li>
+      <li><strong>El hacha y la radio</strong> son herramientas clave para resolver ciertos eventos.</li>
+    </ul>
+
+    <p><strong>CONDICIONES:</strong> Mueren todos → derrota. Llegas al día de rescate con alguien vivo → victoria.</p>
+
+    <p>Recuerda: el exterior es letal. Cada decisión cuenta. El búnker no perdona los errores.</p>
+  </div>
+
+  <button class="btn-back" onclick="showScreen('screen-menu')">← Volver al Menú</button>
+</div>
+
+<!-- ══════════════ JUEGO ══════════════ -->
+<div class="screen" id="screen-game">
+  <div class="game-topbar">
+    <div class="game-title-bar">☢ El Búnker</div>
+    <div class="game-day-badge" id="game-day-badge">Día 1</div>
+    <button class="game-menu-btn" onclick="confirmMenu()">≡ MENÚ</button>
+  </div>
+
+  <div class="game-body">
+
+    <!-- Suministros -->
+    <div class="supplies-bar" id="supplies-bar">
+      <div class="supply-cell" id="cell-food">
+        <span class="sup-icon">🥫</span>
+        <span class="sup-val" id="sup-food">4</span>
+        <span class="sup-label">Raciones</span>
+      </div>
+      <div class="supply-cell" id="cell-water">
+        <span class="sup-icon">💧</span>
+        <span class="sup-val" id="sup-water">4</span>
+        <span class="sup-label">Agua</span>
+      </div>
+      <div class="supply-cell" id="cell-radio">
+        <span class="sup-icon">📻</span>
+        <span class="sup-val" id="sup-radio" style="font-size:12px">OK</span>
+        <span class="sup-label">Radio</span>
+      </div>
+      <div class="supply-cell" id="cell-axe">
+        <span class="sup-icon">🪓</span>
+        <span class="sup-val" id="sup-axe" style="font-size:12px">OK</span>
+        <span class="sup-label">Hacha</span>
+      </div>
+    </div>
+
+    <!-- Personajes -->
+    <div class="chars-grid" id="chars-grid"></div>
+
+    <!-- Diario -->
+    <div class="journal-wrap">
+      <div class="journal-header">📓 Diario del búnker</div>
+      <div class="journal-body" id="journal-body">
+        <div class="journal-entry"><strong>Día 1 —</strong> El búnker está sellado. El exterior es un páramo atómico, pero de momento estamos a salvo aquí abajo. Hay que racionar bien si queremos ver el mañana.</div>
+      </div>
+    </div>
+
+    <!-- Decisiones -->
+    <div class="decisions-wrap">
+      <div class="decisions-header">
+        <span>Órdenes del día</span>
+        <span id="decisions-day-label" style="color:var(--text2)">Día 1</span>
+      </div>
+      <div class="decisions-body" id="decisions-body"></div>
+    </div>
+
+  </div>
+
+  <!-- Footer botón -->
+  <div class="game-footer">
+    <div class="game-info-pills" id="game-pills"></div>
+    <button class="btn-advance" id="btn-advance" onclick="nextDay()">Pasar la Noche →</button>
+  </div>
+</div>
+
+<!-- ══════════════ FIN DE PARTIDA ══════════════ -->
+<div class="screen" id="screen-end">
+  <span class="end-icon" id="end-icon">💀</span>
+  <div class="end-title" id="end-title">TODOS HAN MUERTO</div>
+  <div class="end-subtitle" id="end-subtitle">El búnker quedó en silencio para siempre.</div>
+
+  <div class="end-stats">
+    <div class="end-stat"><strong id="end-days">—</strong><span>Días sobrevividos</span></div>
+    <div class="end-stat"><strong id="end-survivors">0</strong><span>Supervivientes</span></div>
+    <div class="end-stat"><strong id="end-expeditions">0</strong><span>Expediciones</span></div>
+  </div>
+
+  <div class="end-log" id="end-log"></div>
+
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <button class="btn-advance" onclick="startNewGame()" style="max-width:200px">▶ Volver a Intentar</button>
+    <button class="btn-back" onclick="showScreen('screen-menu')" style="padding:14px 24px">🏠 Menú</button>
+  </div>
+</div>
+
+<script>
+// ─── OPCIONES HELPERS ───
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function selectToggle(btn,group){
+  btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function getToggleVal(group){
+  let btn = document.querySelector(`[data-val].active`);
+  // Buscar el grupo específico
+  let container = document.getElementById(group)?.closest('.opt-row')?.querySelector('.opt-toggle');
+  if(container) return container.querySelector('.active')?.dataset.val;
+  return null;
+}
+
+function updateDiffLabel(){}
+
+function getOptions(){
+  return {
+    difficulty: document.getElementById('opt-difficulty')?.value || 'normal',
+    targetDays: parseInt(document.getElementById('opt-days')?.value || 12),
+    survivors: parseInt(document.querySelector('[data-val].active')?.dataset.val || 2),
+    startFood: parseInt(document.getElementById('opt-food')?.value || 4),
+    startWater: parseInt(document.getElementById('opt-water')?.value || 4),
+  };
+}
+
+// ─── DATOS DEL JUEGO ───
+let gameState = {};
+let characters = {};
+let gameLog = [];
+let globalStats = {partidas:0,maxDias:0,victorias:0};
+let expeditionCount = 0;
+
+const CHAR_NAMES = [
+  {name:'Miguel',role:'Padre'},
+  {name:'Ana',role:'Madre'},
+  {name:'Lena',role:'Hija Mayor'},
+  {name:'Rafa',role:'Hijo Menor'},
+];
+
+const DIFFICULTY = {
+  easy:       {hungerDeath:6,thirstDeath:5,scavengeRisk:0.1,eventBadChance:0.2},
+  normal:     {hungerDeath:5,thirstDeath:4,scavengeRisk:0.25,eventBadChance:0.35},
+  hard:       {hungerDeath:4,thirstDeath:3,scavengeRisk:0.4,eventBadChance:0.5},
+  apocalypse: {hungerDeath:3,thirstDeath:2,scavengeRisk:0.55,eventBadChance:0.65},
+};
+
+// Pool de eventos narrativos extendido
+const EVENTS = [
+  {
+    id:'radio_militar', day:3, needsItem:'hasRadio',
+    title:'Frecuencia Militar',
+    desc:'La radio capta estática irregular. Podría ser una transmisión militar cifrada.',
+    option:'Responder con las coordenadas del búnker',
+    onYes:(diff)=>{
+      if(Math.random()>diff.eventBadChance){
+        return {text:'Una voz responde: "Coordenadas recibidas. Equipo de extracción en ruta." Parece esperanzador.', good:true};
+      } else {
+        return {text:'La señal desapareció tras emitir. Quizás solo era ruido estático. O peor, algo os ha localizado.', good:false};
+      }
+    },
+    onNo:()=>({text:'Decidisteis no responder. El silencio es vuestra mejor armadura.',good:null})
+  },
+  {
+    id:'escotilla', day:6, needsItem:'hasAxe',
+    title:'Golpes en la Escotilla',
+    desc:'Algo — o alguien — araña la escotilla metálica desde fuera. Lleva horas.',
+    option:'Salir con el hacha a investigar',
+    onYes:(diff)=>{
+      let r=Math.random();
+      if(r>0.6){
+        let f=Math.floor(Math.random()*3)+2, w=Math.floor(Math.random()*3)+1;
+        gameState.food+=f;gameState.water+=w;
+        return {text:`Era un vagabundo superviviente agonizante. Dejó una mochila: ${f} raciones y ${w} botellas de agua. Murió poco después.`,good:true};
+      } else if(r>0.3){
+        gameState.hasAxe=false;
+        return {text:'El hacha se partió al golpear a una criatura ciega que huyó chirriando. El hacha ya no sirve.',good:false};
+      } else {
+        return {text:'Solo era el viento moviendo escombros metálicos. Falsa alarma, pero el corazón tardó en calmarse.',good:null};
+      }
+    },
+    onNo:()=>({text:'Os quedasteis en silencio absoluto. Los golpes cesaron horas después. No supisteis qué era.',good:null})
+  },
+  {
+    id:'extraños', day:8,
+    title:'Voces en el Exterior',
+    desc:'Se escuchan voces humanas al otro lado de la pared. Piden ayuda. Pueden ser supervivientes... o una trampa.',
+    option:'Abrir la escotilla para ayudarles',
+    onYes:(diff)=>{
+      if(Math.random()>diff.eventBadChance+0.1){
+        let f=Math.floor(Math.random()*2)+1;
+        gameState.food+=f;
+        return {text:`Eran una pareja de civiles agotados. Os dieron sus últimas ${f} raciones y siguieron camino. Hay más supervivientes.`,good:true};
+      } else {
+        gameState.food=Math.max(0,gameState.food-2);
+        return {text:'Eran saqueadores. Os robaron 2 raciones antes de que pudierais cerrar la escotilla. Más cuidado la próxima vez.',good:false};
+      }
+    },
+    onNo:()=>({text:'Decidisteis no arriesgar. Las voces se alejaron. Nunca sabréis si tomasteis la decisión correcta.',good:null})
+  },
+  {
+    id:'agua_filtro', day:5,
+    title:'Sistema de Filtrado',
+    desc:'Ana ha encontrado un sistema de filtración de agua roto. Con las herramientas adecuadas podría repararlo.',
+    option:'Intentar reparar el sistema de agua',
+    onYes:(diff)=>{
+      if(Math.random()>diff.eventBadChance){
+        gameState.water+=Math.floor(Math.random()*3)+2;
+        return {text:'¡Éxito! El sistema de filtrado funciona. Habéis ganado varios días de agua extra.',good:true};
+      } else {
+        return {text:'La reparación falló y se derramó parte del agua. Un día perdido sin nada que mostrar.',good:false};
+      }
+    },
+    onNo:()=>({text:'Dejasteis el sistema roto. El agua sigue escasa como siempre.',good:null})
+  },
+  {
+    id:'fiebre', day:9,
+    title:'Fiebre Alta',
+    desc:'Uno de los supervivientes ha desarrollado una fiebre alarmante. Sin medicinas, el tiempo juega en contra.',
+    option:'Usar las últimas reservas de comida como energía curativa',
+    onYes:(diff)=>{
+      if(gameState.food>=2){
+        gameState.food-=2;
+        let key=getRandomAliveChar();
+        if(key){characters[key].sick=false;characters[key].hunger=Math.max(0,characters[key].hunger-1);}
+        return {text:'La fiebre cedió tras dos días de reposo y racionamiento especial. El enfermo se recupera.',good:true};
+      } else {
+        return {text:'No había suficiente comida para sostener la recuperación. La fiebre sigue.',good:false};
+      }
+    },
+    onNo:()=>({text:'Decidisteis dejar que el cuerpo luchara solo. Es un riesgo calculado.',good:null})
+  },
+  {
+    id:'depósito', day:11,
+    title:'Depósito Secreto',
+    desc:'Miguel ha encontrado un panel falso en la pared. Detrás hay algo oculto.',
+    option:'Abrir el panel y explorar',
+    onYes:(diff)=>{
+      let r=Math.random();
+      if(r>0.3){
+        let f=Math.floor(Math.random()*4)+2,w=Math.floor(Math.random()*3)+1;
+        gameState.food+=f;gameState.water+=w;
+        if(!gameState.hasRadio){gameState.hasRadio=true;}
+        return {text:`¡El panel ocultaba suministros del constructor del búnker! ${f} raciones, ${w} botellas${!gameState.hasRadio?', y una radio de reserva':''}. Un golpe de suerte inmenso.`,good:true};
+      } else {
+        return {text:'El panel solo escondía cables y polvo. Nada útil. La decepción fue palpable.',good:null};
+      }
+    },
+    onNo:()=>({text:'Dejasteis el panel en paz. Quizás era mejor no saber.',good:null})
+  },
+];
+
+function getRandomAliveChar(){
+  let alive=Object.keys(characters).filter(k=>characters[k].alive&&gameState.scavengerAway!==k);
+  if(!alive.length)return null;
+  return alive[Math.floor(Math.random()*alive.length)];
+}
+
+// ─── INICIO DE PARTIDA ───
+function startNewGame(){
+  let opts = getOptions();
+  let diff = DIFFICULTY[opts.difficulty] || DIFFICULTY.normal;
+  expeditionCount=0;
+
+  // Construir personajes según cantidad seleccionada
+  characters={};
+  let count = opts.survivors || 2;
+  count = Math.min(count, CHAR_NAMES.length);
+  for(let i=0;i<count;i++){
+    let c = CHAR_NAMES[i];
+    characters[`p${i+1}`]={
+      name:c.name,role:c.role,alive:true,
+      hunger:0,thirst:0,sick:false,
+    };
+  }
+
+  gameState={
+    day:1,
+    food:opts.startFood,
+    water:opts.startWater,
+    hasRadio:true,
+    hasAxe:true,
+    scavengerAway:null,
+    scavengerReturnDay:0,
+    activeEvent:null,
+    gameOver:false,
+    targetDay:opts.targetDays,
+    difficulty:opts.difficulty,
+    diffConfig:diff,
+    usedEvents:new Set(),
+  };
+  gameLog=[];
+
+  // Actualizar el reel de personajes en el DOM
+  buildCharsGrid();
+  globalStats.partidas++;
+  updateMenuStats();
+
+  showScreen('screen-game');
+  updateGameUI();
+  buildDecisions();
+}
+
+// ─── BUILD UI ───
+function buildCharsGrid(){
+  let grid = document.getElementById('chars-grid');
+  grid.innerHTML='';
+  let cols = Object.keys(characters).length;
+  grid.style.gridTemplateColumns = cols<=2?'1fr 1fr':'repeat(auto-fit,minmax(160px,1fr))';
+  for(let key in characters){
+    let p=characters[key];
+    grid.innerHTML+=`<div class="char-card" id="card-${key}">
+      <div class="char-name">${p.name}</div>
+      <div class="char-role">${p.role}</div>
+      <div class="char-status-text" id="cst-${key}">—</div>
+      <div class="char-bars">
+        <div class="char-bar-row"><span>H</span><div class="char-bar-track"><div class="char-bar-fill bar-hunger" id="bar-h-${key}" style="width:0%"></div></div></div>
+        <div class="char-bar-row"><span>S</span><div class="char-bar-track"><div class="char-bar-fill bar-thirst" id="bar-t-${key}" style="width:0%"></div></div></div>
+      </div>
+    </div>`;
+  }
+}
+
+function updateGameUI(){
+  let gs=gameState;
+  document.getElementById('game-day-badge').innerText=`Día ${gs.day}`;
+  document.getElementById('decisions-day-label').innerText=`Día ${gs.day}`;
+
+  // Suministros
+  let sf=document.getElementById('sup-food');
+  let sw=document.getElementById('sup-water');
+  sf.innerText=gs.food;
+  sw.innerText=gs.water;
+  document.getElementById('sup-radio').innerText=gs.hasRadio?'✓ OK':'✗ Rota';
+  document.getElementById('sup-axe').innerText=gs.hasAxe?'✓ OK':'✗ Perdida';
+  document.getElementById('cell-food').className='supply-cell'+(gs.food<=1?' danger':gs.food<=2?' warning':'');
+  document.getElementById('cell-water').className='supply-cell'+(gs.water<=1?' danger':gs.water<=2?' warning':'');
+  document.getElementById('cell-radio').className='supply-cell'+(gs.hasRadio?'':' danger');
+  document.getElementById('cell-axe').className='supply-cell'+(gs.hasAxe?'':' danger');
+
+  // Pills info
+  let diff={'easy':'Fácil','normal':'Normal','hard':'Difícil','apocalypse':'Apocalíptico'}[gs.difficulty]||'Normal';
+  document.getElementById('game-pills').innerHTML=
+    `<div class="pill">Objetivo: Día ${gs.targetDay}</div>
+     <div class="pill">${diff}</div>`;
+
+  // Personajes
+  let dc=gs.diffConfig;
+  for(let key in characters){
+    let p=characters[key];
+    let card=document.getElementById(`card-${key}`);
+    let cst=document.getElementById(`cst-${key}`);
+    let bh=document.getElementById(`bar-h-${key}`);
+    let bt=document.getElementById(`bar-t-${key}`);
+    if(!card)continue;
+
+    if(!p.alive){
+      card.className='char-card status-dead';
+      cst.innerHTML='<span class="alert">† FALLECIDO</span>';
+      if(bh)bh.style.width='100%',bh.style.background='#333';
+      if(bt)bt.style.width='100%',bt.style.background='#333';
+      continue;
+    }
+    if(gs.scavengerAway===key){
+      card.className='char-card status-away';
+      cst.innerHTML='<span class="away">Explorando el yermo...</span>';
+      continue;
+    }
+
+    let hPct=Math.min(100,Math.round(p.hunger/dc.hungerDeath*100));
+    let tPct=Math.min(100,Math.round(p.thirst/dc.thirstDeath*100));
+    if(bh)bh.style.width=hPct+'%';
+    if(bt)bt.style.width=tPct+'%';
+
+    let conds=[];
+    if(p.sick) conds.push('<span class="warn">Enfermo</span>');
+    if(p.hunger>=dc.hungerDeath-1) conds.push('<span class="alert">¡Famélico!</span>');
+    else if(p.hunger>=2) conds.push('<span class="warn">Hambriento</span>');
+    if(p.thirst>=dc.thirstDeath-1) conds.push('<span class="alert">¡Deshidratado!</span>');
+    else if(p.thirst>=1) conds.push('<span class="warn">Sediento</span>');
+    if(!conds.length) conds.push('<span class="good">Estable</span>');
+    cst.innerHTML=conds.join(' · ');
+
+    let cls='char-card';
+    if(hPct>=80||tPct>=80) cls+=' status-danger';
+    else if(hPct>=50||tPct>=50||p.sick) cls+=' status-warning';
+    card.className=cls;
+  }
+}
+
+function buildDecisions(){
+  let body=document.getElementById('decisions-body');
+  body.innerHTML='';
+  let gs=gameState;
+
+  // Grupo racionamiento
+  let aliveInside=Object.keys(characters).filter(k=>characters[k].alive&&gs.scavengerAway!==k);
+  if(aliveInside.length){
+    body.innerHTML+=`<div class="decision-group">
+      <div class="decision-group-title">🥫 Racionamiento</div>
+      ${aliveInside.map(key=>{
+        let p=characters[key];
+        return `<label class="opt-label"><input type="checkbox" id="feed-${key}" ${gs.food<=0?'disabled':''}>
+          Dar ración de comida a ${p.name}</label>
+          <label class="opt-label"><input type="checkbox" id="drink-${key}" ${gs.water<=0?'disabled':''}>
+          Dar ración de agua a ${p.name}</label>`;
+      }).join('')}
+    </div>`;
+  }
+
+  // Expedición
+  body.innerHTML+=`<div class="hr-dashed"></div>`;
+  if(!gs.scavengerAway){
+    let aliveChars=Object.keys(characters).filter(k=>characters[k].alive);
+    body.innerHTML+=`<div class="decision-group">
+      <div class="decision-group-title">🧭 Expedición al Exterior</div>
+      ${aliveChars.map(key=>`
+        <label class="opt-label" style="color:var(--blue2)"><input type="radio" name="scav-r" value="${key}">
+          Enviar a ${characters[key].name} al yermo a buscar recursos</label>`).join('')}
+      <label class="opt-label"><input type="radio" name="scav-r" value="none" checked>
+        No enviar a nadie hoy</label>
+    </div>`;
+  } else {
+    let p=characters[gs.scavengerAway];
+    body.innerHTML+=`<div class="decision-group">
+      <div class="decision-group-title">🧭 Expedición</div>
+      <div style="color:var(--blue2);font-size:12px;padding:4px 0">${p.name} está fuera explorando. Regresará pronto...</div>
+    </div>`;
+  }
+
+  // Evento especial del día
+  checkAndRenderEvent(body);
+}
+
+function checkAndRenderEvent(body){
+  let gs=gameState;
+  let today=EVENTS.find(e=>{
+    if(gs.usedEvents.has(e.id))return false;
+    if(e.day!==gs.day)return false;
+    if(e.needsItem&&!gs[e.needsItem])return false;
+    return true;
+  });
+
+  if(!today){
+    // Evento aleatorio de baja probabilidad
+    if(Math.random()<0.2&&gs.day>2){
+      let unused=EVENTS.filter(e=>!gs.usedEvents.has(e.id)&&!e.day);
+      if(unused.length){
+        today=unused[Math.floor(Math.random()*unused.length)];
+      }
+    }
+  }
+
+  gs.activeEvent=today||null;
+
+  if(today){
+    body.innerHTML+=`<div class="hr-dashed"></div>
+    <div class="event-box">
+      <div class="event-title">⚡ EVENTO — ${today.title}</div>
+      <div class="event-desc">${today.desc}</div>
+      <label class="opt-label"><input type="checkbox" id="evt-choice"> ${today.option}</label>
+    </div>`;
+  }
+}
+
+// ─── AVANZAR DÍA ───
+function nextDay(){
+  if(gameState.gameOver)return;
+  let gs=gameState;
+  let dc=gs.diffConfig;
+  let log='';
+
+  // 1. Racionamiento
+  for(let key in characters){
+    let p=characters[key];
+    if(!p.alive||gs.scavengerAway===key)continue;
+    let fed=document.getElementById(`feed-${key}`)?.checked;
+    let drank=document.getElementById(`drink-${key}`)?.checked;
+    if(fed&&gs.food>0){gs.food--;p.hunger=Math.max(0,p.hunger-1);}
+    else{p.hunger++;}
+    if(drank&&gs.water>0){gs.water--;p.thirst=Math.max(0,p.thirst-1);}
+    else{p.thirst++;}
+  }
+
+  // 2. Evento especial
+  if(gs.activeEvent){
+    let evt=gs.activeEvent;
+    gs.usedEvents.add(evt.id);
+    let chose=document.getElementById('evt-choice')?.checked;
+    let result=chose?evt.onYes(dc):evt.onNo();
+    log+=`• [${evt.title}] ${result.text}\n`;
+  }
+
+  // 3. Explorador regreso / nuevo
+  if(gs.scavengerAway){
+    if(gs.day>=gs.scavengerReturnDay){
+      let key=gs.scavengerAway;
+      let p=characters[key];
+      if(Math.random()>dc.scavengeRisk){
+        let f=Math.floor(Math.random()*4)+1;
+        let w=Math.floor(Math.random()*3)+1;
+        gs.food+=f;gs.water+=w;
+        if(Math.random()>0.5)p.sick=true;
+        log+=`• ¡${p.name} regresó del exterior! Trae 🥫${f} raciones y 💧${w} botellas. ${p.sick?'Pero el aire contaminado le ha afectado.':''}\n`;
+      } else {
+        p.alive=false;
+        log+=`• No hay señales de ${p.name}. Después de días de espera, debemos asumir lo peor. El yermo es cruel.\n`;
+      }
+      gs.scavengerAway=null;
+    }
+  } else {
+    let sel=document.querySelector('input[name="scav-r"]:checked')?.value;
+    if(sel&&sel!=='none'&&characters[sel]?.alive){
+      gs.scavengerAway=sel;
+      gs.scavengerReturnDay=gs.day+Math.floor(Math.random()*3)+2;
+      expeditionCount++;
+      log+=`• ${characters[sel].name} salió al exterior. Le esperamos de vuelta en aproximadamente ${gs.scavengerReturnDay-gs.day} días.\n`;
+    }
+  }
+
+  // 4. Enfermedades progresivas
+  for(let key in characters){
+    let p=characters[key];
+    if(!p.alive)continue;
+    if(p.sick&&Math.random()<0.15){
+      p.hunger++;p.thirst++;
+    }
+    // Recuperación natural si bien alimentado
+    if(p.hunger===0&&p.thirst===0&&p.sick&&Math.random()<0.2){
+      p.sick=false;
+      log+=`• ${p.name} parece haber superado la enfermedad gracias al descanso.\n`;
+    }
+  }
+
+  // 5. Muertes
+  for(let key in characters){
+    let p=characters[key];
+    if(!p.alive)continue;
+    if(p.hunger>=dc.hungerDeath||p.thirst>=dc.thirstDeath){
+      p.alive=false;
+      log+=`• ${p.name} no ha resistido las privaciones. Descansa en paz.\n`;
+    }
+  }
+
+  gs.day++;
+  if(!log)log='La noche transcurrió en calma tensa. Nada nuevo que reportar.\n';
+  gameLog.push({day:gs.day-1,text:log.trim()});
+
+  addJournalEntry(gs.day-1,log);
+  checkEnd();
+}
+
+function addJournalEntry(day,text){
+  let body=document.getElementById('journal-body');
+  body.innerHTML+=`<div class="journal-entry" style="border-top:1px dashed #c8b890;padding-top:8px;margin-top:8px">
+    <strong>Día ${day} —</strong> ${text.replace(/\n/g,'<br>')}
+  </div>`;
+  body.scrollTop=body.scrollHeight;
+}
+
+function checkEnd(){
+  let gs=gameState;
+  let alive=Object.values(characters).filter(p=>p.alive);
+  let aliveCnt=alive.length;
+
+  if(aliveCnt===0){
+    endGame(false,'Todos han muerto. El búnker quedó en silencio eterno.');
+    return;
+  }
+  if(gs.day>gs.targetDay){
+    endGame(true,`¡El equipo de rescate llegó el día ${gs.targetDay}! ${aliveCnt} superviviente${aliveCnt>1?'s':''} lograron ver el nuevo mundo.`);
+    return;
+  }
+
+  updateGameUI();
+  buildDecisions();
+}
+
+function endGame(victory,message){
+  gameState.gameOver=true;
+  document.getElementById('btn-advance').disabled=true;
+  updateGameUI();
+
+  let aliveCnt=Object.values(characters).filter(p=>p.alive).length;
+
+  if(globalStats.maxDias<gameState.day-1) globalStats.maxDias=gameState.day-1;
+  if(victory) globalStats.victorias++;
+  updateMenuStats();
+
+  document.getElementById('end-icon').innerText=victory?'🏆':'☢';
+  let et=document.getElementById('end-title');
+  et.innerText=victory?'¡RESCATADOS!':'FIN DEL JUEGO';
+  et.className='end-title '+(victory?'victory':'defeat');
+  document.getElementById('end-subtitle').innerText=message;
+  document.getElementById('end-days').innerText=gameState.day-1;
+  document.getElementById('end-survivors').innerText=aliveCnt;
+  document.getElementById('end-expeditions').innerText=expeditionCount;
+
+  let logHtml=gameLog.map(e=>`<strong>Día ${e.day}:</strong> ${e.text}<br>`).join('<br>');
+  document.getElementById('end-log').innerHTML=logHtml;
+
+  setTimeout(()=>showScreen('screen-end'),600);
+}
+
+function confirmMenu(){
+  if(confirm('¿Volver al menú? La partida actual se perderá.')){
+    showScreen('screen-menu');
+  }
+}
+
+function updateMenuStats(){
+  let row=document.getElementById('menu-stats-row');
+  if(globalStats.partidas>0){
+    row.style.display='flex';
+    document.getElementById('stat-partidas').innerText=globalStats.partidas;
+    document.getElementById('stat-max-dias').innerText=globalStats.maxDias||'—';
+    document.getElementById('stat-victorias').innerText=globalStats.victorias;
+  }
+}
+
+// ─── INICIO ───
+showScreen('screen-menu');
+</script>
+</body>
+</html>
