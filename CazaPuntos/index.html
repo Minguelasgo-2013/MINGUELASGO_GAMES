@@ -1,109 +1,420 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>CAZA EL PUNTO - MINGUELASGO</title>
-    <style>
-        body { 
-            background: #121212; 
-            color: white; 
-            font-family: 'Courier New', Courier, monospace; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            margin: 0; 
-            overflow: hidden;
-        }
-        #game-container {
-            width: 90vw;
-            height: 70vh;
-            background: #1e1e1e;
-            border: 4px solid #fff;
-            position: relative;
-            cursor: crosshair;
-            border-radius: 10px;
-        }
-        .target {
-            width: 50px;
-            height: 50px;
-            background: #ff4757;
-            border-radius: 50%;
-            position: absolute;
-            transition: transform 0.1s;
-        }
-        .target:active { transform: scale(0.8); }
-        .stats { font-size: 24px; margin-bottom: 10px; }
-        .btn-salir {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: white;
-            color: black;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
 
-    <div class="stats">PUNTOS: <span id="puntos">0</span> | TIEMPO: <span id="tiempo">30</span>s</div>
-    
-    <div id="game-container">
-        <div id="objetivo" class="target" onclick="sumarPunto()"></div>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+#gc{
+  font-family:'Courier New',monospace;
+  background:#0a0a0f;
+  border-radius:12px;
+  padding:14px;
+  user-select:none;
+  -webkit-user-select:none;
+}
+#arena{
+  width:100%;
+  height:340px;
+  background:#111118;
+  border:1.5px solid #222230;
+  border-radius:8px;
+  position:relative;
+  cursor:crosshair;
+  overflow:hidden;
+}
+#arena.shake{animation:shk 0.15s linear}
+@keyframes shk{0%,100%{transform:translate(0)}25%{transform:translate(-3px,2px)}75%{transform:translate(3px,-2px)}}
+.tgt{
+  position:absolute;
+  border-radius:50%;
+  cursor:crosshair;
+  transform:translate(-50%,-50%);
+  transition:width 0.12s,height 0.12s;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:rgba(255,255,255,0.9);
+}
+.tgt.bonus{border:2px solid #fff;animation:pulse 0.5s infinite alternate}
+@keyframes pulse{from{opacity:0.8}to{opacity:1}}
+.tgt.decoy{opacity:0.6;border:1.5px dashed rgba(255,255,255,0.3)}
+.pop{
+  position:absolute;
+  pointer-events:none;
+  font-weight:700;
+  font-size:15px;
+  animation:popUp 0.6s ease-out forwards;
+  transform:translate(-50%,-50%);
+  white-space:nowrap;
+}
+@keyframes popUp{0%{opacity:1;transform:translate(-50%,-60%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-120%) scale(0.9)}}
+.miss{
+  position:absolute;
+  pointer-events:none;
+  width:18px;height:18px;
+  border:2px solid rgba(255,80,80,0.6);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  animation:missAnim 0.4s ease-out forwards;
+}
+@keyframes missAnim{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.5)}}
+#topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:10px;
+  padding:0 2px;
+}
+.stat-box{
+  background:#14141e;
+  border:1px solid #1e1e2e;
+  border-radius:6px;
+  padding:5px 12px;
+  text-align:center;
+}
+.stat-label{font-size:9px;color:#555;letter-spacing:2px;text-transform:uppercase}
+.stat-val{font-size:20px;font-weight:700;line-height:1.1}
+#timerBar{height:5px;background:#1e1e2e;border-radius:3px;margin-bottom:10px;overflow:hidden}
+#timerFill{height:100%;background:#4af;border-radius:3px;transition:width 0.1s linear}
+#comboDisplay{
+  position:absolute;top:8px;left:50%;transform:translateX(-50%);
+  font-size:11px;letter-spacing:2px;color:#fa0;
+  transition:opacity 0.3s;
+  pointer-events:none;
+}
+#overlay{
+  position:absolute;inset:0;
+  background:rgba(8,8,15,0.92);
+  border-radius:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;
+}
+#overlay h2{font-size:22px;color:#fff;letter-spacing:3px}
+#overlay .final-score{font-size:48px;font-weight:700;color:#4af}
+#overlay .sub{font-size:11px;color:#666;letter-spacing:2px}
+.ov-stats{display:flex;gap:16px}
+.ov-stat{text-align:center;background:#14141e;border:1px solid #222;border-radius:6px;padding:8px 14px}
+.ov-stat .v{font-size:20px;font-weight:700;color:#fff}
+.ov-stat .l{font-size:9px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+#btnStart{
+  background:#4af;color:#000;border:none;border-radius:6px;
+  padding:10px 28px;font-size:13px;font-weight:700;
+  cursor:pointer;letter-spacing:2px;font-family:'Courier New',monospace;
+}
+#btnStart:hover{background:#6bf}
+#diffRow{display:flex;gap:8px}
+.dbtn{
+  background:#14141e;border:1.5px solid #222;border-radius:5px;
+  padding:5px 12px;font-size:10px;cursor:pointer;color:#888;
+  font-family:'Courier New',monospace;letter-spacing:1px;
+}
+.dbtn.sel{border-color:#4af;color:#4af}
+#streakBar{
+  display:flex;gap:3px;margin-bottom:8px;padding:0 2px;
+  align-items:center;
+}
+.streak-pip{width:16px;height:6px;border-radius:2px;background:#1e1e2e;}
+.streak-pip.on{background:#fa0;}
+#bottomRow{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:8px;padding:0 2px;
+  font-size:10px;color:#444;letter-spacing:1px;
+}
+</style>
+
+<div id="gc">
+  <div id="topbar">
+    <div class="stat-box">
+      <div class="stat-label">puntos</div>
+      <div class="stat-val" id="vPuntos" style="color:#4af">0</div>
     </div>
+    <div class="stat-box">
+      <div class="stat-label">tiempo</div>
+      <div class="stat-val" id="vTiempo" style="color:#fa0">30</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">combo</div>
+      <div class="stat-val" id="vCombo" style="color:#f4a">x1</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">mejor</div>
+      <div class="stat-val" id="vMejor" style="color:#8a8">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">precision</div>
+      <div class="stat-val" id="vPrecision" style="color:#a8f">100%</div>
+    </div>
+  </div>
 
-    <button class="btn-salir" onclick="location.href='../index.html'">VOLVER AL MENÚ</button>
+  <div id="timerBar"><div id="timerFill" style="width:100%"></div></div>
 
-    <script>
-        let puntos = 0;
-        let tiempo = 30;
-        const objetivo = document.getElementById('objetivo');
-        const puntosTxt = document.getElementById('puntos');
-        const tiempoTxt = document.getElementById('tiempo');
-        const container = document.getElementById('game-container');
+  <div id="streakBar">
+    <span style="font-size:9px;color:#444;letter-spacing:2px;margin-right:4px">RACHA</span>
+  </div>
 
-        function moverObjetivo() {
-            const maxX = container.clientWidth - 50;
-            const maxY = container.clientHeight - 50;
-            
-            const randomX = Math.floor(Math.random() * maxX);
-            const randomY = Math.floor(Math.random() * maxY);
-            
-            objetivo.style.left = randomX + 'px';
-            objetivo.style.top = randomY + 'px';
-            
-            // Cambia de color aleatoriamente para que sea más loco
-            const colores = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#ffffff'];
-            objetivo.style.background = colores[Math.floor(Math.random() * colores.length)];
-        }
+  <div id="arena" id="arena">
+    <div id="comboDisplay" style="opacity:0"></div>
+    <div id="overlay">
+      <h2>CAZA EL PUNTO</h2>
+      <div class="sub">minguelasgo edition</div>
+      <div id="diffRow">
+        <div class="dbtn sel" data-d="facil" onclick="selDiff(this)">FÁCIL</div>
+        <div class="dbtn" data-d="normal" onclick="selDiff(this)">NORMAL</div>
+        <div class="dbtn" data-d="dificil" onclick="selDiff(this)">DIFÍCIL</div>
+        <div class="dbtn" data-d="caos" onclick="selDiff(this)">CAOS</div>
+      </div>
+      <button id="btnStart" onclick="startGame()">JUGAR</button>
+      <div class="sub" id="lastResult" style="color:#666"></div>
+    </div>
+  </div>
 
-        function sumarPunto() {
-            puntos++;
-            puntosTxt.innerText = puntos;
-            moverObjetivo();
-        }
+  <div id="bottomRow">
+    <span id="vMisses">fallos: 0</span>
+    <span id="vBest10">mejores 10: —</span>
+    <span id="vStreak">racha max: 0</span>
+  </div>
+</div>
 
-        // Cuenta atrás
-        const cuentaAtras = setInterval(() => {
-            tiempo--;
-            tiempoTxt.innerText = tiempo;
-            
-            if (tiempo <= 0) {
-                clearInterval(cuentaAtras);
-                alert("¡TIEMPO AGOTADO!\nPuntos totales: " + puntos);
-                location.reload();
-            }
-        }, 1000);
+<script>
+const arena=document.getElementById('arena');
+const overlay=document.getElementById('overlay');
+const comboDisp=document.getElementById('comboDisplay');
 
-        // Mover el punto solo cada 1.5 segundos si no le das
-        setInterval(() => {
-            moverObjetivo();
-        }, 1500);
+const diffs={
+  facil:  {time:30,minR:22,maxR:32,moveMs:2200,numTargets:1,decoys:0,bonusChance:0.08},
+  normal: {time:25,minR:16,maxR:26,moveMs:1400,numTargets:2,decoys:1,bonusChance:0.12},
+  dificil:{time:20,minR:12,maxR:20,moveMs:900, numTargets:3,decoys:2,bonusChance:0.18},
+  caos:   {time:20,minR:9, maxR:16,moveMs:550, numTargets:4,decoys:3,bonusChance:0.25}
+};
 
-        moverObjetivo(); // Posición inicial
-    </script>
-</body>
-</html>
+let diff='facil';
+let cfg=diffs[diff];
+let running=false;
+let puntos=0,misses=0,hits=0,totalClicks=0;
+let combo=1,maxStreak=0,curStreak=0;
+let timeLeft=30;
+let timerInterval=null,moveInterval=null;
+let best=parseInt(localStorage.getItem('cazaMejor')||'0');
+let targets=[];
+let recentTimes=[];
+
+document.getElementById('vMejor').textContent=best;
+
+function selDiff(el){
+  document.querySelectorAll('.dbtn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  diff=el.dataset.d;
+  cfg=diffs[diff];
+}
+
+function buildStreakPips(){
+  const sb=document.getElementById('streakBar');
+  sb.innerHTML='<span style="font-size:9px;color:#444;letter-spacing:2px;margin-right:4px">RACHA</span>';
+  for(let i=0;i<10;i++){
+    const p=document.createElement('div');
+    p.className='streak-pip';
+    p.id='pip'+i;
+    sb.appendChild(p);
+  }
+}
+
+function updateStreakPips(){
+  for(let i=0;i<10;i++){
+    const p=document.getElementById('pip'+i);
+    if(p) p.className='streak-pip'+(curStreak>i?' on':'');
+  }
+}
+
+function rndColor(){
+  const cols=['#e74c3c','#2ecc71','#3498db','#e67e22','#9b59b6','#1abc9c','#e91e63','#ff5722','#00bcd4'];
+  return cols[Math.floor(Math.random()*cols.length)];
+}
+
+function spawnTarget(isDecoy=false,isBonus=false){
+  const r=isBonus?cfg.minR*0.75:isDecoy?cfg.maxR*1.2:cfg.minR+Math.random()*(cfg.maxR-cfg.minR);
+  const pad=r+4;
+  const rect=arena.getBoundingClientRect();
+  const aw=rect.width||640,ah=arena.clientHeight||340;
+  const x=pad+Math.random()*(aw-pad*2);
+  const y=pad+Math.random()*(ah-pad*2);
+  const el=document.createElement('div');
+  el.className='tgt'+(isBonus?' bonus':isDecoy?' decoy':'');
+  el.style.left=x+'px';
+  el.style.top=y+'px';
+  el.style.width=(r*2)+'px';
+  el.style.height=(r*2)+'px';
+  el.style.background=isBonus?'#ffd700':isDecoy?'#555':rndColor();
+  if(isBonus) el.textContent='★';
+  if(isDecoy) el.textContent='✗';
+  el.dataset.type=isBonus?'bonus':isDecoy?'decoy':'normal';
+  el.dataset.val=isBonus?'3':isDecoy?'-1':'1';
+  el.addEventListener('click',onTargetClick);
+  arena.appendChild(el);
+  return {el,x,y,r,type:el.dataset.type};
+}
+
+function spawnAll(){
+  clearTargets();
+  targets=[];
+  for(let i=0;i<cfg.numTargets;i++){
+    const isBonus=Math.random()<cfg.bonusChance;
+    targets.push(spawnTarget(false,isBonus));
+  }
+  for(let i=0;i<cfg.decoys;i++) targets.push(spawnTarget(true,false));
+}
+
+function clearTargets(){
+  arena.querySelectorAll('.tgt').forEach(e=>e.remove());
+}
+
+function onTargetClick(e){
+  if(!running) return;
+  e.stopPropagation();
+  const val=parseInt(e.currentTarget.dataset.val);
+  const type=e.currentTarget.dataset.type;
+  const rect=e.currentTarget.getBoundingClientRect();
+  const arRect=arena.getBoundingClientRect();
+  const cx=rect.left-arRect.left+rect.width/2;
+  const cy=rect.top-arRect.top+rect.height/2;
+
+  if(type==='decoy'){
+    misses++;
+    curStreak=0;
+    combo=Math.max(1,combo-1);
+    showPop(cx,cy,'-1','#e74c3c');
+    arena.classList.add('shake');
+    setTimeout(()=>arena.classList.remove('shake'),200);
+  } else {
+    hits++;
+    curStreak++;
+    if(curStreak>maxStreak) maxStreak=curStreak;
+    if(curStreak>0&&curStreak%5===0){
+      combo=Math.min(combo+1,8);
+      flashCombo();
+    }
+    const gain=val*combo;
+    puntos+=gain;
+    recentTimes.push(gain);
+    if(recentTimes.length>10) recentTimes.shift();
+    showPop(cx,cy,(gain>val?'x'+combo+' ':'')+(gain>0?'+':'')+gain,gain>3?'#ffd700':gain>1?'#fa0':'#2ecc71');
+  }
+  totalClicks++;
+  updateUI();
+  updateStreakPips();
+  e.currentTarget.remove();
+  targets=targets.filter(t=>t.el!==e.currentTarget);
+
+  const remaining=arena.querySelectorAll('.tgt:not(.decoy)').length;
+  if(remaining===0) spawnAll();
+}
+
+function flashCombo(){
+  comboDisp.textContent='COMBO x'+combo+'!';
+  comboDisp.style.opacity='1';
+  comboDisp.style.color=combo>=5?'#f44':combo>=3?'#ffd700':'#fa0';
+  clearTimeout(comboDisp._t);
+  comboDisp._t=setTimeout(()=>comboDisp.style.opacity='0',900);
+}
+
+function showPop(x,y,txt,color){
+  const d=document.createElement('div');
+  d.className='pop';
+  d.style.left=x+'px';
+  d.style.top=y+'px';
+  d.style.color=color;
+  d.textContent=txt;
+  arena.appendChild(d);
+  setTimeout(()=>d.remove(),700);
+}
+
+arena.addEventListener('click',function(e){
+  if(!running) return;
+  if(e.target===arena||e.target===comboDisp){
+    misses++;
+    curStreak=0;
+    combo=Math.max(1,combo-1);
+    totalClicks++;
+    const rect=arena.getBoundingClientRect();
+    const mx=e.clientX-rect.left;
+    const my=e.clientY-rect.top;
+    const miss=document.createElement('div');
+    miss.className='miss';
+    miss.style.left=mx+'px';
+    miss.style.top=my+'px';
+    arena.appendChild(miss);
+    setTimeout(()=>miss.remove(),500);
+    updateUI();
+    updateStreakPips();
+  }
+});
+
+function updateUI(){
+  document.getElementById('vPuntos').textContent=puntos;
+  document.getElementById('vCombo').textContent='x'+combo;
+  document.getElementById('vMisses').textContent='fallos: '+misses;
+  document.getElementById('vStreak').textContent='racha max: '+maxStreak;
+  const pct=totalClicks>0?Math.round(hits/totalClicks*100):100;
+  document.getElementById('vPrecision').textContent=pct+'%';
+  const best10=recentTimes.length?Math.round(recentTimes.reduce((a,b)=>a+b,0)):'—';
+  document.getElementById('vBest10').textContent='últimos 10: '+(recentTimes.length?best10:'—');
+}
+
+function startGame(){
+  cfg=diffs[diff];
+  running=true;puntos=0;misses=0;hits=0;totalClicks=0;
+  combo=1;maxStreak=0;curStreak=0;recentTimes=[];
+  timeLeft=cfg.time;
+  overlay.style.display='none';
+  buildStreakPips();
+  updateUI();
+  spawnAll();
+
+  const totalMs=cfg.time*1000;
+  const startTs=Date.now();
+
+  timerInterval=setInterval(()=>{
+    const elapsed=(Date.now()-startTs)/1000;
+    timeLeft=Math.max(0,cfg.time-elapsed);
+    document.getElementById('vTiempo').textContent=Math.ceil(timeLeft);
+    document.getElementById('timerFill').style.width=(timeLeft/cfg.time*100)+'%';
+    const fillEl=document.getElementById('timerFill');
+    if(timeLeft<8) fillEl.style.background='#e74c3c';
+    else if(timeLeft<15) fillEl.style.background='#fa0';
+    else fillEl.style.background='#4af';
+    if(timeLeft<=0){endGame();}
+  },80);
+
+  moveInterval=setInterval(()=>{
+    if(!running) return;
+    spawnAll();
+  },cfg.moveMs);
+}
+
+function endGame(){
+  clearInterval(timerInterval);
+  clearInterval(moveInterval);
+  running=false;
+  clearTargets();
+
+  if(puntos>best){best=puntos;localStorage.setItem('cazaMejor',best);}
+  document.getElementById('vMejor').textContent=best;
+
+  const pct=totalClicks>0?Math.round(hits/totalClicks*100):0;
+  const medal=puntos>=200?'🏆':puntos>=100?'🥇':puntos>=50?'🥈':'🥉';
+
+  overlay.innerHTML=`
+    <h2 style="font-size:18px;color:#aaa;letter-spacing:3px">TIEMPO AGOTADO</h2>
+    <div style="font-size:52px;font-weight:700;color:#4af">${puntos}</div>
+    <div style="font-size:11px;color:#555;letter-spacing:2px">puntos ${medal}</div>
+    <div class="ov-stats">
+      <div class="ov-stat"><div class="v" style="color:#2ecc71">${hits}</div><div class="l">aciertos</div></div>
+      <div class="ov-stat"><div class="v" style="color:#e74c3c">${misses}</div><div class="l">fallos</div></div>
+      <div class="ov-stat"><div class="v" style="color:#f4a">${pct}%</div><div class="l">precision</div></div>
+      <div class="ov-stat"><div class="v" style="color:#fa0">${maxStreak}</div><div class="l">racha max</div></div>
+    </div>
+    ${puntos>=best?'<div style="font-size:11px;color:#ffd700;letter-spacing:2px">★ NUEVO RECORD ★</div>':'<div style="font-size:11px;color:#444;letter-spacing:1px">record: '+best+'</div>'}
+    <div id="diffRow" style="display:flex;gap:8px">
+      <div class="dbtn${diff==='facil'?' sel':''}" data-d="facil" onclick="selDiff(this)">FÁCIL</div>
+      <div class="dbtn${diff==='normal'?' sel':''}" data-d="normal" onclick="selDiff(this)">NORMAL</div>
+      <div class="dbtn${diff==='dificil'?' sel':''}" data-d="dificil" onclick="selDiff(this)">DIFÍCIL</div>
+      <div class="dbtn${diff==='caos'?' sel':''}" data-d="caos" onclick="selDiff(this)">CAOS</div>
+    </div>
+    <button id="btnStart" onclick="startGame()" style="background:#4af;color:#000;border:none;border-radius:6px;padding:10px 28px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:2px;font-family:'Courier New',monospace;">OTRA VEZ</button>
+  `;
+  overlay.style.display='flex';
+}
+buildStreakPips();
+</script>
