@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>☢️ OXIGEN</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#050505;
+    color:#00ffcc;
+    font-family:Arial,sans-serif;
+    overflow-x:hidden;
+}
+
+#game{
+    max-width:1000px;
+    margin:auto;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+    font-size:4em;
+    margin:30px 0;
+    text-shadow:0 0 20px #00ffcc;
+}
+
+.panel{
+    background:#111;
+    border:2px solid #00ffcc;
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 0 20px rgba(0,255,204,0.2);
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.bar{
+    width:100%;
+    height:25px;
+    background:#222;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:10px;
+}
+
+.fill{
+    height:100%;
+    transition:0.3s;
+}
+
+#vidaBar{
+    background:red;
+    width:100%;
+}
+
+#oxigenoBar{
+    background:cyan;
+    width:100%;
+}
+
+.info{
+    margin-top:15px;
+    font-size:1.1em;
+}
+
+#eventBox{
+    min-height:150px;
+    font-size:1.2em;
+    line-height:1.6;
+}
+
+.buttons{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+button{
+    flex:1;
+    min-width:200px;
+    padding:20px;
+    border:none;
+    border-radius:15px;
+    background:#00ffcc;
+    color:#000;
+    font-size:1.1em;
+    font-weight:bold;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+button:hover{
+    transform:scale(1.04);
+    background:#fff;
+}
+
+.market-item{
+    background:#1a1a1a;
+    border:2px solid #00ffcc;
+    border-radius:15px;
+    padding:20px;
+    margin-top:15px;
+}
+
+.market-item h3{
+    margin-bottom:10px;
+}
+
+.market-item p{
+    margin-bottom:10px;
+}
+
+.gameover{
+    text-align:center;
+    margin-top:100px;
+}
+
+.gameover h1{
+    color:red;
+    text-shadow:0 0 20px red;
+}
+
+@media(max-width:700px){
+
+    h1{
+        font-size:2.5em;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<div id="game">
+
+    <h1>☢️ OXIGEN</h1>
+
+    <div class="panel">
+
+        <div class="stats">
+
+            <div>
+
+                <h2>❤️ VIDA</h2>
+
+                <div class="bar">
+                    <div class="fill" id="vidaBar"></div>
+                </div>
+
+                <div class="info">
+                    <span id="vidaText"></span>
+                </div>
+
+            </div>
+
+            <div>
+
+                <h2>🫁 OXÍGENO</h2>
+
+                <div class="bar">
+                    <div class="fill" id="oxigenoBar"></div>
+                </div>
+
+                <div class="info">
+                    <span id="oxigenoText"></span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="info">
+            💰 CHATARRA:
+            <span id="chatarraText">0</span>
+        </div>
+
+        <div class="info">
+            📍 DISTANCIA:
+            <span id="distanciaText">0</span>m
+        </div>
+
+    </div>
+
+    <div class="panel" id="eventBox">
+        Bienvenido al mundo devastado de OXIGEN...
+    </div>
+
+    <div class="buttons">
+
+        <button onclick="explorar()">
+            🔍 EXPLORAR
+        </button>
+
+        <button onclick="abrirMercado()">
+            🏪 MERCADO
+        </button>
+
+        <button onclick="descansar()">
+            😴 DESCANSAR
+        </button>
+
+    </div>
+
+    <div id="market"></div>
+
+</div>
+
+<script>
+
+// =====================================
+// CONFIG
+// =====================================
+
+const CONFIG = {
+
+    VIDA_INICIAL:100,
+    OXIGENO_INICIAL:100,
+    CHATARRA_INICIAL:50,
+
+    CONSUMO_OXIGENO_POR_TURNO:5,
+    CONSUMO_VIDA_SIN_OXIGENO:10,
+
+    DISTANCIA_MAXIMA_EXPLORACION:1000,
+
+    PROBABILIDAD_EVENTO:0.4,
+
+    RECOMPENSA_CHATARRA_MIN:10,
+    RECOMPENSA_CHATARRA_MAX:50,
+
+    DANIO_EVENTO_MIN:10,
+    DANIO_EVENTO_MAX:30,
+
+    MEJORAS:{
+
+        cilindro_oxigeno:{
+            nombre:"Cilindro Mejorado",
+            costo:100,
+            efecto:"Oxígeno +50"
+        },
+
+        armadura_ligera:{
+            nombre:"Armadura Ligera",
+            costo:150,
+            efecto:"Daño -20%"
+        },
+
+        detector_recursos:{
+            nombre:"Detector",
+            costo:200,
+            efecto:"Más chatarra"
+        },
+
+        medibots:{
+            nombre:"Medibots",
+            costo:250,
+            efecto:"Regenera vida"
+        }
+
+    }
+
+};
+
+// =====================================
+// JUGADOR
+// =====================================
+
+const jugador = {
+
+    vida:100,
+    vidaMax:100,
+
+    oxigeno:100,
+    oxigenoMax:100,
+
+    chatarra:50,
+
+    distancia:0,
+
+    reduccionDanio:0,
+
+    bonusRecoleccion:1,
+
+    regeneracion:0,
+
+    mejoras:[],
+
+    escudo:false,
+    turnosEscudo:0
+
+};
+
+// =====================================
+// EVENTOS
+// =====================================
+
+const eventos = [
+
+    {
+        nombre:"💎 Depósito de Chatarra",
+        descripcion:"Encontraste recursos valiosos.",
+        tipo:"recompensa"
+    },
+
+    {
+        nombre:"⚠️ Zona Contaminada",
+        descripcion:"La radiación te daña.",
+        tipo:"danio"
+    },
+
+    {
+        nombre:"🔥 Explosión",
+        descripcion:"Una explosión cercana te golpea.",
+        tipo:"danio"
+    },
+
+    {
+        nombre:"💚 Base Médica",
+        descripcion:"Encontraste suministros médicos.",
+        tipo:"curacion"
+    },
+
+    {
+        nombre:"🛡️ Escudo",
+        descripcion:"Activaste un escudo temporal.",
+        tipo:"escudo"
+    }
+
+];
+
+// =====================================
+// UI
+// =====================================
+
+function actualizarUI(){
+
+    document.getElementById("vidaBar").style.width =
+        (jugador.vida/jugador.vidaMax*100)+"%";
+
+    document.getElementById("oxigenoBar").style.width =
+        (jugador.oxigeno/jugador.oxigenoMax*100)+"%";
+
+    document.getElementById("vidaText").innerText =
+        jugador.vida+" / "+jugador.vidaMax;
+
+    document.getElementById("oxigenoText").innerText =
+        jugador.oxigeno+" / "+jugador.oxigenoMax;
+
+    document.getElementById("chatarraText").innerText =
+        jugador.chatarra;
+
+    document.getElementById("distanciaText").innerText =
+        jugador.distancia;
+
+}
+
+// =====================================
+// RANDOM
+// =====================================
+
+function random(min,max){
+
+    return Math.floor(
+        Math.random()*(max-min+1)
+    )+min;
+
+}
+
+// =====================================
+// EVENTOS
+// =====================================
+
+function generarEvento(){
+
+    if(Math.random()>CONFIG.PROBABILIDAD_EVENTO)
+        return;
+
+    const evento =
+        eventos[Math.floor(Math.random()*eventos.length)];
+
+    let html = `
+        <h2>${evento.nombre}</h2>
+        <p>${evento.descripcion}</p>
+    `;
+
+    switch(evento.tipo){
+
+        case "recompensa":
+
+            let scrap =
+                random(
+                    CONFIG.RECOMPENSA_CHATARRA_MIN,
+                    CONFIG.RECOMPENSA_CHATARRA_MAX
+                );
+
+            scrap =
+                Math.floor(scrap*jugador.bonusRecoleccion);
+
+            jugador.chatarra += scrap;
+
+            html += `<p>💰 +${scrap} chatarra</p>`;
+
+            break;
+
+        case "danio":
+
+            if(jugador.escudo){
+
+                html += `<p>🛡️ Escudo bloqueó el daño</p>`;
+                break;
+
+            }
+
+            let danio =
+                random(
+                    CONFIG.DANIO_EVENTO_MIN,
+                    CONFIG.DANIO_EVENTO_MAX
+                );
+
+            danio =
+                Math.floor(
+                    danio*(1-jugador.reduccionDanio/100)
+                );
+
+            jugador.vida -= danio;
+
+            html += `<p>❌ -${danio} vida</p>`;
+
+            break;
+
+        case "curacion":
+
+            jugador.vida += 30;
+
+            if(jugador.vida>jugador.vidaMax)
+                jugador.vida = jugador.vidaMax;
+
+            html += `<p>💚 +30 vida</p>`;
+
+            break;
+
+        case "escudo":
+
+            jugador.escudo = true;
+            jugador.turnosEscudo = 5;
+
+            html += `<p>🛡️ Escudo activado</p>`;
+
+            break;
+
+    }
+
+    document.getElementById("eventBox").innerHTML = html;
+
+}
+
+// =====================================
+// EXPLORAR
+// =====================================
+
+function explorar(){
+
+    jugador.distancia += 10;
+
+    jugador.oxigeno -=
+        CONFIG.CONSUMO_OXIGENO_POR_TURNO;
+
+    if(jugador.oxigeno<0)
+        jugador.oxigeno = 0;
+
+    if(jugador.oxigeno<=0){
+
+        jugador.vida -=
+            CONFIG.CONSUMO_VIDA_SIN_OXIGENO;
+
+    }
+
+    generarEvento();
+
+    if(jugador.regeneracion>0){
+
+        jugador.vida += jugador.regeneracion;
+
+        if(jugador.vida>jugador.vidaMax)
+            jugador.vida = jugador.vidaMax;
+
+    }
+
+    if(jugador.turnosEscudo>0){
+
+        jugador.turnosEscudo--;
+
+        if(jugador.turnosEscudo<=0){
+
+            jugador.escudo = false;
+
+        }
+
+    }
+
+    if(jugador.vida<=0){
+
+        gameOver();
+        return;
+
+    }
+
+    actualizarUI();
+
+}
+
+// =====================================
+// MERCADO
+// =====================================
+
+function abrirMercado(){
+
+    let html = `<div class="panel">`;
+
+    html += `<h2>🏪 MERCADO</h2>`;
+
+    for(let id in CONFIG.MEJORAS){
+
+        const m = CONFIG.MEJORAS[id];
+
+        html += `
+
+        <div class="market-item">
+
+            <h3>${m.nombre}</h3>
+
+            <p>${m.efecto}</p>
+
+            <p>💰 ${m.costo}</p>
+
+            <button onclick="comprar('${id}')">
+                COMPRAR
+            </button>
+
+        </div>
+
+        `;
+
+    }
+
+    html += `</div>`;
+
+    document.getElementById("market").innerHTML = html;
+
+}
+
+// =====================================
+// COMPRAR
+// =====================================
+
+function comprar(id){
+
+    const mejora = CONFIG.MEJORAS[id];
+
+    if(jugador.chatarra<mejora.costo){
+
+        alert("No tienes suficiente chatarra");
+        return;
+
+    }
+
+    if(jugador.mejoras.includes(id)){
+
+        alert("Ya comprada");
+        return;
+
+    }
+
+    jugador.chatarra -= mejora.costo;
+
+    jugador.mejoras.push(id);
+
+    switch(id){
+
+        case "cilindro_oxigeno":
+
+            jugador.oxigenoMax += 50;
+            jugador.oxigeno = jugador.oxigenoMax;
+
+            break;
+
+        case "armadura_ligera":
+
+            jugador.reduccionDanio += 20;
+
+            break;
+
+        case "detector_recursos":
+
+            jugador.bonusRecoleccion += 0.3;
+
+            break;
+
+        case "medibots":
+
+            jugador.regeneracion = 5;
+
+            break;
+
+    }
+
+    actualizarUI();
+
+    alert("✅ Mejora comprada");
+
+}
+
+// =====================================
+// DESCANSAR
+// =====================================
+
+function descansar(){
+
+    jugador.vida += 20;
+    jugador.oxigeno += 20;
+
+    if(jugador.vida>jugador.vidaMax)
+        jugador.vida = jugador.vidaMax;
+
+    if(jugador.oxigeno>jugador.oxigenoMax)
+        jugador.oxigeno = jugador.oxigenoMax;
+
+    document.getElementById("eventBox").innerHTML = `
+        <h2>😴 Descanso</h2>
+        <p>Recuperaste energía.</p>
+    `;
+
+    actualizarUI();
+
+}
+
+// =====================================
+// GAME OVER
+// =====================================
+
+function gameOver(){
+
+    document.body.innerHTML = `
+
+    <div class="gameover">
+
+        <h1>☠ GAME OVER</h1>
+
+        <h2>Distancia recorrida:
+        ${jugador.distancia}m</h2>
+
+        <button onclick="location.reload()">
+            REINICIAR
+        </button>
+
+    </div>
+
+    `;
+
+}
+
+// =====================================
+// START
+// =====================================
+
+actualizarUI();
+
+</script>
+
+</body>
+</html>
