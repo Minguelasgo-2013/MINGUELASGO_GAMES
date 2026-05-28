@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Life Simulator - Un juego tipo Sims</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2C3E50;
+            --light: #ECF0F1;
+            --bg-dark: #1A1A2E;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--light);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            max-width: 1000px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, #FF8E72 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 40px;
+        }
+
+        .sim-character {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F5F7FA 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out 0.2s both;
+        }
+
+        .character-avatar {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--secondary) 0%, #3DB8B0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.3);
+        }
+
+        .character-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .character-mood {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stats-section {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F5F7FA 100%);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out 0.4s both;
+        }
+
+        .stats-title {
+            font-size: 1.5em;
+            color: var(--dark);
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .stat {
+            margin-bottom: 20px;
+        }
+
+        .stat-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .stat-label .value {
+            color: var(--primary);
+        }
+
+        .stat-bar {
+            background: #E0E0E0;
+            height: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            background: linear-gradient(90deg, var(--secondary) 0%, #4ECDC4 100%);
+        }
+
+        .actions-section {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F5F7FA 100%);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out 0.6s both;
+        }
+
+        .actions-title {
+            font-size: 1.5em;
+            color: var(--dark);
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, #FF8E72 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+            animation: popIn 0.4s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .action-btn.secondary {
+            background: linear-gradient(135deg, var(--secondary) 0%, #3DB8B0 100%);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .action-btn.secondary:hover {
+            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.4);
+        }
+
+        .action-btn.accent {
+            background: linear-gradient(135deg, var(--accent) 0%, #FFD93D 100%);
+            color: var(--dark);
+            box-shadow: 0 5px 15px rgba(255, 230, 109, 0.3);
+        }
+
+        .action-btn.accent:hover {
+            box-shadow: 0 10px 25px rgba(255, 230, 109, 0.4);
+        }
+
+        .time-display {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            color: var(--dark);
+            font-weight: bold;
+        }
+
+        .time-hour {
+            color: var(--primary);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.4s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(300px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .daily-summary {
+            background: linear-gradient(135deg, var(--accent) 0%, #FFD93D 100%);
+            color: var(--dark);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .actions-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 The Life Simulator</h1>
+            <p>¡Un juego de simulación de vida!</p>
+        </div>
+
+        <div class="content">
+            <div class="sim-character">
+                <div class="character-avatar" id="avatar">😊</div>
+                <div class="character-name" id="characterName">Nati</div>
+                <div class="character-mood" id="mood">Se siente feliz</div>
+            </div>
+
+            <div class="stats-section">
+                <div class="stats-title">📊 Necesidades</div>
+                
+                <div class="stat">
+                    <div class="stat-label">
+                        <span>🍽️ Hambre</span>
+                        <span class="value" id="hungerValue">50</span>
+                    </div>
+                    <div class="stat-bar">
+                        <div class="stat-fill" id="hungerBar" style="width: 50%"></div>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">
+                        <span>😴 Energía</span>
+                        <span class="value" id="energyValue">70</span>
+                    </div>
+                    <div class="stat-bar">
+                        <div class="stat-fill" id="energyBar" style="width: 70%"></div>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">
+                        <span>🎮 Diversión</span>
+                        <span class="value" id="funValue">40</span>
+                    </div>
+                    <div class="stat-bar">
+                        <div class="stat-fill" id="funBar" style="width: 40%"></div>
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">
+                        <span>💰 Dinero</span>
+                        <span class="value" id="moneyValue">500</span>
+                    </div>
+                    <div class="stat-bar">
+                        <div class="stat-fill" id="moneyBar" style="width: 50%; background: linear-gradient(90deg, var(--accent) 0%, #FFD93D 100%)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions-section">
+                <div class="time-display">
+                    Hora: <span class="time-hour" id="timeDisplay">8:00</span>
+                </div>
+                <div class="actions-title">⚡ Acciones</div>
+                <div class="actions-grid">
+                    <button class="action-btn" onclick="performAction('eat')">🍽️ Comer</button>
+                    <button class="action-btn" onclick="performAction('sleep')">😴 Dormir</button>
+                    <button class="action-btn secondary" onclick="performAction('play')">🎮 Jugar</button>
+                    <button class="action-btn secondary" onclick="performAction('work')">💼 Trabajar</button>
+                    <button class="action-btn accent" onclick="performAction('shower')">🚿 Ducha</button>
+                    <button class="action-btn accent" onclick="performAction('relax')">☕ Relajarse</button>
+                </div>
+                <div class="daily-summary" id="dailySummary">
+                    Presiona acciones para mejorar las necesidades de tu personaje
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estado del juego
+        const game = {
+            character: {
+                name: 'Alex',
+                hunger: 50,
+                energy: 70,
+                fun: 40,
+                money: 500,
+                health: 80
+            },
+            time: {
+                hour: 8,
+                day: 1
+            },
+            actionLog: []
+        };
+
+        const moods = [
+            { emoji: '😢', text: 'Muy triste', threshold: 20 },
+            { emoji: '😞', text: 'Deprimido', threshold: 40 },
+            { emoji: '😐', text: 'Neutral', threshold: 60 },
+            { emoji: '😊', text: 'Feliz', threshold: 75 },
+            { emoji: '😄', text: 'Muy feliz', threshold: 90 },
+            { emoji: '🤩', text: 'Eufórico', threshold: 101 }
+        ];
+
+        const actions = {
+            eat: {
+                name: 'Comer',
+                hunger: -40,
+                energy: 5,
+                fun: 0,
+                money: -10,
+                health: 10,
+                message: 'Tu personaje comió una deliciosa comida 🍽️'
+            },
+            sleep: {
+                name: 'Dormir',
+                hunger: 20,
+                energy: -60,
+                fun: -10,
+                money: 0,
+                health: 15,
+                message: 'Tu personaje durmió profundamente 😴'
+            },
+            play: {
+                name: 'Jugar',
+                hunger: 10,
+                energy: 15,
+                fun: -50,
+                money: -5,
+                health: -5,
+                message: '¡Qué diversión! 🎮'
+            },
+            work: {
+                name: 'Trabajar',
+                hunger: 30,
+                energy: 25,
+                fun: 30,
+                money: -150,
+                health: -10,
+                message: 'Trabajaste duro y ganaste dinero 💰'
+            },
+            shower: {
+                name: 'Ducha',
+                hunger: 0,
+                energy: -10,
+                fun: 5,
+                money: 0,
+                health: 20,
+                message: 'Tu personaje se siente fresco y limpio 🚿'
+            },
+            relax: {
+                name: 'Relajarse',
+                hunger: 5,
+                energy: -15,
+                fun: -25,
+                money: 0,
+                health: 5,
+                message: 'Momento de relajación ☕'
+            }
+        };
+
+        // Funciones
+        function performAction(actionType) {
+            const action = actions[actionType];
+            
+            game.character.hunger += action.hunger;
+            game.character.energy += action.energy;
+            game.character.fun += action.fun;
+            game.character.money += action.money;
+            game.character.health += action.health;
+
+            // Clamp values entre 0 y 100
+            Object.keys(game.character).forEach(key => {
+                if (key !== 'name') {
+                    game.character[key] = Math.max(0, Math.min(100, game.character[key]));
+                }
+            });
+
+            // Agregar hora
+            game.time.hour += Math.floor(Math.random() * 2) + 1;
+            if (game.time.hour >= 24) {
+                game.time.hour = 0;
+                game.time.day++;
+            }
+
+            showNotification(action.message);
+            updateUI();
+            game.actionLog.push(`${new Date().toLocaleTimeString()}: ${action.name}`);
+        }
+
+        function updateUI() {
+            // Actualizar barras
+            document.getElementById('hungerValue').textContent = Math.round(game.character.hunger);
+            document.getElementById('hungerBar').style.width = game.character.hunger + '%';
+
+            document.getElementById('energyValue').textContent = Math.round(game.character.energy);
+            document.getElementById('energyBar').style.width = game.character.energy + '%';
+
+            document.getElementById('funValue').textContent = Math.round(game.character.fun);
+            document.getElementById('funBar').style.width = game.character.fun + '%';
+
+            document.getElementById('moneyValue').textContent = Math.round(game.character.money);
+            document.getElementById('moneyBar').style.width = Math.min(100, (game.character.money / 1000) * 100) + '%';
+
+            // Calcular estado de ánimo
+            const moodScore = (100 - game.character.hunger) + game.character.fun + (game.character.energy / 2);
+            const moodAvg = moodScore / 2.5;
+            const mood = moods.find(m => moodAvg <= m.threshold);
+
+            document.getElementById('avatar').textContent = mood.emoji;
+            document.getElementById('mood').textContent = `Se siente ${mood.text}`;
+
+            // Actualizar hora
+            const hours = String(game.time.hour).padStart(2, '0');
+            document.getElementById('timeDisplay').textContent = `${hours}:00 (Día ${game.time.day})`;
+
+            // Resumen diario
+            updateDailySummary();
+        }
+
+        function updateDailySummary() {
+            let summary = '📈 Estado actual: ';
+            if (game.character.hunger > 70) summary += 'Muy hambriento | ';
+            if (game.character.energy < 30) summary += 'Muy cansado | ';
+            if (game.character.fun < 30) summary += 'Aburrido | ';
+            if (game.character.money < 100) summary += 'Dinero bajo | ';
+            
+            if (summary === '📈 Estado actual: ') {
+                summary = '✨ ¡Todo va bien! Sigue así';
+            }
+
+            document.getElementById('dailySummary').textContent = summary;
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Actualizar UI automáticamente cada segundo (necesidades decaen)
+        setInterval(() => {
+            game.character.hunger += 0.1;
+            game.character.energy -= 0.05;
+            game.character.fun -= 0.08;
+
+            Object.keys(game.character).forEach(key => {
+                if (key !== 'name') {
+                    game.character[key] = Math.max(0, Math.min(100, game.character[key]));
+                }
+            });
+
+            updateUI();
+        }, 1000);
+
+        // Inicializar
+        updateUI();
+    </script>
+</body>
+</html>
