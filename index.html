@@ -3,492 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINGUELASGO GAMES V 2.0</title>
+    <title>MINGUELASGO GAMES - En Mantenimiento</title>
     <style>
-        *{ margin:0; padding:0; box-sizing:border-box; }
-        body{
-            background:#0f0f0f;
-            color:#00ffcc;
-            font-family:Arial, sans-serif;
-            text-align:center;
-            padding:20px;
-            overflow-x:hidden;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        h1{
-            font-size:3.5em;
-            text-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
-            margin-top:40px;
-            letter-spacing:2px;
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0a2e;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            overflow-x: hidden;
         }
-        .container{
-            max-width:1200px;
-            margin:50px auto;
-            display:flex;
-            flex-wrap:wrap;
-            justify-content:center;
-            gap:30px;
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
-        .game-card{
-            width:300px;
-            padding:20px;
-            background:#1a1a1a;
-            border:2px solid #00ffcc;
-            border-radius:20px;
-            transition:0.3s;
-            box-shadow:0 0 15px rgba(0,255,204,0.2);
-            position:relative;
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s infinite alternate;
         }
-        .game-card:hover{
-            transform:scale(1.05);
-            box-shadow:0 0 35px #00ffcc;
-            border-color:#fff;
+
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            100% { opacity: 1; }
         }
-        .game-img{
-            width:100%;
-            height:170px;
-            object-fit:cover;
-            border-radius:12px;
-            margin-bottom:15px;
-            border:1px solid #333;
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
         }
-        h3{ color:#fff; margin:10px 0; font-size:1.4em; }
-        p{ color:#888; font-size:0.9em; margin-bottom:20px; line-height:1.5; }
-        .play-btn{
-            background:#00ffcc;
-            color:#000;
-            border:none;
-            padding:14px;
-            width:100%;
-            border-radius:10px;
-            cursor:pointer;
-            font-weight:bold;
-            font-size:1em;
-            transition:0.2s;
+
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
         }
-        .play-btn:hover{ background:#fff; transform:translateY(-2px); }
-        .vip-btn{ background:#ffd700; color:#000; }
-        .vip-btn:hover{ background:#fff; }
- 
-        /* ── VIP ── */
-        #vipBox{
-            position:fixed;
-            right:20px;
-            bottom:20px;
-            width:260px;
-            background:rgba(0,0,0,0.96);
-            border:2px solid #00ffcc;
-            border-radius:15px;
-            padding:20px;
-            box-shadow:0 0 20px #00ffcc55;
-            text-align:center;
-            z-index:999;
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
         }
-        #vipBox h2{ color:#00ffcc; margin-bottom:10px; text-shadow:0 0 10px #00ffcc; }
-        #vipBox p{ color:#666; margin-bottom:12px; }
-        #vipInput{
-            width:100%;
-            padding:12px;
-            background:#000;
-            border:2px solid #00ffcc;
-            border-radius:8px;
-            color:#00ffcc;
-            text-align:center;
-            margin-bottom:12px;
-            outline:none;
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        #vipBtn{
-            width:100%;
-            padding:12px;
-            background:transparent;
-            color:#00ffcc;
-            border:2px solid #00ffcc;
-            border-radius:8px;
-            font-weight:bold;
-            cursor:pointer;
-            transition:0.3s;
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #a0a0d0;
+            margin-bottom: 30px;
         }
-        #vipBtn:hover{ background:#00ffcc; color:black; }
-        #vipError{ color:#ff4444; display:none; margin-top:10px; font-size:14px; }
-        #vipSection{ display:none; width:100%; margin:60px 0 30px 0; }
-        #vipSection h2{ color:#ffd700; text-shadow:0 0 15px #ffd700; margin-bottom:30px; font-size:2em; }
-        .vip-badge{
-            position:absolute;
-            top:-12px;
-            right:-12px;
-            background:#ffd700;
-            color:#000;
-            padding:6px 14px;
-            border-radius:20px;
-            font-size:0.85em;
-            font-weight:bold;
+
+        .message {
+            max-width: 500px;
+            margin: 0 auto 40px;
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #c0c0e0;
         }
-        .vip-card{ border-color:#ffd700; box-shadow:0 0 15px rgba(255,215,0,0.2); }
-        .vip-card:hover{ box-shadow:0 0 35px #ffd700; }
- 
-        /* ── DEV ── */
-        #devBox{
-            position:fixed;
-            left:20px;
-            bottom:20px;
-            width:260px;
-            background:rgba(0,0,0,0.96);
-            border:2px solid #cc44ff;
-            border-radius:15px;
-            padding:20px;
-            box-shadow:0 0 20px #cc44ff55;
-            text-align:center;
-            z-index:999;
+
+        .progress-bar {
+            width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin: 0 auto 15px;
+            overflow: hidden;
         }
-        #devBox h2{ color:#cc44ff; margin-bottom:10px; text-shadow:0 0 10px #cc44ff; }
-        #devBox p{ color:#666; margin-bottom:12px; }
-        #devInput{
-            width:100%;
-            padding:12px;
-            background:#000;
-            border:2px solid #cc44ff;
-            border-radius:8px;
-            color:#cc44ff;
-            text-align:center;
-            margin-bottom:12px;
-            outline:none;
+
+        .progress-fill {
+            height: 100%;
+            width: 60%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            animation: progress 2s ease-in-out infinite;
         }
-        #devBtn{
-            width:100%;
-            padding:12px;
-            background:transparent;
-            color:#cc44ff;
-            border:2px solid #cc44ff;
-            border-radius:8px;
-            font-weight:bold;
-            cursor:pointer;
-            transition:0.3s;
+
+        @keyframes progress {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
         }
-        #devBtn:hover{ background:#cc44ff; color:#000; }
-        #devError{ color:#ff4444; display:none; margin-top:10px; font-size:14px; }
- 
-        #devSection{ display:none; width:100%; margin:60px 0 30px 0; }
-        #devSection h2{
-            color:#cc44ff;
-            text-shadow:0 0 15px #cc44ff, 0 0 30px #cc44ff;
-            margin-bottom:30px;
-            font-size:2em;
+
+        .status {
+            font-size: 0.9em;
+            color: #7070a0;
+            margin-bottom: 35px;
         }
-        .dev-badge{
-            position:absolute;
-            top:-12px;
-            right:-12px;
-            background:linear-gradient(135deg,#cc44ff,#8800cc);
-            color:#fff;
-            padding:6px 14px;
-            border-radius:20px;
-            font-size:0.85em;
-            font-weight:bold;
-            box-shadow:0 0 10px #cc44ff;
+
+        .gear {
+            display: inline-block;
+            animation: spin 4s linear infinite;
         }
-        .dev-card{
-            border-color:#cc44ff;
-            box-shadow:0 0 15px rgba(204,68,255,0.2);
-            background:#0d0015;
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
         }
-        .dev-card:hover{
-            box-shadow:0 0 35px #cc44ff;
-            border-color:#ee88ff;
+
+        .btn-more {
+            display: inline-block;
+            padding: 18px 50px;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
         }
-        .dev-card h3{ color:#ee88ff; }
-        .dev-btn{
-            background:linear-gradient(135deg,#cc44ff,#8800cc);
-            color:#fff;
+
+        .btn-more:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
         }
-        .dev-btn:hover{ background:#ee88ff; color:#000; }
- 
-        footer{ margin-top:50px; color:#444; font-size:0.8em; }
-        @media(max-width:768px){
-            h1{ font-size:2.2em; }
-            .game-card{ width:100%; max-width:320px; }
-            #vipBox{ width:90%; left:5%; right:5%; bottom:80px; }
-            #devBox{ width:90%; left:5%; right:5%; bottom:15px; }
+
+        .btn-more:active {
+            transform: translateY(0);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #13133a;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 16px;
+            max-width: 620px;
+            width: 100%;
+            padding: 45px 40px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalIn 0.3s ease-out;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #7070a0;
+            font-size: 1.8em;
+            cursor: pointer;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal h2 {
+            font-size: 1.6em;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal p {
+            color: #c0c0e0;
+            font-size: 1.05em;
+            line-height: 1.8;
+            text-align: left;
+            margin-bottom: 18px;
+        }
+
+        .modal .signature {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            color: #8080b0;
+            font-size: 0.95em;
+            text-align: right;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
- 
-    <h1>🎮 MINGUELASGO GAMES V 2.0</h1>
- 
-    <!-- JUEGOS PÚBLICOS -->
+    <div class="stars" id="stars"></div>
+
     <div class="container">
- 
-        <div class="game-card">
-            <img src="BlockDash.jpeg" class="game-img" alt="Block Dash">
-            <h3>🟥 BLOCK DASH</h3>
-            <p>Esquiva bloques rojos.<br>Sobrevive el máximo tiempo posible.</p>
-            <button class="play-btn" onclick="location.href='BlockDash/index.html'">JUGAR AHORA</button>
+        <div class="icon">🎮</div>
+        <h1>MINGUELASGO GAMES</h1>
+        <p class="subtitle"><span class="gear">⚙️</span> En Mantenimiento</p>
+        <p class="message">
+            Estamos trabajando en una <strong>gran actualización</strong>.
+            Volveremos pronto con novedades increíbles.
+            ¡Gracias por tu paciencia!
+        </p>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
         </div>
- 
-        <div class="game-card">
-            <img src="e4c7eef8-b6cf-4aec-87c3-14ca8b23175c.png" class="game-img" alt="Caza Puntos">
-            <h3>🎯 CAZA PUNTOS</h3>
-            <p>Atrapa puntos antes de que desaparezcan.<br>¡Pon a prueba tus reflejos!</p>
-            <button class="play-btn" onclick="location.href='CazaPuntos/index.html'">JUGAR AHORA</button>
-        </div>
- 
-        <div class="game-card">
-            <img src="_129269792_9167d823-b187-4d43-a1ff-9ba322027aaf.jpg" class="game-img" alt="Miextrix">
-            <h3>🧱 MIEXTRIX</h3>
-            <p>Encaja los bloques y consigue puntos!</p>
-            <button class="play-btn" onclick="location.href='Miextrix/index.html'">JUGAR AHORA</button>
-        </div>
- 
-        <div class="game-card">
-            <img src="VirusBroma.jpeg" class="game-img" alt="?????">
-            <h3>🚧 ?????</h3>
-            <p>Cuidado!!</p>
-            <button class="play-btn" onclick="location.href='VirusBroma/index.html'">JUGAR AHORA</button>
-        </div>
-
-        <div class="game-card">
-            <img src="" class="game-img" alt="">
-            <h3>🚧 OXIGEN</h3>
-            <p>Pruebalo</p>
-            <button class="play-btn" onclick="location.href='OXIGEN/index.html'">JUGAR AHORA</button>
-        </div>
-        
-        <div class="game-card">
-            <img src="360_F_483383632_Gr9u8Chzgo9VJJMicsWE7jSYenEhdiqz.jpg" class="game-img" alt="?????">
-            <h3>🚧 ZOMBIE ASSAULT</h3>
-            <p>Disparale a los zombies gana oleadas y compra armas</p>
-            <button class="play-btn" onclick="location.href='ZOMBIEASSAULT/index.html'">JUGAR AHORA</button>
-        </div>
-
-        <div class="game-card">
-            <img src="360_F_483383632_Gr9u8Chzgo9VJJMicsWE7jSYenEhdiqz.jpg" class="game-img" alt="?????">
-            <h3>🚧 GodBox</h3>
-            <p>Se un diosssss</p>
-            <button class="play-btn" onclick="location.href='GodBox/index.html'">JUGAR AHORA</button>
-        </div>
-        
-        <div class="game-card">
-            <img src="download.jpg" class="game-img" alt="?????">
-            <h3>🚧 VAPOR MON</h3>
-            <p>Caza bapors!</p>
-            <button class="play-btn" onclick="location.href='VaporMon/index.html'">JUGAR AHORA</button>
-        </div>
-        
-        <div class="game-card">
-            <img src="" class="game-img" alt="?????">
-            <h3>🚧 NO TOCAR PEGRILOSO</h3>
-            <p>NO TOCAR PEGRILOSO</p>
-            <button class="play-btn" onclick="location.href='NOTOQUES/index.html'">JUGAR AHORA</button>
-        </div>
-
-        <div class="game-card">
-            <img src="" class="game-img" alt="">
-            <h3>🚧 CLICKER GOD</h3>
-            <p>CLICAAAAAAA</p>
-            <button class="play-btn" onclick="location.href='ClickerGod/index.html'">JUGAR AHORA</button>
-        </div>
-
-        <div class="game-card">
-            <img src="" class="game-img" alt="">
-            <h3>🚧 Los Mins</h3>
-            <p>Vive una vida de ensueño o de pesadilla</p>
-            <button class="play-btn" onclick="location.href='Mins/index.html'">JUGAR AHORA</button>
-        </div>
- 
+        <p class="status">Preparando la próxima versión...</p>
+        <button class="btn-more" onclick="document.getElementById('modal').classList.add('active')">
+            Más información
+        </button>
     </div>
- 
-    <!-- ZONA VIP -->
-    <div id="vipSection">
-        <h2>👑 CONTENIDO VIP</h2>
-        <div class="container">
- 
-            <div class="game-card vip-card">
-                <span class="vip-badge">VIP</span>
-                <img src="carrera.jpeg" class="game-img" alt="Extreme Car">
-                <h3>🏎️ EXTREME CAR</h3>
-                <p>Corre a máxima velocidad.<br>Esquiva tráfico y rompe récords.</p>
-                <button class="play-btn vip-btn" onclick="location.href='ExtremeCar/index.html'">JUGAR AHORA</button>
-            </div>
 
-             <div class="game-card vip-card">
-                <span class="vip-badge">VIP</span>
-                <img src="" class="game-img" alt="">
-                <h3>🏎️ THE BLACK HOLE ACCELERATOR</h3>
-                <p>ni idea<br>No se que poner</p>
-                <button class="play-btn vip-btn" onclick="location.href='HEBLACKHOLEACCELERATOR/index.html'">JUGAR AHORA</button>
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <button class="modal-close" onclick="document.getElementById('modal').classList.remove('active')">&times;</button>
+            <h2>Comunicado Oficial</h2>
+            <p>
+                Estimados usuarios y miembros de nuestra comunidad:
+            </p>
+            <p>
+                Desde el equipo de <strong>MINGUELASGO GAMES</strong>, nos dirigimos a ustedes para informarles de que hemos tomado la decisión de suspender temporalmente el servicio de nuestra plataforma.
+            </p>
+            <p>
+                Durante los últimos meses hemos observado un descenso significativo en el número de jugadores activos. Tras evaluar la situación, hemos considerado que este es el momento idóneo para dedicar nuestros recursos al desarrollo de una <strong>actualización de gran envergadura</strong> que mejorará sustancialmente la experiencia de juego.
+            </p>
+            <p>
+                Este periodo de mantenimiento nos permitirá incorporar nuevas funcionalidades, optimizar el rendimiento general de la plataforma y preparar contenido inédito que confiamos será de su interés.
+            </p>
+            <p>
+                Comunicaremos la fecha de reapertura a través de nuestros canales oficiales. Agradecemos sinceramente su comprensión, su paciencia y, sobre todo, su continuo apoyo.
+            </p>
+            <div class="signature">
+                Atentamente,<br>
+                El equipo de MINGUELASGO GAMES
             </div>
-
-             <div class="game-card vip-card">
-                <span class="vip-badge">VIP</span>
-                <img src="carrera.jpeg" class="game-img" alt="Extreme Car">
-                <h3>🏎️ ????</h3>
-                <p>????</p>
-                <button class="play-btn vip-btn" onclick="location.href='VirusBroma2/index.html'">JUGAR AHORA</button>
-            </div>
-            
-            <div class="game-card vip-card">
-                <span class="vip-badge">VIP</span>
-                <img src="" class="game-img" alt="El Heist VIP">
-                <h3>🎰 EL HEIST VIP</h3>
-                <p>La Gran Estafa del Casino Lunar.<br>Te va a impresionar.</p>
-                <button class="play-btn vip-btn" onclick="location.href='EL HEIST VIP: La Gran Estafa del Casino Lunar/index.html'">JUGAR AHORA</button>
-            </div>
- 
-            <div class="game-card vip-card">
-                <span class="vip-badge">VIP</span>
-                <img src="" class="game-img" alt="Plague Ninc">
-                <h3>🏎️ PLAGUE ÑINC.</h3>
-                <p>Crea o destrulle virus</p>
-                <button class="play-btn vip-btn" onclick="location.href='PlagueÑinck/index.html'">JUGAR AHORA</button>
-            </div>
-
-            <div class="game-card vip-card">
-                <span class="vip-badge">VIP</span>
-                <img src="" class="game-img" alt="Plague Ninc">
-                <h3>🏎️ BUNKER 60</h3>
-                <p>Intenta sobrevivir</p>
-                <button class="play-btn vip-btn" onclick="location.href='Bunker60/index.html'">JUGAR AHORA</button>
-            </div>
-            
-        </div>
-        
-    </div>
- 
-    <!-- ZONA DEV -->
-    <div id="devSection">
-        <h2>⚙️ ZONA DESARROLLADOR</h2>
-        <div class="container">
- 
-            <div class="game-card dev-card">
-                <span class="dev-badge">⚙️ DEV</span>
-                <img src="" class="game-img" alt="Dev Game 1">
-                <h3>🛠️ Wasteland</h3>
-                <p>Prototipo en desarrollo.<br>Solo visible para el desarrollador.</p>
-                <button class="play-btn dev-btn" onclick="location.href='Wasteland/index.html'">ACCEDER</button>
-            </div>
- 
-            <div class="game-card dev-card">
-                <span class="dev-badge">⚙️ DEV</span>
-                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200" class="game-img" alt="Dev Game 2">
-                <h3>🔬 TEST LAB</h3>
-                <p>Zona de pruebas de mecánicas.<br>Experimentos internos.</p>
-                <button class="play-btn dev-btn" onclick="location.href='DevGame2/index.html'">ACCEDER</button>
-            </div>
- 
-            <div class="game-card dev-card">
-                <span class="dev-badge">⚙️ DEV</span>
-                <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?q=80&w=1200" class="game-img" alt="Dev Game 3">
-                <h3>🧪 BUILD BETA</h3>
-                <p>Versión beta de un próximo juego.<br>En construcción activa.</p>
-                <button class="play-btn dev-btn" onclick="location.href='DevGame3/index.html'">ACCEDER</button>
-            </div>
- 
         </div>
     </div>
- 
-    <!-- CAJA VIP -->
-    <div id="vipBox">
-        <h2>🔐 VIP ACCESS</h2>
-        <p>Introduce el código VIP</p>
-        <input type="password" id="vipInput" placeholder="Código VIP">
-        <button id="vipBtn">DESBLOQUEAR</button>
-        <div id="vipError">❌ Código incorrecto</div>
-    </div>
- 
-    <!-- CAJA DEV -->
-    <div id="devBox">
-        <h2>⚙️ DEV ACCESS</h2>
-        <p>Código de desarrollador</p>
-        <input type="password" id="devInput" placeholder="Código DEV">
-        <button id="devBtn">ENTRAR</button>
-        <div id="devError">❌ Código incorrecto</div>
-    </div>
- 
-    <footer>&copy; 2026 MINGUELASGO GAMES</footer>
- 
+
     <script>
- 
-        const VIP_HASH = "48cdae21d541a617e72517d378100ff103fc8b8b635c699455c4854b995663fd";
-        const DEV_HASH = "48be857b71525d59a46d9461f19a8fbf0e4d9aafca5975c1c0df8eb54b0ff303";
- 
-        async function sha256(text) {
-            const encoded = new TextEncoder().encode(text);
-            const buffer = await crypto.subtle.digest("SHA-256", encoded);
-            return Array.from(new Uint8Array(buffer))
-                .map(b => b.toString(16).padStart(2, "0"))
-                .join("");
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            star.style.width = star.style.height = Math.random() * 2 + 1 + 'px';
+            starsContainer.appendChild(star);
         }
- 
-        // ── VIP ──────────────────────────────────────────────────────
-        async function checkVIP() {
-            const input = document.getElementById("vipInput").value.trim();
-            const hash  = await sha256(input);
- 
-            if (hash === VIP_HASH) {
-                localStorage.setItem("vipAccess", VIP_HASH);
-                grantVIP();
-            } else {
-                document.getElementById("vipError").style.display = "block";
-                document.getElementById("vipInput").style.borderColor = "#ff4444";
-                setTimeout(() => {
-                    document.getElementById("vipInput").style.borderColor = "#00ffcc";
-                }, 1000);
-            }
-        }
- 
-        function grantVIP() {
-            document.getElementById("vipSection").style.display = "block";
-            document.getElementById("vipBox").style.display     = "none";
-            document.getElementById("vipError").style.display   = "none";
-            document.getElementById("vipInput").value           = "";
-            document.getElementById("vipSection").scrollIntoView({ behavior: "smooth" });
-        }
- 
-        document.getElementById("vipBtn").addEventListener("click", checkVIP);
-        document.getElementById("vipInput").addEventListener("keypress", e => {
-            if (e.key === "Enter") checkVIP();
+
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
         });
- 
-        // ── DEV ──────────────────────────────────────────────────────
-        async function checkDEV() {
-            const input = document.getElementById("devInput").value.trim();
-            const hash  = await sha256(input);
- 
-            if (hash === DEV_HASH) {
-                localStorage.setItem("devAccess", DEV_HASH);
-                grantDEV();
-            } else {
-                document.getElementById("devError").style.display = "block";
-                document.getElementById("devInput").style.borderColor = "#ff4444";
-                setTimeout(() => {
-                    document.getElementById("devInput").style.borderColor = "#cc44ff";
-                }, 1000);
-            }
-        }
- 
-        function grantDEV() {
-            document.getElementById("devSection").style.display = "block";
-            document.getElementById("devBox").style.display     = "none";
-            document.getElementById("devError").style.display   = "none";
-            document.getElementById("devInput").value           = "";
-            document.getElementById("devSection").scrollIntoView({ behavior: "smooth" });
-        }
- 
-        document.getElementById("devBtn").addEventListener("click", checkDEV);
-        document.getElementById("devInput").addEventListener("keypress", e => {
-            if (e.key === "Enter") checkDEV();
-        });
- 
-        // ── AUTOLOGIN ──────────────────────────────────────────────
-        window.onload = function () {
-            if (localStorage.getItem("vipAccess") === VIP_HASH) {
-                grantVIP();
-            }
-            if (localStorage.getItem("devAccess") === DEV_HASH) {
-                grantDEV();
-            }
-        };
     </script>
- 
 </body>
 </html>
- 
