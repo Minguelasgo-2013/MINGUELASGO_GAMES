@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINGUELASGO GAMES</title>
+    <meta name="theme-color" content="#0a0a2e">
+    <style>
+        :root[data-theme="dark"] {
+            --bg-primary: #0a0a2e;
+            --bg-secondary: #111145;
+            --bg-card: #161655;
+            --bg-card-hover: #1e1e6a;
+            --text-primary: #ffffff;
+            --text-secondary: #c0c0e0;
+            --text-muted: #7070a0;
+            --accent: #667eea;
+            --accent-secondary: #764ba2;
+            --border: rgba(102, 126, 234, 0.2);
+            --shadow: rgba(0, 0, 0, 0.4);
+            --glass: rgba(22, 22, 85, 0.8);
+        }
+        :root[data-theme="light"] {
+            --bg-primary: #f0f2ff;
+            --bg-secondary: #e4e7ff;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f5f6ff;
+            --text-primary: #1a1a3e;
+            --text-secondary: #4a4a6a;
+            --text-muted: #8888aa;
+            --accent: #5568d3;
+            --accent-secondary: #6b42a0;
+            --border: rgba(102, 126, 234, 0.25);
+            --shadow: rgba(0, 0, 0, 0.1);
+            --glass: rgba(255, 255, 255, 0.85);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            transition: background 0.4s, color 0.4s;
+        }
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            padding: 15px 40px;
+            display: flex; align-items: center; justify-content: space-between;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: var(--glass);
+            border-bottom: 1px solid var(--border);
+            transition: background 0.4s;
+        }
+        .nav-logo {
+            font-size: 1.4em; font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .nav-links {
+            display: flex; gap: 25px; list-style: none; align-items: center;
+        }
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none; font-size: 0.95em; transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent); }
+        .theme-toggle, .auth-btn {
+            background: var(--bg-card); border: 1px solid var(--border); color: var(--text-primary);
+            padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 0.9em;
+            transition: all 0.3s; display: flex; align-items: center; gap: 6px;
+        }
+        .theme-toggle { width: 42px; height: 42px; border-radius: 50%; justify-content: center; padding: 0; font-size: 1.2em; }
+        .theme-toggle:hover, .auth-btn:hover { background: var(--accent); color: #fff; }
+        .online-badge { display: flex; align-items: center; gap: 6px; font-size: 0.85em; color: #4ade80; }
+        .online-dot {
+            width: 8px; height: 8px; background: #4ade80; border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74,222,128,0.4); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(74,222,128,0); }
+        }
+        .nav-hamburger {
+            display: none; background: none; border: none; color: var(--text-primary);
+            font-size: 1.6em; cursor: pointer;
+        }
+        .user-badge {
+            display: flex; align-items: center; gap: 8px; font-size: 0.9em; color: var(--accent);
+            font-weight: 600;
+        }
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .hero {
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            padding: 120px 20px 80px; position: relative; z-index: 1;
+        }
+        .hero-logo {
+            font-size: 4em; font-weight: 900;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary), #e040fb);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            animation: glitch 5s infinite; margin-bottom: 15px;
+        }
+        @keyframes glitch {
+            0%,90%,100% { text-shadow: none; filter: none; }
+            92% { text-shadow: 3px 0 #ff0040, -3px 0 #0ff; filter: brightness(1.1); }
+            94% { text-shadow: -3px 0 #ff0040, 3px 0 #0ff; filter: brightness(0.9); }
+            96% { text-shadow: 2px 2px #ff0040, -2px -2px #0ff; }
+        }
+        .hero-tagline {
+            font-size: 1.3em; color: var(--text-secondary); max-width: 600px;
+            line-height: 1.6; margin-bottom: 40px;
+        }
+        .hero-stats { display: flex; gap: 50px; margin-top: 20px; }
+        .hero-stat { text-align: center; }
+        .hero-stat-number {
+            font-size: 2.2em; font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-stat-label { font-size: 0.9em; color: var(--text-muted); margin-top: 5px; }
+        .scroll-indicator {
+            position: absolute; bottom: 30px; animation: bounce 2s infinite;
+            color: var(--text-muted); font-size: 1.5em;
+        }
+        @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+        section { padding: 80px 40px; position: relative; z-index: 1; }
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-title {
+            font-size: 2.2em; font-weight: 800; margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .section-subtitle { color: var(--text-muted); font-size: 1.1em; }
+        .filter-tabs {
+            display: flex; gap: 10px; justify-content: center; margin-bottom: 35px; flex-wrap: wrap;
+        }
+        .filter-tab {
+            padding: 8px 22px; border-radius: 20px; border: 1px solid var(--border);
+            background: var(--bg-card); color: var(--text-secondary); cursor: pointer;
+            font-size: 0.9em; transition: all 0.3s;
+        }
+        .filter-tab.active, .filter-tab:hover {
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            color: #fff; border-color: transparent;
+        }
+        .featured { background: var(--bg-secondary); transition: background 0.4s; }
+        .featured-card {
+            max-width: 1000px; margin: 0 auto;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+            background: var(--bg-card); border-radius: 20px; overflow: hidden;
+            border: 1px solid var(--border); transition: background 0.4s;
+        }
+        .featured-image {
+            width: 100%; height: 350px;
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            display: flex; align-items: center; justify-content: center; font-size: 5em;
+        }
+        .featured-info { padding: 40px; }
+        .featured-badge {
+            display: inline-block; padding: 5px 15px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 20px; font-size: 0.8em; font-weight: 600; color: #fff; margin-bottom: 15px;
+        }
+        .featured-info h3 { font-size: 1.8em; margin-bottom: 12px; color: var(--text-primary); }
+        .featured-info p { color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px; }
+        .featured-meta { display: flex; gap: 25px; color: var(--text-muted); font-size: 0.9em; }
+        .games-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px; max-width: 1200px; margin: 0 auto;
+        }
+        .game-card {
+            background: var(--bg-card); border-radius: 16px; overflow: hidden;
+            border: 1px solid var(--border); transition: all 0.3s; cursor: pointer;
+            text-decoration: none; opacity: 0; transform: translateY(30px);
+        }
+        .game-card.visible { opacity: 1; transform: translateY(0); }
+        .game-card:hover {
+            transform: translateY(-8px); background: var(--bg-card-hover);
+            box-shadow: 0 15px 40px var(--shadow);
+        }
+        .game-thumb {
+            width: 100%; height: 180px; display: flex;
+            align-items: center; justify-content: center; font-size: 3.5em;
+        }
+        .game-info { padding: 20px; }
+        .game-info h4 { font-size: 1.15em; margin-bottom: 6px; color: var(--text-primary); }
+        .game-info p { color: var(--text-muted); font-size: 0.9em; margin-bottom: 12px; }
+        .game-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+        .game-tag {
+            padding: 3px 10px; background: rgba(102,126,234,0.15);
+            border-radius: 10px; font-size: 0.75em; color: var(--accent);
+        }
+        .grad-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .grad-2 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .grad-3 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .grad-4 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        .grad-5 { background: linear-gradient(135deg, #fa709a, #fee140); }
+        .grad-6 { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+        .grad-7 { background: linear-gradient(135deg, #ffecd2, #fcb69f); }
+        .grad-8 { background: linear-gradient(135deg, #ff9a9e, #fad0c4); }
+        .news { background: var(--bg-secondary); transition: background 0.4s; }
+        .news-carousel { max-width: 1000px; margin: 0 auto; position: relative; overflow: hidden; border-radius: 16px; }
+        .news-track { display: flex; transition: transform 0.5s ease; }
+        .news-slide {
+            min-width: 100%; padding: 50px; background: var(--bg-card);
+            border: 1px solid var(--border); border-radius: 16px;
+            display: flex; align-items: center; gap: 40px;
+        }
+        .news-icon { font-size: 4em; flex-shrink: 0; }
+        .news-content h3 { font-size: 1.5em; margin-bottom: 10px; color: var(--text-primary); }
+        .news-content p { color: var(--text-secondary); line-height: 1.7; }
+        .news-date { font-size: 0.85em; color: var(--text-muted); margin-top: 10px; }
+        .news-controls { display: flex; justify-content: center; gap: 15px; margin-top: 25px; }
+        .news-btn {
+            width: 45px; height: 45px; border-radius: 50%; border: 1px solid var(--border);
+            background: var(--bg-card); color: var(--text-primary); font-size: 1.2em;
+            cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center;
+        }
+        .news-btn:hover { background: var(--accent); color: #fff; }
+        .news-dots { display: flex; gap: 8px; align-items: center; }
+        .news-dot {
+            width: 10px; height: 10px; border-radius: 50%; background: var(--text-muted);
+            cursor: pointer; transition: all 0.3s;
+        }
+        .news-dot.active { background: var(--accent); width: 25px; border-radius: 5px; }
+        .ranking-table {
+            max-width: 800px; margin: 0 auto; border-radius: 16px;
+            overflow: hidden; border: 1px solid var(--border);
+        }
+        .ranking-row {
+            display: grid; grid-template-columns: 60px 50px 1fr 120px 100px;
+            align-items: center; padding: 18px 25px; background: var(--bg-card);
+            border-bottom: 1px solid var(--border); transition: all 0.3s;
+        }
+        .ranking-row:hover { background: var(--bg-card-hover); }
+        .ranking-row.header {
+            background: var(--bg-secondary); font-weight: 700; font-size: 0.85em;
+            color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;
+        }
+        .ranking-row.top-1 { border-left: 3px solid #ffd700; }
+        .ranking-row.top-2 { border-left: 3px solid #c0c0c0; }
+        .ranking-row.top-3 { border-left: 3px solid #cd7f32; }
+        .ranking-position { font-weight: 800; font-size: 1.1em; color: var(--text-muted); }
+        .ranking-row.top-1 .ranking-position { color: #ffd700; }
+        .ranking-row.top-2 .ranking-position { color: #c0c0c0; }
+        .ranking-row.top-3 .ranking-position { color: #cd7f32; }
+        .ranking-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2em;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+        }
+        .ranking-name { font-weight: 600; color: var(--text-primary); }
+        .ranking-score { font-weight: 700; color: var(--accent); text-align: right; }
+        .ranking-level { text-align: right; font-size: 0.85em; color: var(--text-muted); }
+        .profiles { background: var(--bg-secondary); transition: background 0.4s; }
+        .profiles-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px; max-width: 1100px; margin: 0 auto;
+        }
+        .profile-card {
+            background: var(--bg-card); border-radius: 16px; padding: 30px;
+            text-align: center; border: 1px solid var(--border); transition: all 0.3s;
+        }
+        .profile-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px var(--shadow); }
+        .profile-avatar {
+            width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 15px;
+            display: flex; align-items: center; justify-content: center; font-size: 2.5em;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+        }
+        .profile-name { font-size: 1.2em; font-weight: 700; margin-bottom: 5px; color: var(--text-primary); }
+        .profile-title { font-size: 0.85em; color: var(--accent); margin-bottom: 20px; }
+        .profile-stats { display: flex; justify-content: center; gap: 25px; }
+        .profile-stat-value { font-size: 1.3em; font-weight: 700; color: var(--text-primary); }
+        .profile-stat-label { font-size: 0.75em; color: var(--text-muted); }
+        .comments-container { max-width: 800px; margin: 0 auto; }
+        .comment-form {
+            background: var(--bg-card); border-radius: 16px; padding: 30px;
+            border: 1px solid var(--border); margin-bottom: 30px;
+        }
+        .comment-form h3 { margin-bottom: 20px; color: var(--text-primary); }
+        .comment-input-group { display: flex; gap: 15px; margin-bottom: 15px; }
+        .comment-input-group input, .comment-textarea {
+            flex: 1; padding: 12px 18px; border-radius: 10px;
+            border: 1px solid var(--border); background: var(--bg-primary);
+            color: var(--text-primary); font-size: 0.95em; outline: none;
+            transition: border 0.3s; font-family: inherit;
+        }
+        .comment-textarea { width: 100%; resize: vertical; min-height: 100px; margin-bottom: 15px; }
+        .comment-input-group input:focus, .comment-textarea:focus { border-color: var(--accent); }
+        .comment-stars { display: flex; gap: 5px; margin-bottom: 15px; }
+        .comment-star {
+            font-size: 1.5em; cursor: pointer; transition: transform 0.2s; filter: grayscale(1);
+        }
+        .comment-star.active { filter: none; }
+        .comment-star:hover { transform: scale(1.2); }
+        .comment-submit {
+            padding: 12px 35px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border: none; border-radius: 10px; color: #fff;
+            font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s;
+        }
+        .comment-submit:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102,126,234,0.4); }
+        .comment-list { display: flex; flex-direction: column; gap: 20px; }
+        .comment-item {
+            background: var(--bg-card); border-radius: 16px; padding: 25px;
+            border: 1px solid var(--border);
+        }
+        .comment-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .comment-avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1.2em;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+        }
+        .comment-author { font-weight: 600; color: var(--text-primary); }
+        .comment-time { font-size: 0.8em; color: var(--text-muted); }
+        .comment-rating { margin-left: auto; }
+        .comment-text { color: var(--text-secondary); line-height: 1.6; }
+        .auth-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 2000;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .auth-overlay.active { display: flex; }
+        .auth-modal {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 20px; max-width: 420px; width: 100%;
+            padding: 40px; position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: modalIn 0.3s ease-out;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .auth-modal h2 {
+            text-align: center; margin-bottom: 25px; font-size: 1.5em;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .auth-modal input {
+            width: 100%; padding: 14px 18px; border-radius: 12px;
+            border: 1px solid var(--border); background: var(--bg-primary);
+            color: var(--text-primary); font-size: 1em; outline: none;
+            margin-bottom: 15px; transition: border 0.3s;
+        }
+        .auth-modal input:focus { border-color: var(--accent); }
+        .auth-modal .auth-submit {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border: none; border-radius: 12px; color: #fff;
+            font-size: 1.05em; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; margin-bottom: 15px;
+        }
+        .auth-modal .auth-submit:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102,126,234,0.4); }
+        .auth-toggle { text-align: center; color: var(--text-muted); font-size: 0.9em; }
+        .auth-toggle span { color: var(--accent); cursor: pointer; font-weight: 600; }
+        .auth-toggle span:hover { text-decoration: underline; }
+        .auth-close {
+            position: absolute; top: 15px; right: 20px; background: none;
+            border: none; color: var(--text-muted); font-size: 1.8em;
+            cursor: pointer; line-height: 1;
+        }
+        .auth-close:hover { color: var(--text-primary); }
+        .auth-error {
+            color: #f5576c; font-size: 0.85em; text-align: center;
+            margin-bottom: 10px; min-height: 20px;
+        }
+        footer {
+            background: var(--bg-secondary); padding: 40px; text-align: center;
+            border-top: 1px solid var(--border); position: relative; z-index: 1;
+            transition: background 0.4s;
+        }
+        .footer-logo {
+            font-size: 1.3em; font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 10px;
+        }
+        .footer-text { color: var(--text-muted); font-size: 0.9em; }
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        @media (max-width: 768px) {
+            nav { padding: 12px 20px; }
+            .nav-links {
+                display: none; position: absolute; top: 100%; left: 0; width: 100%;
+                background: var(--glass); backdrop-filter: blur(20px);
+                flex-direction: column; padding: 20px; gap: 15px;
+                border-bottom: 1px solid var(--border);
+            }
+            .nav-links.open { display: flex; }
+            .nav-hamburger { display: block; }
+            .hero-logo { font-size: 2.5em; }
+            .hero-stats { gap: 25px; }
+            .hero-stat-number { font-size: 1.6em; }
+            .featured-card { grid-template-columns: 1fr; }
+            .featured-image { height: 220px; }
+            section { padding: 60px 20px; }
+            .ranking-row {
+                grid-template-columns: 40px 40px 1fr 80px;
+                padding: 14px 15px; font-size: 0.9em;
+            }
+            .ranking-level { display: none; }
+            .news-slide { flex-direction: column; padding: 30px; text-align: center; }
+            .comment-input-group { flex-direction: column; }
+        }
+        @media (max-width: 480px) {
+            .hero-logo { font-size: 1.8em; }
+            .hero-stats { flex-direction: column; gap: 15px; }
+            .section-title { font-size: 1.6em; }
+            .games-grid { grid-template-columns: 1fr; }
+            .profiles-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+
+    <nav>
+        <span class="nav-logo">MINGUELASGO GAMES</span>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#catalogo">Juegos</a></li>
+            <li><a href="#novedades">Novedades</a></li>
+            <li><a href="#ranking">Ranking</a></li>
+            <li><a href="#jugadores">Jugadores</a></li>
+            <li><a href="#opiniones">Opiniones</a></li>
+            <li>
+                <span class="online-badge">
+                    <span class="online-dot"></span>
+                    <span id="onlineCount">0</span> online
+                </span>
+            </li>
+            <li><button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Cambiar tema">🌙</button></li>
+            <li id="authArea">
+                <button class="auth-btn" onclick="openAuth()">🔑 Iniciar sesión</button>
+            </li>
+        </ul>
+        <button class="nav-hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">☰</button>
+    </nav>
+
+    <div class="auth-overlay" id="authModal">
+        <div class="auth-modal">
+            <button class="auth-close" onclick="closeAuth()">&times;</button>
+            <h2 id="authTitle">Iniciar Sesión</h2>
+            <div id="authNameGroup" style="display:none">
+                <input type="text" id="authName" placeholder="Nombre de jugador">
+            </div>
+            <input type="email" id="authEmail" placeholder="Correo electrónico">
+            <input type="password" id="authPass" placeholder="Contraseña">
+            <div class="auth-error" id="authError"></div>
+            <button class="auth-submit" onclick="handleAuth()" id="authSubmitBtn">Entrar</button>
+            <div class="auth-toggle" id="authToggle">
+                ¿No tienes cuenta? <span onclick="switchAuthMode()">Regístrate</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="hero-logo">MINGUELASGO GAMES</div>
+        <p class="hero-tagline">Tu plataforma de juegos favorita, ahora completamente renovada. 17 juegos, ranking global, perfiles y mucho más.</p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-number" id="statGames">0</div>
+                <div class="hero-stat-label">Juegos</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-number" id="statPlayers">0</div>
+                <div class="hero-stat-label">Jugadores</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-number" id="statReviews">0</div>
+                <div class="hero-stat-label">Opiniones</div>
+            </div>
+        </div>
+        <div class="scroll-indicator">&#8595;</div>
+    </section>
+
+    <section class="featured" id="destacado">
+        <div class="section-header fade-in">
+            <h2 class="section-title">Juego Destacado</h2>
+            <p class="section-subtitle">El favorito de la semana</p>
+        </div>
+        <div class="featured-card fade-in">
+            <div class="featured-image">🧟</div>
+            <div class="featured-info">
+                <span class="featured-badge">DESTACADO</span>
+                <h3>ZOMBIE ASSAULT</h3>
+                <p>Elimina oleadas de zombies sin parar en este frenético juego de acción. ¿Cuánto tiempo podrás sobrevivir?</p>
+                <div class="featured-meta">
+                    <span>⭐ 4.8/5</span>
+                    <span>🏷️ Acción</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="catalogo">
+        <div class="section-header fade-in">
+            <h2 class="section-title">Catálogo de Juegos</h2>
+            <p class="section-subtitle">Explora nuestros 17 juegos</p>
+        </div>
+        <div class="filter-tabs fade-in" id="filterTabs"></div>
+        <div class="games-grid" id="gamesGrid"></div>
+    </section>
+
+    <section class="news" id="novedades">
+        <div class="section-header fade-in">
+            <h2 class="section-title">Novedades</h2>
+            <p class="section-subtitle">Lo último de la gran actualización</p>
+        </div>
+        <div class="news-carousel fade-in">
+            <div class="news-track" id="newsTrack">
+                <div class="news-slide">
+                    <div class="news-icon">🚀</div>
+                    <div class="news-content">
+                        <h3>Gran Actualización Disponible</h3>
+                        <p>Hemos renovado la plataforma por completo. Nuevo diseño, sistema de cuentas, ranking global y perfiles de jugador.</p>
+                        <div class="news-date">Julio 2026</div>
+                    </div>
+                </div>
+                <div class="news-slide">
+                    <div class="news-icon">🔥</div>
+                    <div class="news-content">
+                        <h3>17 Juegos Disponibles</h3>
+                        <p>Todo el catálogo actualizado y organizado por categorías: Acción, Arcade, Estrategia, Aventura y más.</p>
+                        <div class="news-date">Julio 2026</div>
+                    </div>
+                </div>
+                <div class="news-slide">
+                    <div class="news-icon">🏅</div>
+                    <div class="news-content">
+                        <h3>Sistema de Ranking y Perfiles</h3>
+                        <p>Crea tu cuenta, acumula puntos jugando y compite en el ranking global. Tu perfil muestra tus estadísticas y logros.</p>
+                        <div class="news-date">Julio 2026</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="news-controls fade-in">
+            <button class="news-btn" onclick="changeSlide(-1)">&#8592;</button>
+            <div class="news-dots" id="newsDots"></div>
+            <button class="news-btn" onclick="changeSlide(1)">&#8594;</button>
+        </div>
+    </section>
+
+    <section id="ranking">
+        <div class="section-header fade-in">
+            <h2 class="section-title">Ranking Global</h2>
+            <p class="section-subtitle">Los mejores jugadores de la plataforma</p>
+        </div>
+        <div class="ranking-table fade-in" id="rankingTable">
+            <div class="ranking-row header">
+                <span>#</span><span></span><span>Jugador</span>
+                <span style="text-align:right">Puntos</span>
+                <span style="text-align:right">Nivel</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="profiles" id="jugadores">
+        <div class="section-header fade-in">
+            <h2 class="section-title">Jugadores Destacados</h2>
+            <p class="section-subtitle">Los miembros más activos de la comunidad</p>
+        </div>
+        <div class="profiles-grid" id="profilesGrid"></div>
+    </section>
+
+    <section id="opiniones">
+        <div class="section-header fade-in">
+            <h2 class="section-title">Opiniones</h2>
+            <p class="section-subtitle">Lo que dicen nuestros jugadores</p>
+        </div>
+        <div class="comments-container">
+            <div class="comment-form fade-in" id="commentFormBox">
+                <h3>Deja tu opinión</h3>
+                <p style="color:var(--text-muted);margin-bottom:15px;font-size:0.9em" id="commentLoginMsg">Inicia sesión para comentar</p>
+                <textarea class="comment-textarea" id="commentText" placeholder="Escribe tu opinión..." disabled></textarea>
+                <div class="comment-stars" id="commentStars">
+                    <span class="comment-star" data-v="1">⭐</span>
+                    <span class="comment-star" data-v="2">⭐</span>
+                    <span class="comment-star" data-v="3">⭐</span>
+                    <span class="comment-star" data-v="4">⭐</span>
+                    <span class="comment-star" data-v="5">⭐</span>
+                </div>
+                <button class="comment-submit" onclick="addComment()" id="commentBtn" disabled>Publicar</button>
+            </div>
+            <div class="comment-list" id="commentList"></div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-logo">MINGUELASGO GAMES</div>
+        <p class="footer-text">&copy; 2026 MINGUELASGO GAMES. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <script>
+    firebase.initializeApp({
+        apiKey: "AIzaSyCyKZLCvvj6rW8VktyLjF53Smc7o9Q4LbY",
+        authDomain: "miguelasgo-games.firebaseapp.com",
+        projectId: "miguelasgo-games",
+        storageBucket: "miguelasgo-games.firebasestorage.app",
+        messagingSenderId: "17704257603",
+        appId: "1:17704257603:web:544bc481254462d2846cf6"
+    });
+
+    var auth = firebase.auth();
+    var db = firebase.firestore();
+    var currentUser = null;
+    var isLogin = true;
+
+    function openAuth() { document.getElementById('authModal').classList.add('active'); }
+    function closeAuth() {
+        document.getElementById('authModal').classList.remove('active');
+        document.getElementById('authError').textContent = '';
+    }
+
+    function switchAuthMode() {
+        isLogin = !isLogin;
+        document.getElementById('authTitle').textContent = isLogin ? 'Iniciar Sesión' : 'Crear Cuenta';
+        document.getElementById('authSubmitBtn').textContent = isLogin ? 'Entrar' : 'Registrarse';
+        document.getElementById('authNameGroup').style.display = isLogin ? 'none' : 'block';
+        document.getElementById('authToggle').innerHTML = isLogin
+            ? '¿No tienes cuenta? <span onclick="switchAuthMode()">Regístrate</span>'
+            : '¿Ya tienes cuenta? <span onclick="switchAuthMode()">Inicia sesión</span>';
+        document.getElementById('authError').textContent = '';
+    }
+
+    function handleAuth() {
+        var email = document.getElementById('authEmail').value.trim();
+        var pass = document.getElementById('authPass').value;
+        var errEl = document.getElementById('authError');
+        errEl.textContent = '';
+        if (!email || !pass) { errEl.textContent = 'Completa todos los campos'; return; }
+        if (isLogin) {
+            auth.signInWithEmailAndPassword(email, pass).then(function() {
+                closeAuth();
+            }).catch(function(e) {
+                errEl.textContent = 'Correo o contraseña incorrectos';
+            });
+        } else {
+            var name = document.getElementById('authName').value.trim();
+            if (!name) { errEl.textContent = 'Escribe un nombre de jugador'; return; }
+            auth.createUserWithEmailAndPassword(email, pass).then(function(cred) {
+                return db.collection('players').doc(cred.user.uid).set({
+                    name: name, score: 0, level: 1, games: 0, wins: 0,
+                    joined: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }).then(function() { closeAuth(); })
+            .catch(function(e) {
+                if (e.code === 'auth/email-already-in-use') errEl.textContent = 'Este correo ya está registrado';
+                else if (e.code === 'auth/weak-password') errEl.textContent = 'La contraseña debe tener al menos 6 caracteres';
+                else errEl.textContent = 'Error al registrarse';
+            });
+        }
+    }
+
+    auth.onAuthStateChanged(function(user) {
+        var area = document.getElementById('authArea');
+        if (user) {
+            currentUser = user;
+            db.collection('players').doc(user.uid).get().then(function(doc) {
+                var name = doc.exists ? doc.data().name : 'Jugador';
+                area.innerHTML = '<div class="user-badge">👤 ' + name +
+                    '</div> <button class="auth-btn" onclick="auth.signOut()" style="margin-left:8px;padding:6px 12px;font-size:0.8em">Salir</button>';
+            });
+            document.getElementById('commentText').disabled = false;
+            document.getElementById('commentBtn').disabled = false;
+            document.getElementById('commentLoginMsg').style.display = 'none';
+        } else {
+            currentUser = null;
+            area.innerHTML = '<button class="auth-btn" onclick="openAuth()">🔑 Iniciar sesión</button>';
+            document.getElementById('commentText').disabled = true;
+            document.getElementById('commentBtn').disabled = true;
+            document.getElementById('commentLoginMsg').style.display = 'block';
+        }
+    });
+
+    function toggleTheme() {
+        var html = document.documentElement;
+        var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        document.getElementById('themeBtn').textContent = next === 'dark' ? '🌙' : '☀️';
+        localStorage.setItem('theme', next);
+    }
+    (function() {
+        var s = localStorage.getItem('theme');
+        if (s) {
+            document.documentElement.setAttribute('data-theme', s);
+            document.getElementById('themeBtn').textContent = s === 'dark' ? '🌙' : '☀️';
+        }
+    })();
+
+    (function() {
+        var c = document.getElementById('particles'), ctx = c.getContext('2d'), w, h, pts = [], mouse = {x:null,y:null};
+        function resize() { w = c.width = innerWidth; h = c.height = innerHeight; }
+        resize(); addEventListener('resize', resize);
+        for (var i = 0; i < 70; i++) pts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-0.5)*0.5,vy:(Math.random()-0.5)*0.5,r:Math.random()*2+1});
+        document.addEventListener('mousemove', function(e) { mouse.x=e.clientX; mouse.y=e.clientY; });
+        function draw() {
+            ctx.clearRect(0,0,w,h);
+            var dk = document.documentElement.getAttribute('data-theme')==='dark';
+            pts.forEach(function(p,i) {
+                p.x+=p.vx; p.y+=p.vy;
+                if(p.x<0||p.x>w)p.vx*=-1; if(p.y<0||p.y>h)p.vy*=-1;
+                if(mouse.x!==null){var dx=mouse.x-p.x,dy=mouse.y-p.y,d=Math.sqrt(dx*dx+dy*dy);if(d<150){p.x-=dx*0.01;p.y-=dy*0.01;}}
+                ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+                ctx.fillStyle=dk?'rgba(102,126,234,0.5)':'rgba(102,126,234,0.3)'; ctx.fill();
+                for(var j=i+1;j<pts.length;j++){var dx2=pts[j].x-p.x,dy2=pts[j].y-p.y,d2=Math.sqrt(dx2*dx2+dy2*dy2);
+                if(d2<120){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(pts[j].x,pts[j].y);
+                ctx.strokeStyle=dk?'rgba(102,126,234,'+(1-d2/120)*0.2+')':'rgba(102,126,234,'+(1-d2/120)*0.1+')';ctx.stroke();}}
+            });
+            requestAnimationFrame(draw);
+        }
+        draw();
+    })();
+
+    function animateCount(el,target,dur){var s=0,step=target/(dur/16);function t(){s+=step;if(s>=target){el.textContent=target.toLocaleString();return;}el.textContent=Math.floor(s).toLocaleString();requestAnimationFrame(t);}t();}
+    setTimeout(function(){
+        animateCount(document.getElementById('statGames'),17,1500);
+        animateCount(document.getElementById('statPlayers'),0,1);
+        animateCount(document.getElementById('statReviews'),0,1);
+        db.collection('players').get().then(function(snap){animateCount(document.getElementById('statPlayers'),snap.size,2000);});
+        db.collection('comments').get().then(function(snap){animateCount(document.getElementById('statReviews'),snap.size,1800);});
+    },500);
+
+    var onlineBase = 5 + Math.floor(Math.random()*10);
+    document.getElementById('onlineCount').textContent = onlineBase;
+    setInterval(function(){onlineBase+=Math.floor(Math.random()*5)-2;if(onlineBase<1)onlineBase=1;document.getElementById('onlineCount').textContent=onlineBase;},8000);
+
+    var GAMES = [
+        {name:'BlockDash', folder:'BlockDash', icon:'🏃', cat:'Acción', grad:1, desc:'Corre, esquiva y sobrevive'},
+        {name:'Bunker60', folder:'Bunker60', icon:'🏚️', cat:'Aventura', grad:2, desc:'Sobrevive en el búnker'},
+        {name:'CazaPuntos', folder:'CazaPuntos', icon:'🎯', cat:'Arcade', grad:3, desc:'Atrapa todos los puntos'},
+        {name:'ClickerGod', folder:'ClickerGod', icon:'👆', cat:'Estrategia', grad:4, desc:'Haz clic hasta ser un dios'},
+        {name:'ExtremeCar', folder:'ExtremeCar', icon:'🏎️', cat:'Acción', grad:5, desc:'Carreras al extremo'},
+        {name:'HE BLACK HOLE', folder:'HEBLACKHOLEACCELERATOR', icon:'🕳️', cat:'Acción', grad:8, desc:'Acelera hacia el agujero negro'},
+        {name:'Miextrix', folder:'Miextrix', icon:'🟩', cat:'Arcade', grad:1, desc:'Puzzle de bloques'},
+        {name:'Mins', folder:'Mins', icon:'⏱️', cat:'Arcade', grad:2, desc:'Contra el reloj'},
+        {name:'NOTOQUES', folder:'NOTOQUES', icon:'🚫', cat:'Arcade', grad:3, desc:'No toques lo que no debes'},
+        {name:'OXIGEN', folder:'OXIGEN', icon:'💨', cat:'Aventura', grad:5, desc:'Lucha por respirar'},
+        {name:'VaporMon', folder:'VaporMon', icon:'👾', cat:'Aventura', grad:8, desc:'Captura criaturas vapor'},
+        {name:'VirusBroma', folder:'VirusBroma', icon:'🧪', cat:'Estrategia', grad:1, desc:'El virus broma original'},
+        {name:'VirusBroma 2', folder:'VirusBroma2', icon:'🧬', cat:'Estrategia', grad:2, desc:'La secuela del virus'},
+        {name:'Wasteland', folder:'Wasteland', icon:'🏜️', cat:'Acción', grad:3, desc:'Sobrevive en el páramo'},
+        {name:'ZOMBIE ASSAULT', folder:'ZOMBIEASSAULT', icon:'🧟', cat:'Acción', grad:4, desc:'Elimina zombies sin parar'},
+        {name:'Juego 3', folder:'juego3', icon:'🎲', cat:'Otros', grad:5, desc:'Un juego misterioso'},
+        {name:'Vapor Chronicles', folder:'vapor-chronicles', icon:'📖', cat:'Aventura', grad:6, desc:'Crónicas del vapor'}
+    ];
+
+    var categories = ['Todos'];
+    GAMES.forEach(function(g){if(categories.indexOf(g.cat)===-1)categories.push(g.cat);});
+    var tabsEl = document.getElementById('filterTabs');
+    categories.forEach(function(cat){
+        var btn = document.createElement('div');
+        btn.className = 'filter-tab' + (cat==='Todos'?' active':'');
+        btn.textContent = cat;
+        btn.onclick = function(){ filterGames(cat); };
+        tabsEl.appendChild(btn);
+    });
+
+    function filterGames(cat) {
+        document.querySelectorAll('.filter-tab').forEach(function(t){t.classList.toggle('active',t.textContent===cat);});
+        document.querySelectorAll('.game-card').forEach(function(card){
+            var show = cat==='Todos' || card.getAttribute('data-cat')===cat;
+            card.style.display = show ? '' : 'none';
+        });
+    }
+
+    var grid = document.getElementById('gamesGrid');
+    GAMES.forEach(function(g, i) {
+        var a = document.createElement('a');
+        a.className = 'game-card';
+        a.href = g.folder + '/index.html';
+        a.setAttribute('data-cat', g.cat);
+        a.innerHTML = '<div class="game-thumb grad-'+g.grad+'">'+g.icon+'</div>'+
+            '<div class="game-info"><h4>'+g.name+'</h4><p>'+g.desc+'</p>'+
+            '<div class="game-tags"><span class="game-tag">'+g.cat+'</span></div></div>';
+        grid.appendChild(a);
+        setTimeout(function(){a.classList.add('visible');}, 80*i);
+    });
+
+    var currentSlide = 0;
+    var slides = document.querySelectorAll('.news-slide');
+    var dotsC = document.getElementById('newsDots');
+    slides.forEach(function(_,i){
+        var d = document.createElement('div');
+        d.className = 'news-dot'+(i===0?' active':'');
+        d.onclick = function(){goToSlide(i);};
+        dotsC.appendChild(d);
+    });
+    function goToSlide(n){
+        currentSlide=n;
+        document.getElementById('newsTrack').style.transform='translateX(-'+(n*100)+'%)';
+        document.querySelectorAll('.news-dot').forEach(function(d,i){d.classList.toggle('active',i===n);});
+    }
+    function changeSlide(dir){var n=currentSlide+dir;if(n<0)n=slides.length-1;if(n>=slides.length)n=0;goToSlide(n);}
+    setInterval(function(){changeSlide(1);},6000);
+
+    function loadRanking() {
+        db.collection('players').orderBy('score','desc').limit(10).onSnapshot(function(snap) {
+            var table = document.getElementById('rankingTable');
+            table.querySelectorAll('.ranking-row:not(.header)').forEach(function(r){r.remove();});
+            var emojis = ['😎','🎯','🐺','⭐','⚡','👑','🦸','🎮','🔥','💎'];
+            snap.docs.forEach(function(doc, i) {
+                var d = doc.data();
+                var row = document.createElement('div');
+                var topClass = i < 3 ? ' top-'+(i+1) : '';
+                row.className = 'ranking-row'+topClass;
+                row.innerHTML = '<span class="ranking-position">'+(i+1)+'</span>'+
+                    '<div class="ranking-avatar">'+(emojis[i]||'🎮')+'</div>'+
+                    '<span class="ranking-name">'+d.name+'</span>'+
+                    '<span class="ranking-score">'+(d.score||0).toLocaleString()+'</span>'+
+                    '<span class="ranking-level">Nv. '+(d.level||1)+'</span>';
+                table.appendChild(row);
+            });
+        });
+    }
+    loadRanking();
+
+    function loadProfiles() {
+        db.collection('players').orderBy('score','desc').limit(4).onSnapshot(function(snap) {
+            var pgrid = document.getElementById('profilesGrid');
+            pgrid.innerHTML = '';
+            var titles = ['Leyenda','Experto','Veterano','Destacado'];
+            var emojis = ['😎','🎯','🐺','⭐'];
+            snap.docs.forEach(function(doc, i) {
+                var d = doc.data();
+                var card = document.createElement('div');
+                card.className = 'profile-card fade-in visible';
+                card.innerHTML = '<div class="profile-avatar">'+(emojis[i]||'🎮')+'</div>'+
+                    '<div class="profile-name">'+d.name+'</div>'+
+                    '<div class="profile-title">'+(titles[i]||'Jugador')+'</div>'+
+                    '<div class="profile-stats">'+
+                    '<div><div class="profile-stat-value">'+(d.games||0)+'</div><div class="profile-stat-label">Partidas</div></div>'+
+                    '<div><div class="profile-stat-value">'+(d.wins||0)+'</div><div class="profile-stat-label">Victorias</div></div>'+
+                    '<div><div class="profile-stat-value">Nv.'+(d.level||1)+'</div><div class="profile-stat-label">Nivel</div></div>'+
+                    '</div>';
+                pgrid.appendChild(card);
+            });
+        });
+    }
+    loadProfiles();
+
+    var selectedRating = 0;
+    document.querySelectorAll('.comment-star').forEach(function(star){
+        star.addEventListener('click', function(){
+            selectedRating = parseInt(this.getAttribute('data-v'));
+            document.querySelectorAll('.comment-star').forEach(function(s,i){s.classList.toggle('active',i<selectedRating);});
+        });
+    });
+
+    function addComment() {
+        if (!currentUser) return;
+        var text = document.getElementById('commentText').value.trim();
+        if (!text) { alert('Escribe tu opinión'); return; }
+        db.collection('players').doc(currentUser.uid).get().then(function(doc) {
+            var name = doc.exists ? doc.data().name : 'Anónimo';
+            return db.collection('comments').add({
+                uid: currentUser.uid, name: name, text: text,
+                rating: selectedRating || 5,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }).then(function() {
+            document.getElementById('commentText').value = '';
+            selectedRating = 0;
+            document.querySelectorAll('.comment-star').forEach(function(s){s.classList.remove('active');});
+        });
+    }
+
+    db.collection('comments').orderBy('timestamp','desc').limit(20).onSnapshot(function(snap) {
+        var list = document.getElementById('commentList');
+        list.innerHTML = '';
+        var emojis = ['😊','🎮','🔥','💪','🌟','🚀','👾','🎯'];
+        snap.docs.forEach(function(doc) {
+            var c = doc.data();
+            var time = c.timestamp ? c.timestamp.toDate().toLocaleDateString('es-ES') : 'Ahora';
+            var item = document.createElement('div');
+            item.className = 'comment-item';
+            item.innerHTML = '<div class="comment-header">'+
+                '<div class="comment-avatar">'+emojis[Math.floor(Math.random()*emojis.length)]+'</div>'+
+                '<div><div class="comment-author">'+c.name+'</div><div class="comment-time">'+time+'</div></div>'+
+                '<div class="comment-rating">'+'⭐'.repeat(c.rating||5)+'</div>'+
+                '</div><p class="comment-text">'+c.text+'</p>';
+            list.appendChild(item);
+        });
+        animateCount(document.getElementById('statReviews'), snap.size, 500);
+    });
+
+    var obs = new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.1});
+    document.querySelectorAll('.fade-in').forEach(function(el){obs.observe(el);});
+
+    document.querySelectorAll('.nav-links a').forEach(function(l){l.addEventListener('click',function(){document.getElementById('navLinks').classList.remove('open');});});
+    document.getElementById('authModal').addEventListener('click',function(e){if(e.target===this)closeAuth();});
+    </script>
+</body>
+</html>
