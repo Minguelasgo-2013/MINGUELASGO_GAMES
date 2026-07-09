@@ -86,7 +86,6 @@
             color: #c0c0e0;
         }
 
-        /* COUNTDOWN */
         .countdown {
             display: flex;
             justify-content: center;
@@ -123,23 +122,6 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-top: 5px;
-        }
-
-        .countdown-finished {
-            display: none;
-            font-size: 1.3em;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 40px;
-            animation: pulse-text 2s infinite;
-        }
-
-        @keyframes pulse-text {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
         }
 
         .progress-bar {
@@ -322,7 +304,6 @@
                 <div class="countdown-label">Segundos</div>
             </div>
         </div>
-        <div class="countdown-finished" id="countdownFinished">🎉 ¡La actualización está lista! 🎉</div>
 
         <div class="progress-bar">
             <div class="progress-fill"></div>
@@ -361,9 +342,9 @@
 
     <script>
         // STARS
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 100; i++) {
-            const star = document.createElement('div');
+        var starsContainer = document.getElementById('stars');
+        for (var i = 0; i < 100; i++) {
+            var star = document.createElement('div');
             star.className = 'star';
             star.style.left = Math.random() * 100 + '%';
             star.style.top = Math.random() * 100 + '%';
@@ -377,16 +358,15 @@
             if (e.target === this) this.classList.remove('active');
         });
 
-        // COUNTDOWN — 1 semana desde el 15 de julio de 2026
-        var TARGET = new Date('2026-07-15T12:00:00').getTime();
+        // COUNTDOWN — fecha fija: 16 de julio 2026 a las 12:00 (no se reinicia)
+        var TARGET = new Date('2026-07-16T12:00:00').getTime();
 
         function updateCountdown() {
             var now = new Date().getTime();
             var diff = TARGET - now;
 
             if (diff <= 0) {
-                document.getElementById('countdown').style.display = 'none';
-                document.getElementById('countdownFinished').style.display = 'block';
+                window.location.href = 'plataforma.html';
                 return;
             }
 
