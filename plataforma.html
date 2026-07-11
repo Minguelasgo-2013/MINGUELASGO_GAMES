@@ -611,6 +611,12 @@
     var currentUser = null;
     var isLogin = true;
 
+    function esc(text) {
+        var d = document.createElement('div');
+        d.textContent = text;
+        return d.innerHTML;
+    }
+
     function openAuth() { document.getElementById('authModal').classList.add('active'); }
     function closeAuth() {
         document.getElementById('authModal').classList.remove('active');
@@ -663,7 +669,7 @@
             currentUser = user;
             db.collection('players').doc(user.uid).get().then(function(doc) {
                 var name = doc.exists ? doc.data().name : 'Jugador';
-                area.innerHTML = '<div class="user-badge">👤 ' + name +
+                area.innerHTML = '<div class="user-badge">👤 ' + esc(name) +
                     '</div> <button class="auth-btn" onclick="auth.signOut()" style="margin-left:8px;padding:6px 12px;font-size:0.8em">Salir</button>';
             });
             document.getElementById('commentText').disabled = false;
@@ -776,8 +782,8 @@
         a.href = g.folder + '/index.html';
         a.setAttribute('data-cat', g.cat);
         a.innerHTML = '<div class="game-thumb grad-'+g.grad+'">'+g.icon+'</div>'+
-            '<div class="game-info"><h4>'+g.name+'</h4><p>'+g.desc+'</p>'+
-            '<div class="game-tags"><span class="game-tag">'+g.cat+'</span></div></div>';
+            '<div class="game-info"><h4>'+esc(g.name)+'</h4><p>'+esc(g.desc)+'</p>'+
+            '<div class="game-tags"><span class="game-tag">'+esc(g.cat)+'</span></div></div>';
         grid.appendChild(a);
         setTimeout(function(){a.classList.add('visible');}, 80*i);
     });
@@ -811,7 +817,7 @@
                 row.className = 'ranking-row'+topClass;
                 row.innerHTML = '<span class="ranking-position">'+(i+1)+'</span>'+
                     '<div class="ranking-avatar">'+(emojis[i]||'🎮')+'</div>'+
-                    '<span class="ranking-name">'+d.name+'</span>'+
+                    '<span class="ranking-name">'+esc(d.name)+'</span>'+
                     '<span class="ranking-score">'+(d.score||0).toLocaleString()+'</span>'+
                     '<span class="ranking-level">Nv. '+(d.level||1)+'</span>';
                 table.appendChild(row);
@@ -831,7 +837,7 @@
                 var card = document.createElement('div');
                 card.className = 'profile-card fade-in visible';
                 card.innerHTML = '<div class="profile-avatar">'+(emojis[i]||'🎮')+'</div>'+
-                    '<div class="profile-name">'+d.name+'</div>'+
+                    '<div class="profile-name">'+esc(d.name)+'</div>'+
                     '<div class="profile-title">'+(titles[i]||'Jugador')+'</div>'+
                     '<div class="profile-stats">'+
                     '<div><div class="profile-stat-value">'+(d.games||0)+'</div><div class="profile-stat-label">Partidas</div></div>'+
@@ -881,9 +887,9 @@
             item.className = 'comment-item';
             item.innerHTML = '<div class="comment-header">'+
                 '<div class="comment-avatar">'+emojis[Math.floor(Math.random()*emojis.length)]+'</div>'+
-                '<div><div class="comment-author">'+c.name+'</div><div class="comment-time">'+time+'</div></div>'+
+                '<div><div class="comment-author">'+esc(c.name)+'</div><div class="comment-time">'+time+'</div></div>'+
                 '<div class="comment-rating">'+'⭐'.repeat(c.rating||5)+'</div>'+
-                '</div><p class="comment-text">'+c.text+'</p>';
+                '</div><p class="comment-text">'+esc(c.text)+'</p>';
             list.appendChild(item);
         });
         animateCount(document.getElementById('statReviews'), snap.size, 500);
