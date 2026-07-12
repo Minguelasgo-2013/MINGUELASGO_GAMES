@@ -3,323 +3,543 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SURVIVAL VIP - MINGUELASGO</title>
+<title>SURVIVAL VIP - MINGUELASGO GAMES</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
-background:#0f0f0f;
-color:#00ffcc;
-font-family:'Courier New', monospace;
-min-height:100vh;
-display:flex;
-flex-direction:column;
-align-items:center;
-padding:20px;
+    background: #0a0a2e;
+    color: #e0e0ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
 }
 h1 {
-font-size:2.2em;
-text-shadow:0 0 15px #00ffcc, 0 0 30px #00ffcc;
-margin:20px 0 5px;
-letter-spacing:3px;
+    font-size: 2.2em;
+    font-weight: 900;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 20px 0 5px;
+    letter-spacing: 2px;
 }
 .vip-tag {
-background:#ffd700;
-color:#000;
-padding:3px 14px;
-border-radius:20px;
-font-size:0.8em;
-font-weight:bold;
-margin-bottom:20px;
-display:inline-block;
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    color: #000;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: inline-block;
 }
 #game {
-width:100%;
-max-width:620px;
-background:#111;
-border:2px solid #00ffcc;
-border-radius:16px;
-padding:24px;
-box-shadow:0 0 30px #00ffcc33;
+    width: 100%;
+    max-width: 650px;
+    background: #111145;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.15);
 }
-.stats { display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
-.stat-box { flex:1; min-width:80px; background:#1a1a1a; border:1px solid #00ffcc44; border-radius:10px; padding:10px; text-align:center; }
-.stat-label { font-size:0.7em; color:#666; margin-bottom:4px; }
-.stat-val { font-size:1.3em; font-weight:bold; }
-.stat-val.hp { color:#ff4444; }
-.stat-val.hunger { color:#ff9900; }
-.stat-val.thirst { color:#00aaff; }
-.stat-val.day { color:#00ffcc; }
-.bar-wrap { background:#222; border-radius:4px; height:6px; margin-top:4px; }
-.bar { height:6px; border-radius:4px; transition:width 0.4s; }
-.bar.hp { background:#ff4444; }
-.bar.hunger { background:#ff9900; }
-.bar.thirst { background:#00aaff; }
+.stats { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+.stat-box {
+    flex: 1; min-width: 80px;
+    background: #161655;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    transition: all 0.3s;
+}
+.stat-box:hover { border-color: rgba(102, 126, 234, 0.5); }
+.stat-label { font-size: 0.7em; color: #7070a0; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+.stat-val { font-size: 1.3em; font-weight: 700; }
+.stat-val.hp { color: #ff4466; }
+.stat-val.hunger { color: #ff9900; }
+.stat-val.thirst { color: #4facfe; }
+.stat-val.day { color: #667eea; }
+.bar-wrap { background: #0a0a2e; border-radius: 4px; height: 6px; margin-top: 6px; }
+.bar { height: 6px; border-radius: 4px; transition: width 0.4s; }
+.bar.hp { background: linear-gradient(90deg, #ff4466, #ff6b8a); }
+.bar.hunger { background: linear-gradient(90deg, #ff9900, #ffcc00); }
+.bar.thirst { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+
 .inventory {
-background:#0a0a0a;
-border:1px solid #333;
-border-radius:10px;
-padding:10px 14px;
-font-size:0.82em;
-color:#888;
-margin-bottom:16px;
+    background: #0a0a2e;
+    border: 1px solid rgba(102, 126, 234, 0.15);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 0.85em;
+    color: #7070a0;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
 }
-.inventory span { color:#00ffcc; }
+.inv-item { display: flex; align-items: center; gap: 4px; }
+.inv-item span { color: #667eea; font-weight: 600; }
+
 .zone {
-font-size:1.1em;
-font-weight:bold;
-color:#ffd700;
-text-shadow:0 0 10px #ffd700;
-margin-bottom:8px;
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #ffd700;
+    margin-bottom: 10px;
+    padding: 8px 14px;
+    background: rgba(255, 215, 0, 0.08);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    display: inline-block;
 }
 #log {
-background:#0a0a0a;
-border-left:3px solid #00ffcc;
-padding:12px;
-border-radius:8px;
-font-size:0.88em;
-color:#ccc;
-min-height:70px;
-margin-bottom:18px;
-line-height:1.6;
+    background: #0a0a2e;
+    border-left: 3px solid #667eea;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 0.9em;
+    color: #c0c0e0;
+    min-height: 70px;
+    margin-bottom: 18px;
+    line-height: 1.7;
 }
-#log .good { color:#00ffcc; }
-#log .bad { color:#ff4444; }
-#log .neutral { color:#aaa; }
-.options { display:flex; flex-direction:column; gap:10px; }
+#log .good { color: #4ade80; }
+#log .bad { color: #ff4466; }
+#log .neutral { color: #c0c0e0; }
+#log .event { color: #fbbf24; }
+
+.options { display: flex; flex-direction: column; gap: 10px; }
 .opt-btn {
-background:transparent;
-border:2px solid #00ffcc;
-color:#00ffcc;
-padding:12px 16px;
-border-radius:10px;
-cursor:pointer;
-font-family:'Courier New', monospace;
-font-size:0.9em;
-text-align:left;
-transition:0.2s;
+    background: transparent;
+    border: 1.5px solid rgba(102, 126, 234, 0.4);
+    color: #e0e0ff;
+    padding: 13px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-size: 0.9em;
+    text-align: left;
+    transition: all 0.2s;
 }
 .opt-btn:hover {
-background:#00ffcc;
-color:#000;
-box-shadow:0 0 15px #00ffcc;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    transform: translateY(-1px);
 }
+.opt-btn:active { transform: translateY(0); }
+
 #overlay {
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.92);
-flex-direction:column;
-align-items:center;
-justify-content:center;
-z-index:99;
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 46, 0.95);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+    backdrop-filter: blur(10px);
 }
-#overlay.show { display:flex; }
-#overlay h2 { font-size:3em; margin-bottom:10px; }
-#overlay p { color:#aaa; margin-bottom:30px; font-size:1em; }
+#overlay.show { display: flex; }
+#overlay h2 { font-size: 2.8em; margin-bottom: 10px; }
+#overlay p { color: #7070a0; margin-bottom: 10px; font-size: 1.1em; }
+#overlay .score-detail { color: #c0c0e0; font-size: 0.9em; margin-bottom: 25px; }
 #overlay button {
-background:#00ffcc;
-color:#000;
-border:none;
-padding:14px 40px;
-border-radius:10px;
-font-size:1.1em;
-font-weight:bold;
-cursor:pointer;
-font-family:'Courier New', monospace;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 12px;
+    font-size: 1.1em;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    transition: all 0.3s;
 }
-.dead h2 { color:#ff4444; text-shadow:0 0 20px #ff4444; }
-.win h2 { color:#ffd700; text-shadow:0 0 20px #ffd700; }
-footer { margin-top:30px; color:#333; font-size:0.75em; }
+#overlay button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+.dead h2 { color: #ff4466; }
+.win h2 { color: #ffd700; }
+
+.record-bar {
+    background: #161655;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 10px;
+    padding: 8px 14px;
+    margin-bottom: 16px;
+    font-size: 0.8em;
+    color: #7070a0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.record-bar .record-val { color: #ffd700; font-weight: 700; }
+
+footer {
+    margin-top: 30px;
+    color: #7070a0;
+    font-size: 0.8em;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@media(max-width:480px) {
+    h1 { font-size: 1.6em; }
+    #game { padding: 16px; }
+    .stat-box { min-width: 70px; padding: 8px; }
+    .stat-val { font-size: 1.1em; }
+}
 </style>
 </head>
 <body>
-<h1>☠️ SURVIVAL</h1>
-<div class="vip-tag">👑 VIP EXCLUSIVE</div>
+<h1>SURVIVAL</h1>
+<div class="vip-tag">VIP EXCLUSIVE</div>
 <div id="game">
-<div class="stats">
-<div class="stat-box"><div class="stat-label">DÍA</div><div class="stat-val day" id="sDia">1</div></div>
-<div class="stat-box"><div class="stat-label">❤️ HP</div><div class="stat-val hp" id="sHp">100</div><div class="bar-wrap"><div class="bar hp" id="bHp" style="width:100%"></div></div></div>
-<div class="stat-box"><div class="stat-label">🍖 HAMBRE</div><div class="stat-val hunger" id="sHam">100</div><div class="bar-wrap"><div class="bar hunger" id="bHam" style="width:100%"></div></div></div>
-<div class="stat-box"><div class="stat-label">💧 SED</div><div class="stat-val thirst" id="sSed">100</div><div class="bar-wrap"><div class="bar thirst" id="bSed" style="width:100%"></div></div></div>
-</div>
-<div class="inventory">
-🎒 Madera: <span id="iMad">0</span> | 
-Comida: <span id="iCom">3</span> | 
-Agua: <span id="iAgu">2</span> | 
-Lanza: <span id="iLan">NO</span> | 
-Cabaña: <span id="iCab">NO</span> | 
-Fósforos: <span id="iFos">1</span>
-</div>
-<div class="zone" id="zoneName">📍 PLAYA</div>
-<div id="log">Bienvenido a la isla. Sobrevive el máximo posible.</div>
-<div class="options" id="options"></div>
+    <div class="record-bar">
+        <span>Record: <span class="record-val" id="recordDays">0</span> dias</span>
+        <span>Partidas: <span class="record-val" id="totalGames">0</span></span>
+    </div>
+    <div class="stats">
+        <div class="stat-box"><div class="stat-label">DIA</div><div class="stat-val day" id="sDia">1</div></div>
+        <div class="stat-box"><div class="stat-label">HP</div><div class="stat-val hp" id="sHp">100</div><div class="bar-wrap"><div class="bar hp" id="bHp" style="width:100%"></div></div></div>
+        <div class="stat-box"><div class="stat-label">HAMBRE</div><div class="stat-val hunger" id="sHam">100</div><div class="bar-wrap"><div class="bar hunger" id="bHam" style="width:100%"></div></div></div>
+        <div class="stat-box"><div class="stat-label">SED</div><div class="stat-val thirst" id="sSed">100</div><div class="bar-wrap"><div class="bar thirst" id="bSed" style="width:100%"></div></div></div>
+    </div>
+    <div class="inventory" id="invDisplay"></div>
+    <div class="zone" id="zoneName"></div>
+    <div id="log">Bienvenido a la isla. Sobrevive el maximo posible.</div>
+    <div class="options" id="options"></div>
 </div>
 
 <div id="overlay">
-<h2 id="oTitle"></h2>
-<p id="oMsg"></p>
-<button onclick="resetGame()">🔄 REINTENTAR</button>
+    <h2 id="oTitle"></h2>
+    <p id="oMsg"></p>
+    <p class="score-detail" id="oDetail"></p>
+    <button onclick="resetGame()">REINTENTAR</button>
 </div>
-<footer>&copy; 2026 MINGUELASGO GAMES — VIP</footer>
+<footer>&copy; 2026 MINGUELASGO GAMES</footer>
 
 <script>
-const ZONES = [
-    { name: "📍 PLAYA", options: [
-        { txt: "🌊 Buscar cocos", fn: s => { s.sed = Math.min(100, s.sed + 25); s.inv.comida++; return {msg:"+25💧 +1🍖", cls:"good"}; }},
-        { txt: "🪵 Recoger madera", fn: s => { s.inv.madera += 4; return {msg:"+4 madera", cls:"neutral"}; }},
-        { txt: "🐟 Pescar", fn: s => { 
-            if(s.inv.anzuelo){ s.inv.comida += 3; return {msg:"¡Buena pesca! +3🍖", cls:"good"}; }
-            return {msg:"Necesitas anzuelo para pescar mejor.", cls:"neutral"}; 
+var ZONES = [
+    { name: "PLAYA", icon: "🏝️", options: [
+        { txt: "🌊 Buscar cocos en la orilla", fn: function(s) {
+            if(Math.random() > 0.2) { s.sed = Math.min(100, s.sed + 25); s.inv.comida++; return {msg:"+25 sed +1 comida", cls:"good"}; }
+            return {msg:"No encontraste cocos esta vez.", cls:"neutral"};
         }},
-        { txt: "🌿 Entrar a la Selva", fn: s => { s.zone = 1; return {msg:"Te adentras en la selva...", cls:"neutral"}; }},
-        { txt: "😴 Descansar", fn: s => { s.hp = Math.min(100, s.hp + 15); return {msg:"+15❤️", cls:"good"}; }},
+        { txt: "🪵 Recoger madera de la costa", fn: function(s) { var n = 3 + Math.floor(Math.random()*3); s.inv.madera += n; return {msg:"+" + n + " madera", cls:"good"}; }},
+        { txt: "🐟 Pescar en la orilla", fn: function(s) {
+            if(s.inv.anzuelo) { var n = 2 + Math.floor(Math.random()*3); s.inv.comida += n; return {msg:"+" + n + " comida (con anzuelo)", cls:"good"}; }
+            if(Math.random() > 0.5) { s.inv.comida++; return {msg:"+1 comida (a mano)", cls:"good"}; }
+            return {msg:"Se te escaparon los peces.", cls:"neutral"};
+        }},
+        { txt: "🐚 Buscar objetos en la playa", fn: function(s) {
+            var r = Math.random();
+            if(r > 0.7) { s.inv.fosforos += 2; return {msg:"Encontraste una caja con 2 fosforos!", cls:"good"}; }
+            if(r > 0.4) { s.inv.cuerda++; return {msg:"+1 cuerda", cls:"good"}; }
+            return {msg:"Solo conchas y algas.", cls:"neutral"};
+        }},
+        { txt: "🌿 Ir a la Selva", fn: function(s) { s.zone = 1; return {msg:"Te adentras en la selva...", cls:"neutral"}; }},
+        { txt: "😴 Descansar en la arena", fn: function(s) {
+            var heal = s.inv.cabana ? 25 : 12;
+            s.hp = Math.min(100, s.hp + heal);
+            return {msg:"+" + heal + " HP" + (s.inv.cabana ? " (cabana)" : ""), cls:"good"};
+        }},
     ]},
-    { name: "🌿 SELVA", options: [
-        { txt: "🍌 Buscar frutas", fn: s => { s.inv.comida += 2; s.hambre = Math.min(100,s.hambre+20); return {msg:"+2🍖 +20🍖", cls:"good"}; }},
-        { txt: "🪵 Cortar árboles", fn: s => { s.inv.madera += 6; return {msg:"+6 madera", cls:"good"}; }},
-        { txt: "💧 Buscar río", fn: s => { s.sed = Math.min(100,s.sed+35); s.inv.agua += 2; return {msg:"+35💧 +2🥤", cls:"good"}; }},
-        { txt: "🗡️ Fabricar lanza", fn: s => {
-            if(s.inv.madera >= 4){ s.inv.madera-=4; s.inv.lanza=true; return {msg:"¡Lanza fabricada!", cls:"good"}; }
-            return {msg:"Necesitas 4 maderas", cls:"bad"};
+    { name: "SELVA", icon: "🌿", options: [
+        { txt: "🍌 Buscar frutas", fn: function(s) {
+            if(Math.random() > 0.15) { var n = 1 + Math.floor(Math.random()*3); s.inv.comida += n; s.hambre = Math.min(100,s.hambre+15); return {msg:"+" + n + " comida +15 hambre", cls:"good"}; }
+            s.hp -= 8; return {msg:"Comiste una fruta toxica! -8 HP", cls:"bad"};
         }},
-        { txt: "🏗️ Construir cabaña", fn: s => {
-            if(s.inv.madera >= 12){ s.inv.madera-=12; s.inv.cabana=true; return {msg:"¡Cabaña construida!", cls:"good"}; }
-            return {msg:`Faltan maderas (${s.inv.madera}/12)`, cls:"bad"};
+        { txt: "🪵 Talar arboles", fn: function(s) { var n = 5 + Math.floor(Math.random()*4); s.inv.madera += n; return {msg:"+" + n + " madera", cls:"good"}; }},
+        { txt: "💧 Buscar rio", fn: function(s) {
+            if(Math.random() > 0.25) { s.sed = Math.min(100,s.sed+35); s.inv.agua += 2; return {msg:"+35 sed +2 agua", cls:"good"}; }
+            return {msg:"No encontraste agua limpia.", cls:"neutral"};
         }},
-        { txt: "⛰️ Subir a la Montaña", fn: s => { s.zone = 2; return {msg:"Subes a la montaña...", cls:"neutral"}; }},
-        { txt: "🌧️ Entrar al Pantano", fn: s => { s.zone = 3; return {msg:"Entras al pantano...", cls:"neutral"}; }},
-        { txt: "🔙 Volver a la Playa", fn: s => { s.zone = 0; return {msg:"Vuelves a la playa.", cls:"neutral"}; }},
+        { txt: "🗡️ Fabricar lanza (4 madera + 1 cuerda)", fn: function(s) {
+            if(s.inv.madera >= 4 && s.inv.cuerda >= 1) { s.inv.madera-=4; s.inv.cuerda--; s.inv.lanza=true; return {msg:"Lanza fabricada!", cls:"good"}; }
+            if(s.inv.madera < 4) return {msg:"Necesitas 4 madera (tienes " + s.inv.madera + ")", cls:"bad"};
+            return {msg:"Necesitas 1 cuerda (tienes " + s.inv.cuerda + ")", cls:"bad"};
+        }},
+        { txt: "🏗️ Construir cabana (14 madera + 2 cuerda)", fn: function(s) {
+            if(s.inv.madera >= 14 && s.inv.cuerda >= 2) { s.inv.madera-=14; s.inv.cuerda-=2; s.inv.cabana=true; return {msg:"Cabana construida! Descansas mejor.", cls:"good"}; }
+            return {msg:"Faltan materiales (madera: " + s.inv.madera + "/14, cuerda: " + s.inv.cuerda + "/2)", cls:"bad"};
+        }},
+        { txt: "🪤 Poner trampa (2 madera + 1 cuerda)", fn: function(s) {
+            if(s.inv.madera >= 2 && s.inv.cuerda >= 1) { s.inv.madera-=2; s.inv.cuerda--; s.inv.trampa = (s.inv.trampa||0)+1; return {msg:"Trampa colocada! (total: " + s.inv.trampa + ")", cls:"good"}; }
+            return {msg:"Necesitas 2 madera + 1 cuerda", cls:"bad"};
+        }},
+        { txt: "⛰️ Subir a la Montana", fn: function(s) { s.zone = 2; return {msg:"Subes a la montana...", cls:"neutral"}; }},
+        { txt: "🌧️ Entrar al Pantano", fn: function(s) { s.zone = 3; return {msg:"Entras al pantano...", cls:"neutral"}; }},
+        { txt: "🏝️ Volver a la Playa", fn: function(s) { s.zone = 0; return {msg:"Vuelves a la playa.", cls:"neutral"}; }},
     ]},
-    { name: "⛰️ MONTAÑA", options: [
-        { txt: "🦌 Cazar", fn: s => {
-            if(s.inv.lanza){ s.inv.comida += 5; return {msg:"+5🍖", cls:"good"}; }
-            s.hp -= 20; return {msg:"-20❤️ Sin lanza", cls:"bad"};
-        }},
-        { txt: "🌧️ Recoger agua lluvia", fn: s => { s.sed = Math.min(100,s.sed+30); s.inv.agua++; return {msg:"+30💧", cls:"good"}; }},
-        { txt: "🔥 Encender hoguera", fn: s => {
-            if(s.inv.fosforos > 0 && s.inv.madera >= 3){ 
-                s.inv.madera -= 3; s.inv.fosforos--; 
-                s.hp = Math.min(100, s.hp + 25); 
-                return {msg:"+25❤️ Hoguera", cls:"good"}; 
+    { name: "MONTANA", icon: "⛰️", options: [
+        { txt: "🦌 Cazar animales", fn: function(s) {
+            if(s.inv.lanza) {
+                if(Math.random() > 0.25) { var n = 4 + Math.floor(Math.random()*4); s.inv.comida += n; return {msg:"Caza exitosa! +" + n + " comida", cls:"good"}; }
+                return {msg:"El animal escapo.", cls:"neutral"};
             }
-            return {msg:"Necesitas fósforos y madera", cls:"bad"};
+            s.hp -= 20; return {msg:"-20 HP! Sin lanza es peligroso.", cls:"bad"};
         }},
-        { txt: "📡 Señales de humo", fn: s => {
-            if(s.inv.madera >= 5 && s.dia >= 8){ s.dia = 999; return {msg:"¡RESCATADO!", cls:"good"}; }
-            return {msg:"Aún no te ven...", cls:"neutral"};
+        { txt: "🌧️ Recoger agua de lluvia", fn: function(s) {
+            if(Math.random() > 0.3) { s.sed = Math.min(100,s.sed+30); s.inv.agua += 2; return {msg:"+30 sed +2 agua", cls:"good"}; }
+            return {msg:"No llueve hoy.", cls:"neutral"};
         }},
-        { txt: "🔙 Bajar a la Selva", fn: s => { s.zone = 1; return {msg:"Bajas a la selva.", cls:"neutral"}; }},
+        { txt: "🔥 Encender hoguera (3 madera + 1 fosforo)", fn: function(s) {
+            if(s.inv.fosforos > 0 && s.inv.madera >= 3) {
+                s.inv.madera -= 3; s.inv.fosforos--;
+                s.hp = Math.min(100, s.hp + 20);
+                s.inv.comidaCocida = true;
+                return {msg:"+20 HP. Puedes cocinar comida.", cls:"good"};
+            }
+            return {msg:"Necesitas 3 madera + 1 fosforo", cls:"bad"};
+        }},
+        { txt: "🪨 Explorar cueva", fn: function(s) { s.zone = 4; return {msg:"Entras en una cueva oscura...", cls:"neutral"}; }},
+        { txt: "📡 Senal de humo (6 madera + 1 fosforo, dia 10+)", fn: function(s) {
+            if(s.inv.madera >= 6 && s.inv.fosforos > 0 && s.dia >= 10) {
+                s.inv.madera -= 6; s.inv.fosforos--;
+                if(Math.random() > 0.4) { s.rescate = true; return {msg:"Ves un barco acercarse! Espera un turno mas...", cls:"good"}; }
+                return {msg:"Nadie vio la senal. Intenta manana.", cls:"neutral"};
+            }
+            if(s.dia < 10) return {msg:"Es muy pronto, no hay barcos cercanos (dia 10+)", cls:"neutral"};
+            return {msg:"Necesitas 6 madera + 1 fosforo", cls:"bad"};
+        }},
+        { txt: "🌿 Bajar a la Selva", fn: function(s) { s.zone = 1; return {msg:"Bajas a la selva.", cls:"neutral"}; }},
     ]},
-    { name: "🌧️ PANTANO", options: [
-        { txt: "🐊 Cazar reptiles", fn: s => {
-            if(s.inv.lanza && Math.random()>0.45){ s.inv.comida += 6; return {msg:"+6🍖", cls:"good"}; }
-            s.hp -= 22; return {msg:"-22❤️ Peligro", cls:"bad"};
+    { name: "PANTANO", icon: "🌧️", options: [
+        { txt: "🐊 Cazar reptiles", fn: function(s) {
+            if(s.inv.lanza) {
+                if(Math.random() > 0.35) { var n = 5 + Math.floor(Math.random()*3); s.inv.comida += n; return {msg:"+" + n + " comida!", cls:"good"}; }
+                s.hp -= 10; return {msg:"-10 HP. El reptil contraataco.", cls:"bad"};
+            }
+            s.hp -= 25; return {msg:"-25 HP! Sin lanza es suicida.", cls:"bad"};
         }},
-        { txt: "🪱 Buscar comida", fn: s => { s.inv.comida += 3; return {msg:"+3 comida", cls:"good"}; }},
-        { txt: "🌿 Plantas medicinales", fn: s => { s.hp = Math.min(100, s.hp + 25); return {msg:"+25❤️", cls:"good"}; }},
-        { txt: "🔍 Explorar", fn: s => {
-            if(Math.random() > 0.55){ s.inv.fosforos += 2; s.inv.anzuelo = true; return {msg:"¡Botín! +2 fósforos + Anzuelo", cls:"good"}; }
-            return {msg:"Solo lodo...", cls:"neutral"};
+        { txt: "🪱 Buscar larvas y raices", fn: function(s) { var n = 2 + Math.floor(Math.random()*2); s.inv.comida += n; return {msg:"+" + n + " comida", cls:"good"}; }},
+        { txt: "🌿 Plantas medicinales", fn: function(s) {
+            if(Math.random() > 0.2) { var heal = 20 + Math.floor(Math.random()*15); s.hp = Math.min(100, s.hp + heal); return {msg:"+" + heal + " HP!", cls:"good"}; }
+            s.hp -= 10; return {msg:"-10 HP. Planta venenosa!", cls:"bad"};
         }},
-        { txt: "🔙 Volver a la Selva", fn: s => { s.zone = 1; return {msg:"Sales del pantano.", cls:"neutral"}; }},
+        { txt: "🔍 Explorar restos del naufragio", fn: function(s) {
+            var r = Math.random();
+            if(r > 0.65) { s.inv.fosforos += 3; s.inv.anzuelo = true; return {msg:"Botin: +3 fosforos + anzuelo!", cls:"good"}; }
+            if(r > 0.35) { s.inv.cuerda += 2; s.inv.madera += 3; return {msg:"+2 cuerda +3 madera", cls:"good"}; }
+            if(r > 0.15) { return {msg:"Solo lodo y moho.", cls:"neutral"}; }
+            s.hp -= 15; return {msg:"-15 HP. Pisaste algo afilado.", cls:"bad"};
+        }},
+        { txt: "🐸 Recolectar veneno de rana", fn: function(s) {
+            if(Math.random() > 0.5) { s.inv.veneno = true; return {msg:"Veneno recolectado! Tu lanza hace mas dano.", cls:"good"}; }
+            s.hp -= 12; return {msg:"-12 HP. Te salpico veneno.", cls:"bad"};
+        }},
+        { txt: "🏝️ Ir a la Playa Oculta", fn: function(s) { s.zone = 5; return {msg:"Encuentras una playa escondida...", cls:"neutral"}; }},
+        { txt: "🌿 Volver a la Selva", fn: function(s) { s.zone = 1; return {msg:"Sales del pantano.", cls:"neutral"}; }},
     ]},
-    { name: "🪨 CUEVA", options: [
-        { txt: "🔦 Explorar profundo", fn: s => {
-            if(Math.random() > 0.5){ s.inv.fosforos += 3; return {msg:"+3 fósforos", cls:"good"}; }
-            s.hp -= 15; return {msg:"-15❤️ Oscuridad", cls:"bad"};
+    { name: "CUEVA", icon: "🪨", options: [
+        { txt: "🔦 Explorar el fondo", fn: function(s) {
+            var r = Math.random();
+            if(r > 0.6) { s.inv.fosforos += 3; s.inv.cuerda += 2; return {msg:"Encontraste suministros! +3 fosforos +2 cuerda", cls:"good"}; }
+            if(r > 0.3) { s.inv.madera += 4; return {msg:"Madera seca +4", cls:"good"}; }
+            s.hp -= 18; return {msg:"-18 HP. Caiste en un hoyo.", cls:"bad"};
         }},
-        { txt: "🦇 Cazar murciélagos", fn: s => { s.inv.comida += 3; return {msg:"+3🍖", cls:"good"}; }},
-        { txt: "🏕️ Dormir en cueva", fn: s => { s.hp = Math.min(100, s.hp + 35); return {msg:"+35❤️", cls:"good"}; }},
-        { txt: "🔙 Salir de la cueva", fn: s => { s.zone = 2; return {msg:"Sales de la cueva.", cls:"neutral"}; }},
+        { txt: "🦇 Cazar murcielagos", fn: function(s) {
+            if(s.inv.lanza) { var n = 3 + Math.floor(Math.random()*3); s.inv.comida += n; return {msg:"+" + n + " comida", cls:"good"}; }
+            s.inv.comida += 2; s.hp -= 5; return {msg:"+2 comida pero -5 HP (mordedura)", cls:"neutral"};
+        }},
+        { txt: "🏕️ Dormir protegido", fn: function(s) {
+            var heal = 30 + Math.floor(Math.random()*10);
+            s.hp = Math.min(100, s.hp + heal);
+            return {msg:"+" + heal + " HP. Buen descanso.", cls:"good"};
+        }},
+        { txt: "💎 Buscar minerales", fn: function(s) {
+            if(Math.random() > 0.6) { s.inv.piedraAfilada = true; return {msg:"Piedra afilada! Mejora tu lanza.", cls:"good"}; }
+            return {msg:"Solo rocas normales.", cls:"neutral"};
+        }},
+        { txt: "⛰️ Salir a la Montana", fn: function(s) { s.zone = 2; return {msg:"Sales de la cueva.", cls:"neutral"}; }},
+    ]},
+    { name: "PLAYA OCULTA", icon: "🏖️", options: [
+        { txt: "🚢 Revisar barco varado", fn: function(s) {
+            var r = Math.random();
+            if(r > 0.5) { s.inv.fosforos += 4; s.inv.cuerda += 3; s.inv.anzuelo = true; return {msg:"Botin: +4 fosforos +3 cuerda +anzuelo!", cls:"good"}; }
+            if(r > 0.2) { s.inv.comida += 5; s.inv.agua += 3; return {msg:"+5 comida +3 agua (provisiones)", cls:"good"}; }
+            s.hp -= 10; return {msg:"-10 HP. Tabla podrida.", cls:"bad"};
+        }},
+        { txt: "🐢 Recolectar huevos de tortuga", fn: function(s) { var n = 3 + Math.floor(Math.random()*3); s.inv.comida += n; return {msg:"+" + n + " comida", cls:"good"}; }},
+        { txt: "🧱 Construir balsa (20 madera + 4 cuerda, dia 15+)", fn: function(s) {
+            if(s.inv.madera >= 20 && s.inv.cuerda >= 4 && s.dia >= 15) {
+                s.inv.madera -= 20; s.inv.cuerda -= 4;
+                s.balsa = true;
+                return {msg:"Balsa construida! Puedes intentar escapar!", cls:"good"};
+            }
+            if(s.dia < 15) return {msg:"Necesitas mas experiencia para navegar (dia 15+)", cls:"neutral"};
+            return {msg:"Necesitas 20 madera + 4 cuerda (madera: " + s.inv.madera + "/20, cuerda: " + s.inv.cuerda + "/4)", cls:"bad"};
+        }},
+        { txt: "⛵ Escapar en balsa", fn: function(s) {
+            if(!s.balsa) return {msg:"No tienes balsa.", cls:"bad"};
+            if(s.inv.agua < 3 || s.inv.comida < 5) return {msg:"Necesitas minimo 3 agua + 5 comida para el viaje.", cls:"bad"};
+            if(Math.random() > 0.3) { s.escaped = true; return {msg:"Ves tierra firme! LO LOGRASTE!", cls:"good"}; }
+            s.hp -= 30; s.inv.agua -= 2; s.inv.comida -= 3;
+            return {msg:"-30 HP. Tormenta! Volviste a la isla.", cls:"bad"};
+        }},
+        { txt: "🌧️ Volver al Pantano", fn: function(s) { s.zone = 3; return {msg:"Vuelves al pantano.", cls:"neutral"}; }},
     ]}
 ];
 
-let state = {};
+var RANDOM_EVENTS = [
+    { chance: 0.08, fn: function(s) { s.hp -= 15; return "Tormenta nocturna! -15 HP" + (s.inv.cabana ? " (la cabana te protegio un poco)" : ""); }, cabin: function(s) { s.hp += 10; } },
+    { chance: 0.06, fn: function(s) { s.inv.comida = Math.max(0, s.inv.comida - 2); return "Animales robaron tu comida! -2 comida"; }, cabin: null },
+    { chance: 0.07, fn: function(s) { var n = 2 + Math.floor(Math.random()*3); s.inv.comida += n; return "Encontraste un nido! +" + n + " comida"; }, cabin: null },
+    { chance: 0.05, fn: function(s) { s.inv.agua += 3; s.sed = Math.min(100, s.sed + 20); return "Lluvia! +3 agua +20 sed"; }, cabin: null },
+    { chance: 0.04, fn: function(s) { s.hp -= 20; return "Picadura de insecto venenoso! -20 HP"; }, cabin: function(s) { s.hp += 12; } },
+    { chance: 0.03, fn: function(s) { s.inv.cuerda += 2; s.inv.fosforos++; return "Encontraste restos flotando! +2 cuerda +1 fosforo"; }, cabin: null },
+    { chance: 0.04, fn: function(s) { if(s.inv.trampa && s.inv.trampa > 0) { var n = s.inv.trampa * 2; s.inv.comida += n; return "Tus trampas atraparon comida! +" + n + " comida"; } return null; }, cabin: null },
+];
+
+var state = {};
+
+function loadRecord() {
+    var r = localStorage.getItem('mg_survival_record') || '0';
+    var g = localStorage.getItem('mg_survival_games') || '0';
+    document.getElementById('recordDays').textContent = r;
+    document.getElementById('totalGames').textContent = g;
+}
+
+function saveRecord(dias) {
+    var r = parseInt(localStorage.getItem('mg_survival_record') || '0');
+    var g = parseInt(localStorage.getItem('mg_survival_games') || '0');
+    if(dias > r) localStorage.setItem('mg_survival_record', dias);
+    localStorage.setItem('mg_survival_games', g + 1);
+    loadRecord();
+}
 
 function resetGame() {
     state = {
         dia: 1, hp: 100, hambre: 100, sed: 100, zone: 0,
-        inv: { madera: 0, comida: 3, agua: 2, lanza: false, cabana: false, fosforos: 1, anzuelo: false }
+        rescate: false, balsa: false, escaped: false,
+        inv: { madera: 0, comida: 3, agua: 2, lanza: false, cabana: false, fosforos: 1, anzuelo: false, cuerda: 0, trampa: 0, veneno: false, piedraAfilada: false, comidaCocida: false }
     };
-    document.getElementById("overlay").classList.remove("show","dead","win");
-    updateLog("Bienvenido a la isla desierta. Sobrevive todo lo que puedas.", "neutral");
+    document.getElementById("overlay").className = "";
+    updateLog("Despiertas en una isla desierta. Sobrevive todo lo que puedas.", "neutral");
     renderGame();
+    loadRecord();
+}
+
+function renderInventory() {
+    var inv = state.inv;
+    var html = '';
+    html += '<div class="inv-item">🪵 Madera: <span>' + inv.madera + '</span></div>';
+    html += '<div class="inv-item">🍖 Comida: <span>' + inv.comida + '</span></div>';
+    html += '<div class="inv-item">💧 Agua: <span>' + inv.agua + '</span></div>';
+    html += '<div class="inv-item">🧶 Cuerda: <span>' + inv.cuerda + '</span></div>';
+    html += '<div class="inv-item">🔥 Fosforos: <span>' + inv.fosforos + '</span></div>';
+    html += '<div class="inv-item">🗡️ Lanza: <span>' + (inv.lanza ? (inv.veneno ? "ENVENENADA" : (inv.piedraAfilada ? "MEJORADA" : "SI")) : "NO") + '</span></div>';
+    html += '<div class="inv-item">🏠 Cabana: <span>' + (inv.cabana ? "SI" : "NO") + '</span></div>';
+    if(inv.anzuelo) html += '<div class="inv-item">🪝 Anzuelo: <span>SI</span></div>';
+    if(inv.trampa) html += '<div class="inv-item">🪤 Trampas: <span>' + inv.trampa + '</span></div>';
+    document.getElementById('invDisplay').innerHTML = html;
 }
 
 function renderGame() {
-    document.getElementById("sDia").textContent = state.dia > 900 ? "🏁" : state.dia;
+    document.getElementById("sDia").textContent = state.dia;
     document.getElementById("sHp").textContent = Math.floor(state.hp);
     document.getElementById("sHam").textContent = Math.floor(state.hambre);
     document.getElementById("sSed").textContent = Math.floor(state.sed);
-
     document.getElementById("bHp").style.width = state.hp + "%";
     document.getElementById("bHam").style.width = state.hambre + "%";
     document.getElementById("bSed").style.width = state.sed + "%";
 
-    document.getElementById("iMad").textContent = state.inv.madera;
-    document.getElementById("iCom").textContent = state.inv.comida;
-    document.getElementById("iAgu").textContent = state.inv.agua;
-    document.getElementById("iLan").textContent = state.inv.lanza ? "✅" : "NO";
-    document.getElementById("iCab").textContent = state.inv.cabana ? "✅" : "NO";
-    document.getElementById("iFos").textContent = state.inv.fosforos;
+    renderInventory();
 
-    const zone = ZONES[state.zone];
-    document.getElementById("zoneName").textContent = zone.name;
+    var zone = ZONES[state.zone];
+    document.getElementById("zoneName").textContent = zone.icon + " " + zone.name;
 
-    const opts = document.getElementById("options");
+    var opts = document.getElementById("options");
     opts.innerHTML = "";
-    zone.options.forEach((opt, i) => {
-        const btn = document.createElement("button");
+    zone.options.forEach(function(opt, i) {
+        var btn = document.createElement("button");
         btn.className = "opt-btn";
         btn.textContent = opt.txt;
-        btn.onclick = () => doAction(i);
+        btn.onclick = function() { doAction(i); };
         opts.appendChild(btn);
     });
 }
 
 function updateLog(msg, cls) {
-    document.getElementById("log").innerHTML = `<span class="${cls}">${msg}</span>`;
+    document.getElementById("log").innerHTML = '<span class="' + cls + '">' + msg + '</span>';
 }
 
 function doAction(idx) {
-    const result = ZONES[state.zone].options[idx].fn(state);
+    var result = ZONES[state.zone].options[idx].fn(state);
 
     state.dia++;
-    state.hambre = Math.max(0, state.hambre - (13 + Math.random()*9));
-    state.sed = Math.max(0, state.sed - (16 + Math.random()*11));
+    var hungerDrain = 11 + Math.random() * 8;
+    var thirstDrain = 14 + Math.random() * 9;
+    state.hambre = Math.max(0, state.hambre - hungerDrain);
+    state.sed = Math.max(0, state.sed - thirstDrain);
 
-    if(state.inv.cabana) state.hp = Math.min(100, state.hp + 7);
-    if(state.hambre <= 0) state.hp -= 18;
-    if(state.sed <= 0) state.hp -= 22;
+    if(state.inv.cabana) state.hp = Math.min(100, state.hp + 5);
+    if(state.hambre <= 0) state.hp -= 16;
+    if(state.sed <= 0) state.hp -= 20;
 
-    if(state.hambre < 25 && state.inv.comida > 0){ state.inv.comida--; state.hambre = Math.min(100, state.hambre + 40); }
-    if(state.sed < 25 && state.inv.agua > 0){ state.inv.agua--; state.sed = Math.min(100, state.sed + 40); }
+    if(state.hambre < 20 && state.inv.comida > 0) {
+        state.inv.comida--;
+        var foodRestore = state.inv.comidaCocida ? 50 : 35;
+        state.hambre = Math.min(100, state.hambre + foodRestore);
+    }
+    if(state.sed < 20 && state.inv.agua > 0) {
+        state.inv.agua--;
+        state.sed = Math.min(100, state.sed + 40);
+    }
 
-    state.hp = Math.max(0, state.hp);
+    var eventMsg = '';
+    RANDOM_EVENTS.forEach(function(ev) {
+        if(Math.random() < ev.chance) {
+            var r = ev.fn(state);
+            if(r) {
+                if(state.inv.cabana && ev.cabin) ev.cabin(state);
+                eventMsg += ' | ' + r;
+            }
+        }
+    });
 
-    let logMsg = result.msg;
-    if(state.hp < 30) logMsg += " 🚨 HP CRÍTICO";
-    if(state.hambre < 30) logMsg += " ⚠️ Hambre";
-    if(state.sed < 30) logMsg += " ⚠️ Sed";
+    state.hp = Math.max(0, Math.min(100, state.hp));
 
-    updateLog(logMsg, result.cls);
+    var logMsg = result.msg;
+    if(eventMsg) logMsg += '<br><span class="event">' + eventMsg.substring(3) + '</span>';
+    if(state.hp < 25) logMsg += ' <span class="bad">HP CRITICO!</span>';
+    if(state.hambre < 20 && state.inv.comida <= 0) logMsg += ' <span class="bad">Sin comida!</span>';
+    if(state.sed < 20 && state.inv.agua <= 0) logMsg += ' <span class="bad">Sin agua!</span>';
 
-    if(state.hp <= 0) endGame(false);
-    else if(state.dia >= 999) endGame(true);
+    document.getElementById("log").innerHTML = '<span class="' + result.cls + '">' + logMsg + '</span>';
+
+    if(state.hp <= 0) endGame('dead');
+    else if(state.rescate) endGame('rescue');
+    else if(state.escaped) endGame('escape');
     else renderGame();
 }
 
-function endGame(win) {
-    const ov = document.getElementById("overlay");
-    ov.classList.add("show");
-    if(win){
-        ov.classList.add("win");
-        document.getElementById("oTitle").textContent = "🎉 ¡RESCATADO!";
-        document.getElementById("oMsg").textContent = `Sobreviviste ${state.dia} días. ¡Legendario!`;
-    } else {
+function endGame(type) {
+    var ov = document.getElementById("overlay");
+    ov.className = "show";
+    var dias = state.dia - 1;
+    saveRecord(dias);
+
+    if(type === 'dead') {
         ov.classList.add("dead");
-        document.getElementById("oTitle").textContent = "💀 HAS MUERTO";
-        document.getElementById("oMsg").textContent = `Sobreviviste ${state.dia-1} días.`;
+        document.getElementById("oTitle").textContent = "HAS MUERTO";
+        document.getElementById("oMsg").textContent = "Sobreviviste " + dias + " dias.";
+        document.getElementById("oDetail").textContent = "Causa: " + (state.hambre <= 0 && state.sed <= 0 ? "Hambre y sed" : state.hambre <= 0 ? "Hambre" : state.sed <= 0 ? "Deshidratacion" : "Heridas");
+    } else if(type === 'rescue') {
+        ov.classList.add("win");
+        document.getElementById("oTitle").textContent = "RESCATADO!";
+        document.getElementById("oMsg").textContent = "Un barco te rescato el dia " + dias + ".";
+        document.getElementById("oDetail").textContent = "Metodo: Senal de humo desde la montana";
+    } else if(type === 'escape') {
+        ov.classList.add("win");
+        document.getElementById("oTitle").textContent = "ESCAPASTE!";
+        document.getElementById("oMsg").textContent = "Navegaste a tierra firme el dia " + dias + ".";
+        document.getElementById("oDetail").textContent = "Metodo: Balsa desde la playa oculta";
     }
 }
 
