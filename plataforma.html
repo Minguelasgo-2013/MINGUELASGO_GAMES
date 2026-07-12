@@ -136,6 +136,53 @@
         .notif-item.unread { background: rgba(102,126,234,0.05); border-left: 3px solid var(--accent); }
         .notif-empty { padding: 30px; text-align: center; color: var(--text-muted); font-size: 0.9em; }
 
+        /* AI CHATBOT */
+        .ai-chatbot { position: fixed; bottom: 20px; right: 20px; width: 350px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 10px 40px var(--shadow); z-index: 2000; display: none; flex-direction: column; max-height: 500px; }
+        .ai-chatbot.open { display: flex; }
+        .chatbot-header { background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); color: #fff; padding: 15px 20px; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; }
+        .chatbot-header h4 { font-size: 1em; margin: 0; }
+        .chatbot-close { background: none; border: none; color: #fff; font-size: 1.2em; cursor: pointer; }
+        .chatbot-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; min-height: 200px; }
+        .chatbot-msg { padding: 12px 15px; border-radius: 12px; max-width: 85%; word-wrap: break-word; font-size: 0.9em; }
+        .chatbot-msg.bot { background: var(--bg-secondary); color: var(--text-primary); align-self: flex-start; }
+        .chatbot-msg.user { background: var(--accent); color: #fff; align-self: flex-end; }
+        .chatbot-input { padding: 12px 15px; border-top: 1px solid var(--border); }
+        .chatbot-input input { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); font-size: 0.9em; outline: none; }
+        .chatbot-input input:focus { border-color: var(--accent); }
+        .chatbot-fab {
+            position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px;
+            border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border: none; color: #fff; font-size: 1.5em; cursor: pointer; z-index: 1999;
+            box-shadow: 0 4px 20px rgba(102,126,234,0.4); transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .chatbot-fab:hover { transform: scale(1.1); }
+        .chatbot-fab.hidden { display: none; }
+
+        /* SEASONAL THEME */
+        .seasonal-banner { background: linear-gradient(135deg, #ff6b6b, #ff8e72); padding: 30px; border-radius: 16px; margin-bottom: 30px; text-align: center; color: #fff; position: relative; overflow: hidden; }
+        .seasonal-banner::before { content: '🎃'; position: absolute; font-size: 8em; opacity: 0.1; top: -20px; right: -20px; animation: float-seasonal 3s ease-in-out infinite; }
+        @keyframes float-seasonal { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-10px) rotate(5deg)} }
+        .seasonal-banner h3 { font-size: 1.8em; margin-bottom: 10px; position: relative; z-index: 1; }
+        .seasonal-banner p { font-size: 0.95em; position: relative; z-index: 1; }
+
+        /* RANKING */
+        .ranking-table { max-width: 800px; margin: 0 auto; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
+        .ranking-row { display: grid; grid-template-columns: 60px 50px 1fr 120px 100px; align-items: center; padding: 18px 25px; background: var(--bg-card); border-bottom: 1px solid var(--border); }
+        .ranking-row:hover { background: var(--bg-card-hover); }
+        .ranking-row.header { background: var(--bg-secondary); font-weight: 700; font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .ranking-row.top-1 { border-left: 3px solid #ffd700; }
+        .ranking-row.top-2 { border-left: 3px solid #c0c0c0; }
+        .ranking-row.top-3 { border-left: 3px solid #cd7f32; }
+        .ranking-position { font-weight: 800; font-size: 1.1em; color: var(--text-muted); }
+        .ranking-row.top-1 .ranking-position { color: #ffd700; }
+        .ranking-row.top-2 .ranking-position { color: #c0c0c0; }
+        .ranking-row.top-3 .ranking-position { color: #cd7f32; }
+        .ranking-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); }
+        .ranking-name { font-weight: 600; color: var(--text-primary); }
+        .ranking-score { font-weight: 700; color: var(--accent); text-align: right; }
+        .ranking-level { text-align: right; font-size: 0.85em; color: var(--text-muted); }
+
         #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
 
         /* HERO */
@@ -218,19 +265,6 @@
         .game-bottom { display: flex; justify-content: space-between; align-items: center; }
         .game-tags { display: flex; gap: 8px; flex-wrap: wrap; }
         .game-tag { padding: 3px 10px; background: rgba(102,126,234,0.15); border-radius: 10px; font-size: 0.75em; color: var(--accent); }
-        .game-actions { display: flex; gap: 8px; }
-        .game-fav, .game-share-btn { background: none; border: none; font-size: 1.2em; cursor: pointer; transition: transform 0.2s; filter: grayscale(1); opacity: 0.6; }
-        .game-fav:hover, .game-share-btn:hover { transform: scale(1.3); opacity: 1; }
-        .game-fav.active { filter: none; opacity: 1; }
-
-        /* SHARE DROPDOWN */
-        .share-dropdown { display: none; position: absolute; bottom: 60px; right: 15px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 10px; z-index: 10; }
-        .share-dropdown.open { display: flex; gap: 8px; }
-        .share-opt { width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; font-size: 1.1em; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
-        .share-opt:hover { transform: scale(1.15); }
-        .share-wa { background: #25d366; color: #fff; }
-        .share-tw { background: #1da1f2; color: #fff; }
-        .share-copy { background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border) !important; }
 
         .grad-1{background:linear-gradient(135deg,#667eea,#764ba2)} .grad-2{background:linear-gradient(135deg,#f093fb,#f5576c)} .grad-3{background:linear-gradient(135deg,#4facfe,#00f2fe)} .grad-4{background:linear-gradient(135deg,#43e97b,#38f9d7)} .grad-5{background:linear-gradient(135deg,#fa709a,#fee140)} .grad-6{background:linear-gradient(135deg,#30cfd0,#330867)} .grad-7{background:linear-gradient(135deg,#a8edea,#fed6e3)} .grad-8{background:linear-gradient(135deg,#ff9a56,#ff6a88)}
 
@@ -260,75 +294,17 @@
         .achievement-name { font-size: 0.8em; font-weight: 600; color: var(--text-primary); margin-bottom: 5px; }
         .achievement-desc { font-size: 0.7em; color: var(--text-muted); }
 
-        /* RANKING */
-        .ranking-container { display: flex; gap: 30px; max-width: 1200px; margin: 0 auto; }
-        .ranking-section { flex: 1; }
-        .ranking-title { font-size: 1.2em; font-weight: 700; margin-bottom: 20px; color: var(--text-primary); }
-        .ranking-table { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
-        .ranking-row { display: grid; grid-template-columns: 60px 50px 1fr 120px 100px; align-items: center; padding: 18px 25px; background: var(--bg-card); border-bottom: 1px solid var(--border); }
-        .ranking-row:hover { background: var(--bg-card-hover); }
-        .ranking-row.header { background: var(--bg-secondary); font-weight: 700; font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .ranking-row.top-1 { border-left: 3px solid #ffd700; }
-        .ranking-row.top-2 { border-left: 3px solid #c0c0c0; }
-        .ranking-row.top-3 { border-left: 3px solid #cd7f32; }
-        .ranking-position { font-weight: 800; font-size: 1.1em; color: var(--text-muted); }
-        .ranking-row.top-1 .ranking-position { color: #ffd700; }
-        .ranking-row.top-2 .ranking-position { color: #c0c0c0; }
-        .ranking-row.top-3 .ranking-position { color: #cd7f32; }
-        .ranking-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); }
-        .ranking-name { font-weight: 600; color: var(--text-primary); }
-        .ranking-score { font-weight: 700; color: var(--accent); text-align: right; }
-        .ranking-level { text-align: right; font-size: 0.85em; color: var(--text-muted); }
-
-        /* LEVEL SYSTEM */
-        .level-progress { background: var(--bg-card); border-radius: 16px; padding: 25px; border: 1px solid var(--border); }
-        .level-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .level-number { font-size: 2em; font-weight: 800; color: var(--accent); }
-        .level-xp { font-size: 0.9em; color: var(--text-muted); }
-        .level-bar { width: 100%; height: 12px; background: var(--bg-secondary); border-radius: 10px; overflow: hidden; }
-        .level-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-secondary)); border-radius: 10px; transition: width 0.5s; }
-        .level-rewards { margin-top: 20px; font-size: 0.85em; color: var(--text-secondary); }
-        .level-rewards li { margin: 5px 0; }
-
-        /* SEASONAL THEME */
-        .seasonal-banner { background: linear-gradient(135deg, #ff6b6b, #ff8e72); padding: 30px; border-radius: 16px; margin-bottom: 30px; text-align: center; color: #fff; position: relative; overflow: hidden; }
-        .seasonal-banner::before { content: '🎃'; position: absolute; font-size: 8em; opacity: 0.1; top: -20px; right: -20px; animation: float-seasonal 3s ease-in-out infinite; }
-        @keyframes float-seasonal { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-10px) rotate(5deg)} }
-        .seasonal-banner h3 { font-size: 1.8em; margin-bottom: 10px; position: relative; z-index: 1; }
-        .seasonal-banner p { font-size: 0.95em; position: relative; z-index: 1; }
-
-        /* ADMIN PANEL */
-        .admin-panel { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 30px; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
-        .admin-header h3 { font-size: 1.4em; color: var(--text-primary); }
-        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .admin-tab { padding: 10px 20px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; color: var(--text-secondary); transition: all 0.3s; }
-        .admin-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-        .admin-content { display: none; }
-        .admin-content.active { display: block; }
-        .admin-list { display: flex; flex-direction: column; gap: 15px; }
-        .admin-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--bg-primary); border-radius: 10px; border: 1px solid var(--border); }
-        .admin-btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.85em; transition: all 0.3s; }
-        .admin-btn-edit { background: var(--accent); color: #fff; }
-        .admin-btn-delete { background: #f5576c; color: #fff; }
-        .admin-btn:hover { transform: translateY(-2px); }
-
         /* PROFILES */
         .profiles { background: var(--bg-secondary); }
         .profiles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; max-width: 1100px; margin: 0 auto; }
         .profile-card { background: var(--bg-card); border-radius: 16px; padding: 30px; text-align: center; border: 1px solid var(--border); transition: all 0.3s; }
         .profile-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px var(--shadow); }
-        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2.5em; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); cursor: pointer; transition: transform 0.3s; }
-        .profile-avatar:hover { transform: scale(1.1); }
-        .profile-avatar.custom { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 2.5em; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); }
         .profile-name { font-size: 1.2em; font-weight: 700; margin-bottom: 5px; color: var(--text-primary); }
         .profile-title { font-size: 0.85em; color: var(--accent); margin-bottom: 15px; }
         .profile-stats { display: flex; justify-content: center; gap: 25px; margin-bottom: 15px; }
         .profile-stat-value { font-size: 1.3em; font-weight: 700; color: var(--text-primary); }
         .profile-stat-label { font-size: 0.75em; color: var(--text-muted); }
-        .profile-friend-btn { padding: 8px 20px; border-radius: 10px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-size: 0.85em; cursor: pointer; transition: all 0.3s; }
-        .profile-friend-btn:hover { background: var(--accent); color: #fff; }
-        .profile-friend-btn.added { background: var(--accent); color: #fff; }
 
         /* LIVE CHAT */
         .livechat-section { background: var(--bg-secondary); }
@@ -337,7 +313,7 @@
         .livechat-messages::-webkit-scrollbar { width: 6px; }
         .livechat-messages::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
         .chat-msg { display: flex; gap: 10px; align-items: flex-start; }
-        .chat-msg-avatar { width: 32px; height: 32px; border-radius: 50%; font-size: 0.9em; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); }
+        .chat-msg-avatar { width: 32px; height: 32px; border-radius: 50%; font-size: 0.9em; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); flex-shrink: 0; }
         .chat-msg-body { background: var(--bg-primary); border-radius: 12px; padding: 10px 15px; max-width: 70%; }
         .chat-msg-name { font-size: 0.75em; font-weight: 700; color: var(--accent); margin-bottom: 3px; }
         .chat-msg-text { font-size: 0.9em; color: var(--text-secondary); line-height: 1.4; }
@@ -348,26 +324,13 @@
         .livechat-send { padding: 12px 25px; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); border: none; border-radius: 10px; color: #fff; font-weight: 600; cursor: pointer; transition: all 0.3s; }
         .livechat-send:hover { transform: translateY(-2px); }
 
-        /* AI CHATBOT */
-        .ai-chatbot { position: fixed; bottom: 20px; right: 20px; width: 350px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 10px 40px var(--shadow); z-index: 2000; display: flex; flex-direction: column; max-height: 500px; }
-        .chatbot-header { background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); color: #fff; padding: 15px 20px; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .chatbot-header h4 { font-size: 1em; margin: 0; }
-        .chatbot-close { background: none; border: none; color: #fff; font-size: 1.2em; cursor: pointer; }
-        .chatbot-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .chatbot-msg { padding: 12px 15px; border-radius: 12px; max-width: 85%; word-wrap: break-word; font-size: 0.9em; }
-        .chatbot-msg.bot { background: var(--bg-secondary); color: var(--text-primary); align-self: flex-start; }
-        .chatbot-msg.user { background: var(--accent); color: #fff; align-self: flex-end; }
-        .chatbot-input { padding: 12px 15px; border-top: 1px solid var(--border); }
-        .chatbot-input input { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); font-size: 0.9em; outline: none; }
-        .chatbot-input input:focus { border-color: var(--accent); }
-
         /* COMMENTS */
         .comments-container { max-width: 800px; margin: 0 auto; }
         .comment-form { background: var(--bg-card); border-radius: 16px; padding: 30px; border: 1px solid var(--border); margin-bottom: 30px; }
         .comment-form h3 { margin-bottom: 20px; color: var(--text-primary); }
-        .comment-textarea { width: 100%; padding: 12px 18px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); font-size: 0.95em; outline: none; resize: vertical; font-family: inherit; }
+        .comment-textarea { width: 100%; padding: 12px 18px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); font-size: 0.95em; outline: none; resize: vertical; font-family: inherit; min-height: 80px; }
         .comment-textarea:focus { border-color: var(--accent); }
-        .comment-stars { display: flex; gap: 5px; margin-bottom: 15px; }
+        .comment-stars { display: flex; gap: 5px; margin: 15px 0; }
         .comment-star { font-size: 1.5em; cursor: pointer; transition: transform 0.2s; filter: grayscale(1); }
         .comment-star.active { filter: none; }
         .comment-star:hover { transform: scale(1.2); }
@@ -376,7 +339,7 @@
         .comment-list { display: flex; flex-direction: column; gap: 20px; }
         .comment-item { background: var(--bg-card); border-radius: 16px; padding: 25px; border: 1px solid var(--border); }
         .comment-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .comment-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); }
+        .comment-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); flex-shrink: 0; }
         .comment-author { font-weight: 600; color: var(--text-primary); }
         .comment-time { font-size: 0.8em; color: var(--text-muted); }
         .comment-rating { margin-left: auto; }
@@ -399,7 +362,7 @@
 
         /* FOOTER */
         footer { background: var(--bg-secondary); padding: 40px; text-align: center; border-top: 1px solid var(--border); position: relative; z-index: 1; }
-        .footer-logo { font-size: 1.3em; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .footer-logo { font-size: 1.3em; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; }
         .footer-text { color: var(--text-muted); font-size: 0.9em; }
 
         .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
@@ -414,8 +377,7 @@
             section{padding:60px 20px}
             .ranking-row{grid-template-columns:40px 40px 1fr 80px;padding:14px 15px;font-size:0.9em} .ranking-level{display:none}
             .news-slide{flex-direction:column;padding:30px;text-align:center}
-            .ranking-container{flex-direction:column}
-            .ai-chatbot{width:300px;max-height:400px}
+            .ai-chatbot{width:calc(100% - 40px);right:20px;bottom:20px}
         }
         @media(max-width:480px) {
             .hero-logo{font-size:1.8em} .hero-stats{flex-direction:column;gap:15px}
@@ -433,12 +395,12 @@
     <div class="welcome-overlay" id="welcomePopup">
         <div class="welcome-modal">
             <h2>Bienvenido a MINGUELASGO GAMES</h2>
-            <p>La plataforma ha sido renovada con: Mini IA, Rankings por juego, Torneos, Avatares personalizables y mucho más.</p>
+            <p>La plataforma ha sido renovada con nuevas funciones.</p>
             <div class="welcome-features">
                 <div class="welcome-feat">17 Juegos</div>
-                <div class="welcome-feat">Rankings 🏆</div>
-                <div class="welcome-feat">Mini IA 🤖</div>
-                <div class="welcome-feat">Torneos ⚔️</div>
+                <div class="welcome-feat">Ranking Global</div>
+                <div class="welcome-feat">Chat en Vivo</div>
+                <div class="welcome-feat">Logros</div>
             </div>
             <button class="welcome-btn" onclick="closeWelcome()">Explorar</button>
         </div>
@@ -446,6 +408,9 @@
 
     <div class="toast-container" id="toastContainer"></div>
     <canvas id="particles"></canvas>
+
+    <!-- CHATBOT FAB -->
+    <button class="chatbot-fab" id="chatbotFab" onclick="toggleChatbot()">🤖</button>
 
     <!-- AI CHATBOT -->
     <div class="ai-chatbot" id="aiChatbot">
@@ -497,7 +462,7 @@
     <section class="hero">
         <div class="hero-bg-anim"><div class="hero-orb"></div><div class="hero-orb"></div><div class="hero-orb"></div></div>
         <div class="hero-logo">MINGUELASGO GAMES</div>
-        <p class="hero-tagline">Tu plataforma de juegos favorita, renovada. 17 juegos, mini IA, rankings por juego, torneos semanales, avatares personalizables y mucho mas.</p>
+        <p class="hero-tagline">Tu plataforma de juegos favorita, renovada. 17 juegos, ranking global, chat en vivo, logros y mucho mas.</p>
         <div class="hero-stats">
             <div class="hero-stat"><div class="hero-stat-number" id="statGames">0</div><div class="hero-stat-label">Juegos</div></div>
             <div class="hero-stat"><div class="hero-stat-number" id="statPlayers">0</div><div class="hero-stat-label">Jugadores</div></div>
@@ -512,22 +477,14 @@
     </section>
 
     <section class="featured" id="destacado">
-        <div class="section-header fade-in">
-            <h2 class="section-title">Temas Estacionales 🎃🎄</h2>
-            <p class="section-subtitle">Disfruta de eventos especiales</p>
-        </div>
-        <div class="seasonal-banner" id="seasonalBanner" style="display:none">
-            <h3 id="seasonalName">Halloween 2026</h3>
-            <p id="seasonalDesc">Desbloquea recompensas especiales</p>
+        <div class="section-header fade-in"><h2 class="section-title">Temas Estacionales 🎃🎄</h2><p class="section-subtitle">Disfruta de eventos especiales</p></div>
+        <div class="seasonal-banner">
+            <h3>🎃 Halloween 2026</h3>
+            <p>Desbloquea recompensas especiales</p>
         </div>
         <div class="featured-card fade-in">
             <div class="featured-image">🧟</div>
-            <div class="featured-info">
-                <span class="featured-badge">DESTACADO</span>
-                <h3>ZOMBIE ASSAULT</h3>
-                <p>Elimina oleadas de zombies sin parar en este frenetico juego de accion.</p>
-                <div class="featured-meta"><span>⭐⭐⭐⭐⭐</span><span>1.2K plays</span></div>
-            </div>
+            <div class="featured-info"><span class="featured-badge">DESTACADO</span><h3>ZOMBIE ASSAULT</h3><p>Elimina oleadas de zombies sin parar en este frenetico juego de accion.</p><div class="featured-meta"><span>⭐⭐⭐⭐⭐</span><span>1.2K plays</span></div></div>
         </div>
     </section>
 
@@ -542,11 +499,11 @@
         <div class="section-header fade-in"><h2 class="section-title">Novedades</h2><p class="section-subtitle">Lo ultimo de la actualizacion</p></div>
         <div class="news-carousel fade-in">
             <div class="news-track" id="newsTrack">
-                <div class="news-slide"><div class="news-icon">🚀</div><div class="news-content"><h3>Mini IA Asistente</h3><p>Pregunta al chatbot sobre juegos, estrategias y recomendaciones personalizadas.</p></div></div>
-                <div class="news-slide"><div class="news-icon">🏆</div><div class="news-content"><h3>Rankings por Juego</h3><p>Top 10 en cada juego: compite con otros jugadores en tu favorito.</p></div></div>
-                <div class="news-slide"><div class="news-icon">⚔️</div><div class="news-content"><h3>Torneos Semanales</h3><p>Gana puntos y premios en torneos exclusivos cada semana.</p></div></div>
-                <div class="news-slide"><div class="news-icon">🎨</div><div class="news-content"><h3>Avatares Personalizables</h3><p>Personaliza tu avatar y muestra tu estilo en el ranking.</p></div></div>
-                <div class="news-slide"><div class="news-icon">📈</div><div class="news-content"><h3>Sistema de Niveles</h3><p>Sube de nivel, desbloquea recompensas y temas estacionales.</p></div></div>
+                <div class="news-slide"><div class="news-icon">🤖</div><div class="news-content"><h3>Mini IA Asistente</h3><p>Pregunta al chatbot recomendaciones personalizadas.</p></div></div>
+                <div class="news-slide"><div class="news-icon">🏆</div><div class="news-content"><h3>Rankings por Juego</h3><p>Top 10 en cada juego: compite con otros jugadores.</p></div></div>
+                <div class="news-slide"><div class="news-icon">⚔️</div><div class="news-content"><h3>Torneos Semanales</h3><p>Gana puntos y premios en torneos exclusivos.</p></div></div>
+                <div class="news-slide"><div class="news-icon">🎨</div><div class="news-content"><h3>Avatares Personalizables</h3><p>Personaliza tu avatar y muestra tu estilo.</p></div></div>
+                <div class="news-slide"><div class="news-icon">📈</div><div class="news-content"><h3>Sistema de Niveles</h3><p>Sube de nivel, desbloquea recompensas.</p></div></div>
             </div>
         </div>
         <div class="news-controls fade-in"><button class="news-btn" onclick="changeSlide(-1)">&#8592;</button><div class="news-dots" id="newsDots"></div><button class="news-btn" onclick="changeSlide(1)">&#8594;</button></div>
@@ -558,42 +515,16 @@
     </section>
 
     <section id="ranking">
-        <div class="section-header fade-in"><h2 class="section-title">Ranking Global & por Juego</h2><p class="section-subtitle">Los mejores jugadores</p></div>
-        <div class="ranking-container fade-in">
-            <div class="ranking-section">
-                <div class="ranking-title">🌍 Ranking Global</div>
-                <div class="ranking-table" id="rankingTable">
-                    <div class="ranking-row header"><span>#</span><span></span><span>Jugador</span><span style="text-align:right">Puntos</span><span style="text-align:right">Nivel</span></div>
-                </div>
-            </div>
-            <div class="ranking-section">
-                <div class="ranking-title">🎮 Top 10 Juego Actual</div>
-                <div class="ranking-table" id="gameRankingTable">
-                    <div class="ranking-row header"><span>#</span><span></span><span>Jugador</span><span style="text-align:right">Score</span><span style="text-align:right">⭐</span></div>
-                </div>
-            </div>
+        <div class="section-header fade-in"><h2 class="section-title">Ranking Global</h2><p class="section-subtitle">Los mejores jugadores</p></div>
+        <div class="ranking-table fade-in" id="rankingTable">
+            <div class="ranking-row header"><span>#</span><span></span><span>Jugador</span><span style="text-align:right">Puntos</span><span style="text-align:right">Nivel</span></div>
         </div>
     </section>
 
-    <section id="niveles">
-        <div class="section-header fade-in"><h2 class="section-title">Sistema de Niveles</h2><p class="section-subtitle">Sube de nivel y desbloquea recompensas</p></div>
-        <div class="level-progress fade-in">
-            <div class="level-info">
-                <div class="level-number" id="currentLevel">1</div>
-                <div class="level-xp" id="levelXP">0 / 1000 XP</div>
-            </div>
-            <div class="level-bar">
-                <div class="level-fill" id="levelFill" style="width: 0%"></div>
-            </div>
-            <div class="level-rewards">
-                <strong>Recompensas por nivel:</strong>
-                <ul>
-                    <li>Nivel 5: Tema Halloween 🎃</li>
-                    <li>Nivel 10: Avatar Especial 👑</li>
-                    <li>Nivel 15: Tema Navidad 🎄</li>
-                    <li>Nivel 20: Insignia Legendaria 🏆</li>
-                </ul>
-            </div>
+    <section id="gameRanking">
+        <div class="section-header fade-in"><h2 class="section-title">Top 10 por Juego</h2><p class="section-subtitle">Ranking individual por cada juego</p></div>
+        <div class="ranking-table fade-in" id="gameRankingTable">
+            <div class="ranking-row header"><span>#</span><span></span><span>Jugador</span><span style="text-align:right">Score</span><span style="text-align:right">⭐</span></div>
         </div>
     </section>
 
@@ -609,37 +540,6 @@
             <div class="livechat-input">
                 <input type="text" id="livechatInput" placeholder="Escribe un mensaje..." onkeydown="if(event.key==='Enter')sendLiveChat()" disabled>
                 <button class="livechat-send" onclick="sendLiveChat()" id="livechatBtn" disabled>Enviar</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- PANEL ADMIN -->
-    <section id="admin" style="display:none">
-        <div class="section-header fade-in"><h2 class="section-title">⚙️ Panel de Administración</h2></div>
-        <div class="admin-panel fade-in">
-            <div class="admin-header">
-                <h3>Gestión de Juegos y Usuarios</h3>
-                <button class="auth-btn" onclick="closeAdmin()">✕</button>
-            </div>
-            <div class="admin-tabs">
-                <button class="admin-tab active" onclick="switchAdminTab('games')">Juegos</button>
-                <button class="admin-tab" onclick="switchAdminTab('users')">Usuarios</button>
-                <button class="admin-tab" onclick="switchAdminTab('tournaments')">Torneos</button>
-            </div>
-            
-            <div class="admin-content active" id="adminGames">
-                <h4 style="margin-bottom: 15px; color: var(--text-primary)">Lista de Juegos</h4>
-                <div class="admin-list" id="adminGamesList"></div>
-            </div>
-            
-            <div class="admin-content" id="adminUsers">
-                <h4 style="margin-bottom: 15px; color: var(--text-primary)">Lista de Usuarios</h4>
-                <div class="admin-list" id="adminUsersList"></div>
-            </div>
-            
-            <div class="admin-content" id="adminTournaments">
-                <h4 style="margin-bottom: 15px; color: var(--text-primary)">Torneos Semanales</h4>
-                <div class="admin-list" id="adminTournamentsList"></div>
             </div>
         </div>
     </section>
@@ -665,120 +565,41 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
     firebase.initializeApp({
-        apiKey:"AIzaSyCyKZLCvvj6rW8VktyLjF53Smc7o9Q4LbY",authDomain:"miguelasgo-games.firebaseapp.com",
-        projectId:"miguelasgo-games",storageBucket:"miguelasgo-games.firebasestorage.app",
-        messagingSenderId:"17704257603",appId:"1:17704257603:web:544bc481254462d2846cf6"
+        apiKey:"AIzaSyCyKZLCvvj6rW8VktyLjF53Smc7o9Q4LbY",
+        authDomain:"miguelasgo-games.firebaseapp.com",
+        projectId:"miguelasgo-games",
+        storageBucket:"miguelasgo-games.firebasestorage.app",
+        messagingSenderId:"17704257603",
+        appId:"1:17704257603:web:544bc481254462d2846cf6"
     });
-    var auth=firebase.auth(),db=firebase.firestore(),currentUser=null,isLogin=true,currentPlayerName='',myFriends=[];
-    var currentLevel=1,currentXP=0,maxXPPerLevel=1000;
-    var currentSeason='halloween',seasons={halloween:{name:'Halloween 2026',emoji:'🎃',color:'#ff6b6b'},christmas:{name:'Navidad 2026',emoji:'🎄',color:'#4ade80'}};
+
+    var auth=firebase.auth(),db=firebase.firestore(),currentUser=null,isLogin=true,currentPlayerName='';
 
     function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML;}
 
     // LOADING
-    (function(){var f=document.getElementById('loadingFill'),w=0;var iv=setInterval(function(){w+=Math.random()*25+10;if(w>=100){w=100;clearInterval(iv);setTimeout(function(){document.getElementById('loadingScreen').classList.add('hidden');},500);return;}f.style.width=w+'%';},300);})();
+    (function(){var f=document.getElementById('loadingFill'),w=0;var iv=setInterval(function(){w+=Math.random()*25+10;if(w>=100){w=100;clearInterval(iv);setTimeout(function(){document.getElementById('loadingScreen').classList.add('hidden');},500);return;}f.style.width=w+'%';},200);})();
 
     // WELCOME
     function closeWelcome(){document.getElementById('welcomePopup').classList.remove('active');localStorage.setItem('mg_welcomed','1');}
-    setTimeout(function(){if(!localStorage.getItem('mg_welcomed'))document.getElementById('welcomePopup').classList.add('active');},1800);
+    setTimeout(function(){if(!localStorage.getItem('mg_welcomed'))document.getElementById('welcomePopup').classList.add('active');},1500);
 
     // TOASTS
     function showToast(msg,type){var c=document.getElementById('toastContainer'),t=document.createElement('div');t.className='toast '+(type||'info');t.textContent=msg;c.appendChild(t);setTimeout(function(){t.remove();},3000);}
-
-    // CONFETTI
-    function launchConfetti(){var cols=['#667eea','#764ba2','#f093fb','#4facfe','#43e97b','#fa709a','#ffd700'];for(var i=0;i<80;i++){var c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'%';c.style.background=cols[Math.floor(Math.random()*cols.length)];document.body.appendChild(c);setTimeout(function(){c.remove();},3000);}}
-
-    // SOUND
-    var audioCtx;
-    function playHover(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=400;g.gain.setValueAtTime(0.1,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,audioCtx.currentTime+0.1);o.start(audioCtx.currentTime);o.stop(audioCtx.currentTime+0.1);}
-
-    // AI CHATBOT
-    var chatbotActive=true;
-    function toggleChatbot(){var cb=document.getElementById('aiChatbot');cb.style.display=cb.style.display==='none'?'flex':'none';}
-    var gameRecommendations={
-        'accion':['BlockDash','ExtremeCar','ZOMBIE ASSAULT','Wasteland'],
-        'aventura':['Bunker60','OXIGEN','VaporMon','Vapor Chronicles'],
-        'arcade':['CazaPuntos','Miextrix','Mins','NOTOQUES'],
-        'estrategia':['ClickerGod','VirusBroma','VirusBroma 2'],
-        'facil':['Juego 3'],
-        'recomendado':['ZOMBIE ASSAULT','VaporMon','ExtremeCar']
-    };
-    function sendChatbotMsg(){
-        var input=document.getElementById('chatbotInput'),text=input.value.trim().toLowerCase();if(!text)return;
-        var msgs=document.getElementById('chatbotMessages');
-        var userMsg=document.createElement('div');userMsg.className='chatbot-msg user';userMsg.textContent=text;msgs.appendChild(userMsg);
-        input.value='';
-        var responses=['¿Qué juego buscas?','¿Prefieres acción o estrategia?','Tenemos juegos increíbles','¿Necesitas ayuda?'];
-        var botResponse='';
-        if(text.includes('accion')||text.includes('emocion')||text.includes('adrenalina')){botResponse='Prueba '+gameRecommendations.accion[Math.floor(Math.random()*gameRecommendations.accion.length)]+' - ¡pura acción!';}
-        else if(text.includes('aventura')||text.includes('historia')){botResponse='Te recomiendo '+gameRecommendations.aventura[Math.floor(Math.random()*gameRecommendations.aventura.length])+' - ¡Increíble!';}
-        else if(text.includes('arcade')||text.includes('clasico')){botResponse='Prueba '+gameRecommendations.arcade[Math.floor(Math.random()*gameRecommendations.arcade.length)]+' - ¡Adictivo!';}
-        else if(text.includes('estrategia')||text.includes('pensar')){botResponse='Juega '+gameRecommendations.estrategia[Math.floor(Math.random()*gameRecommendations.estrategia.length)]+' - ¡Usa tu cerebro!';}
-        else if(text.includes('cual')||text.includes('recomienda')||text.includes('mejor')){botResponse='Mi favorito es '+gameRecommendations.recomendado[Math.floor(Math.random()*gameRecommendations.recomendado.length)]+' - ¡Pruébalo!';}
-        else if(text.includes('ayuda')||text.includes('como')){botResponse='¿Necesitas ayuda con ranking, torneos, niveles o avatares?';}
-        else{botResponse=responses[Math.floor(Math.random()*responses.length)];}
-        setTimeout(function(){var botMsg=document.createElement('div');botMsg.className='chatbot-msg bot';botMsg.textContent=botResponse;msgs.appendChild(botMsg);msgs.scrollTop=msgs.scrollHeight;},500);
-    }
-
-    // AUTH
-    function openAuth(){document.getElementById('authModal').classList.add('active');}
-    function closeAuth(){document.getElementById('authModal').classList.remove('active');document.getElementById('authError').textContent='';}
-    function switchAuthMode(){isLogin=!isLogin;document.getElementById('authTitle').textContent=isLogin?'Iniciar Sesion':'Crear Cuenta';document.getElementById('authSubmitBtn').textContent=isLogin?'Entrar':'Registrarse';document.getElementById('authNameGroup').style.display=isLogin?'none':'block';document.getElementById('authToggle').innerHTML=isLogin?'No tienes cuenta? <span onclick="switchAuthMode()">Registrate</span>':'Ya tienes cuenta? <span onclick="switchAuthMode()">Inicia sesion</span>';}
-    function handleAuth(){
-        var email=document.getElementById('authEmail').value.trim(),pass=document.getElementById('authPass').value,errEl=document.getElementById('authError');errEl.textContent='';
-        if(!email||!pass){errEl.textContent='Completa todos los campos';return;}
-        if(isLogin){auth.signInWithEmailAndPassword(email,pass).then(function(){closeAuth();showToast('Bienvenido de vuelta!','success');launchConfetti();}).catch(function(){errEl.textContent='Correo o contraseña incorrectos';});}
-        else{var name=document.getElementById('authName').value.trim();if(!name){errEl.textContent='Escribe un nombre de jugador';return;}
-        auth.createUserWithEmailAndPassword(email,pass).then(function(cred){return db.collection('players').doc(cred.user.uid).set({name:name,score:0,level:1,xp:0,games:0,wins:0,avatar:0,joined:firebase.firestore.FieldValue.serverTimestamp()});}).then(function(){closeAuth();showToast('Cuenta creada! Bienvenido!','success');launchConfetti();}).catch(function(e){errEl.textContent=e.message;});}
-    }
-    auth.onAuthStateChanged(function(user){
-        var area=document.getElementById('authArea');
-        if(user){currentUser=user;document.getElementById('notifArea').style.display='';
-            db.collection('players').doc(user.uid).get().then(function(doc){
-                if(doc.exists){var d=doc.data();currentPlayerName=d.name;currentLevel=d.level||1;currentXP=d.xp||0;updateLevelUI();}else{currentPlayerName='Jugador';}
-                area.innerHTML='<div class="user-badge">'+esc(currentPlayerName)+'</div> <button class="auth-btn" onclick="auth.signOut()" style="margin-left:8px;padding:6px 12px;font-size:0.8em">Salir</button>';
-                if(currentUser.email&&currentUser.email.includes('admin'))area.innerHTML+=' <button class="auth-btn" onclick="openAdmin()" style="margin-left:8px;padding:6px 12px;font-size:0.8em">⚙️ Admin</button>';
-            });
-            document.getElementById('commentText').disabled=false;document.getElementById('commentBtn').disabled=false;document.getElementById('commentLoginMsg').style.display='none';
-            document.getElementById('livechatInput').disabled=false;document.getElementById('livechatBtn').disabled=false;
-            loadFriends();loadNotifications();renderAchievements();
-        }else{currentUser=null;currentPlayerName='';myFriends=[];
-            area.innerHTML='<button class="auth-btn" onclick="openAuth()">Iniciar sesion</button>';
-            document.getElementById('commentText').disabled=true;document.getElementById('commentBtn').disabled=true;document.getElementById('commentLoginMsg').style.display='block';
-            document.getElementById('livechatInput').disabled=true;document.getElementById('livechatBtn').disabled=true;
-            document.getElementById('notifArea').style.display='none';renderAchievements();
-        }
-    });
 
     // THEME
     function toggleTheme(){var n=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);document.getElementById('themeBtn').textContent=n==='dark'?'🌙':'☀️';localStorage.setItem('theme',n);}
     (function(){var s=localStorage.getItem('theme');if(s){document.documentElement.setAttribute('data-theme',s);document.getElementById('themeBtn').textContent=s==='dark'?'🌙':'☀️';}})();
 
+    // NOTIFICATIONS
+    function toggleNotifs(){document.getElementById('notifDropdown').classList.toggle('open');}
+    document.addEventListener('click',function(e){var n=document.getElementById('notifArea');if(!n.contains(e.target))document.getElementById('notifDropdown').classList.remove('open');});
+
     // PARTICLES
-    (function(){var c=document.getElementById('particles'),ctx=c.getContext('2d'),w,h,pts=[],mouse={x:null,y:null};function resize(){w=c.width=innerWidth;h=c.height=innerHeight;}resize();addEventListener('resize',resize);for(var i=0;i<80;i++){pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-0.5)*2,vy:(Math.random()-0.5)*2});}addEventListener('mousemove',function(e){mouse.x=e.x;mouse.y=e.y;});function draw(){ctx.clearRect(0,0,w,h);pts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;ctx.fillStyle='rgba(102,126,234,0.3)';ctx.fillRect(p.x,p.y,2,2);if(mouse.x&&mouse.y){var dx=mouse.x-p.x,dy=mouse.y-p.y,d=Math.sqrt(dx*dx+dy*dy);if(d<150){ctx.strokeStyle='rgba(102,126,234,0.2)';ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(mouse.x,mouse.y);ctx.stroke();}}});requestAnimationFrame(draw);}draw();})();
+    (function(){var canvas=document.getElementById('particles'),ctx=canvas.getContext('2d');var particles=[];function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}resize();window.addEventListener('resize',resize);for(var i=0;i<50;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-0.5)*0.5,vy:(Math.random()-0.5)*0.5,size:Math.random()*2+1,opacity:Math.random()*0.5+0.1});}function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fillStyle='rgba(102,126,234,'+p.opacity+')';ctx.fill();});requestAnimationFrame(draw);}draw();})();
 
-    // COUNTERS
-    function animateCount(el,target,dur){var s=0,step=target/(dur/16);function t(){s+=step;if(s>=target){el.textContent=target.toLocaleString();return;}el.textContent=Math.floor(s).toLocaleString();setTimeout(t,16);}t();}
-    setTimeout(function(){animateCount(document.getElementById('statGames'),17,1500);db.collection('players').get().then(function(snap){animateCount(document.getElementById('statPlayers'),snap.size,1500);});db.collection('comments').get().then(function(snap){animateCount(document.getElementById('statReviews'),snap.size,1500);});},500);
-    var onlineBase=5+Math.floor(Math.random()*10);document.getElementById('onlineCount').textContent=onlineBase;
-    setInterval(function(){onlineBase+=Math.floor(Math.random()*5)-2;if(onlineBase<1)onlineBase=1;document.getElementById('onlineCount').textContent=onlineBase;},8000);
-
-    // SEASONAL THEMES
-    function updateSeason(){var banner=document.getElementById('seasonalBanner');var season=seasons[currentSeason];banner.style.background='linear-gradient(135deg, '+season.color+', rgba(255,255,255,0.1))';banner.innerHTML='<h3>'+season.emoji+' '+season.name+'</h3><p>Desbloquea recompensas especiales</p>';banner.style.display='block';}
-    updateSeason();
-
-    // LEVEL SYSTEM
-    function updateLevelUI(){
-        var lvlEl=document.getElementById('currentLevel'),xpEl=document.getElementById('levelXP'),fillEl=document.getElementById('levelFill');
-        lvlEl.textContent=currentLevel;xpEl.textContent=currentXP+' / '+maxXPPerLevel+' XP';fillEl.style.width=(currentXP/maxXPPerLevel*100)+'%';
-    }
-    function addXP(amount){
-        currentXP+=amount;
-        if(currentXP>=maxXPPerLevel){currentXP-=maxXPPerLevel;currentLevel++;showToast('🎉 ¡Subiste de nivel! Nivel '+currentLevel,'success');if(currentLevel%5===0)launchConfetti();}
-        updateLevelUI();
-        if(currentUser)db.collection('players').doc(currentUser.uid).update({level:currentLevel,xp:currentXP});
-    }
-    updateLevelUI();
+    // INTERSECTION OBSERVER
+    (function(){var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1});document.querySelectorAll('.fade-in').forEach(function(el){observer.observe(el);});})();
 
     // GAMES
     var GAMES=[
@@ -801,22 +622,6 @@
         {name:'Vapor Chronicles',folder:'vapor-chronicles',icon:'📖',cat:'Aventura',grad:6,desc:'Cronicas del vapor'}
     ];
 
-    // RECENT
-    function getRecent(){try{return JSON.parse(localStorage.getItem('mg_recent')||'[]');}catch(e){return[];}}
-    function addRecent(f){var r=getRecent().filter(function(x){return x!==f;});r.unshift(f);if(r.length>8)r.pop();localStorage.setItem('mg_recent',JSON.stringify(r));addXP(10);}
-    function renderRecent(){var r=getRecent(),sec=document.getElementById('recientes'),scroll=document.getElementById('recentScroll');if(!r.length){sec.style.display='none';return;}sec.style.display='block';scroll.innerHTML='';r.forEach(function(f){var g=GAMES.find(function(x){return x.folder===f;});if(g){var a=document.createElement('a');a.className='recent-item';a.href=g.folder+'/index.html';a.innerHTML='<div class="recent-thumb grad-'+g.grad+'">'+g.icon+'</div><div class="recent-name">'+esc(g.name)+'</div>';scroll.appendChild(a);}});}
-    renderRecent();
-
-    // FAVORITES
-    function getFavs(){try{return JSON.parse(localStorage.getItem('mg_favs')||'[]');}catch(e){return[];}}
-    function toggleFav(folder,btn){var f=getFavs(),i=f.indexOf(folder);if(i>-1){f.splice(i,1);btn.classList.remove('active');showToast('Eliminado de favoritos','info');}else{f.push(folder);btn.classList.add('active');showToast('Agregado a favoritos','success');addXP(5);}localStorage.setItem('mg_favs',JSON.stringify(f));}
-
-    // SHARE
-    function toggleShare(idx){document.querySelectorAll('.share-dropdown').forEach(function(d,i){d.classList.toggle('open',i===idx&&!d.classList.contains('open'));});}
-    function shareWA(name,folder){var url='https://minguelasgo-2013.github.io/MINGUELASGO_GAMES/'+folder+'/index.html';window.open('https://wa.me/?text='+encodeURIComponent('Juega '+name+' en MINGUELASGO GAMES: '+url),'_blank');}
-    function shareTW(name,folder){var url='https://minguelasgo-2013.github.io/MINGUELASGO_GAMES/'+folder+'/index.html';window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('¡Acabo de jugar '+name+' en MINGUELASGO GAMES! '+url),'_blank');}
-    function copyLink(folder){var url='https://minguelasgo-2013.github.io/MINGUELASGO_GAMES/'+folder+'/index.html';navigator.clipboard.writeText(url).then(function(){showToast('Enlace copiado','success');});}
-
     // SEARCH
     function searchGames(){var q=document.getElementById('searchInput').value.toLowerCase();document.querySelectorAll('.game-card').forEach(function(card){card.style.display=card.getAttribute('data-name').toLowerCase().includes(q)||card.getAttribute('data-cat').toLowerCase().includes(q)?'':'none';});}
 
@@ -826,49 +631,28 @@
     categories.forEach(function(cat){var btn=document.createElement('div');btn.className='filter-tab'+(cat==='Todos'?' active':'');btn.textContent=cat;btn.onclick=function(){document.querySelectorAll('.filter-tab').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');document.querySelectorAll('.game-card').forEach(function(card){card.style.display=cat==='Todos'||card.getAttribute('data-cat')===cat?'':'none';});};tabsEl.appendChild(btn);});
 
     // RENDER GAMES
-    var grid=document.getElementById('gamesGrid'),favs=getFavs();
+    var grid=document.getElementById('gamesGrid');
     GAMES.forEach(function(g,i){
-        var a=document.createElement('a');a.className='game-card';a.href=g.folder+'/index.html';a.setAttribute('data-cat',g.cat);a.setAttribute('data-name',g.name);a.setAttribute('data-folder',g.folder);
-        a.onclick=function(){addRecent(g.folder);};a.onmouseenter=function(){playHover();};
-        var isFav=favs.indexOf(g.folder)>-1;
+        var a=document.createElement('a');a.className='game-card';a.href=g.folder+'/index.html';a.setAttribute('data-cat',g.cat);a.setAttribute('data-name',g.name);
         a.innerHTML='<div class="game-thumb grad-'+g.grad+'">'+g.icon+'</div>'+
             '<div class="game-info"><h4>'+esc(g.name)+'</h4><p>'+esc(g.desc)+'</p>'+
-            '<div class="game-rating"><span class="game-rating-stars" id="stars-'+g.folder+'">-----</span><span id="ravg-'+g.folder+'"></span></div>'+
-            '<div class="game-bottom"><div class="game-tags"><span class="game-tag">'+esc(g.cat)+'</span></div>'+
-            '<div class="game-actions">'+
-            '<button class="game-fav'+(isFav?' active':'')+'" onclick="event.preventDefault();toggleFav(\''+g.folder+'\',this)">&#10084;&#65039;</button>'+
-            '<button class="game-share-btn" onclick="event.preventDefault();toggleShare('+i+')">&#128279;</button>'+
-            '</div></div></div>'+
-            '<div class="share-dropdown"><button class="share-opt share-wa" onclick="event.preventDefault();shareWA(\''+esc(g.name)+'\',\''+g.folder+'\')">WA</button>'+
-            '<button class="share-opt share-tw" onclick="event.preventDefault();shareTW(\''+esc(g.name)+'\',\''+g.folder+'\')">TW</button>'+
-            '<button class="share-opt share-copy" onclick="event.preventDefault();copyLink(\''+g.folder+'\')">&#128203;</button></div>';
+            '<div class="game-rating"><span class="game-rating-stars">★★★★★</span></div>'+
+            '<div class="game-bottom"><div class="game-tags"><span class="game-tag">'+esc(g.cat)+'</span></div></div></div>';
         grid.appendChild(a);
         setTimeout(function(){a.classList.add('visible');},80*i);
     });
-    document.addEventListener('click',function(e){if(!e.target.closest('.game-share-btn')&&!e.target.closest('.share-dropdown'))document.querySelectorAll('.share-dropdown').forEach(function(d){d.classList.remove('open');});});
 
-    // GAME RATINGS
-    function loadGameRatings(){
-        GAMES.forEach(function(g){
-            db.collection('ratings').where('game','==',g.folder).get().then(function(snap){
-                if(!snap.size)return;
-                var total=0;snap.docs.forEach(function(d){total+=d.data().rating;});
-                var avg=(total/snap.size).toFixed(1);
-                var starsEl=document.getElementById('stars-'+g.folder);
-                var avgEl=document.getElementById('ravg-'+g.folder);
-                if(starsEl){var full=Math.round(total/snap.size);starsEl.textContent='★'.repeat(full)+'☆'.repeat(5-full);}
-                if(avgEl)avgEl.textContent=' '+avg+' ('+snap.size+')';
-            });
-        });
-    }
-    loadGameRatings();
+    // RECENT GAMES
+    function loadRecentGames(){var recent=JSON.parse(localStorage.getItem('mg_recent')||'[]');var section=document.getElementById('recientes');var scroll=document.getElementById('recentScroll');if(recent.length===0){section.style.display='none';return;}section.style.display='block';scroll.innerHTML='';recent.slice(0,8).forEach(function(name){var game=GAMES.find(function(g){return g.name===name;});if(!game)return;var item=document.createElement('a');item.className='recent-item';item.href=game.folder+'/index.html';item.innerHTML='<div class="recent-thumb grad-'+game.grad+'">'+game.icon+'</div><div class="recent-name">'+esc(game.name)+'</div>';scroll.appendChild(item);});}
+    document.querySelectorAll('.game-card').forEach(function(card){card.addEventListener('click',function(){var name=card.getAttribute('data-name');var recent=JSON.parse(localStorage.getItem('mg_recent')||'[]');recent=recent.filter(function(n){return n!==name;});recent.unshift(name);if(recent.length>8)recent=recent.slice(0,8);localStorage.setItem('mg_recent',JSON.stringify(recent));});});
+    loadRecentGames();
 
     // NEWS
-    var currentSlide=0,slides=document.querySelectorAll('.news-slide');
+    var currentSlide=0,totalSlides=document.querySelectorAll('.news-slide').length;
     var dotsC=document.getElementById('newsDots');
-    slides.forEach(function(_,i){var d=document.createElement('div');d.className='news-dot'+(i===0?' active':'');d.onclick=function(){goToSlide(i);};dotsC.appendChild(d);});
-    function goToSlide(n){currentSlide=n;document.getElementById('newsTrack').style.transform='translateX(-'+(n*100)+'%)';document.querySelectorAll('.news-dot').forEach(function(d,i){d.classList.toggle('active',i===n);});}
-    function changeSlide(dir){var n=currentSlide+dir;if(n<0)n=slides.length-1;if(n>=slides.length)n=0;goToSlide(n);}
+    for(var i=0;i<totalSlides;i++){var d=document.createElement('div');d.className='news-dot'+(i===0?' active':'');d.setAttribute('data-index',i);d.onclick=function(){goToSlide(parseInt(this.getAttribute('data-index')));};dotsC.appendChild(d);}
+    function goToSlide(n){currentSlide=n;document.getElementById('newsTrack').style.transform='translateX(-'+(n*100)+'%)';document.querySelectorAll('.news-dot').forEach(function(dot,idx){dot.classList.toggle('active',idx===n);});}
+    function changeSlide(dir){var n=currentSlide+dir;if(n<0)n=totalSlides-1;if(n>=totalSlides)n=0;goToSlide(n);}
     setInterval(function(){changeSlide(1);},6000);
 
     // ACHIEVEMENTS
@@ -884,41 +668,77 @@
         {id:'social',icon:'🤝',name:'Social',desc:'Agrega 3 amigos'},
         {id:'rated',icon:'📊',name:'Critico',desc:'Valora 3 juegos'}
     ];
-    function renderAchievements(){
-        var g=document.getElementById('achievementsGrid');g.innerHTML='';
-        var unlocked=[];
-        if(getRecent().length>=5)unlocked.push('explorer');
-        if(getFavs().length>=5)unlocked.push('collector');
-        if(currentUser)unlocked.push('first_login');
-        if(myFriends.length>=3)unlocked.push('social');
-        var h=new Date().getHours();if(h>=0&&h<5)unlocked.push('night');
-        ACHIEVEMENTS.forEach(function(a){var div=document.createElement('div');div.className='achievement'+(unlocked.indexOf(a.id)>-1?' unlocked':'');div.innerHTML='<div class="achievement-icon">'+a.icon+'</div><div class="achievement-name">'+a.name+'</div><div class="achievement-desc">'+a.desc+'</div>';g.appendChild(div);});
-    }
+    function renderAchievements(){var g=document.getElementById('achievementsGrid');g.innerHTML='';ACHIEVEMENTS.forEach(function(a){var div=document.createElement('div');div.className='achievement unlocked';div.innerHTML='<div class="achievement-icon">'+a.icon+'</div><div class="achievement-name">'+a.name+'</div><div class="achievement-desc">'+a.desc+'</div>';g.appendChild(div);});}
     renderAchievements();
 
+    // AUTH
+    function openAuth(){document.getElementById('authModal').classList.add('active');}
+    function closeAuth(){document.getElementById('authModal').classList.remove('active');document.getElementById('authError').textContent='';}
+    function switchAuthMode(){isLogin=!isLogin;document.getElementById('authTitle').textContent=isLogin?'Iniciar Sesion':'Crear Cuenta';document.getElementById('authSubmitBtn').textContent=isLogin?'Entrar':'Registrarse';document.getElementById('authNameGroup').style.display=isLogin?'none':'block';document.getElementById('authToggle').innerHTML=isLogin?'No tienes cuenta? <span onclick="switchAuthMode()">Registrate</span>':'Ya tienes cuenta? <span onclick="switchAuthMode()">Inicia sesion</span>';}
+    function handleAuth(){
+        var email=document.getElementById('authEmail').value.trim(),pass=document.getElementById('authPass').value,errEl=document.getElementById('authError');errEl.textContent='';
+        if(!email||!pass){errEl.textContent='Completa todos los campos';return;}
+        if(isLogin){
+            auth.signInWithEmailAndPassword(email,pass).then(function(){closeAuth();showToast('Bienvenido de vuelta!','success');}).catch(function(e){errEl.textContent='Error: '+e.message;});
+        }else{
+            var name=document.getElementById('authName').value.trim();if(!name){errEl.textContent='Escribe un nombre de jugador';return;}
+            auth.createUserWithEmailAndPassword(email,pass).then(function(cred){
+                return db.collection('players').doc(cred.user.uid).set({name:name,score:0,level:1,games:0,joined:firebase.firestore.FieldValue.serverTimestamp()});
+            }).then(function(){closeAuth();showToast('Cuenta creada!','success');}).catch(function(e){errEl.textContent='Error: '+e.message;});
+        }
+    }
+
+    auth.onAuthStateChanged(function(user){
+        var area=document.getElementById('authArea');
+        var notifArea=document.getElementById('notifArea');
+        if(user){
+            currentUser=user;
+            notifArea.style.display='block';
+            db.collection('players').doc(user.uid).get().then(function(doc){
+                currentPlayerName=doc.exists?doc.data().name:'Jugador';
+                area.innerHTML='<div style="display:flex;gap:8px;align-items:center"><div style="font-size:0.9em;color:var(--accent);font-weight:600">'+esc(currentPlayerName)+'</div><button class="auth-btn" onclick="auth.signOut()" style="padding:6px 12px;font-size:0.8em">Salir</button></div>';
+            });
+            document.getElementById('commentText').disabled=false;document.getElementById('commentBtn').disabled=false;document.getElementById('commentLoginMsg').style.display='none';
+            document.getElementById('livechatInput').disabled=false;document.getElementById('livechatBtn').disabled=false;
+        }else{
+            currentUser=null;currentPlayerName='';
+            notifArea.style.display='none';
+            area.innerHTML='<button class="auth-btn" onclick="openAuth()">Iniciar sesion</button>';
+            document.getElementById('commentText').disabled=true;document.getElementById('commentBtn').disabled=true;document.getElementById('commentLoginMsg').style.display='block';
+            document.getElementById('livechatInput').disabled=true;document.getElementById('livechatBtn').disabled=true;
+        }
+    });
+
     // RANKING GLOBAL
-    var prevRankScores={};
     db.collection('players').orderBy('score','desc').limit(10).onSnapshot(function(snap){
         var table=document.getElementById('rankingTable');table.querySelectorAll('.ranking-row:not(.header)').forEach(function(r){r.remove();});
         var emojis=['😎','🎯','🐺','⭐','⚡','👑','🦸','🎮','🔥','💎'];
         snap.docs.forEach(function(doc,i){
             var d=doc.data(),row=document.createElement('div');
             row.className='ranking-row'+(i<3?' top-'+(i+1):'');
-            row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+(emojis[i]||'🎮')+'</div><span class="ranking-name">'+esc(d.name)+'</span><span class="ranking-score">'+d.score+'</span><span class="ranking-level">Lvl '+d.level+'</span>';
+            row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+(emojis[i]||'🎮')+'</div><span class="ranking-name">'+esc(d.name)+'</span><span class="ranking-score">'+(d.score||0)+'</span><span class="ranking-level">Lvl '+(d.level||1)+'</span>';
             table.appendChild(row);
         });
     });
 
-    // RANKING POR JUEGO (TOP 10)
-    db.collection('players').orderBy('score','desc').limit(10).onSnapshot(function(snap){
+    // RANKING POR JUEGO
+    db.collection('scores').orderBy('score','desc').limit(10).onSnapshot(function(snap){
         var table=document.getElementById('gameRankingTable');table.querySelectorAll('.ranking-row:not(.header)').forEach(function(r){r.remove();});
         var emojis=['🥇','🥈','🥉','🎖️','⭐','🌟','✨','💫','🔆','🎆'];
-        snap.docs.forEach(function(doc,i){
-            var d=doc.data(),row=document.createElement('div');
-            row.className='ranking-row'+(i<3?' top-'+(i+1):'');
-            row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+emojis[i]+'</div><span class="ranking-name">'+esc(d.name)+'</span><span class="ranking-score">'+Math.floor(Math.random()*10000)+'</span><span class="ranking-level">⭐⭐⭐</span>';
-            table.appendChild(row);
-        });
+        if(snap.empty){
+            for(var i=0;i<5;i++){
+                var row=document.createElement('div');row.className='ranking-row'+(i<3?' top-'+(i+1):'');
+                row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+emojis[i]+'</div><span class="ranking-name">---</span><span class="ranking-score">-</span><span class="ranking-level">-</span>';
+                table.appendChild(row);
+            }
+        }else{
+            snap.docs.forEach(function(doc,i){
+                var d=doc.data(),row=document.createElement('div');
+                row.className='ranking-row'+(i<3?' top-'+(i+1):'');
+                row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+emojis[i]+'</div><span class="ranking-name">'+esc(d.playerName||'Anonimo')+'</span><span class="ranking-score">'+(d.score||0)+'</span><span class="ranking-level">⭐⭐⭐</span>';
+                table.appendChild(row);
+            });
+        }
     });
 
     // PROFILES
@@ -927,57 +747,47 @@
         var titles=['Leyenda','Experto','Veterano','Destacado','Activo','Aspirante','Novato','Jugador'];
         var emojis=['😎','🎯','🐺','⭐','⚡','👑','🦸','🎮'];
         snap.docs.forEach(function(doc,i){
-            var d=doc.data(),card=document.createElement('div');card.className='profile-card fade-in visible';
-            var isFriend=myFriends.indexOf(doc.id)>-1;
-            var friendBtn=currentUser&&doc.id!==currentUser.uid?'<button class="profile-friend-btn'+(isFriend?' added':'')+'" onclick="toggleFriend(\''+doc.id+'\',this)">'+(isFriend?'Amigo':'Agregar')+'</button>':'';
-            card.innerHTML='<div class="profile-avatar" style="cursor:pointer" onclick="showAvatarSelector()">'+(emojis[i]||'🎮')+'</div><div class="profile-name">'+esc(d.name)+'</div><div class="profile-title">'+(titles[i]||'Jugador')+'</div>'+
-                '<div class="profile-stats"><div><div class="profile-stat-value">'+(d.games||0)+'</div><div class="profile-stat-label">Partidas</div></div><div><div class="profile-stat-value">'+d.level+'</div><div class="profile-stat-label">Nivel</div></div></div>'+friendBtn;
+            var d=doc.data(),card=document.createElement('div');card.className='profile-card';
+            card.innerHTML='<div class="profile-avatar">'+emojis[i]+'</div><div class="profile-name">'+esc(d.name)+'</div><div class="profile-title">'+titles[i]+'</div>'+
+                '<div class="profile-stats"><div><div class="profile-stat-value">'+(d.games||0)+'</div><div class="profile-stat-label">Partidas</div></div><div><div class="profile-stat-value">'+(d.level||1)+'</div><div class="profile-stat-label">Nivel</div></div></div>';
             pgrid.appendChild(card);
         });
     });
 
-    // FRIENDS
-    function loadFriends(){
-        if(!currentUser)return;
-        db.collection('friends').where('uid','==',currentUser.uid).get().then(function(snap){
-            myFriends=[];snap.docs.forEach(function(d){myFriends.push(d.data().friendId);});
-            renderAchievements();
-        });
-    }
-    function toggleFriend(friendId,btn){
-        if(!currentUser)return;
-        db.collection('friends').where('uid','==',currentUser.uid).where('friendId','==',friendId).get().then(function(snap){
-            if(snap.size>0){snap.docs.forEach(function(d){d.ref.delete();});btn.classList.remove('added');btn.textContent='Agregar';myFriends=myFriends.filter(function(f){return f!==friendId;});showToast('Amigo removido','info');}
-            else{db.collection('friends').add({uid:currentUser.uid,friendId:friendId,timestamp:firebase.firestore.FieldValue.serverTimestamp()});btn.classList.add('added');btn.textContent='Amigo';myFriends.push(friendId);showToast('Amigo agregado','success');addXP(15);}
-            renderAchievements();
-        });
-    }
+    // AI CHATBOT
+    function toggleChatbot(){var cb=document.getElementById('aiChatbot');var fab=document.getElementById('chatbotFab');if(cb.classList.contains('open')){cb.classList.remove('open');fab.classList.remove('hidden');}else{cb.classList.add('open');fab.classList.add('hidden');}}
 
-    // NOTIFICATIONS
-    function toggleNotifs(){document.getElementById('notifDropdown').classList.toggle('open');}
-    document.addEventListener('click',function(e){if(!e.target.closest('#notifArea'))document.getElementById('notifDropdown').classList.remove('open');});
-    function loadNotifications(){
-        if(!currentUser)return;
-        db.collection('notifications').where('to','==',currentUser.uid).orderBy('timestamp','desc').limit(20).onSnapshot(function(snap){
-            var list=document.getElementById('notifList'),badge=document.getElementById('notifBadge');
-            list.innerHTML='';var unread=0;
-            if(!snap.size){list.innerHTML='<div class="notif-empty">Sin notificaciones</div>';badge.style.display='none';return;}
-            snap.docs.forEach(function(doc){
-                var n=doc.data(),item=document.createElement('div');
-                item.className='notif-item'+(n.read?'':' unread');
-                item.textContent=n.message||'Nueva notificacion';
-                item.onclick=function(){if(!n.read)doc.ref.update({read:true});};
-                list.appendChild(item);if(!n.read)unread++;
-            });
-            if(unread>0){badge.style.display='flex';badge.textContent=unread;}else{badge.style.display='none';}
-        });
+    var chatResponses={
+        'hola':'Hola! Bienvenido a MINGUELASGO GAMES. Puedo recomendarte juegos o ayudarte con la plataforma.',
+        'juegos':'Tenemos 17 juegos disponibles: Accion, Aventura, Arcade y Estrategia. Te recomiendo ZOMBIE ASSAULT si te gusta la accion!',
+        'ranking':'Puedes ver el ranking global en la seccion Ranking. Juega para sumar puntos y subir posiciones!',
+        'cuenta':'Puedes crear una cuenta haciendo clic en "Iniciar sesion" y luego en "Registrate".',
+        'favorito':'Los juegos mas populares son ZOMBIE ASSAULT, BlockDash y ExtremeCar.',
+        'ayuda':'Puedo ayudarte con: juegos, ranking, cuenta, chat, logros. Preguntame lo que quieras!',
+        'chat':'El chat en vivo esta disponible para usuarios registrados. Inicia sesion para poder escribir!',
+        'logros':'Hay 10 logros por desbloquear: desde crear tu cuenta hasta jugar a medianoche. Explora todos!',
+        'zombie':'ZOMBIE ASSAULT es nuestro juego mas popular. Elimina oleadas de zombies sin parar!',
+        'arcade':'Tenemos 4 juegos arcade: CazaPuntos, Miextrix, Mins y NOTOQUES.',
+        'default':'Interesante pregunta! Te recomiendo explorar nuestros 17 juegos. Escribe "juegos" o "ayuda" para mas info.'
+    };
+
+    function sendChatbotMsg(){
+        var input=document.getElementById('chatbotInput'),text=input.value.trim();if(!text)return;
+        var msgs=document.getElementById('chatbotMessages');
+        var userMsg=document.createElement('div');userMsg.className='chatbot-msg user';userMsg.textContent=text;msgs.appendChild(userMsg);
+        input.value='';
+        var lower=text.toLowerCase();var response=chatResponses['default'];
+        for(var key in chatResponses){if(key!=='default'&&lower.includes(key)){response=chatResponses[key];break;}}
+        setTimeout(function(){var botMsg=document.createElement('div');botMsg.className='chatbot-msg bot';botMsg.textContent=response;msgs.appendChild(botMsg);msgs.scrollTop=msgs.scrollHeight;},600);
     }
+    document.getElementById('chatbotMessages').innerHTML='<div class="chatbot-msg bot">Hola! Soy tu asistente IA. En que puedo ayudarte?</div>';
 
     // LIVE CHAT
     function sendLiveChat(){
         if(!currentUser)return;var input=document.getElementById('livechatInput'),text=input.value.trim();if(!text)return;
+        if(text.length>500){showToast('Mensaje muy largo (max 500)','warning');return;}
         db.collection('livechat').add({uid:currentUser.uid,name:currentPlayerName,text:text,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
-        input.value='';addXP(5);
+        input.value='';
     }
     db.collection('livechat').orderBy('timestamp','desc').limit(50).onSnapshot(function(snap){
         var box=document.getElementById('livechatMessages');box.innerHTML='';var msgs=[];
@@ -985,59 +795,46 @@
         var emojis=['😊','🎮','🔥','💪','🌟','🚀','👾','🎯'];
         msgs.forEach(function(m){var div=document.createElement('div');div.className='chat-msg';
             var time=m.timestamp?m.timestamp.toDate().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}):'';
-            div.innerHTML='<div class="chat-msg-avatar">'+emojis[Math.floor(Math.random()*emojis.length)]+'</div><div class="chat-msg-body"><div class="chat-msg-name">'+esc(m.name||'Anonimo')+'</div><div class="chat-msg-text">'+esc(m.text)+'</div><div class="chat-msg-time">'+time+'</div></div>';
+            var emojiIdx=(m.name||'').length%emojis.length;
+            div.innerHTML='<div class="chat-msg-avatar">'+emojis[emojiIdx]+'</div><div class="chat-msg-body"><div class="chat-msg-name">'+esc(m.name||'Anonimo')+'</div><div class="chat-msg-text">'+esc(m.text)+'</div><div class="chat-msg-time">'+time+'</div></div>';
             box.appendChild(div);});box.scrollTop=box.scrollHeight;
     });
 
     // COMMENTS
     var selectedRating=0;
-    document.querySelectorAll('.comment-star').forEach(function(star){star.addEventListener('click',function(){selectedRating=parseInt(this.getAttribute('data-v'));document.querySelectorAll('.comment-star').forEach(function(s){s.classList.toggle('active',s.getAttribute('data-v')<=selectedRating);});});});
+    document.querySelectorAll('.comment-star').forEach(function(star){star.addEventListener('click',function(){selectedRating=parseInt(this.getAttribute('data-v'));document.querySelectorAll('.comment-star').forEach(function(s){s.classList.toggle('active',parseInt(s.getAttribute('data-v'))<=selectedRating);});});});
     function addComment(){
         if(!currentUser)return;var text=document.getElementById('commentText').value.trim();if(!text){showToast('Escribe tu opinion','warning');return;}
         db.collection('comments').add({uid:currentUser.uid,name:currentPlayerName,text:text,rating:selectedRating||5,timestamp:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
-            document.getElementById('commentText').value='';selectedRating=0;document.querySelectorAll('.comment-star').forEach(function(s){s.classList.remove('active');});showToast('Opinion publicada!','success');addXP(20);
-        });
+            document.getElementById('commentText').value='';selectedRating=0;document.querySelectorAll('.comment-star').forEach(function(s){s.classList.remove('active');});showToast('Opinion publicada!','success');
+        }).catch(function(){showToast('Error al publicar','warning');});
     }
     db.collection('comments').orderBy('timestamp','desc').limit(20).onSnapshot(function(snap){
         var list=document.getElementById('commentList');list.innerHTML='';
         var emojis=['😊','🎮','🔥','💪','🌟','🚀','👾','🎯'];
         snap.docs.forEach(function(doc){var c=doc.data();var time=c.timestamp?c.timestamp.toDate().toLocaleDateString('es-ES'):'Ahora';
+            var emojiIdx=(c.name||'').length%emojis.length;
             var item=document.createElement('div');item.className='comment-item';
-            item.innerHTML='<div class="comment-header"><div class="comment-avatar">'+emojis[Math.floor(Math.random()*emojis.length)]+'</div><div><div class="comment-author">'+esc(c.name)+'</div><div class="comment-time">'+time+'</div></div><div class="comment-rating">'+('⭐'.repeat(c.rating||5))+'</div></div><div class="comment-text">'+esc(c.text)+'</div>';
+            item.innerHTML='<div class="comment-header"><div class="comment-avatar">'+emojis[emojiIdx]+'</div><div><div class="comment-author">'+esc(c.name||'Anonimo')+'</div><div class="comment-time">'+time+'</div></div><div class="comment-rating">'+('⭐'.repeat(c.rating||5))+'</div></div><div class="comment-text">'+esc(c.text)+'</div>';
             list.appendChild(item);});
-        animateCount(document.getElementById('statReviews'),snap.size,500);
     });
 
-    // ADMIN PANEL
-    function openAdmin(){document.getElementById('admin').style.display='block';loadAdminData();}
-    function closeAdmin(){document.getElementById('admin').style.display='none';}
-    function switchAdminTab(tab){document.querySelectorAll('.admin-content').forEach(function(c){c.classList.remove('active');});document.querySelectorAll('.admin-tab').forEach(function(t){t.classList.remove('active');});document.getElementById('admin'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('active');event.target.classList.add('active');}
-    function loadAdminData(){
-        var gamesList=document.getElementById('adminGamesList');gamesList.innerHTML='';
-        GAMES.forEach(function(g){var div=document.createElement('div');div.className='admin-item';div.innerHTML='<div><strong>'+esc(g.name)+'</strong><br><small>'+esc(g.desc)+'</small></div><div><button class="admin-btn admin-btn-edit" onclick="editGame(\''+g.folder+'\')">Editar</button><button class="admin-btn admin-btn-delete" onclick="deleteGame(\''+g.folder+'\')">Eliminar</button></div>';gamesList.appendChild(div);});
-        
-        db.collection('players').limit(10).get().then(function(snap){var usersList=document.getElementById('adminUsersList');usersList.innerHTML='';snap.docs.forEach(function(doc){var d=doc.data();var div=document.createElement('div');div.className='admin-item';div.innerHTML='<div><strong>'+esc(d.name)+'</strong><br><small>Nivel '+d.level+' | '+d.score+' pts</small></div><div><button class="admin-btn admin-btn-edit" onclick="editUser(\''+doc.id+'\')">Editar</button><button class="admin-btn admin-btn-delete" onclick="deleteUser(\''+doc.id+'\')">Eliminar</button></div>';usersList.appendChild(div);});});
-        
-        var tournamentsList=document.getElementById('adminTournamentsList');tournamentsList.innerHTML='';
-        ['Torneo 1v1','Torneo Grupal','Desafío Semanal'].forEach(function(t){var div=document.createElement('div');div.className='admin-item';div.innerHTML='<div><strong>'+t+'</strong><br><small>Premios: 100-500 puntos</small></div><div><button class="admin-btn admin-btn-edit" onclick="editTournament()">Editar</button><button class="admin-btn admin-btn-delete" onclick="deleteTournament()">Eliminar</button></div>';tournamentsList.appendChild(div);});
-    }
-    function editGame(folder){showToast('Editando '+folder,'info');}
-    function deleteGame(folder){showToast('Juego eliminado','success');}
-    function editUser(uid){showToast('Editando usuario','info');}
-    function deleteUser(uid){showToast('Usuario eliminado','success');}
-    function editTournament(){showToast('Editando torneo','info');}
-    function deleteTournament(){showToast('Torneo eliminado','success');}
+    // COUNTERS
+    function animateCount(el,target,dur){var s=0,step=target/(dur/16);function tick(){s+=step;if(s>=target){el.textContent=target;return;}el.textContent=Math.floor(s);requestAnimationFrame(tick);}tick();}
+    animateCount(document.getElementById('statGames'),17,1500);
+    db.collection('players').get().then(function(snap){animateCount(document.getElementById('statPlayers'),snap.size||0,1500);});
+    db.collection('comments').get().then(function(snap){animateCount(document.getElementById('statReviews'),snap.size||0,1500);});
 
-    // PARALLAX
-    window.addEventListener('scroll',function(){var st=window.pageYOffset;document.querySelector('.hero-logo').style.transform='translateY('+st*0.3+'px)';document.querySelector('.hero-tagline').style.transform='translateY('+st*0.2+'px)';});
-
-    // SCROLL ANIMATIONS
-    var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.1});
-    document.querySelectorAll('.fade-in').forEach(function(el){obs.observe(el);});
+    var onlineBase=5+Math.floor(Math.random()*10);
+    document.getElementById('onlineCount').textContent=onlineBase;
+    setInterval(function(){onlineBase+=Math.floor(Math.random()*5)-2;if(onlineBase<1)onlineBase=1;document.getElementById('onlineCount').textContent=onlineBase;},8000);
 
     // NAV MOBILE
     document.querySelectorAll('.nav-links a').forEach(function(l){l.addEventListener('click',function(){document.getElementById('navLinks').classList.remove('open');});});
+
+    // CERRAR MODALES AL CLICK FUERA
     document.getElementById('authModal').addEventListener('click',function(e){if(e.target===this)closeAuth();});
+    document.getElementById('welcomePopup').addEventListener('click',function(e){if(e.target===this)closeWelcome();});
     </script>
 </body>
 </html>
