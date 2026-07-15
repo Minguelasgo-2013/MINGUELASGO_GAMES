@@ -264,6 +264,11 @@
         .game-rating-stars { color: #fbbf24; }
         .game-bottom { display: flex; justify-content: space-between; align-items: center; }
         .game-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+        .fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); width: 38px; height: 38px; border-radius: 10px; font-size: 1.1em; cursor: pointer; transition: all 0.25s; display: flex; align-items: center; justify-content: center; z-index: 2; color: rgba(255,255,255,0.6); backdrop-filter: blur(4px); }
+        .fav-btn:hover { background: rgba(102,126,234,0.4); border-color: rgba(102,126,234,0.5); transform: scale(1.1); color: #fff; }
+        .fav-btn.active { background: rgba(102,126,234,0.7); border-color: var(--accent); color: #fff; }
+        .fav-section { background: var(--bg-secondary); }
+        .fav-empty { text-align: center; color: var(--text-muted); padding: 30px; font-size: 1em; }
         .game-tag { padding: 3px 10px; background: rgba(102,126,234,0.15); border-radius: 10px; font-size: 0.75em; color: var(--accent); }
 
         .grad-1{background:linear-gradient(135deg,#667eea,#764ba2)} .grad-2{background:linear-gradient(135deg,#f093fb,#f5576c)} .grad-3{background:linear-gradient(135deg,#4facfe,#00f2fe)} .grad-4{background:linear-gradient(135deg,#43e97b,#38f9d7)} .grad-5{background:linear-gradient(135deg,#fa709a,#fee140)} .grad-6{background:linear-gradient(135deg,#30cfd0,#330867)} .grad-7{background:linear-gradient(135deg,#a8edea,#fed6e3)} .grad-8{background:linear-gradient(135deg,#ff9a56,#ff6a88)}
@@ -305,6 +310,10 @@
         .profile-stats { display: flex; justify-content: center; gap: 25px; margin-bottom: 15px; }
         .profile-stat-value { font-size: 1.3em; font-weight: 700; color: var(--text-primary); }
         .profile-stat-label { font-size: 0.75em; color: var(--text-muted); }
+        .profile-xp-bar { width: 100%; height: 6px; background: rgba(102,126,234,0.15); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+        .profile-xp-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-secondary)); border-radius: 3px; transition: width 0.6s ease; }
+        .profile-xp-label { font-size: 0.7em; color: var(--text-muted); margin-top: 4px; }
+        .profile-level-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75em; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); color: #fff; margin-bottom: 8px; }
 
         /* LIVE CHAT */
         .livechat-section { background: var(--bg-secondary); }
@@ -391,13 +400,16 @@
         <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
         <div class="loading-text">Cargando plataforma...</div>
     </div>
+    <script>
+    (function(){var f=document.getElementById('loadingFill'),w=0;var iv=setInterval(function(){w+=Math.random()*25+10;if(w>=100){w=100;clearInterval(iv);setTimeout(function(){document.getElementById('loadingScreen').classList.add('hidden');},500);return;}f.style.width=w+'%';},200);})();
+    </script>
 
     <div class="welcome-overlay" id="welcomePopup">
         <div class="welcome-modal">
             <h2>Bienvenido a MINGUELASGO GAMES</h2>
             <p>La plataforma ha sido renovada con nuevas funciones.</p>
             <div class="welcome-features">
-                <div class="welcome-feat">17 Juegos</div>
+                <div class="welcome-feat">19 Juegos</div>
                 <div class="welcome-feat">Ranking Global</div>
                 <div class="welcome-feat">Chat en Vivo</div>
                 <div class="welcome-feat">Logros</div>
@@ -474,6 +486,11 @@
     <section class="recent-section" id="recientes" style="display:none">
         <div class="section-header fade-in"><h2 class="section-title">Jugados Recientemente</h2><p class="section-subtitle">Continua donde lo dejaste</p></div>
         <div class="recent-scroll" id="recentScroll"></div>
+    </section>
+
+    <section class="fav-section" id="favoritos" style="display:none">
+        <div class="section-header fade-in"><h2 class="section-title">Mis Likes</h2><p class="section-subtitle">Juegos que te gustan</p></div>
+        <div class="games-grid" id="favGrid"></div>
     </section>
 
     <section class="featured" id="destacado">
@@ -577,9 +594,6 @@
 
     function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML;}
 
-    // LOADING
-    (function(){var f=document.getElementById('loadingFill'),w=0;var iv=setInterval(function(){w+=Math.random()*25+10;if(w>=100){w=100;clearInterval(iv);setTimeout(function(){document.getElementById('loadingScreen').classList.add('hidden');},500);return;}f.style.width=w+'%';},200);})();
-
     // WELCOME
     function closeWelcome(){document.getElementById('welcomePopup').classList.remove('active');localStorage.setItem('mg_welcomed','1');}
     setTimeout(function(){if(!localStorage.getItem('mg_welcomed'))document.getElementById('welcomePopup').classList.add('active');},1500);
@@ -619,7 +633,7 @@
         {name:'Wasteland',folder:'Wasteland',icon:'🏜️',cat:'Accion',grad:3,desc:'Sobrevive en el paramo'},
         {name:'ZOMBIE ASSAULT',folder:'ZOMBIEASSAULT',icon:'🧟',cat:'Accion',grad:4,desc:'Elimina zombies sin parar'},
         {name:'Juego 3',folder:'juego3',icon:'🎲',cat:'Otros',grad:5,desc:'Un juego misterioso'},
-        {name:'Vapor Chronicles',folder:'vapor-chronicles',icon:'📖',cat:'Aventura',grad:6,desc:'Cronicas del vapor'}
+        {name:'Vapor Chronicles',folder:'vapor-chronicles',icon:'📖',cat:'Aventura',grad:6,desc:'Cronicas del vapor'},
     ];
 
     // SEARCH
@@ -630,17 +644,43 @@
     var tabsEl=document.getElementById('filterTabs');
     categories.forEach(function(cat){var btn=document.createElement('div');btn.className='filter-tab'+(cat==='Todos'?' active':'');btn.textContent=cat;btn.onclick=function(){document.querySelectorAll('.filter-tab').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');document.querySelectorAll('.game-card').forEach(function(card){card.style.display=cat==='Todos'||card.getAttribute('data-cat')===cat?'':'none';});};tabsEl.appendChild(btn);});
 
+    // FAVORITES
+    var favs=JSON.parse(localStorage.getItem('mg_favs')||'[]');
+    function isFav(name){return favs.indexOf(name)!==-1;}
+    function toggleFav(name,e){
+        e.preventDefault();e.stopPropagation();
+        var idx=favs.indexOf(name);
+        if(idx===-1){favs.push(name);showToast('Like! '+name+' guardado','success');}
+        else{favs.splice(idx,1);showToast(name+' quitado de likes','info');}
+        localStorage.setItem('mg_favs',JSON.stringify(favs));
+        document.querySelectorAll('.fav-btn').forEach(function(btn){btn.classList.toggle('active',isFav(btn.getAttribute('data-fav')));});
+        renderFavGrid();
+    }
+    function renderFavGrid(){
+        var sec=document.getElementById('favoritos'),fg=document.getElementById('favGrid');
+        if(favs.length===0){sec.style.display='none';return;}
+        sec.style.display='block';fg.innerHTML='';
+        favs.forEach(function(name){
+            var g=GAMES.find(function(x){return x.name===name;});if(!g)return;
+            var a=document.createElement('a');a.className='game-card visible';a.href=g.folder+'/index.html';a.setAttribute('data-cat',g.cat);a.setAttribute('data-name',g.name);
+            a.innerHTML='<div class="game-thumb grad-'+g.grad+'"><button class="fav-btn active" data-fav="'+esc(g.name)+'" onclick="toggleFav(\''+g.name.replace(/'/g,"\\'")+'\',event)">&#128077;</button>'+g.icon+'</div>'+
+                '<div class="game-info"><h4>'+esc(g.name)+'</h4><p>'+esc(g.desc)+'</p><div class="game-bottom"><div class="game-tags"><span class="game-tag">'+esc(g.cat)+'</span></div></div></div>';
+            fg.appendChild(a);
+        });
+    }
+
     // RENDER GAMES
     var grid=document.getElementById('gamesGrid');
     GAMES.forEach(function(g,i){
         var a=document.createElement('a');a.className='game-card';a.href=g.folder+'/index.html';a.setAttribute('data-cat',g.cat);a.setAttribute('data-name',g.name);
-        a.innerHTML='<div class="game-thumb grad-'+g.grad+'">'+g.icon+'</div>'+
+        a.innerHTML='<div class="game-thumb grad-'+g.grad+'"><button class="fav-btn'+(isFav(g.name)?' active':'')+'" data-fav="'+esc(g.name)+'" onclick="toggleFav(\''+g.name.replace(/'/g,"\\'")+'\',event)">&#128077;</button>'+g.icon+'</div>'+
             '<div class="game-info"><h4>'+esc(g.name)+'</h4><p>'+esc(g.desc)+'</p>'+
             '<div class="game-rating"><span class="game-rating-stars">★★★★★</span></div>'+
             '<div class="game-bottom"><div class="game-tags"><span class="game-tag">'+esc(g.cat)+'</span></div></div></div>';
         grid.appendChild(a);
         setTimeout(function(){a.classList.add('visible');},80*i);
     });
+    renderFavGrid();
 
     // RECENT GAMES
     function loadRecentGames(){var recent=JSON.parse(localStorage.getItem('mg_recent')||'[]');var section=document.getElementById('recientes');var scroll=document.getElementById('recentScroll');if(recent.length===0){section.style.display='none';return;}section.style.display='block';scroll.innerHTML='';recent.slice(0,8).forEach(function(name){var game=GAMES.find(function(g){return g.name===name;});if(!game)return;var item=document.createElement('a');item.className='recent-item';item.href=game.folder+'/index.html';item.innerHTML='<div class="recent-thumb grad-'+game.grad+'">'+game.icon+'</div><div class="recent-name">'+esc(game.name)+'</div>';scroll.appendChild(item);});}
@@ -748,8 +788,13 @@
         var emojis=['😎','🎯','🐺','⭐','⚡','👑','🦸','🎮'];
         snap.docs.forEach(function(doc,i){
             var d=doc.data(),card=document.createElement('div');card.className='profile-card';
-            card.innerHTML='<div class="profile-avatar">'+emojis[i]+'</div><div class="profile-name">'+esc(d.name)+'</div><div class="profile-title">'+titles[i]+'</div>'+
-                '<div class="profile-stats"><div><div class="profile-stat-value">'+(d.games||0)+'</div><div class="profile-stat-label">Partidas</div></div><div><div class="profile-stat-value">'+(d.level||1)+'</div><div class="profile-stat-label">Nivel</div></div></div>';
+            var lvl=d.level||1;var xpNeeded=lvl*100;var xpCurrent=(d.score||0)%xpNeeded;var xpPct=Math.min(100,Math.round(xpCurrent/xpNeeded*100));
+            card.innerHTML='<div class="profile-avatar">'+emojis[i]+'</div><div class="profile-name">'+esc(d.name)+'</div>'+
+                '<span class="profile-level-badge">Lvl '+lvl+'</span>'+
+                '<div class="profile-title">'+titles[i]+'</div>'+
+                '<div class="profile-stats"><div><div class="profile-stat-value">'+(d.games||0)+'</div><div class="profile-stat-label">Partidas</div></div><div><div class="profile-stat-value">'+(d.score||0)+'</div><div class="profile-stat-label">XP Total</div></div></div>'+
+                '<div class="profile-xp-bar"><div class="profile-xp-fill" style="width:'+xpPct+'%"></div></div>'+
+                '<div class="profile-xp-label">'+xpCurrent+' / '+xpNeeded+' XP para nivel '+(lvl+1)+'</div>';
             pgrid.appendChild(card);
         });
     });
@@ -757,30 +802,61 @@
     // AI CHATBOT
     function toggleChatbot(){var cb=document.getElementById('aiChatbot');var fab=document.getElementById('chatbotFab');if(cb.classList.contains('open')){cb.classList.remove('open');fab.classList.remove('hidden');}else{cb.classList.add('open');fab.classList.add('hidden');}}
 
-    var chatResponses={
-        'hola':'Hola! Bienvenido a MINGUELASGO GAMES. Puedo recomendarte juegos o ayudarte con la plataforma.',
-        'juegos':'Tenemos 17 juegos disponibles: Accion, Aventura, Arcade y Estrategia. Te recomiendo ZOMBIE ASSAULT si te gusta la accion!',
-        'ranking':'Puedes ver el ranking global en la seccion Ranking. Juega para sumar puntos y subir posiciones!',
-        'cuenta':'Puedes crear una cuenta haciendo clic en "Iniciar sesion" y luego en "Registrate".',
-        'favorito':'Los juegos mas populares son ZOMBIE ASSAULT, BlockDash y ExtremeCar.',
-        'ayuda':'Puedo ayudarte con: juegos, ranking, cuenta, chat, logros. Preguntame lo que quieras!',
-        'chat':'El chat en vivo esta disponible para usuarios registrados. Inicia sesion para poder escribir!',
-        'logros':'Hay 10 logros por desbloquear: desde crear tu cuenta hasta jugar a medianoche. Explora todos!',
-        'zombie':'ZOMBIE ASSAULT es nuestro juego mas popular. Elimina oleadas de zombies sin parar!',
-        'arcade':'Tenemos 4 juegos arcade: CazaPuntos, Miextrix, Mins y NOTOQUES.',
-        'default':'Interesante pregunta! Te recomiendo explorar nuestros 17 juegos. Escribe "juegos" o "ayuda" para mas info.'
+    var _mgKey='MG26arcX';
+    var _mgChatCount=0;
+    var _mgHintShown=false;
+    var _mgResponses={
+            "hola": "BSheV0BSITEoKURTDxsHN20mEnsoPCQNCAtzZSY9Qx8MCndlT1IzLSgjXRYTFwA3ICJcUgAAFz1tLUdTBh0QeCJnU08UFgIqOSISVQ4cQzQsZ0JaAAYCPiI1X1dP",
+            "juegos": "GSJcUwwdEHh8cBJcFBcENz5nVl8SAgw2JCVeUxJSBjZtIkFCAFITOSouXFdbUiI7Li5dWE1SIi4oKUZDExNPeAw1UVcFF0MhbQJBQhMTFz0qLlMYQSEKeC8yQVUAAUM5ISBdFgwTEHRtM1NaQQQGIm0vU08AUhA9LjVXQg4BQzcuMl5CDgFN",
+            "ayuda": "HTJXUg5SAiE4I1NEFRdDOyIpElwUFwQ3PmsSRAAcCDEjIB4WAgcGNjkmHhYCGgIsbT4SWg4VETc+aRJmExcELSMzU1sEUg83bTZHU0EDFjEoNVNFTw==",
+            "ranking": "HTJXUgQBQy4oNRJTDVIROSMsW1gGUgQ0IiVTWkEXDXghJhJFBBEAMSIpEmQAHAgxIyAcFisHBj8sZ0JXExNDKzgqU0RBAhY2OShBFhhSEC0vLkAWER0QMS4uXVgEAU0=",
+            "cuenta": "HTJXUgQBQzs/IlNEQQcNOW0kR1MPBgJ4JSZRXwQcBzdtJF5fAlIGNm0OXF8CGwIqbTRXRQgdDXg0Z15DBBUMeCgpEmQEFQorOTVTQgRc",
+            "favorito": "AShBFgsHBj8iNBJbAAFDKCI3R1oAAAYrbTRdWEEoLBUPDncWICEwGRgLZhpBMA83Lix2VxIaQyFtAkpCExcOPQ4mQBg=",
+            "arcade": "GSJcUwwdEHg7JkBfDgFDMjgiVVkSUgIqLiZWU0ERDDUiZ3FXGxMzLSMzXUVNUi4xKD9GRAgKT3gALlxFQQtDFgITfWc0NzB2",
+            "zombie": "Fwh/dCg3QxkeFHNjLSZDPT5nR1gOUgc9bStdRUEYFj0qKEEWDBMQeD0oQkMNExE9PmkScw0bDjEjJhJZDRcCPCw0ElIEUhk3ICVbUxJSEDEjZ0JXExMRdg==",
+            "chat": "CCsSVQkTF3goKRJACAQMeCg0RldBFgorPShcXwMeBng9JkBXQQcQLSw1W1kSUhE9Ki5BQhMTBzc+aRJ/DxsAMSxnQVMSGww2bTdTRABSEzcpIkAWBAEAKiQlW0RP",
+            "logros": "BSZLFg0dBCoiNBJGDgBDPCg0UFoOAxY9LDUIFgIABjk/Z0ZDQREWPSMzUxpBEQw1KClGVxNeQzI4IFNEQQtDKCw1Rl8CGxM5P2dXWEEeAnguKF9DDxsHOSlp",
+            "default": "BClGUxMXEDkjM1cWEQAGPzgpRldPUjc9bTVXVQ4fCj0jI10WBAoTNCI1U0RBHBY9PjNAWRJSUm9tLUdTBh0QdG03QFkDExF4IShBFgUXECwsJFNSDgFDN20iQVUTGwExP2dTTxQWAnY=",
+            "hint": "BSZBFgUXEDs4JVtTEwYMeDgpEkUEERE9OSgcFjUXQzwkIF0WDgYRN3Jnd0UVE0MoLCBbWABSDTdtM1tTDxdDLCIjXUVBHgwrbS1HUwYdEHg8MlcWBRcBPT8uUxYVFw09P2kScghSDzQsMVcWGFIXPW0jU0QEUg45PmdbWAcdTQ=="
     };
+    var _mgSecret='LQ8CExYDTBITBh4JFRlFCAkSFRAOBQQEEQNWa3w1DQsIGARMDgQCBFZMCQIRHB9bWUoBBQ8REAkAAAUCA0FTRlRfQgYfEQQZA1gMA0MjMzEtQSw/Kys5JDokPysuWyItISQlSmY5EgMEHgUOVhUJHgwXCwkCFRNfTAEIERAJAAAFAgNmIhkLGB4ABQACDVtWPQdVQgApAUhTBjcWTVkhFWZmLxlFDwMMBgQeGAAFRQkfFRdFAAAAAABMDw4YRQ8ZABoUGQUEBARC';
+
+    function _mgDecode(value,key){
+        var raw=atob(value),out='',i;
+        for(i=0;i<raw.length;i++) out+=String.fromCharCode(raw.charCodeAt(i)^key.charCodeAt(i%key.length));
+        try{return decodeURIComponent(escape(out));}catch(e){return out;}
+    }
 
     function sendChatbotMsg(){
         var input=document.getElementById('chatbotInput'),text=input.value.trim();if(!text)return;
         var msgs=document.getElementById('chatbotMessages');
         var userMsg=document.createElement('div');userMsg.className='chatbot-msg user';userMsg.textContent=text;msgs.appendChild(userMsg);
         input.value='';
-        var lower=text.toLowerCase();var response=chatResponses['default'];
-        for(var key in chatResponses){if(key!=='default'&&lower.includes(key)){response=chatResponses[key];break;}}
+        _mgChatCount++;
+        var lower=text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+        var response=null;
+
+        if(lower==='llave'||lower==='la llave'||lower.includes('di llave')){
+            response=_mgDecode(_mgSecret,'llave');
+        }else if(lower.includes('secreto')||lower.includes('oculto')||lower.includes('escondido')||lower.includes('misterio')||lower.includes('mas juegos')||lower.includes('faltan')){
+            _mgHintShown=true;
+            response=_mgDecode(_mgResponses.hint,_mgKey);
+        }else if(_mgChatCount>=5&&!_mgHintShown){
+            _mgHintShown=true;
+            response=_mgDecode(_mgResponses.hint,_mgKey);
+        }else{
+            response=_mgDecode(_mgResponses.default,_mgKey);
+            for(var key in _mgResponses){
+                if(key!=='default'&&key!=='hint'&&lower.includes(key)){
+                    response=_mgDecode(_mgResponses[key],_mgKey);
+                    break;
+                }
+            }
+        }
+
         setTimeout(function(){var botMsg=document.createElement('div');botMsg.className='chatbot-msg bot';botMsg.textContent=response;msgs.appendChild(botMsg);msgs.scrollTop=msgs.scrollHeight;},600);
     }
-    document.getElementById('chatbotMessages').innerHTML='<div class="chatbot-msg bot">Hola! Soy tu asistente IA. En que puedo ayudarte?</div>';
+    document.getElementById('chatbotMessages').innerHTML='<div class="chatbot-msg bot">'+_mgDecode(_mgResponses.hola,_mgKey)+'</div>';
 
     // LIVE CHAT
     function sendLiveChat(){
@@ -838,3 +914,4 @@
     </script>
 </body>
 </html>
+
