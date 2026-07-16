@@ -42,6 +42,18 @@
             overflow-x: hidden; transition: background 0.4s, color 0.4s;
         }
 
+        /* ESTILO SECCIÓN VIP (NUEVO) */
+        .vip-section {
+            display: none; 
+            background: linear-gradient(135deg, #FFD700, #B8860B); 
+            padding: 60px 40px; 
+            text-align: center; 
+            color: #000;
+        }
+        .vip-section.unlocked { display: block; animation: slideDown 0.5s ease-out; }
+        .vip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; max-width: 1200px; margin: 30px auto 0; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+
         /* LOADING SCREEN */
         .loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -483,6 +495,21 @@
         <div class="scroll-indicator">&#8595;</div>
     </section>
 
+    <!-- SECCIÓN VIP (NUEVA) -->
+    <section id="vipArea" class="vip-section">
+        <div class="section-header"><h2 class="section-title" style="color: #000;">🌟 ZONA VIP DESBLOQUEADA 🌟</h2><p class="section-subtitle" style="color: #444;">Acceso exclusivo a juegos ocultos</p></div>
+        <div class="vip-grid">
+            <a href="#" class="game-card visible" style="background: #fff; border: 2px solid #000;">
+                <div class="game-thumb grad-6">💎</div>
+                <div class="game-info"><h4>Juego Secreto 1</h4><p>Nivel Leyenda</p></div>
+            </a>
+            <a href="#" class="game-card visible" style="background: #fff; border: 2px solid #000;">
+                <div class="game-thumb grad-8">🔥</div>
+                <div class="game-info"><h4>Ultra Plataforma</h4><p>Solo para expertos</p></div>
+            </a>
+        </div>
+    </section>
+
     <section class="recent-section" id="recientes" style="display:none">
         <div class="section-header fade-in"><h2 class="section-title">Jugados Recientemente</h2><p class="section-subtitle">Continua donde lo dejaste</p></div>
         <div class="recent-scroll" id="recentScroll"></div>
@@ -593,6 +620,32 @@
     var auth=firebase.auth(),db=firebase.firestore(),currentUser=null,isLogin=true,currentPlayerName='';
 
     function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML;}
+
+    // LOGICA CÓDIGO KONAMI (NUEVO)
+    var konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    var konamiIndex = 0;
+    window.addEventListener('keydown', function(e) {
+        if (e.key === konamiCode[konamiIndex]) {
+            konamiIndex++;
+            if (konamiIndex === konamiCode.length) {
+                desbloquearVIP();
+                konamiIndex = 0;
+            }
+        } else {
+            konamiIndex = 0;
+        }
+    });
+    function desbloquearVIP() {
+        var code = prompt("SISTEMA VIP: Introduce código de acceso:");
+        if (code === "2013") { // Puedes cambiar este código por el que quieras
+            showToast("🌟 ¡ACCESO VIP CONCEDIDO! 🌟", "success");
+            var area = document.getElementById('vipArea');
+            area.classList.add('unlocked');
+            area.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            showToast("Código VIP incorrecto", "warning");
+        }
+    }
 
     // WELCOME
     function closeWelcome(){document.getElementById('welcomePopup').classList.remove('active');localStorage.setItem('mg_welcomed','1');}
@@ -914,4 +967,3 @@
     </script>
 </body>
 </html>
-
