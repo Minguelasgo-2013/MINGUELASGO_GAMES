@@ -705,7 +705,7 @@ function renderFavGrid(){
     });
 }
 
-/* ============ GRID PRINCIPAL (CORREGIDO) ============ */
+/* ============ GRID PRINCIPAL ============ */
 var grid=document.getElementById('gamesGrid');
 GAMES.forEach(function(g,i){
     var a=document.createElement('a');
@@ -1137,18 +1137,87 @@ db.collection('notifications').orderBy('time','desc').limit(10).onSnapshot(funct
     else{badge.style.display='none';}
 });
 
-/* ============ ONLINE COUNT ============ */
-function updateOnlineCount(){
-    var count=40+Math.floor(Math.random()*80);
-    var el=document.getElementById('onlineCount');
-    if(el) el.textContent=count;
+/* ============ ONLINE COUNT (real con Firestore) ============ */
+var onlineInterval=null;
+
+function startOnlinePresence(){
+    if(onlineInterval) clearInterval(onlineInterval);
+    if(!currentUser) return;
+
+    // Marca presencia inmediata
+    db.collection('online').doc(currentUser.uid).set({
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+        name: currentPlayerName || 'Anónimo'
+    });
+
+    // Refresca cada 60 segundos
+    onlineInterval = setInterval(function(){
+        if(!currentUser) return;
+        db.collection('online').doc(currentUser.uid).set({
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+            name: currentPlayerName || 'Anónimo'
+        });
+    }, 60000);
 }
-updateOnlineCount();
-setInterval(updateOnlineCount,15000);
+
+function stopOnlinePresence(){
+    if(onlineInterval){ clearInterval(onlineInterval); onlineInterval=null; }
+    if(currentUser){
+        db.collection('online').doc(currentUser.uid).delete().catch(function(){});
+    }
+}
+
+// Contar usuarios activos en los últimos 5 minutos
+db.collection('online').onSnapshot(function(snap){
+    var now = Date.now();
+    var count = 0;
+    snap.docs.forEach(function(doc){
+        var d = doc.data();
+        if(d.lastSeen && d.lastSeen.toDate && (now - d.lastSeen.toDate().getTime()) < 5*60*1000){
+            count++;
+        }
+    });
+    var el = document.getElementById('onlineCount');
+    if(el) el.textContent = count;
+});
+
+// Marcar/limpiar presencia al iniciar/cerrar sesión
+auth.onAuthStateChanged(function(user){
+    if(user){
+        // pequeño delay para que currentUser y currentPlayerName estén listos
+        setTimeout(startOnlinePresence, 1200);
+    } else {
+        stopOnlinePresence();
+    }
+});
+
+// Limpiar al cerrar la pestaña
+window.addEventListener('beforeunload', function(){
+    if(currentUser){
+        db.collection('online').doc(currentUser.uid).delete();
+    }
+});
+
+// Actualiza el contador visualmente cada minuto (por si alguien expiró sin snapshot)
+setInterval(function(){
+    db.collection('online').get().then(function(snap){
+        var now = Date.now();
+        var count = 0;
+        snap.docs.forEach(function(doc){
+            var d = doc.data();
+            if(d.lastSeen && d.lastSeen.toDate && (now - d.lastSeen.toDate().getTime()) < 5*60*1000){
+                count++;
+            }
+        });
+        var el = document.getElementById('onlineCount');
+        if(el) el.textContent = count;
+    });
+}, 60000);
 
 /* ============ HERO STATS ============ */
 function animateNumber(el,target){
     var cur=0,step=Math.max(1,Math.ceil(target/40));
+    if(target===0){el.textContent='0';return;}
     var iv=setInterval(function(){
         cur+=step;
         if(cur>=target){cur=target;clearInterval(iv);}
