@@ -149,7 +149,7 @@
         .notif-empty { padding: 30px; text-align: center; color: var(--text-muted); font-size: 0.9em; }
 
         /* AI CHATBOT */
-        .ai-chatbot { position: fixed; bottom: 20px; right: 20px; width: 350px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 10px 40px var(--shadow); z-index: 2000; display: none; flex-direction: column; max-height: 500px; }
+        .ai-chatbot { position: fixed; bottom: 20px; right: 20px; width: 350px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 10px 40px var(--shadow); display: none; flex-direction: column; z-index: 1998; }
         .ai-chatbot.open { display: flex; }
         .chatbot-header { background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); color: #fff; padding: 15px 20px; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; }
         .chatbot-header h4 { font-size: 1em; margin: 0; }
@@ -180,7 +180,7 @@
 
         /* RANKING */
         .ranking-table { max-width: 800px; margin: 0 auto; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
-        .ranking-row { display: grid; grid-template-columns: 60px 50px 1fr 120px 100px; align-items: center; padding: 18px 25px; background: var(--bg-card); border-bottom: 1px solid var(--border); }
+        .ranking-row { display: grid; grid-template-columns: 60px 50px 1fr 120px 100px; align-items: center; padding: 18px 25px; background: var(--bg-card); border-bottom: 1px solid var(--border); transition: background 0.2s; }
         .ranking-row:hover { background: var(--bg-card-hover); }
         .ranking-row.header { background: var(--bg-secondary); font-weight: 700; font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
         .ranking-row.top-1 { border-left: 3px solid #ffd700; }
@@ -217,7 +217,7 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
             animation: glitch 5s infinite; margin-bottom: 15px;
         }
-        @keyframes glitch { 0%,90%,100%{text-shadow:none;filter:none} 92%{text-shadow:3px 0 #ff0040,-3px 0 #0ff;filter:brightness(1.1)} 94%{text-shadow:-3px 0 #ff0040,3px 0 #0ff;filter:brightness(0.9)} }
+        @keyframes glitch { 0%,90%,100%{text-shadow:none;filter:none} 92%{text-shadow:3px 0 #ff0040,-3px 0 #0ff;filter:brightness(1.1)} 94%{text-shadow:-3px 0 #ff0040,3px 0 #0ff;filter:brightness(0.8)} }
         .hero-tagline { font-size: 1.3em; color: var(--text-secondary); max-width: 600px; line-height: 1.6; margin-bottom: 40px; }
         .hero-stats { display: flex; gap: 50px; margin-top: 20px; }
         .hero-stat { text-align: center; }
@@ -248,7 +248,7 @@
         .featured-card { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; background: var(--bg-card); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
         .featured-image { width: 100%; height: 350px; background: linear-gradient(135deg, #43e97b, #38f9d7); display: flex; align-items: center; justify-content: center; font-size: 5em; }
         .featured-info { padding: 40px; }
-        .featured-badge { display: inline-block; padding: 5px 15px; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); border-radius: 20px; font-size: 0.8em; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .featured-badge { display: inline-block; padding: 5px 15px; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); border-radius: 20px; font-size: 0.8em; font-weight: 700; color: #fff; margin-bottom: 12px; }
         .featured-info h3 { font-size: 1.8em; margin-bottom: 12px; color: var(--text-primary); }
         .featured-info p { color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px; }
         .featured-meta { display: flex; gap: 25px; color: var(--text-muted); font-size: 0.9em; }
@@ -276,14 +276,14 @@
         .game-rating-stars { color: #fbbf24; }
         .game-bottom { display: flex; justify-content: space-between; align-items: center; }
         .game-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-        .fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); width: 38px; height: 38px; border-radius: 10px; font-size: 1.1em; cursor: pointer; transition: all 0.25s; display: flex; align-items: center; justify-content: center; z-index: 2; color: rgba(255,255,255,0.6); backdrop-filter: blur(4px); }
+        .fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); width: 38px; height: 38px; border-radius: 10px; font-size: 1.2em; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
         .fav-btn:hover { background: rgba(102,126,234,0.4); border-color: rgba(102,126,234,0.5); transform: scale(1.1); color: #fff; }
         .fav-btn.active { background: rgba(102,126,234,0.7); border-color: var(--accent); color: #fff; }
         .fav-section { background: var(--bg-secondary); }
         .fav-empty { text-align: center; color: var(--text-muted); padding: 30px; font-size: 1em; }
         .game-tag { padding: 3px 10px; background: rgba(102,126,234,0.15); border-radius: 10px; font-size: 0.75em; color: var(--accent); }
 
-        .grad-1{background:linear-gradient(135deg,#667eea,#764ba2)} .grad-2{background:linear-gradient(135deg,#f093fb,#f5576c)} .grad-3{background:linear-gradient(135deg,#4facfe,#00f2fe)} .grad-4{background:linear-gradient(135deg,#43e97b,#38f9d7)} .grad-5{background:linear-gradient(135deg,#fa709a,#fee140)} .grad-6{background:linear-gradient(135deg,#30cfd0,#330867)} .grad-7{background:linear-gradient(135deg,#a8edea,#fed6e3)} .grad-8{background:linear-gradient(135deg,#ff9a56,#ff6a88)}
+        .grad-1{background:linear-gradient(135deg,#667eea,#764ba2)} .grad-2{background:linear-gradient(135deg,#f093fb,#f5576c)} .grad-3{background:linear-gradient(135deg,#4facfe,#00f2fe)} .grad-4{background:linear-gradient(135deg,#43e97b,#38f9d7)} .grad-5{background:linear-gradient(135deg,#fa709a,#fee140)} .grad-6{background:linear-gradient(135deg,#30cfd0,#330867)} .grad-8{background:linear-gradient(135deg,#a8edea,#fed6e3)}
 
         /* NEWS */
         .news { background: var(--bg-secondary); }
@@ -300,6 +300,131 @@
         .news-dots { display: flex; gap: 8px; align-items: center; }
         .news-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--text-muted); cursor: pointer; transition: all 0.3s; }
         .news-dot.active { background: var(--accent); width: 25px; border-radius: 5px; }
+
+        /* MINECRAFT DESTACADO */
+        .featured-minecraft {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .minecraft-card {
+            background: linear-gradient(135deg, #2d5016, #1a3a0a);
+            border: 2px solid #4caf50;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(76, 175, 80, 0.3);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .minecraft-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(76, 175, 80, 0.4);
+            border-color: #66bb6a;
+        }
+
+        .minecraft-badges {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        .badge-nuevo {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .badge-lanzamiento {
+            background: linear-gradient(135deg, #ff6b6b, #ff5252);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .minecraft-image {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6em;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+        }
+
+        .minecraft-info {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .minecraft-info h3 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: #66bb6a;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .minecraft-info p {
+            font-size: 1.05em;
+            color: #c0e0c0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .minecraft-features {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .minecraft-features span {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            color: #a8d5a8;
+        }
+
+        .btn-minecraft {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1em;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+            width: fit-content;
+        }
+
+        .btn-minecraft:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(76, 175, 80, 0.5);
+            background: linear-gradient(135deg, #66bb6a, #81c784);
+        }
 
         /* ACHIEVEMENTS */
         .achievements { background: var(--bg-secondary); }
@@ -325,7 +450,7 @@
         .profile-xp-bar { width: 100%; height: 6px; background: rgba(102,126,234,0.15); border-radius: 3px; margin-top: 12px; overflow: hidden; }
         .profile-xp-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-secondary)); border-radius: 3px; transition: width 0.6s ease; }
         .profile-xp-label { font-size: 0.7em; color: var(--text-muted); margin-top: 4px; }
-        .profile-level-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75em; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); color: #fff; margin-bottom: 8px; }
+        .profile-level-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75em; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); color: #fff; }
 
         /* LIVE CHAT */
         .livechat-section { background: var(--bg-secondary); }
@@ -334,7 +459,7 @@
         .livechat-messages::-webkit-scrollbar { width: 6px; }
         .livechat-messages::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
         .chat-msg { display: flex; gap: 10px; align-items: flex-start; }
-        .chat-msg-avatar { width: 32px; height: 32px; border-radius: 50%; font-size: 0.9em; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); flex-shrink: 0; }
+        .chat-msg-avatar { width: 32px; height: 32px; border-radius: 50%; font-size: 0.9em; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); }
         .chat-msg-body { background: var(--bg-primary); border-radius: 12px; padding: 10px 15px; max-width: 70%; }
         .chat-msg-name { font-size: 0.75em; font-weight: 700; color: var(--accent); margin-bottom: 3px; }
         .chat-msg-text { font-size: 0.9em; color: var(--text-secondary); line-height: 1.4; }
@@ -349,7 +474,7 @@
         .comments-container { max-width: 800px; margin: 0 auto; }
         .comment-form { background: var(--bg-card); border-radius: 16px; padding: 30px; border: 1px solid var(--border); margin-bottom: 30px; }
         .comment-form h3 { margin-bottom: 20px; color: var(--text-primary); }
-        .comment-textarea { width: 100%; padding: 12px 18px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); font-size: 0.95em; outline: none; resize: vertical; font-family: inherit; min-height: 80px; }
+        .comment-textarea { width: 100%; padding: 12px 18px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); font-size: 0.95em; outline: none; font-family: inherit; resize: vertical; min-height: 100px; }
         .comment-textarea:focus { border-color: var(--accent); }
         .comment-stars { display: flex; gap: 5px; margin: 15px 0; }
         .comment-star { font-size: 1.5em; cursor: pointer; transition: transform 0.2s; filter: grayscale(1); }
@@ -360,7 +485,7 @@
         .comment-list { display: flex; flex-direction: column; gap: 20px; }
         .comment-item { background: var(--bg-card); border-radius: 16px; padding: 25px; border: 1px solid var(--border); }
         .comment-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .comment-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); flex-shrink: 0; }
+        .comment-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); }
         .comment-author { font-weight: 600; color: var(--text-primary); }
         .comment-time { font-size: 0.8em; color: var(--text-muted); }
         .comment-rating { margin-left: auto; }
@@ -372,9 +497,9 @@
         .auth-modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; max-width: 420px; width: 100%; padding: 40px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: modalIn 0.3s ease-out; }
         @keyframes modalIn { from{opacity:0;transform:scale(0.95) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
         .auth-modal h2 { text-align: center; margin-bottom: 25px; font-size: 1.5em; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .auth-modal input { width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); font-size: 1em; outline: none; margin-bottom: 10px; }
+        .auth-modal input { width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); font-size: 1em; outline: none; margin-bottom: 12px; transition: border 0.3s; }
         .auth-modal input:focus { border-color: var(--accent); }
-        .auth-submit { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); border: none; border-radius: 12px; color: #fff; font-size: 1.05em; font-weight: 700; cursor: pointer; margin-bottom: 15px; transition: all 0.3s; }
+        .auth-submit { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); border: none; border-radius: 12px; color: #fff; font-size: 1.05em; font-weight: 600; cursor: pointer; transition: all 0.3s; }
         .auth-submit:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102,126,234,0.4); }
         .auth-toggle { text-align: center; color: var(--text-muted); font-size: 0.9em; }
         .auth-toggle span { color: var(--accent); cursor: pointer; font-weight: 600; }
@@ -383,7 +508,7 @@
 
         /* FOOTER */
         footer { background: var(--bg-secondary); padding: 40px; text-align: center; border-top: 1px solid var(--border); position: relative; z-index: 1; }
-        .footer-logo { font-size: 1.3em; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; }
+        .footer-logo { font-size: 1.3em; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .footer-text { color: var(--text-muted); font-size: 0.9em; }
 
         .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
@@ -399,6 +524,31 @@
             .ranking-row{grid-template-columns:40px 40px 1fr 80px;padding:14px 15px;font-size:0.9em} .ranking-level{display:none}
             .news-slide{flex-direction:column;padding:30px;text-align:center}
             .ai-chatbot{width:calc(100% - 40px);right:20px;bottom:20px}
+            .minecraft-card {
+                grid-template-columns: 1fr;
+            }
+            
+            .minecraft-image {
+                height: 200px;
+                font-size: 4em;
+            }
+            
+            .minecraft-info {
+                padding: 30px 20px;
+            }
+            
+            .minecraft-info h3 {
+                font-size: 1.8em;
+            }
+            
+            .minecraft-features {
+                gap: 10px;
+            }
+            
+            .minecraft-features span {
+                font-size: 0.8em;
+                padding: 6px 12px;
+            }
         }
         @media(max-width:480px) {
             .hero-logo{font-size:1.8em} .hero-stats{flex-direction:column;gap:15px}
@@ -413,7 +563,7 @@
         <div class="loading-text">Cargando plataforma...</div>
     </div>
     <script>
-    (function(){var f=document.getElementById('loadingFill'),w=0;var iv=setInterval(function(){w+=Math.random()*25+10;if(w>=100){w=100;clearInterval(iv);setTimeout(function(){document.getElementById('loadingScreen').classList.add('hidden');},500);return;}f.style.width=w+'%';},200);})();
+    (function(){var f=document.getElementById('loadingFill'),w=0;var iv=setInterval(function(){w+=Math.random()*25+10;if(w>=100){w=100;clearInterval(iv);setTimeout(function(){document.getElementById('loadingScreen').classList.add('hidden');},500);}f.style.width=w+'%';},400);})();
     </script>
 
     <div class="welcome-overlay" id="welcomePopup">
@@ -497,7 +647,7 @@
 
     <!-- SECCIÓN VIP (NUEVA) -->
     <section id="vipArea" class="vip-section">
-        <div class="section-header"><h2 class="section-title" style="color: #000;">🌟 ZONA VIP DESBLOQUEADA 🌟</h2><p class="section-subtitle" style="color: #444;">Acceso exclusivo a juegos ocultos</p></div>
+        <div class="section-header"><h2 class="section-title" style="color: #000;">🌟 ZONA VIP DESBLOQUEADA 🌟</h2><p class="section-subtitle" style="color: #444;">Acceso exclusivo a juegos o contenido premium</p></div>
         <div class="vip-grid">
             <a href="#" class="game-card visible" style="background: #fff; border: 2px solid #000;">
                 <div class="game-thumb grad-6">💎</div>
@@ -528,7 +678,7 @@
         </div>
         <div class="featured-card fade-in">
             <div class="featured-image">🧟</div>
-            <div class="featured-info"><span class="featured-badge">DESTACADO</span><h3>ZOMBIE ASSAULT</h3><p>Elimina oleadas de zombies sin parar en este frenetico juego de accion.</p><div class="featured-meta"><span>⭐⭐⭐⭐⭐</span><span>1.2K plays</span></div></div>
+            <div class="featured-info"><span class="featured-badge">DESTACADO</span><h3>ZOMBIE ASSAULT</h3><p>Elimina oleadas de zombies sin parar en este frenetico juego de accion.</p><div class="featured-meta"><span>🎮 Acción</span><span>⭐ 4.8/5</span></div></div>
         </div>
     </section>
 
@@ -540,7 +690,33 @@
     </section>
 
     <section class="news" id="novedades">
-        <div class="section-header fade-in"><h2 class="section-title">Novedades</h2><p class="section-subtitle">Lo ultimo de la actualizacion</p></div>
+        <div class="section-header fade-in">
+            <h2 class="section-title">Novedades</h2>
+            <p class="section-subtitle">Lo último de la actualización</p>
+        </div>
+
+        <!-- MINECRAFT DESTACADO -->
+        <div class="featured-minecraft fade-in" style="margin-bottom: 50px;">
+            <div class="minecraft-card">
+                <div class="minecraft-badges">
+                    <span class="badge-nuevo">🆕 NUEVO</span>
+                    <span class="badge-lanzamiento">🚀 GRAN LANZAMIENTO</span>
+                </div>
+                <div class="minecraft-image">⛏️</div>
+                <div class="minecraft-info">
+                    <h3>MINECRAFT</h3>
+                    <p>¡El juego de construcción más esperado ha llegado a MINGUELASGO GAMES! Construye, explora y sobrevive en tu propio mundo.</p>
+                    <div class="minecraft-features">
+                        <span>🏗️ Construcción Libre</span>
+                        <span>🌍 Mundos Infinitos</span>
+                        <span>⚔️ Modo Supervivencia</span>
+                    </div>
+                    <a href="minecraft/index.html" class="btn-minecraft">JUGAR AHORA</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- CAROUSEL DE NOVEDADES -->
         <div class="news-carousel fade-in">
             <div class="news-track" id="newsTrack">
                 <div class="news-slide"><div class="news-icon">🤖</div><div class="news-content"><h3>Mini IA Asistente</h3><p>Pregunta al chatbot recomendaciones personalizadas.</p></div></div>
@@ -637,7 +813,7 @@
     });
     function desbloquearVIP() {
         var code = prompt("SISTEMA VIP: Introduce código de acceso:");
-        if (code === "2013") { // Puedes cambiar este código por el que quieras
+        if (code === "2013") {
             showToast("🌟 ¡ACCESO VIP CONCEDIDO! 🌟", "success");
             var area = document.getElementById('vipArea');
             area.classList.add('unlocked');
@@ -663,10 +839,10 @@
     document.addEventListener('click',function(e){var n=document.getElementById('notifArea');if(!n.contains(e.target))document.getElementById('notifDropdown').classList.remove('open');});
 
     // PARTICLES
-    (function(){var canvas=document.getElementById('particles'),ctx=canvas.getContext('2d');var particles=[];function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}resize();window.addEventListener('resize',resize);for(var i=0;i<50;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-0.5)*0.5,vy:(Math.random()-0.5)*0.5,size:Math.random()*2+1,opacity:Math.random()*0.5+0.1});}function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fillStyle='rgba(102,126,234,'+p.opacity+')';ctx.fill();});requestAnimationFrame(draw);}draw();})();
+    (function(){var canvas=document.getElementById('particles'),ctx=canvas.getContext('2d');var particles=[];function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}resize();function Particle(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.size=Math.random()*2+0.5;this.speedY=Math.random()*-2-1;}Particle.prototype.update=function(){this.y+=this.speedY;if(this.y<0)this.y=canvas.height;};Particle.prototype.draw=function(){ctx.fillStyle='rgba(102,126,234,0.3)';ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();};for(var i=0;i<50;i++)particles.push(new Particle());function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(function(p){p.update();p.draw();});requestAnimationFrame(animate);}animate();window.addEventListener('resize',resize);})();
 
     // INTERSECTION OBSERVER
-    (function(){var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1});document.querySelectorAll('.fade-in').forEach(function(el){observer.observe(el);});})();
+    (function(){var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting)entry.target.classList.add('visible');});},{threshold:0.1});document.querySelectorAll('.fade-in, .game-card').forEach(function(el){observer.observe(el);});})();
 
     // GAMES
     var GAMES=[
@@ -690,12 +866,12 @@
     ];
 
     // SEARCH
-    function searchGames(){var q=document.getElementById('searchInput').value.toLowerCase();document.querySelectorAll('.game-card').forEach(function(card){card.style.display=card.getAttribute('data-name').toLowerCase().includes(q)||card.getAttribute('data-cat').toLowerCase().includes(q)?'':'none';});}
+    function searchGames(){var q=document.getElementById('searchInput').value.toLowerCase();document.querySelectorAll('.game-card').forEach(function(card){card.style.display=card.getAttribute('data-name').toLowerCase().includes(q)?'':'none';});}
 
     // FILTERS
     var categories=['Todos'];GAMES.forEach(function(g){if(categories.indexOf(g.cat)===-1)categories.push(g.cat);});
     var tabsEl=document.getElementById('filterTabs');
-    categories.forEach(function(cat){var btn=document.createElement('div');btn.className='filter-tab'+(cat==='Todos'?' active':'');btn.textContent=cat;btn.onclick=function(){document.querySelectorAll('.filter-tab').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');document.querySelectorAll('.game-card').forEach(function(card){card.style.display=cat==='Todos'||card.getAttribute('data-cat')===cat?'':'none';});};tabsEl.appendChild(btn);});
+    categories.forEach(function(cat){var btn=document.createElement('div');btn.className='filter-tab'+(cat==='Todos'?' active':'');btn.textContent=cat;btn.onclick=function(){document.querySelectorAll('.filter-tab').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');document.querySelectorAll('.game-card').forEach(function(card){card.style.display=(cat==='Todos'||card.getAttribute('data-cat')===cat)?'':'none';});};tabsEl.appendChild(btn);});
 
     // FAVORITES
     var favs=JSON.parse(localStorage.getItem('mg_favs')||'[]');
@@ -716,7 +892,7 @@
         favs.forEach(function(name){
             var g=GAMES.find(function(x){return x.name===name;});if(!g)return;
             var a=document.createElement('a');a.className='game-card visible';a.href=g.folder+'/index.html';a.setAttribute('data-cat',g.cat);a.setAttribute('data-name',g.name);
-            a.innerHTML='<div class="game-thumb grad-'+g.grad+'"><button class="fav-btn active" data-fav="'+esc(g.name)+'" onclick="toggleFav(\''+g.name.replace(/'/g,"\\'")+'\',event)">&#128077;</button>'+g.icon+'</div>'+
+            a.innerHTML='<div class="game-thumb grad-'+g.grad+'"><button class="fav-btn active" data-fav="'+esc(g.name)+'" onclick="toggleFav(\''+g.name.replace(/'/g,"\\'")+'\',event)">&#128077;</button></div>'+
                 '<div class="game-info"><h4>'+esc(g.name)+'</h4><p>'+esc(g.desc)+'</p><div class="game-bottom"><div class="game-tags"><span class="game-tag">'+esc(g.cat)+'</span></div></div></div>';
             fg.appendChild(a);
         });
@@ -726,7 +902,7 @@
     var grid=document.getElementById('gamesGrid');
     GAMES.forEach(function(g,i){
         var a=document.createElement('a');a.className='game-card';a.href=g.folder+'/index.html';a.setAttribute('data-cat',g.cat);a.setAttribute('data-name',g.name);
-        a.innerHTML='<div class="game-thumb grad-'+g.grad+'"><button class="fav-btn'+(isFav(g.name)?' active':'')+'" data-fav="'+esc(g.name)+'" onclick="toggleFav(\''+g.name.replace(/'/g,"\\'")+'\',event)">&#128077;</button>'+g.icon+'</div>'+
+        a.innerHTML='<div class="game-thumb grad-'+g.grad+'"><button class="fav-btn'+(isFav(g.name)?' active':'')+'" data-fav="'+esc(g.name)+'" onclick="toggleFav(\''+g.name.replace(/'/g,"\\'")+'\'[...]
             '<div class="game-info"><h4>'+esc(g.name)+'</h4><p>'+esc(g.desc)+'</p>'+
             '<div class="game-rating"><span class="game-rating-stars">★★★★★</span></div>'+
             '<div class="game-bottom"><div class="game-tags"><span class="game-tag">'+esc(g.cat)+'</span></div></div></div>';
@@ -736,8 +912,8 @@
     renderFavGrid();
 
     // RECENT GAMES
-    function loadRecentGames(){var recent=JSON.parse(localStorage.getItem('mg_recent')||'[]');var section=document.getElementById('recientes');var scroll=document.getElementById('recentScroll');if(recent.length===0){section.style.display='none';return;}section.style.display='block';scroll.innerHTML='';recent.slice(0,8).forEach(function(name){var game=GAMES.find(function(g){return g.name===name;});if(!game)return;var item=document.createElement('a');item.className='recent-item';item.href=game.folder+'/index.html';item.innerHTML='<div class="recent-thumb grad-'+game.grad+'">'+game.icon+'</div><div class="recent-name">'+esc(game.name)+'</div>';scroll.appendChild(item);});}
-    document.querySelectorAll('.game-card').forEach(function(card){card.addEventListener('click',function(){var name=card.getAttribute('data-name');var recent=JSON.parse(localStorage.getItem('mg_recent')||'[]');recent=recent.filter(function(n){return n!==name;});recent.unshift(name);if(recent.length>8)recent=recent.slice(0,8);localStorage.setItem('mg_recent',JSON.stringify(recent));});});
+    function loadRecentGames(){var recent=JSON.parse(localStorage.getItem('mg_recent')||'[]');var section=document.getElementById('recientes');var scroll=document.getElementById('recentScroll');if(recent.length===0){section.style.display='none';return;}section.style.display='block';scroll.innerHTML='';recent.forEach(function(name){var g=GAMES.find(function(x){return x.name===name;});if(!g)return;var a=document.createElement('a');a.className='recent-item';a.href=g.folder+'/index.html';a.innerHTML='<div class="recent-thumb grad-'+g.grad+'">'+g.icon+'</div><div class="recent-name">'+esc(g.name)+'</div>';scroll.appendChild(a);});}
+    document.querySelectorAll('.game-card').forEach(function(card){card.addEventListener('click',function(){var name=card.getAttribute('data-name');var recent=JSON.parse(localStorage.getItem('mg_recent')||'[]');if(!recent.includes(name)){recent.unshift(name);recent=recent.slice(0,5);localStorage.setItem('mg_recent',JSON.stringify(recent));loadRecentGames();}});});
     loadRecentGames();
 
     // NEWS
@@ -767,7 +943,7 @@
     // AUTH
     function openAuth(){document.getElementById('authModal').classList.add('active');}
     function closeAuth(){document.getElementById('authModal').classList.remove('active');document.getElementById('authError').textContent='';}
-    function switchAuthMode(){isLogin=!isLogin;document.getElementById('authTitle').textContent=isLogin?'Iniciar Sesion':'Crear Cuenta';document.getElementById('authSubmitBtn').textContent=isLogin?'Entrar':'Registrarse';document.getElementById('authNameGroup').style.display=isLogin?'none':'block';document.getElementById('authToggle').innerHTML=isLogin?'No tienes cuenta? <span onclick="switchAuthMode()">Registrate</span>':'Ya tienes cuenta? <span onclick="switchAuthMode()">Inicia sesion</span>';}
+    function switchAuthMode(){isLogin=!isLogin;document.getElementById('authTitle').textContent=isLogin?'Iniciar Sesion':'Crear Cuenta';document.getElementById('authSubmitBtn').textContent=isLogin?'Entrar':'Registrarse';document.getElementById('authNameGroup').style.display=isLogin?'none':'block';document.getElementById('authToggle').innerHTML=isLogin?'No tienes cuenta? <span onclick="switchAuthMode()">Registrate</span>':'¿Ya tienes cuenta? <span onclick="switchAuthMode()">Inicia sesión</span>';}
     function handleAuth(){
         var email=document.getElementById('authEmail').value.trim(),pass=document.getElementById('authPass').value,errEl=document.getElementById('authError');errEl.textContent='';
         if(!email||!pass){errEl.textContent='Completa todos los campos';return;}
@@ -789,7 +965,7 @@
             notifArea.style.display='block';
             db.collection('players').doc(user.uid).get().then(function(doc){
                 currentPlayerName=doc.exists?doc.data().name:'Jugador';
-                area.innerHTML='<div style="display:flex;gap:8px;align-items:center"><div style="font-size:0.9em;color:var(--accent);font-weight:600">'+esc(currentPlayerName)+'</div><button class="auth-btn" onclick="auth.signOut()" style="padding:6px 12px;font-size:0.8em">Salir</button></div>';
+                area.innerHTML='<div style="display:flex;gap:8px;align-items:center"><div style="font-size:0.9em;color:var(--accent);font-weight:600">'+esc(currentPlayerName)+'</div><button class="auth-btn" onclick="auth.signOut()">Salir</button></div>';
             });
             document.getElementById('commentText').disabled=false;document.getElementById('commentBtn').disabled=false;document.getElementById('commentLoginMsg').style.display='none';
             document.getElementById('livechatInput').disabled=false;document.getElementById('livechatBtn').disabled=false;
@@ -809,7 +985,7 @@
         snap.docs.forEach(function(doc,i){
             var d=doc.data(),row=document.createElement('div');
             row.className='ranking-row'+(i<3?' top-'+(i+1):'');
-            row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+(emojis[i]||'🎮')+'</div><span class="ranking-name">'+esc(d.name)+'</span><span class="ranking-score">'+(d.score||0)+'</span><span class="ranking-level">Lvl '+(d.level||1)+'</span>';
+            row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+(emojis[i]||'🎮')+'</div><span class="ranking-name">'+esc(d.name)+'</span><span class="ranking-score">'+d.score+'</span><span class="ranking-level">'+d.level+'</span>';
             table.appendChild(row);
         });
     });
@@ -828,7 +1004,7 @@
             snap.docs.forEach(function(doc,i){
                 var d=doc.data(),row=document.createElement('div');
                 row.className='ranking-row'+(i<3?' top-'+(i+1):'');
-                row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+emojis[i]+'</div><span class="ranking-name">'+esc(d.playerName||'Anonimo')+'</span><span class="ranking-score">'+(d.score||0)+'</span><span class="ranking-level">⭐⭐⭐</span>';
+                row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+emojis[i]+'</div><span class="ranking-name">'+esc(d.playerName||'Anonimo')+'</span><span class="ranking-score">'+d.score+'</span><span class="ranking-level">'+d.game+'</span>';
                 table.appendChild(row);
             });
         }
@@ -845,7 +1021,7 @@
             card.innerHTML='<div class="profile-avatar">'+emojis[i]+'</div><div class="profile-name">'+esc(d.name)+'</div>'+
                 '<span class="profile-level-badge">Lvl '+lvl+'</span>'+
                 '<div class="profile-title">'+titles[i]+'</div>'+
-                '<div class="profile-stats"><div><div class="profile-stat-value">'+(d.games||0)+'</div><div class="profile-stat-label">Partidas</div></div><div><div class="profile-stat-value">'+(d.score||0)+'</div><div class="profile-stat-label">XP Total</div></div></div>'+
+                '<div class="profile-stats"><div><div class="profile-stat-value">'+(d.games||0)+'</div><div class="profile-stat-label">Partidas</div></div><div><div class="profile-stat-value">'+d.score+'</div><div class="profile-stat-label">Puntos</div></div></div>'+
                 '<div class="profile-xp-bar"><div class="profile-xp-fill" style="width:'+xpPct+'%"></div></div>'+
                 '<div class="profile-xp-label">'+xpCurrent+' / '+xpNeeded+' XP para nivel '+(lvl+1)+'</div>';
             pgrid.appendChild(card);
@@ -860,10 +1036,10 @@
     var _mgHintShown=false;
     var _mgResponses={
             "hola": "BSheV0BSITEoKURTDxsHN20mEnsoPCQNCAtzZSY9Qx8MCndlT1IzLSgjXRYTFwA3ICJcUgAAFz1tLUdTBh0QeCJnU08UFgIqOSISVQ4cQzQsZ0JaAAYCPiI1X1dP",
-            "juegos": "GSJcUwwdEHh8cBJcFBcENz5nVl8SAgw2JCVeUxJSBjZtIkFCAFITOSouXFdbUiI7Li5dWE1SIi4oKUZDExNPeAw1UVcFF0MhbQJBQhMTFz0qLlMYQSEKeC8yQVUAAUM5ISBdFgwTEHRtM1NaQQQGIm0vU08AUhA9LjVXQg4BQzcuMl5CDgFN",
-            "ayuda": "HTJXUg5SAiE4I1NEFRdDOyIpElwUFwQ3PmsSRAAcCDEjIB4WAgcGNjkmHhYCGgIsbT4SWg4VETc+aRJmExcELSMzU1sEUg83bTZHU0EDFjEoNVNFTw==",
+            "juegos": "GSJcUwwdEHh8cBJcFBcENz5nVl8SAgw2JCVeUxJSBjZtIkFCAFITOSouXFdbUiI7Li5dWE1SIi4oKUZDExNPeAw1UVcFF0MhbQJBQhMTFz0qLlMYQSEKeC8yQVUAAUM5ISBdFgwTEHRtM1NaQQQGIm0vU08AUhA9LjVXQg4BQzcu",
+            "ayuda": "HTJXUg5SAiE4I1NEFRdDOyIpElwUFwQ3PmsSRAAcCDEjIB4WAgcGNjkmHhYCGgIsbT4SWg4VERc+aRJmExcELSMzU1sEUg83bTZHU0EDFjEoNVNFTw==",
             "ranking": "HTJXUgQBQy4oNRJTDVIROSMsW1gGUgQ0IiVTWkEXDXghJhJFBBEAMSIpEmQAHAgxIyAcFisHBj8sZ0JXExNDKzgqU0RBAhY2OShBFhhSEC0vLkAWER0QMS4uXVgEAU0=",
-            "cuenta": "HTJXUgQBQzs/IlNEQQcNOW0kR1MPBgJ4JSZRXwQcBzdtJF5fAlIGNm0OXF8CGwIqbTRXRQgdDXg0Z15DBBUMeCgpEmQEFQorOTVTQgRc",
+            "cuenta": "HTJXUgQBQzs/IlNEQQcNOW0kR1MPBgJ4JSZRXwQcBzdtJF5fAlIGNm0OXF8CGwIqbTRXRQgdDXg0Z15DBBUMeCgpEmQEFQorPTVTQgRc",
             "favorito": "AShBFgsHBj8iNBJbAAFDKCI3R1oAAAYrbTRdWEEoLBUPDncWICEwGRgLZhpBMA83Lix2VxIaQyFtAkpCExcOPQ4mQBg=",
             "arcade": "GSJcUwwdEHg7JkBfDgFDMjgiVVkSUgIqLiZWU0ERDDUiZ3FXGxMzLSMzXUVNUi4xKD9GRAgKT3gALlxFQQtDFgITfWc0NzB2",
             "zombie": "Fwh/dCg3QxkeFHNjLSZDPT5nR1gOUgc9bStdRUEYFj0qKEEWDBMQeD0oQkMNExE9PmkScw0bDjEjJhJZDRcCPCw0ElIEUhk3ICVbUxJSEDEjZ0JXExMRdg==",
@@ -872,7 +1048,7 @@
             "default": "BClGUxMXEDkjM1cWEQAGPzgpRldPUjc9bTVXVQ4fCj0jI10WBAoTNCI1U0RBHBY9PjNAWRJSUm9tLUdTBh0QdG03QFkDExF4IShBFgUXECwsJFNSDgFDN20iQVUTGwExP2dTTxQWAnY=",
             "hint": "BSZBFgUXEDs4JVtTEwYMeDgpEkUEERE9OSgcFjUXQzwkIF0WDgYRN3Jnd0UVE0MoLCBbWABSDTdtM1tTDxdDLCIjXUVBHgwrbS1HUwYdEHg8MlcWBRcBPT8uUxYVFw09P2kScghSDzQsMVcWGFIXPW0jU0QEUg45PmdbWAcdTQ=="
     };
-    var _mgSecret='LQ8CExYDTBITBh4JFRlFCAkSFRAOBQQEEQNWa3w1DQsIGARMDgQCBFZMCQIRHB9bWUoBBQ8REAkAAAUCA0FTRlRfQgYfEQQZA1gMA0MjMzEtQSw/Kys5JDokPysuWyItISQlSmY5EgMEHgUOVhUJHgwXCwkCFRNfTAEIERAJAAAFAgNmIhkLGB4ABQACDVtWPQdVQgApAUhTBjcWTVkhFWZmLxlFDwMMBgQeGAAFRQkfFRdFAAAAAABMDw4YRQ8ZABoUGQUEBARC';
+    var _mgSecret='LQ8CExYDTBITBh4JFRlFCAkSFRAOBQQEEQNWa3w1DQsIGARMDgQCBFZMCQIRHB9bWUoBBQ8REAkAAAUCA0FTRlRfQgYfEQQZA1gMA0MjMzEtQSw/Kys5JDokPysuWyItISQlSmY5EgMEHgUOVhUJHgwXCwkCFRNfTAEIERAJAAAFAgNm';
 
     function _mgDecode(value,key){
         var raw=atob(value),out='',i;
@@ -925,13 +1101,13 @@
         msgs.forEach(function(m){var div=document.createElement('div');div.className='chat-msg';
             var time=m.timestamp?m.timestamp.toDate().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}):'';
             var emojiIdx=(m.name||'').length%emojis.length;
-            div.innerHTML='<div class="chat-msg-avatar">'+emojis[emojiIdx]+'</div><div class="chat-msg-body"><div class="chat-msg-name">'+esc(m.name||'Anonimo')+'</div><div class="chat-msg-text">'+esc(m.text)+'</div><div class="chat-msg-time">'+time+'</div></div>';
+            div.innerHTML='<div class="chat-msg-avatar">'+emojis[emojiIdx]+'</div><div class="chat-msg-body"><div class="chat-msg-name">'+esc(m.name||'Anonimo')+'</div><div class="chat-msg-text">'+esc(m.text||'...')+'</div><div class="chat-msg-time">'+time+'</div></div>';
             box.appendChild(div);});box.scrollTop=box.scrollHeight;
     });
 
     // COMMENTS
     var selectedRating=0;
-    document.querySelectorAll('.comment-star').forEach(function(star){star.addEventListener('click',function(){selectedRating=parseInt(this.getAttribute('data-v'));document.querySelectorAll('.comment-star').forEach(function(s){s.classList.toggle('active',parseInt(s.getAttribute('data-v'))<=selectedRating);});});});
+    document.querySelectorAll('.comment-star').forEach(function(star){star.addEventListener('click',function(){selectedRating=parseInt(this.getAttribute('data-v'));document.querySelectorAll('.comment-star').forEach(function(s){s.classList.toggle('active',s.getAttribute('data-v')<=selectedRating);});});});
     function addComment(){
         if(!currentUser)return;var text=document.getElementById('commentText').value.trim();if(!text){showToast('Escribe tu opinion','warning');return;}
         db.collection('comments').add({uid:currentUser.uid,name:currentPlayerName,text:text,rating:selectedRating||5,timestamp:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
@@ -944,7 +1120,7 @@
         snap.docs.forEach(function(doc){var c=doc.data();var time=c.timestamp?c.timestamp.toDate().toLocaleDateString('es-ES'):'Ahora';
             var emojiIdx=(c.name||'').length%emojis.length;
             var item=document.createElement('div');item.className='comment-item';
-            item.innerHTML='<div class="comment-header"><div class="comment-avatar">'+emojis[emojiIdx]+'</div><div><div class="comment-author">'+esc(c.name||'Anonimo')+'</div><div class="comment-time">'+time+'</div></div><div class="comment-rating">'+('⭐'.repeat(c.rating||5))+'</div></div><div class="comment-text">'+esc(c.text)+'</div>';
+            item.innerHTML='<div class="comment-header"><div class="comment-avatar">'+emojis[emojiIdx]+'</div><div><div class="comment-author">'+esc(c.name||'Anonimo')+'</div><div class="comment-time">'+time+'</div></div><div class="comment-rating">'+('★'.repeat(c.rating||5))+'</div></div><div class="comment-text">'+esc(c.text||'')+'</div>';
             list.appendChild(item);});
     });
 
