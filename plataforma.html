@@ -1214,7 +1214,7 @@ setInterval(function(){
     });
 }, 60000);
 
-/* ============ HERO STATS ============ */
+/* ============ HERO STATS (con datos reales) ============ */
 function animateNumber(el,target){
     var cur=0,step=Math.max(1,Math.ceil(target/40));
     if(target===0){el.textContent='0';return;}
@@ -1224,11 +1224,21 @@ function animateNumber(el,target){
         el.textContent=cur;
     },40);
 }
+
+// Juegos: valor fijo real (17)
 setTimeout(function(){
     animateNumber(document.getElementById('statGames'),17);
-    animateNumber(document.getElementById('statPlayers'),420+Math.floor(Math.random()*300));
-    animateNumber(document.getElementById('statReviews'),120+Math.floor(Math.random()*100));
 },700);
+
+// Jugadores reales (cuenta documentos en 'players')
+db.collection('players').onSnapshot(function(snap){
+    animateNumber(document.getElementById('statPlayers'),snap.size);
+});
+
+// Opiniones reales (cuenta documentos en 'comments')
+db.collection('comments').onSnapshot(function(snap){
+    animateNumber(document.getElementById('statReviews'),snap.size);
+});
 </script>
 </body>
 </html>
