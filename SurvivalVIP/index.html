@@ -5,545 +5,1050 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SURVIVAL VIP - MINGUELASGO GAMES</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-    background: #0a0a2e;
-    color: #e0e0ff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-}
-h1 {
-    font-size: 2.2em;
-    font-weight: 900;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 20px 0 5px;
-    letter-spacing: 2px;
-}
-.vip-tag {
-    background: linear-gradient(135deg, #ffd700, #ffaa00);
-    color: #000;
-    padding: 4px 16px;
-    border-radius: 20px;
-    font-size: 0.8em;
-    font-weight: 700;
-    margin-bottom: 20px;
-    display: inline-block;
-}
-#game {
-    width: 100%;
-    max-width: 650px;
-    background: #111145;
-    border: 1px solid rgba(102, 126, 234, 0.3);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.15);
-}
-.stats { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
-.stat-box {
-    flex: 1; min-width: 80px;
-    background: #161655;
-    border: 1px solid rgba(102, 126, 234, 0.2);
-    border-radius: 12px;
-    padding: 12px;
-    text-align: center;
-    transition: all 0.3s;
-}
-.stat-box:hover { border-color: rgba(102, 126, 234, 0.5); }
-.stat-label { font-size: 0.7em; color: #7070a0; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
-.stat-val { font-size: 1.3em; font-weight: 700; }
-.stat-val.hp { color: #ff4466; }
-.stat-val.hunger { color: #ff9900; }
-.stat-val.thirst { color: #4facfe; }
-.stat-val.day { color: #667eea; }
-.bar-wrap { background: #0a0a2e; border-radius: 4px; height: 6px; margin-top: 6px; }
-.bar { height: 6px; border-radius: 4px; transition: width 0.4s; }
-.bar.hp { background: linear-gradient(90deg, #ff4466, #ff6b8a); }
-.bar.hunger { background: linear-gradient(90deg, #ff9900, #ffcc00); }
-.bar.thirst { background: linear-gradient(90deg, #4facfe, #00f2fe); }
-
-.inventory {
-    background: #0a0a2e;
-    border: 1px solid rgba(102, 126, 234, 0.15);
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 0.85em;
-    color: #7070a0;
-    margin-bottom: 16px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 16px;
-}
-.inv-item { display: flex; align-items: center; gap: 4px; }
-.inv-item span { color: #667eea; font-weight: 600; }
-
-.zone {
-    font-size: 1.1em;
-    font-weight: 700;
-    color: #ffd700;
-    margin-bottom: 10px;
-    padding: 8px 14px;
-    background: rgba(255, 215, 0, 0.08);
-    border-radius: 10px;
-    border: 1px solid rgba(255, 215, 0, 0.2);
-    display: inline-block;
-}
-#log {
-    background: #0a0a2e;
-    border-left: 3px solid #667eea;
-    padding: 14px 16px;
-    border-radius: 10px;
-    font-size: 0.9em;
-    color: #c0c0e0;
-    min-height: 70px;
-    margin-bottom: 18px;
-    line-height: 1.7;
-}
-#log .good { color: #4ade80; }
-#log .bad { color: #ff4466; }
-#log .neutral { color: #c0c0e0; }
-#log .event { color: #fbbf24; }
-
-.options { display: flex; flex-direction: column; gap: 10px; }
-.opt-btn {
-    background: transparent;
-    border: 1.5px solid rgba(102, 126, 234, 0.4);
-    color: #e0e0ff;
-    padding: 13px 18px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    font-size: 0.9em;
-    text-align: left;
-    transition: all 0.2s;
-}
-.opt-btn:hover {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    border-color: transparent;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    transform: translateY(-1px);
-}
-.opt-btn:active { transform: translateY(0); }
-
-#overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(10, 10, 46, 0.95);
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 99;
-    backdrop-filter: blur(10px);
-}
-#overlay.show { display: flex; }
-#overlay h2 { font-size: 2.8em; margin-bottom: 10px; }
-#overlay p { color: #7070a0; margin-bottom: 10px; font-size: 1.1em; }
-#overlay .score-detail { color: #c0c0e0; font-size: 0.9em; margin-bottom: 25px; }
-#overlay button {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    border: none;
-    padding: 14px 40px;
-    border-radius: 12px;
-    font-size: 1.1em;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    transition: all 0.3s;
-}
-#overlay button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
-.dead h2 { color: #ff4466; }
-.win h2 { color: #ffd700; }
-
-.record-bar {
-    background: #161655;
-    border: 1px solid rgba(102, 126, 234, 0.2);
-    border-radius: 10px;
-    padding: 8px 14px;
-    margin-bottom: 16px;
-    font-size: 0.8em;
-    color: #7070a0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.record-bar .record-val { color: #ffd700; font-weight: 700; }
-
-footer {
-    margin-top: 30px;
-    color: #7070a0;
-    font-size: 0.8em;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-@media(max-width:480px) {
-    h1 { font-size: 1.6em; }
-    #game { padding: 16px; }
-    .stat-box { min-width: 70px; padding: 8px; }
-    .stat-val { font-size: 1.1em; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a2e;color:#e0e0ff;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+h1{font-size:2.2em;font-weight:900;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:20px 0 5px;letter-spacing:2px}
+.vip-tag{background:linear-gradient(135deg,#ffd700,#ffaa00);color:#000;padding:4px 16px;border-radius:20px;font-size:.8em;font-weight:700;margin-bottom:20px;display:inline-block}
+#game{width:100%;max-width:720px;background:#111145;border:1px solid rgba(102,126,234,.3);border-radius:16px;padding:24px;box-shadow:0 10px 40px rgba(102,126,234,.15)}
+.topbar{background:#161655;border:1px solid rgba(102,126,234,.2);border-radius:10px;padding:8px 14px;margin-bottom:12px;font-size:.8em;color:#7070a0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.topbar .record-val{color:#ffd700;font-weight:700}
+.topbar .weather-val{color:#4facfe;font-weight:700}
+.topbar .time-val{color:#fbbf24;font-weight:700}
+.quest-bar{background:linear-gradient(135deg,rgba(74,222,128,.1),rgba(34,211,238,.1));border:1px solid rgba(74,222,128,.3);border-radius:10px;padding:8px 14px;margin-bottom:12px;font-size:.82em;display:flex;align-items:center;gap:8px}
+.quest-bar .quest-icon{font-size:1.2em}
+.quest-bar .quest-text{color:#c0c0e0;flex:1}
+.quest-bar .quest-text b{color:#4ade80}
+.panel-btns{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.panel-btn{background:#161655;border:1px solid rgba(102,126,234,.3);color:#c0c0e0;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.78em;transition:all .2s;display:flex;align-items:center;gap:4px}
+.panel-btn:hover{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-color:transparent}
+.panel-btn .notif{background:#f5576c;color:#fff;font-size:.75em;padding:1px 6px;border-radius:8px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(85px,1fr));gap:8px;margin-bottom:14px}
+.stat-box{background:#161655;border:1px solid rgba(102,126,234,.2);border-radius:10px;padding:8px 6px;text-align:center;transition:all .3s}
+.stat-box:hover{border-color:rgba(102,126,234,.5)}
+.stat-label{font-size:.62em;color:#7070a0;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.stat-val{font-size:1.1em;font-weight:700}
+.stat-val.hp{color:#ff4466}.stat-val.hunger{color:#ff9900}.stat-val.thirst{color:#4facfe}
+.stat-val.energy{color:#a78bfa}.stat-val.sleep{color:#c084fc}.stat-val.luck{color:#4ade80}
+.stat-val.luck.negative{color:#ff4466}.stat-val.xp{color:#22d3ee}.stat-val.lvl{color:#fbbf24}
+.bar-wrap{background:#0a0a2e;border-radius:4px;height:5px;margin-top:4px;overflow:hidden}
+.bar{height:5px;border-radius:4px;transition:width .4s}
+.bar.hp{background:linear-gradient(90deg,#ff4466,#ff6b8a)}.bar.hunger{background:linear-gradient(90deg,#ff9900,#ffcc00)}
+.bar.thirst{background:linear-gradient(90deg,#4facfe,#00f2fe)}.bar.energy{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+.bar.sleep{background:linear-gradient(90deg,#7c3aed,#c084fc)}.bar.luck{background:linear-gradient(90deg,#4ade80,#a3e635)}
+.bar.xp{background:linear-gradient(90deg,#06b6d4,#22d3ee)}
+.conditions{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.cond-tag{font-size:.7em;padding:4px 10px;border-radius:8px;font-weight:700;display:inline-flex;align-items:center;gap:4px;border:1px solid;animation:pulse-cond 2s infinite}
+@keyframes pulse-cond{0%,100%{opacity:1}50%{opacity:.75}}
+.cond-tag.sangrado{background:rgba(255,68,102,.15);border-color:#ff4466;color:#ff6b8a}
+.cond-tag.herida{background:rgba(255,100,100,.15);border-color:#ff6478;color:#ff8a9a}
+.cond-tag.infeccion{background:rgba(74,222,128,.15);border-color:#4ade80;color:#6ee7a0}
+.cond-tag.fiebre{background:rgba(251,146,60,.15);border-color:#fb923c;color:#fbbf24}
+.cond-tag.veneno{background:rgba(167,139,250,.15);border-color:#a78bfa;color:#c4b5fd}
+.cond-tag.fractura{background:rgba(148,163,184,.15);border-color:#94a3b8;color:#cbd5e1}
+.cond-tag.hipotermia{background:rgba(59,130,246,.15);border-color:#3b82f6;color:#60a5fa}
+.cond-tag.insolacion{background:rgba(234,88,12,.15);border-color:#ea580c;color:#fb923c}
+.cond-tag.hambre{background:rgba(255,153,0,.15);border-color:#ff9900;color:#fbbf24}
+.cond-tag.sed{background:rgba(79,172,254,.15);border-color:#4facfe;color:#7dd3fc}
+.cond-tag.combate{background:rgba(255,68,102,.2);border-color:#ff4466;color:#ff6b8a}
+.cond-tag.buff{background:rgba(74,222,128,.2);border-color:#4ade80;color:#6ee7a0}
+.inventory{background:#0a0a2e;border:1px solid rgba(102,126,234,.15);border-radius:12px;padding:12px 16px;font-size:.82em;color:#7070a0;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:6px 14px;max-height:110px;overflow-y:auto}
+.inv-item{display:flex;align-items:center;gap:4px}
+.inv-item span{color:#667eea;font-weight:600}
+.zone{font-size:1.1em;font-weight:700;color:#ffd700;margin-bottom:10px;padding:8px 14px;background:rgba(255,215,0,.08);border-radius:10px;border:1px solid rgba(255,215,0,.2);display:inline-flex;align-items:center;gap:8px}
+.zone .zone-temp{font-size:.75em;color:#fb923c;background:rgba(251,146,60,.15);padding:2px 8px;border-radius:8px}
+#log{background:#0a0a2e;border-left:3px solid #667eea;padding:14px 16px;border-radius:10px;font-size:.9em;color:#c0c0e0;min-height:70px;margin-bottom:18px;line-height:1.7;max-height:180px;overflow-y:auto}
+#log .good{color:#4ade80}#log .bad{color:#ff4466}#log .neutral{color:#c0c0e0}
+#log .event{color:#fbbf24}#log .roll{color:#a78bfa;font-size:.85em}#log .cond{color:#fb923c}
+#log .combat{color:#ff6b8a;font-weight:700}#log .quest{color:#22d3ee;font-weight:700}
+.options{display:flex;flex-direction:column;gap:8px;max-height:480px;overflow-y:auto;padding-right:4px}
+.opt-btn{background:transparent;border:1.5px solid rgba(102,126,234,.4);color:#e0e0ff;padding:12px 16px;border-radius:12px;cursor:pointer;font-family:'Segoe UI',Tahoma,sans-serif;font-size:.88em;text-align:left;transition:all .2s;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.opt-btn:hover{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-color:transparent;box-shadow:0 4px 15px rgba(102,126,234,.3);transform:translateY(-1px)}
+.opt-btn.combat-btn{border-color:rgba(255,68,102,.5)}.opt-btn.combat-btn:hover{background:linear-gradient(135deg,#ff4466,#ff6b8a)}
+.opt-btn.defend-btn{border-color:rgba(79,172,254,.5)}.opt-btn.defend-btn:hover{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.opt-btn.flee-btn{border-color:rgba(251,191,36,.5)}.opt-btn.flee-btn:hover{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000}
+.opt-chance{font-size:.75em;padding:3px 8px;border-radius:8px;background:rgba(74,222,128,.15);color:#4ade80;font-weight:700;white-space:nowrap}
+.opt-chance.risky{background:rgba(255,68,102,.15);color:#ff4466}
+.opt-chance.neutral{background:rgba(160,160,200,.15);color:#a0a0c8}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,46,.95);align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(10px);padding:20px}
+.modal-overlay.show{display:flex}
+.modal-box{background:#111145;border:1px solid rgba(102,126,234,.4);border-radius:16px;max-width:640px;width:100%;max-height:85vh;overflow-y:auto;padding:25px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-box h2{font-size:1.4em;margin-bottom:15px;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.modal-close{float:right;background:none;border:none;color:#7070a0;font-size:1.5em;cursor:pointer;margin-top:-5px}
+.quest-item,.build-item,.achieve-item,.lore-item,.mode-item{background:#161655;border:1px solid rgba(102,126,234,.2);border-radius:10px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.quest-item.done{border-color:#4ade80;background:rgba(74,222,128,.08)}
+.quest-item .q-icon,.build-item .b-icon,.achieve-item .a-icon{font-size:1.6em}
+.quest-item .q-info,.build-item .b-info,.achieve-item .a-info{flex:1}
+.quest-item .q-title{font-weight:700;color:#c0c0e0}
+.quest-item .q-desc{font-size:.82em;color:#7070a0;margin-top:2px}
+.quest-item .q-status{font-size:1.2em}
+.build-item .b-cost{font-size:.78em;color:#fbbf24;margin-top:3px}
+.build-item .b-desc{font-size:.82em;color:#7070a0}
+.build-btn{background:linear-gradient(135deg,#667eea,#764ba2);border:none;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:.85em;font-family:inherit}
+.build-btn:disabled{opacity:.4;cursor:not-allowed}
+.achieve-item.locked{opacity:.4}
+.achieve-item .a-icon{filter:grayscale(1)}
+.achieve-item.unlocked .a-icon{filter:none}
+.lore-item{font-style:italic;color:#c4b5fd;font-size:.88em;line-height:1.5}
+.mode-item{cursor:pointer}
+.mode-item:hover{background:#1e1e6a}
+#overlay{display:none;position:fixed;inset:0;background:rgba(10,10,46,.95);flex-direction:column;align-items:center;justify-content:center;z-index:99;backdrop-filter:blur(10px);padding:20px;text-align:center}
+#overlay.show{display:flex}
+#overlay h2{font-size:2.4em;margin-bottom:12px}
+#overlay p{color:#7070a0;margin-bottom:10px;font-size:1em}
+#overlay .score-detail{color:#c0c0e0;font-size:.9em;margin-bottom:25px;line-height:1.6;max-width:500px}
+#overlay button{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:14px 40px;border-radius:12px;font-size:1.05em;font-weight:700;cursor:pointer;font-family:inherit;transition:all .3s;margin:4px}
+#overlay button:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(102,126,234,.4)}
+.dead h2{color:#ff4466}.win h2{color:#ffd700}.true-end h2{color:#22d3ee}
+footer{margin-top:25px;color:#7070a0;font-size:.8em;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.combat-panel{background:linear-gradient(135deg,#2d0a3a,#1a0a2e);border:2px solid #ff4466;border-radius:12px;padding:14px 18px;margin-bottom:14px;animation:pulse-combat 1.5s infinite}
+@keyframes pulse-combat{0%,100%{box-shadow:0 0 10px rgba(255,68,102,.3)}50%{box-shadow:0 0 25px rgba(255,68,102,.6)}}
+.combat-panel h3{color:#ff6b8a;font-size:1.1em;margin-bottom:8px}
+.combat-panel .enemy-hp-wrap{background:#0a0a2e;border-radius:4px;height:8px;overflow:hidden;margin-top:6px}
+.combat-panel .enemy-hp-bar{height:8px;background:linear-gradient(90deg,#ff4466,#ff6b8a);transition:width .4s}
+.combat-panel .enemy-stats{font-size:.85em;color:#c0c0e0;margin-top:6px}
+.combat-panel .enemy-icon{font-size:2em;margin-right:10px}
+@media(max-width:520px){
+h1{font-size:1.5em}#game{padding:14px}
+.stat-box{padding:6px 4px}.stat-val{font-size:.95em}.stat-label{font-size:.55em}
+.opt-btn{font-size:.8em;padding:10px 12px}.opt-chance{font-size:.68em;padding:2px 6px}
+.inventory{font-size:.75em;max-height:90px}
 }
 </style>
 </head>
 <body>
 <h1>SURVIVAL</h1>
-<div class="vip-tag">VIP EXCLUSIVE</div>
+<div class="vip-tag">VIP EXCLUSIVE · FASE 1+2+3+4</div>
 <div id="game">
-    <div class="record-bar">
-        <span>Record: <span class="record-val" id="recordDays">0</span> dias</span>
-        <span>Partidas: <span class="record-val" id="totalGames">0</span></span>
+    <div class="topbar">
+        <span>🏆 <span class="record-val" id="recordDays">0</span>d</span>
+        <span>🎮 <span class="record-val" id="totalGames">0</span></span>
+        <span>🌦️ <span class="weather-val" id="weatherDisplay">Sol</span></span>
+        <span>🕐 <span class="time-val" id="timeDisplay">Amanecer</span></span>
+        <span id="modeDisplay" style="color:#4ade80;font-weight:700">Normal</span>
     </div>
-    <div class="stats">
-        <div class="stat-box"><div class="stat-label">DIA</div><div class="stat-val day" id="sDia">1</div></div>
-        <div class="stat-box"><div class="stat-label">HP</div><div class="stat-val hp" id="sHp">100</div><div class="bar-wrap"><div class="bar hp" id="bHp" style="width:100%"></div></div></div>
-        <div class="stat-box"><div class="stat-label">HAMBRE</div><div class="stat-val hunger" id="sHam">100</div><div class="bar-wrap"><div class="bar hunger" id="bHam" style="width:100%"></div></div></div>
-        <div class="stat-box"><div class="stat-label">SED</div><div class="stat-val thirst" id="sSed">100</div><div class="bar-wrap"><div class="bar thirst" id="bSed" style="width:100%"></div></div></div>
+    <div class="quest-bar" id="questBar"></div>
+    <div class="panel-btns">
+        <button class="panel-btn" onclick="openJournal()">📖 Diario <span class="notif" id="journalNotif" style="display:none">0</span></button>
+        <button class="panel-btn" onclick="openBuild()">🔨 Construir</button>
+        <button class="panel-btn" onclick="openQuests()">📜 Misiones</button>
+        <button class="panel-btn" onclick="openAchievements()">🏆 Logros</button>
+        <button class="panel-btn" onclick="openCompanions()">🐕 Compañeros</button>
     </div>
+    <div class="stats" id="statsGrid"></div>
+    <div class="conditions" id="conditionsDisplay"></div>
     <div class="inventory" id="invDisplay"></div>
+    <div id="combatPanel"></div>
     <div class="zone" id="zoneName"></div>
     <div id="log">Bienvenido a la isla. Sobrevive el maximo posible.</div>
     <div class="options" id="options"></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <h2 id="modalTitle"></h2>
+        <div id="modalBody"></div>
+    </div>
 </div>
 
 <div id="overlay">
     <h2 id="oTitle"></h2>
     <p id="oMsg"></p>
     <p class="score-detail" id="oDetail"></p>
-    <button onclick="resetGame()">REINTENTAR</button>
+    <div id="oButtons"></div>
 </div>
-<footer>&copy; 2026 MINGUELASGO GAMES</footer>
+<footer>&copy; 2026 MINGUELASGO GAMES · FASE 1+2+3+4</footer>
 
 <script>
-var ZONES = [
-    { name: "PLAYA", icon: "🏝️", options: [
-        { txt: "🌊 Buscar cocos en la orilla", fn: function(s) {
-            if(Math.random() > 0.2) { s.sed = Math.min(100, s.sed + 25); s.inv.comida++; return {msg:"+25 sed +1 comida", cls:"good"}; }
-            return {msg:"No encontraste cocos esta vez.", cls:"neutral"};
-        }},
-        { txt: "🪵 Recoger madera de la costa", fn: function(s) { var n = 3 + Math.floor(Math.random()*3); s.inv.madera += n; return {msg:"+" + n + " madera", cls:"good"}; }},
-        { txt: "🐟 Pescar en la orilla", fn: function(s) {
-            if(s.inv.anzuelo) { var n = 2 + Math.floor(Math.random()*3); s.inv.comida += n; return {msg:"+" + n + " comida (con anzuelo)", cls:"good"}; }
-            if(Math.random() > 0.5) { s.inv.comida++; return {msg:"+1 comida (a mano)", cls:"good"}; }
-            return {msg:"Se te escaparon los peces.", cls:"neutral"};
-        }},
-        { txt: "🐚 Buscar objetos en la playa", fn: function(s) {
-            var r = Math.random();
-            if(r > 0.7) { s.inv.fosforos += 2; return {msg:"Encontraste una caja con 2 fosforos!", cls:"good"}; }
-            if(r > 0.4) { s.inv.cuerda++; return {msg:"+1 cuerda", cls:"good"}; }
-            return {msg:"Solo conchas y algas.", cls:"neutral"};
-        }},
-        { txt: "🌿 Ir a la Selva", fn: function(s) { s.zone = 1; return {msg:"Te adentras en la selva...", cls:"neutral"}; }},
-        { txt: "😴 Descansar en la arena", fn: function(s) {
-            var heal = s.inv.cabana ? 25 : 12;
-            s.hp = Math.min(100, s.hp + heal);
-            return {msg:"+" + heal + " HP" + (s.inv.cabana ? " (cabana)" : ""), cls:"good"};
-        }},
-    ]},
-    { name: "SELVA", icon: "🌿", options: [
-        { txt: "🍌 Buscar frutas", fn: function(s) {
-            if(Math.random() > 0.15) { var n = 1 + Math.floor(Math.random()*3); s.inv.comida += n; s.hambre = Math.min(100,s.hambre+15); return {msg:"+" + n + " comida +15 hambre", cls:"good"}; }
-            s.hp -= 8; return {msg:"Comiste una fruta toxica! -8 HP", cls:"bad"};
-        }},
-        { txt: "🪵 Talar arboles", fn: function(s) { var n = 5 + Math.floor(Math.random()*4); s.inv.madera += n; return {msg:"+" + n + " madera", cls:"good"}; }},
-        { txt: "💧 Buscar rio", fn: function(s) {
-            if(Math.random() > 0.25) { s.sed = Math.min(100,s.sed+35); s.inv.agua += 2; return {msg:"+35 sed +2 agua", cls:"good"}; }
-            return {msg:"No encontraste agua limpia.", cls:"neutral"};
-        }},
-        { txt: "🗡️ Fabricar lanza (4 madera + 1 cuerda)", fn: function(s) {
-            if(s.inv.madera >= 4 && s.inv.cuerda >= 1) { s.inv.madera-=4; s.inv.cuerda--; s.inv.lanza=true; return {msg:"Lanza fabricada!", cls:"good"}; }
-            if(s.inv.madera < 4) return {msg:"Necesitas 4 madera (tienes " + s.inv.madera + ")", cls:"bad"};
-            return {msg:"Necesitas 1 cuerda (tienes " + s.inv.cuerda + ")", cls:"bad"};
-        }},
-        { txt: "🏗️ Construir cabana (14 madera + 2 cuerda)", fn: function(s) {
-            if(s.inv.madera >= 14 && s.inv.cuerda >= 2) { s.inv.madera-=14; s.inv.cuerda-=2; s.inv.cabana=true; return {msg:"Cabana construida! Descansas mejor.", cls:"good"}; }
-            return {msg:"Faltan materiales (madera: " + s.inv.madera + "/14, cuerda: " + s.inv.cuerda + "/2)", cls:"bad"};
-        }},
-        { txt: "🪤 Poner trampa (2 madera + 1 cuerda)", fn: function(s) {
-            if(s.inv.madera >= 2 && s.inv.cuerda >= 1) { s.inv.madera-=2; s.inv.cuerda--; s.inv.trampa = (s.inv.trampa||0)+1; return {msg:"Trampa colocada! (total: " + s.inv.trampa + ")", cls:"good"}; }
-            return {msg:"Necesitas 2 madera + 1 cuerda", cls:"bad"};
-        }},
-        { txt: "⛰️ Subir a la Montana", fn: function(s) { s.zone = 2; return {msg:"Subes a la montana...", cls:"neutral"}; }},
-        { txt: "🌧️ Entrar al Pantano", fn: function(s) { s.zone = 3; return {msg:"Entras al pantano...", cls:"neutral"}; }},
-        { txt: "🏝️ Volver a la Playa", fn: function(s) { s.zone = 0; return {msg:"Vuelves a la playa.", cls:"neutral"}; }},
-    ]},
-    { name: "MONTANA", icon: "⛰️", options: [
-        { txt: "🦌 Cazar animales", fn: function(s) {
-            if(s.inv.lanza) {
-                if(Math.random() > 0.25) { var n = 4 + Math.floor(Math.random()*4); s.inv.comida += n; return {msg:"Caza exitosa! +" + n + " comida", cls:"good"}; }
-                return {msg:"El animal escapo.", cls:"neutral"};
-            }
-            s.hp -= 20; return {msg:"-20 HP! Sin lanza es peligroso.", cls:"bad"};
-        }},
-        { txt: "🌧️ Recoger agua de lluvia", fn: function(s) {
-            if(Math.random() > 0.3) { s.sed = Math.min(100,s.sed+30); s.inv.agua += 2; return {msg:"+30 sed +2 agua", cls:"good"}; }
-            return {msg:"No llueve hoy.", cls:"neutral"};
-        }},
-        { txt: "🔥 Encender hoguera (3 madera + 1 fosforo)", fn: function(s) {
-            if(s.inv.fosforos > 0 && s.inv.madera >= 3) {
-                s.inv.madera -= 3; s.inv.fosforos--;
-                s.hp = Math.min(100, s.hp + 20);
-                s.inv.comidaCocida = true;
-                return {msg:"+20 HP. Puedes cocinar comida.", cls:"good"};
-            }
-            return {msg:"Necesitas 3 madera + 1 fosforo", cls:"bad"};
-        }},
-        { txt: "🪨 Explorar cueva", fn: function(s) { s.zone = 4; return {msg:"Entras en una cueva oscura...", cls:"neutral"}; }},
-        { txt: "📡 Senal de humo (6 madera + 1 fosforo, dia 10+)", fn: function(s) {
-            if(s.inv.madera >= 6 && s.inv.fosforos > 0 && s.dia >= 10) {
-                s.inv.madera -= 6; s.inv.fosforos--;
-                if(Math.random() > 0.4) { s.rescate = true; return {msg:"Ves un barco acercarse! Espera un turno mas...", cls:"good"}; }
-                return {msg:"Nadie vio la senal. Intenta manana.", cls:"neutral"};
-            }
-            if(s.dia < 10) return {msg:"Es muy pronto, no hay barcos cercanos (dia 10+)", cls:"neutral"};
-            return {msg:"Necesitas 6 madera + 1 fosforo", cls:"bad"};
-        }},
-        { txt: "🌿 Bajar a la Selva", fn: function(s) { s.zone = 1; return {msg:"Bajas a la selva.", cls:"neutral"}; }},
-    ]},
-    { name: "PANTANO", icon: "🌧️", options: [
-        { txt: "🐊 Cazar reptiles", fn: function(s) {
-            if(s.inv.lanza) {
-                if(Math.random() > 0.35) { var n = 5 + Math.floor(Math.random()*3); s.inv.comida += n; return {msg:"+" + n + " comida!", cls:"good"}; }
-                s.hp -= 10; return {msg:"-10 HP. El reptil contraataco.", cls:"bad"};
-            }
-            s.hp -= 25; return {msg:"-25 HP! Sin lanza es suicida.", cls:"bad"};
-        }},
-        { txt: "🪱 Buscar larvas y raices", fn: function(s) { var n = 2 + Math.floor(Math.random()*2); s.inv.comida += n; return {msg:"+" + n + " comida", cls:"good"}; }},
-        { txt: "🌿 Plantas medicinales", fn: function(s) {
-            if(Math.random() > 0.2) { var heal = 20 + Math.floor(Math.random()*15); s.hp = Math.min(100, s.hp + heal); return {msg:"+" + heal + " HP!", cls:"good"}; }
-            s.hp -= 10; return {msg:"-10 HP. Planta venenosa!", cls:"bad"};
-        }},
-        { txt: "🔍 Explorar restos del naufragio", fn: function(s) {
-            var r = Math.random();
-            if(r > 0.65) { s.inv.fosforos += 3; s.inv.anzuelo = true; return {msg:"Botin: +3 fosforos + anzuelo!", cls:"good"}; }
-            if(r > 0.35) { s.inv.cuerda += 2; s.inv.madera += 3; return {msg:"+2 cuerda +3 madera", cls:"good"}; }
-            if(r > 0.15) { return {msg:"Solo lodo y moho.", cls:"neutral"}; }
-            s.hp -= 15; return {msg:"-15 HP. Pisaste algo afilado.", cls:"bad"};
-        }},
-        { txt: "🐸 Recolectar veneno de rana", fn: function(s) {
-            if(Math.random() > 0.5) { s.inv.veneno = true; return {msg:"Veneno recolectado! Tu lanza hace mas dano.", cls:"good"}; }
-            s.hp -= 12; return {msg:"-12 HP. Te salpico veneno.", cls:"bad"};
-        }},
-        { txt: "🏝️ Ir a la Playa Oculta", fn: function(s) { s.zone = 5; return {msg:"Encuentras una playa escondida...", cls:"neutral"}; }},
-        { txt: "🌿 Volver a la Selva", fn: function(s) { s.zone = 1; return {msg:"Sales del pantano.", cls:"neutral"}; }},
-    ]},
-    { name: "CUEVA", icon: "🪨", options: [
-        { txt: "🔦 Explorar el fondo", fn: function(s) {
-            var r = Math.random();
-            if(r > 0.6) { s.inv.fosforos += 3; s.inv.cuerda += 2; return {msg:"Encontraste suministros! +3 fosforos +2 cuerda", cls:"good"}; }
-            if(r > 0.3) { s.inv.madera += 4; return {msg:"Madera seca +4", cls:"good"}; }
-            s.hp -= 18; return {msg:"-18 HP. Caiste en un hoyo.", cls:"bad"};
-        }},
-        { txt: "🦇 Cazar murcielagos", fn: function(s) {
-            if(s.inv.lanza) { var n = 3 + Math.floor(Math.random()*3); s.inv.comida += n; return {msg:"+" + n + " comida", cls:"good"}; }
-            s.inv.comida += 2; s.hp -= 5; return {msg:"+2 comida pero -5 HP (mordedura)", cls:"neutral"};
-        }},
-        { txt: "🏕️ Dormir protegido", fn: function(s) {
-            var heal = 30 + Math.floor(Math.random()*10);
-            s.hp = Math.min(100, s.hp + heal);
-            return {msg:"+" + heal + " HP. Buen descanso.", cls:"good"};
-        }},
-        { txt: "💎 Buscar minerales", fn: function(s) {
-            if(Math.random() > 0.6) { s.inv.piedraAfilada = true; return {msg:"Piedra afilada! Mejora tu lanza.", cls:"good"}; }
-            return {msg:"Solo rocas normales.", cls:"neutral"};
-        }},
-        { txt: "⛰️ Salir a la Montana", fn: function(s) { s.zone = 2; return {msg:"Sales de la cueva.", cls:"neutral"}; }},
-    ]},
-    { name: "PLAYA OCULTA", icon: "🏖️", options: [
-        { txt: "🚢 Revisar barco varado", fn: function(s) {
-            var r = Math.random();
-            if(r > 0.5) { s.inv.fosforos += 4; s.inv.cuerda += 3; s.inv.anzuelo = true; return {msg:"Botin: +4 fosforos +3 cuerda +anzuelo!", cls:"good"}; }
-            if(r > 0.2) { s.inv.comida += 5; s.inv.agua += 3; return {msg:"+5 comida +3 agua (provisiones)", cls:"good"}; }
-            s.hp -= 10; return {msg:"-10 HP. Tabla podrida.", cls:"bad"};
-        }},
-        { txt: "🐢 Recolectar huevos de tortuga", fn: function(s) { var n = 3 + Math.floor(Math.random()*3); s.inv.comida += n; return {msg:"+" + n + " comida", cls:"good"}; }},
-        { txt: "🧱 Construir balsa (20 madera + 4 cuerda, dia 15+)", fn: function(s) {
-            if(s.inv.madera >= 20 && s.inv.cuerda >= 4 && s.dia >= 15) {
-                s.inv.madera -= 20; s.inv.cuerda -= 4;
-                s.balsa = true;
-                return {msg:"Balsa construida! Puedes intentar escapar!", cls:"good"};
-            }
-            if(s.dia < 15) return {msg:"Necesitas mas experiencia para navegar (dia 15+)", cls:"neutral"};
-            return {msg:"Necesitas 20 madera + 4 cuerda (madera: " + s.inv.madera + "/20, cuerda: " + s.inv.cuerda + "/4)", cls:"bad"};
-        }},
-        { txt: "⛵ Escapar en balsa", fn: function(s) {
-            if(!s.balsa) return {msg:"No tienes balsa.", cls:"bad"};
-            if(s.inv.agua < 3 || s.inv.comida < 5) return {msg:"Necesitas minimo 3 agua + 5 comida para el viaje.", cls:"bad"};
-            if(Math.random() > 0.3) { s.escaped = true; return {msg:"Ves tierra firme! LO LOGRASTE!", cls:"good"}; }
-            s.hp -= 30; s.inv.agua -= 2; s.inv.comida -= 3;
-            return {msg:"-30 HP. Tormenta! Volviste a la isla.", cls:"bad"};
-        }},
-        { txt: "🌧️ Volver al Pantano", fn: function(s) { s.zone = 3; return {msg:"Vuelves al pantano.", cls:"neutral"}; }},
-    ]}
+/* ============ SUERTE ============ */
+function luckBonus(){return (state.suerte||0)*.03}
+function luckChance(){var r=Math.random();return Math.max(0,Math.min(1,r+luckBonus()))}
+function roll(rate){var a=Math.max(.03,Math.min(.97,rate+luckBonus()));return Math.random()<a}
+function pct(rate){return Math.round(Math.max(3,Math.min(97,rate*100)))+"%"}
+function addLuck(n){state.suerte=Math.max(-5,Math.min(5,(state.suerte||0)+n));if(n>0)return' <span class="roll">[Suerte +'+n+']</span>';if(n<0)return' <span class="roll">[Suerte '+n+']</span>';return''}
+
+/* ============ MODOS ============ */
+var GAME_MODES={
+    normal:{name:"Normal",icon:"🎮",desc:"Experiencia estandar",hpMult:1,hungerMult:1,lootMult:1},
+    hardcore:{name:"Hardcore",icon:"💀",desc:"Recursos escasos, hambre brutal",hpMult:.7,hungerMult:1.6,lootMult:.7},
+    infinite:{name:"Infinito",icon:"♾️",desc:"Sin final. Sobrevive hasta que puedas",hpMult:1,hungerMult:.8,lootMult:1.2}
+};
+
+/* ============ CLIMA / HORA ============ */
+var WEATHERS=[
+    {name:"Sol",icon:"☀️",temp:3,fish:1,hunt:1},
+    {name:"Nublado",icon:"☁️",temp:0,fish:1.05,hunt:1.05},
+    {name:"Lluvia",icon:"🌧️",temp:-3,fish:.85,hunt:.85},
+    {name:"Tormenta",icon:"⛈️",temp:-5,fish:.6,hunt:.6},
+    {name:"Tormenta eléc.",icon:"🌩️",temp:-4,fish:.5,hunt:.5},
+    {name:"Niebla",icon:"🌫️",temp:-1,fish:.9,hunt:.7},
+    {name:"Viento fuerte",icon:"💨",temp:-3,fish:.8,hunt:.8},
+    {name:"Ola de calor",icon:"🔥",temp:8,fish:.9,hunt:1.1},
+    {name:"Ola de frío",icon:"❄️",temp:-8,fish:.7,hunt:.7},
+    {name:"Granizo",icon:"🧊",temp:-6,fish:.6,hunt:.6},
+    {name:"Huracán",icon:"🌀",temp:-4,fish:.3,hunt:.3}
+];
+var TIMES=[
+    {name:"Amanecer",icon:"🌅"},{name:"Día",icon:"☀️"},
+    {name:"Atardecer",icon:"🌇"},{name:"Noche",icon:"🌙"},{name:"Madrugada",icon:"🌌"}
 ];
 
-var RANDOM_EVENTS = [
-    { chance: 0.08, fn: function(s) { s.hp -= 15; return "Tormenta nocturna! -15 HP" + (s.inv.cabana ? " (la cabana te protegio un poco)" : ""); }, cabin: function(s) { s.hp += 10; } },
-    { chance: 0.06, fn: function(s) { s.inv.comida = Math.max(0, s.inv.comida - 2); return "Animales robaron tu comida! -2 comida"; }, cabin: null },
-    { chance: 0.07, fn: function(s) { var n = 2 + Math.floor(Math.random()*3); s.inv.comida += n; return "Encontraste un nido! +" + n + " comida"; }, cabin: null },
-    { chance: 0.05, fn: function(s) { s.inv.agua += 3; s.sed = Math.min(100, s.sed + 20); return "Lluvia! +3 agua +20 sed"; }, cabin: null },
-    { chance: 0.04, fn: function(s) { s.hp -= 20; return "Picadura de insecto venenoso! -20 HP"; }, cabin: function(s) { s.hp += 12; } },
-    { chance: 0.03, fn: function(s) { s.inv.cuerda += 2; s.inv.fosforos++; return "Encontraste restos flotando! +2 cuerda +1 fosforo"; }, cabin: null },
-    { chance: 0.04, fn: function(s) { if(s.inv.trampa && s.inv.trampa > 0) { var n = s.inv.trampa * 2; s.inv.comida += n; return "Tus trampas atraparon comida! +" + n + " comida"; } return null; }, cabin: null },
+/* ============ CONDICIONES ============ */
+var CONDITIONS=[
+    {id:"sangrado",name:"Sangrado",icon:"🩸",dmg:8},
+    {id:"herida",name:"Herida",icon:"🤕",dmg:4},
+    {id:"infeccion",name:"Infección",icon:"🦠",dmg:6},
+    {id:"fiebre",name:"Fiebre",icon:"🌡️",dmg:5},
+    {id:"veneno",name:"Envenenado",icon:"☠️",dmg:7},
+    {id:"fractura",name:"Fractura",icon:"🦴",dmg:3},
+    {id:"hipotermia",name:"Hipotermia",icon:"🥶",dmg:6},
+    {id:"insolacion",name:"Insolación",icon:"🥵",dmg:5}
 ];
 
-var state = {};
+/* ============ ENEMIGOS ============ */
+var ENEMIES={
+    lobo:{name:"Lobo",icon:"🐺",hp:25,atk:8,xp:5,loot:"piel",lootN:1},
+    loboAlfa:{name:"Lobo Alfa",icon:"🐺",hp:45,atk:14,xp:12,loot:"piel",lootN:3},
+    oso:{name:"Oso",icon:"🐻",hp:60,atk:18,xp:15,loot:"piel",lootN:3},
+    pantera:{name:"Pantera",icon:"🐆",hp:40,atk:20,xp:14,loot:"piel",lootN:2},
+    jabali:{name:"Jabalí",icon:"🐗",hp:35,atk:12,xp:8,loot:"comida",lootN:3},
+    serpiente:{name:"Serpiente",icon:"🐍",hp:15,atk:10,xp:6,venom:true,loot:"antidoto",lootN:1},
+    cocodrilo:{name:"Cocodrilo",icon:"🐊",hp:55,atk:22,xp:16,loot:"piel",lootN:4},
+    arana:{name:"Araña Gigante",icon:"🕷️",hp:20,atk:9,xp:7,venom:true,loot:"venenoLanza",lootN:1},
+    escorpion:{name:"Escorpión",icon:"🦂",hp:18,atk:11,xp:8,venom:true,loot:"antidoto",lootN:1},
+    tiburon:{name:"Tiburón",icon:"🦈",hp:70,atk:25,xp:20,loot:"dienteTiburon",lootN:1},
+    bandido:{name:"Bandido",icon:"🗡️",hp:45,atk:15,xp:18,loot:"chatarra",lootN:3,human:true},
+    pirata:{name:"Pirata",icon:"🏴‍☠️",hp:55,atk:18,xp:22,loot:"oro",lootN:3,human:true},
+    saqueador:{name:"Saqueador",icon:"🪓",hp:50,atk:17,xp:20,loot:"componentes",lootN:2,human:true},
+    jefeBandido:{name:"JEFE Bandido",icon:"👑",hp:120,atk:25,xp:60,loot:"armaFuego",lootN:1,human:true,boss:true},
+    jefePirata:{name:"CAPITÁN Pirata",icon:"☠️",hp:150,atk:30,xp:80,loot:"oro",lootN:10,human:true,boss:true},
+    jefeAntiguo:{name:"GUARDIÁN ANTIGUO",icon:"🗿",hp:200,atk:35,xp:120,loot:"mineralRaro",lootN:5,boss:true}
+};
+var ZONE_ENEMIES={
+    0:["serpiente","bandido"],1:["jabali","serpiente","pantera","arana","bandido"],
+    2:["lobo","loboAlfa","oso","bandido","saqueador"],3:["cocodrilo","serpiente","arana","saqueador"],
+    4:["arana","escorpion","bandido"],5:["tiburon","pirata","jefePirata"],
+    6:["bandido","saqueador","pirata","jefeBandido"],7:["bandido","saqueador","jefeBandido"],
+    8:["pantera","oso"],9:["lobo","loboAlfa"],10:["cocodrilo","jabali"],
+    11:["lobo","loboAlfa","oso","pantera"],12:["lobo","loboAlfa","oso"],
+    13:["escorpion","jefeAntiguo"],14:["tiburon","cocodrilo"],15:["escorpion","jefeAntiguo"],
+    16:["escorpion","arana","bandido"],17:["jefeAntiguo"],18:["bandido","pirata"],
+    19:["saqueador","jefeAntiguo"],20:["bandido","jefeBandido"]
+};
 
-function loadRecord() {
-    var r = localStorage.getItem('mg_survival_record') || '0';
-    var g = localStorage.getItem('mg_survival_games') || '0';
-    document.getElementById('recordDays').textContent = r;
-    document.getElementById('totalGames').textContent = g;
+/* ============ NPCs ============ */
+var NPCS=[
+    {id:"comerciante",name:"Comerciante",icon:"🧙",desc:"Intercambia recursos"},
+    {id:"medico",name:"Médico",icon:"👨‍⚕️",desc:"Cura heridas"},
+    {id:"cientifico",name:"Científico",icon:"👨‍🔬",desc:"Da información"},
+    {id:"cazador",name:"Cazador",icon:"🏹",desc:"Enseña a cazar"},
+    {id:"naufrago",name:"Náufrago",icon:"🧔",desc:"Comparte historia"},
+    {id:"soldado",name:"Soldado",icon:"💂",desc:"Vende armas"}
+];
+
+/* ============ COMPAÑEROS ============ */
+var COMPANIONS={
+    perro:{id:"perro",name:"Perro",icon:"🐕",desc:"+15% éxito en caza",bonus:"hunt",cost:{comida:5}},
+    loro:{id:"loro",name:"Loro",icon:"🦜",desc:"+20% probabilidad de loot raro",bonus:"loot",cost:{comida:4}},
+    mono:{id:"mono",name:"Mono",icon:"🐒",desc:"+1 comida gratis cada 3 días",bonus:"food",cost:{comida:6}}
+};
+
+/* ============ EDIFICIOS ============ */
+var BUILDINGS=[
+    {id:"cabana",name:"Cabaña",icon:"🏠",cost:{madera:14,cuerda:2},desc:"+5 HP/día, protege eventos",repeat:false},
+    {id:"muralla",name:"Muralla",icon:"🧱",cost:{madera:20,piedra:10},desc:"Reduce daño en eventos",repeat:true,max:3},
+    {id:"taller",name:"Taller",icon:"🔨",cost:{madera:15,hierro:5},desc:"Desbloquea crafteo avanzado",repeat:false},
+    {id:"huerto",name:"Huerto",icon:"🌾",cost:{madera:5,fibra:5},desc:"+2 comida cada 4 días",repeat:false},
+    {id:"corral",name:"Corral",icon:"🐔",cost:{madera:10,cuerda:4},desc:"+1 comida +1 huevo/día",repeat:false},
+    {id:"radio",name:"Torre de Radio",icon:"📡",cost:{madera:20,hierro:10,componentes:5},desc:"+30% éxito de rescate",repeat:false},
+    {id:"enfermeria",name:"Enfermería",icon:"🏥",cost:{madera:12,fibra:8},desc:"Cura +5 HP/día, cura infecciones",repeat:false},
+    {id:"torre",name:"Torre Vigilancia",icon:"🗼",cost:{madera:18,cuerda:3},desc:"Evita 50% de emboscadas",repeat:false}
+];
+
+/* ============ MISIONES ============ */
+var QUESTS=[
+    {id:"q1",title:"Supervivencia básica",desc:"Sobrevive 3 días",icon:"🌱",main:true,check:function(s){return s.dia>=3},reward:{xp:20}},
+    {id:"q2",title:"Constructor",desc:"Construye una cabaña",icon:"🏠",main:true,check:function(s){return s.inv.cabana},reward:{xp:30}},
+    {id:"q3",title:"Cazador",desc:"Fabrica una lanza",icon:"🗡️",main:true,check:function(s){return s.inv.lanza},reward:{xp:25}},
+    {id:"q4",title:"Explorador",desc:"Visita 5 zonas diferentes",icon:"🗺️",main:true,check:function(s){return s.visitedZones.length>=5},reward:{xp:40}},
+    {id:"q5",title:"El misterio comienza",desc:"Encuentra la llave del búnker",icon:"🔑",main:true,check:function(s){return s.inv.llaveBunker},reward:{xp:50}},
+    {id:"q6",title:"Científico loco",desc:"Visita el laboratorio",icon:"🧪",main:true,check:function(s){return s.visitedZones.indexOf(19)>=0},reward:{xp:60}},
+    {id:"q7",title:"Superviviente",desc:"Sobrevive 15 días",icon:"🏕️",main:true,check:function(s){return s.dia>=15},reward:{xp:80}},
+    {id:"q8",title:"Veterano",desc:"Llega al nivel 10",icon:"🏅",main:true,check:function(s){return s.nivel>=10},reward:{xp:100}},
+    {id:"s1",title:"Pescador",desc:"Consigue un anzuelo",icon:"🪝",main:false,check:function(s){return s.inv.anzuelo},reward:{xp:15}},
+    {id:"s2",title:"Armero",desc:"Consigue un arma de fuego",icon:"🔫",main:false,check:function(s){return s.inv.armaFuego},reward:{xp:40}},
+    {id:"s3",title:"Minero",desc:"Consigue un pico",icon:"⛏️",main:false,check:function(s){return s.inv.pico},reward:{xp:30}},
+    {id:"s4",title:"Coleccionista",desc:"Consigue 3 minerales raros",icon:"⭐",main:false,check:function(s){return (s.inv.mineralRaro||0)>=3},reward:{xp:50}},
+    {id:"s5",title:"Rico",desc:"Acumula 10 de oro",icon:"💰",main:false,check:function(s){return (s.inv.oro||0)>=10},reward:{xp:40}}
+];
+
+/* ============ DIARIOS ============ */
+var DIARIES=[
+    {id:"d1",zone:4,title:"Registro #47",text:"Día 47 del proyecto. Los experimentos con cristales han dado resultados inesperados. El sujeto 13 ya no responde...",unlocked:false},
+    {id:"d2",zone:7,title:"Carta sin enviar",text:"El pueblo fue evacuado de repente. ¿Qué encontraron en las profundidades del volcán?",unlocked:false},
+    {id:"d3",zone:17,title:"Inscripción tallada",text:"Los antiguos ya conocían el poder del cristal. Lo llamaban 'la luz del alma' y lo usaban para sanar.",unlocked:false},
+    {id:"d4",zone:19,title:"Registro final",text:"Dr. Vance, registro final: El guardián está despierto. Si alguien lee esto, NO entren a la cueva de cristal.",unlocked:false},
+    {id:"d5",zone:20,title:"Manual del búnker",text:"El búnker fue construido como último refugio. Nunca llegamos a usarlo. La puerta de atrás lleva al laboratorio.",unlocked:false},
+    {id:"d6",zone:13,title:"Notas garabateadas",text:"El guardián no es malvado. Solo protege lo que le pertenece. Se puede razonar con él... quizás.",unlocked:false},
+    {id:"d7",zone:18,title:"Diario del farero",text:"Desde el faro se ve una isla al norte. Si alguien llega hasta aquí, hay esperanza.",unlocked:false}
+];
+
+/* ============ LOGROS ============ */
+var ACHIEVEMENTS=[
+    {id:"first_blood",name:"Primera Sangre",desc:"Mata a un enemigo",icon:"⚔️"},
+    {id:"veteran",name:"Veterano",desc:"Llega al nivel 10",icon:"🏅"},
+    {id:"survivor20",name:"Superviviente",desc:"Sobrevive 20 días",icon:"🎖️"},
+    {id:"builder",name:"Constructor",desc:"Construye una cabaña",icon:"🏠"},
+    {id:"explorer",name:"Explorador",desc:"Visita 10 zonas",icon:"🗺️"},
+    {id:"boss_slayer",name:"Cazador de Jefes",desc:"Mata a un jefe",icon:"👑"},
+    {id:"rich",name:"Millonario",desc:"Acumula 50 de oro",icon:"💰"},
+    {id:"librarian",name:"Bibliotecario",desc:"Encuentra 5 diarios",icon:"📖"},
+    {id:"rescued",name:"Rescatado",desc:"Termina siendo rescatado",icon:"🚁"},
+    {id:"escaped",name:"Evasor",desc:"Escapa de la isla",icon:"⛵"},
+    {id:"companion",name:"Mejor Amigo",desc:"Consigue un compañero",icon:"🐕"},
+    {id:"farmer",name:"Granjero",desc:"Cosecha tu primer cultivo",icon:"🌾"}
+];
+
+/* ============ ZONAS ============ */
+var ZONES=[
+{name:"PLAYA",icon:"🏝️",temp:22,options:[
+    {txt:"🌊 Buscar cocos",chance:.8,fn:function(s){if(roll(.8)){s.sed=Math.min(100,s.sed+25);s.inv.comida++;return{msg:"+25 sed +1 comida",cls:"good"}}return{msg:"No encontraste cocos.",cls:"neutral"}}},
+    {txt:"🪵 Recoger madera",fn:function(s){var n=3+Math.floor(Math.random()*3);s.inv.madera+=n;return{msg:"+"+n+" madera",cls:"good"}}},
+    {txt:"🐟 Pescar",chance:.5,risky:true,fn:function(s){if(s.inv.anzuelo){var n=2+Math.floor(Math.random()*3);s.inv.comida+=n;return{msg:"+"+n+" comida",cls:"good"}}if(roll(.5)){s.inv.comida++;return{msg:"+1 comida",cls:"good"}}return{msg:"Se escaparon.",cls:"neutral"}}},
+    {txt:"🐚 Buscar objetos",chance:.6,fn:function(s){var r=luckChance();if(r>.7){s.inv.fosforos+=2;return{msg:"+2 fósforos",cls:"good"}}if(r>.45){s.inv.cuerda++;return{msg:"+1 cuerda",cls:"good"}}if(r>.25){s.inv.fibra+=2;return{msg:"+2 fibra",cls:"good"}}return{msg:"Solo conchas.",cls:"neutral"}}},
+    {txt:"👀 Explorar",chance:.7,risky:true,fn:function(s){if(roll(.7)){if(Math.random()<.35){return{msg:"Algo sospechoso...",cls:"neutral",trigger:"combat"}}return{msg:"Todo tranquilo.",cls:"neutral"}}return{msg:"Zona tranquila.",cls:"neutral"}}},
+    {txt:"🌿 Ir a la Selva",fn:function(s){s.zone=1;return{msg:"Te adentras en la selva...",cls:"neutral"}}},
+    {txt:"💦 Cascada",fn:function(s){s.zone=8;return{msg:"Buscas la cascada...",cls:"neutral"}}},
+    {txt:"⚓ Puerto",fn:function(s){s.zone=6;return{msg:"Vas al puerto...",cls:"neutral"}}},
+    {txt:"😴 Descansar",fn:function(s){var heal=s.inv.cabana?25:12;s.hp=Math.min(100,s.hp+heal);s.energia=Math.min(100,s.energia+15);return{msg:"+"+heal+" HP +15 energía",cls:"good"}}}
+]},
+{name:"SELVA",icon:"🌿",temp:28,options:[
+    {txt:"🍌 Buscar frutas",chance:.85,risky:true,fn:function(s){if(roll(.85)){var n=1+Math.floor(Math.random()*3);s.inv.comida+=n;s.hambre=Math.min(100,s.hambre+15);return{msg:"+"+n+" comida +15 hambre",cls:"good"}}s.hp-=8;return{msg:"Fruta tóxica! -8 HP",cls:"bad"}}},
+    {txt:"🪵 Talar árboles",fn:function(s){var n=5+Math.floor(Math.random()*4);s.inv.madera+=n;s.energia-=8;return{msg:"+"+n+" madera",cls:"good"}}},
+    {txt:"💧 Buscar río",chance:.75,fn:function(s){if(roll(.75)){s.sed=Math.min(100,s.sed+35);s.inv.agua+=2;return{msg:"+35 sed +2 agua",cls:"good"}}return{msg:"Sin agua limpia.",cls:"neutral"}}},
+    {txt:"🌿 Recolectar fibra",fn:function(s){var n=3+Math.floor(Math.random()*3);s.inv.fibra+=n;return{msg:"+"+n+" fibra",cls:"good"}}},
+    {txt:"🍄 Buscar setas",chance:.7,risky:true,fn:function(s){if(roll(.7)){s.inv.comida+=2;return{msg:"+2 comida",cls:"good"}}s.condiciones.veneno=1;return{msg:"Setas tóxicas!",cls:"bad"}}},
+    {txt:"🗡️ Fabricar lanza (4 madera + 1 cuerda)",fn:function(s){if(s.inv.madera>=4&&s.inv.cuerda>=1){s.inv.madera-=4;s.inv.cuerda--;s.inv.lanza=true;return{msg:"Lanza fabricada!",cls:"good"}}return{msg:"Faltan materiales.",cls:"bad"}}},
+    {txt:"🏗️ Construir cabaña (14 madera + 2 cuerda)",fn:function(s){if(s.inv.madera>=14&&s.inv.cuerda>=2){s.inv.madera-=14;s.inv.cuerda-=2;s.inv.cabana=true;return{msg:"Cabaña construida!",cls:"good"}}return{msg:"Faltan materiales.",cls:"bad"}}},
+    {txt:"🪤 Poner trampa",fn:function(s){if(s.inv.madera>=2&&s.inv.cuerda>=1){s.inv.madera-=2;s.inv.cuerda--;s.inv.trampa=(s.inv.trampa||0)+1;return{msg:"Trampa colocada!",cls:"good"}}return{msg:"Faltan materiales.",cls:"bad"}}},
+    {txt:"🐆 Cazar",chance:.75,risky:true,fn:function(s){if(roll(.75)){return{msg:"Rastros de animales...",cls:"neutral",trigger:"combat"}}return{msg:"No hay presas.",cls:"neutral"}}},
+    {txt:"⛰️ Montaña",fn:function(s){s.zone=2;return{msg:"Subes a la montaña...",cls:"neutral"}}},
+    {txt:"🌧️ Pantano",fn:function(s){s.zone=3;return{msg:"Entras al pantano...",cls:"neutral"}}},
+    {txt:"🏛️ Ruinas",fn:function(s){s.zone=17;return{msg:"Vas a las ruinas...",cls:"neutral"}}},
+    {txt:"🌲 Bosque Profundo",fn:function(s){s.zone=11;return{msg:"Al bosque...",cls:"neutral"}}},
+    {txt:"🏝️ Playa",fn:function(s){s.zone=0;return{msg:"Vuelves a la playa.",cls:"neutral"}}}
+]},
+{name:"MONTAÑA",icon:"⛰️",temp:12,options:[
+    {txt:"🐺 Cazar (peligro: lobos)",chance:.7,risky:true,fn:function(s){if(roll(.7)){return{msg:"¡Rastros de lobos!",cls:"neutral",trigger:"combat"}}return{msg:"El animal escapó.",cls:"neutral"}}},
+    {txt:"🌧️ Recoger agua",chance:.7,fn:function(s){if(roll(.7)){s.sed=Math.min(100,s.sed+30);s.inv.agua+=2;return{msg:"+30 sed +2 agua",cls:"good"}}return{msg:"No llueve.",cls:"neutral"}}},
+    {txt:"🔥 Encender hoguera",fn:function(s){if(s.inv.fosforos>0&&s.inv.madera>=3){s.inv.madera-=3;s.inv.fosforos--;s.hp=Math.min(100,s.hp+20);s.condiciones.hipotermia=0;s.inv.comidaCocida=true;return{msg:"+20 HP, hipotermia curada",cls:"good"}}return{msg:"Faltan materiales.",cls:"bad"}}},
+    {txt:"🪨 Cueva",fn:function(s){s.zone=4;return{msg:"Entras en la cueva...",cls:"neutral"}}},
+    {txt:"🏔️ Nieve",fn:function(s){s.zone=12;return{msg:"Subes hacia la nieve...",cls:"neutral"}}},
+    {txt:"🌋 Volcán",fn:function(s){s.zone=15;return{msg:"Sientes el calor del volcán...",cls:"neutral"}}},
+    {txt:"🌿 Selva",fn:function(s){s.zone=1;return{msg:"Bajas a la selva.",cls:"neutral"}}}
+]},
+{name:"PANTANO",icon:"🌧️",temp:20,options:[
+    {txt:"🐊 Cazar (peligro: cocodrilos)",chance:.65,risky:true,fn:function(s){if(roll(.65)){return{msg:"¡Un cocodrilo!",cls:"neutral",trigger:"combat"}}return{msg:"Nada.",cls:"neutral"}}},
+    {txt:"🪱 Buscar larvas",fn:function(s){var n=2+Math.floor(Math.random()*2);s.inv.comida+=n;return{msg:"+"+n+" comida",cls:"good"}}},
+    {txt:"🌿 Plantas medicinales",chance:.8,risky:true,fn:function(s){if(roll(.8)){var heal=20+Math.floor(Math.random()*15);s.hp=Math.min(100,s.hp+heal);s.inv.medicina=(s.inv.medicina||0)+1;return{msg:"+"+heal+" HP +1 Medicina",cls:"good"}}s.hp-=10;s.condiciones.veneno=1;return{msg:"-10 HP + Envenenado",cls:"bad"}}},
+    {txt:"🔍 Restos del naufragio",chance:.85,risky:true,fn:function(s){var r=luckChance();if(r>.65){s.inv.fosforos+=3;s.inv.anzuelo=true;return{msg:"+3 fósforos + anzuelo",cls:"good"}}if(r>.35){s.inv.cuerda+=2;s.inv.madera+=3;return{msg:"+2 cuerda +3 madera",cls:"good"}}if(r>.15){return{msg:"Solo lodo.",cls:"neutral"}}s.hp-=15;s.condiciones.herida=1;return{msg:"-15 HP + Herida",cls:"bad"}}},
+    {txt:"🐸 Veneno de rana",chance:.5,risky:true,fn:function(s){if(roll(.5)){s.inv.venenoLanza=true;return{msg:"Lanza envenenada!",cls:"good"}}s.hp-=12;s.condiciones.veneno=1;return{msg:"-12 HP + Envenenado",cls:"bad"}}},
+    {txt:"🏝️ Playa Oculta",fn:function(s){s.zone=5;return{msg:"Buscas la playa oculta...",cls:"neutral"}}},
+    {txt:"🌿 Selva",fn:function(s){s.zone=1;return{msg:"Sales del pantano.",cls:"neutral"}}}
+]},
+{name:"CUEVA",icon:"🪨",temp:14,options:[
+    {txt:"🔦 Explorar el fondo",chance:.7,risky:true,fn:function(s){var r=luckChance();if(r>.6){s.inv.fosforos+=3;s.inv.cuerda+=2;return{msg:"+3 fósforos +2 cuerda",cls:"good"}}if(r>.3){s.inv.madera+=4;return{msg:"+4 madera",cls:"good"}}s.hp-=18;s.condiciones.herida=1;return{msg:"-18 HP + Herida",cls:"bad"}}},
+    {txt:"🕷️ Explorar (arañas)",chance:.6,risky:true,fn:function(s){if(roll(.6)){return{msg:"¡Telarañas gigantes!",cls:"neutral",trigger:"combat"}}return{msg:"Sin peligro.",cls:"neutral"}}},
+    {txt:"🏕️ Dormir protegido",fn:function(s){var heal=30+Math.floor(Math.random()*10);s.hp=Math.min(100,s.hp+heal);s.energia=Math.min(100,s.energia+50);s.sueno=Math.min(100,s.sueno+60);return{msg:"+"+heal+" HP +50 energía +60 sueño",cls:"good"}}},
+    {txt:"💎 Buscar minerales",chance:.4,fn:function(s){if(roll(.4)){var r=Math.random();if(r>.85){s.inv.hierro=(s.inv.hierro||0)+2;return{msg:"+2 hierro",cls:"good"}}if(r>.6){s.inv.piedra+=3;return{msg:"+3 piedra",cls:"good"}}s.inv.carbon=(s.inv.carbon||0)+2;return{msg:"+2 carbón",cls:"good"}}return{msg:"Rocas normales.",cls:"neutral"}}},
+    {txt:"💎 Cueva de Cristal",fn:function(s){s.zone=13;return{msg:"Buscas la cueva de cristal...",cls:"neutral"}}},
+    {txt:"⛏️ Mina",fn:function(s){s.zone=16;return{msg:"Entras a la mina...",cls:"neutral"}}},
+    {txt:"⛰️ Montaña",fn:function(s){s.zone=2;return{msg:"Sales de la cueva.",cls:"neutral"}}}
+]},
+{name:"PLAYA OCULTA",icon:"🏖️",temp:24,options:[
+    {txt:"🚢 Barco varado",chance:.8,risky:true,fn:function(s){var r=luckChance();if(r>.5){s.inv.fosforos+=4;s.inv.cuerda+=3;s.inv.anzuelo=true;return{msg:"+4 fósforos +3 cuerda + anzuelo",cls:"good"}}if(r>.2){s.inv.comida+=5;s.inv.agua+=3;return{msg:"+5 comida +3 agua",cls:"good"}}s.hp-=10;s.condiciones.herida=1;return{msg:"-10 HP + Herida",cls:"bad"}}},
+    {txt:"🐢 Recolectar huevos",fn:function(s){var n=3+Math.floor(Math.random()*3);s.inv.comida+=n;return{msg:"+"+n+" comida",cls:"good"}}},
+    {txt:"🏴‍☠️ Cueva pirata",chance:.5,risky:true,fn:function(s){if(roll(.5)){return{msg:"¡Piratas!",cls:"neutral",trigger:"combat",forceEnemy:"pirata"}}if(Math.random()>.6){s.inv.oro=(s.inv.oro||0)+5;return{msg:"+5 oro",cls:"good"}}return{msg:"Cueva vacía.",cls:"neutral"}}},
+    {txt:"🧱 Construir balsa",fn:function(s){if(s.inv.madera>=20&&s.inv.cuerda>=4&&s.dia>=15){s.inv.madera-=20;s.inv.cuerda-=4;s.balsa=true;return{msg:"Balsa construida!",cls:"good"}}if(s.dia<15)return{msg:"Día 15+ requerido",cls:"neutral"};return{msg:"Faltan materiales.",cls:"bad"}}},
+    {txt:"⛵ Escapar en balsa",chance:.7,risky:true,fn:function(s){if(!s.balsa)return{msg:"No tienes balsa.",cls:"bad"};if(s.inv.agua<3||s.inv.comida<5)return{msg:"Necesitas 3 agua + 5 comida.",cls:"bad"};if(roll(.7)){s.escaped=true;return{msg:"¡LO LOGRASTE!",cls:"good"}}s.hp-=30;s.inv.agua-=2;s.inv.comida-=3;return{msg:"-30 HP, vuelves",cls:"bad"}}},
+    {txt:"🌊 Zona Submarina",fn:function(s){if(!s.inv.alettas)return{msg:"Necesitas aletas.",cls:"bad"};s.zone=14;return{msg:"Te sumerges...",cls:"neutral"}}},
+    {txt:"🌧️ Pantano",fn:function(s){s.zone=3;return{msg:"Vuelves al pantano.",cls:"neutral"}}}
+]},
+{name:"PUERTO",icon:"⚓",temp:21,options:[
+    {txt:"🔍 Buscar almacenes",chance:.75,fn:function(s){var r=luckChance();if(r>.7){s.inv.chatarra=(s.inv.chatarra||0)+3;s.inv.cuerda+=2;return{msg:"+3 chatarra +2 cuerda",cls:"good"}}if(r>.4){s.inv.comida+=3;s.inv.agua+=2;return{msg:"+3 comida +2 agua",cls:"good"}}return{msg:"Cajas vacías.",cls:"neutral"}}},
+    {txt:"🐟 Pescar",chance:.7,fn:function(s){var bonus=WEATHERS[s.weatherIdx].fish;if(roll(.7*bonus)){var n=3+Math.floor(Math.random()*3);s.inv.comida+=n;return{msg:"+"+n+" comida",cls:"good"}}return{msg:"Nada picó.",cls:"neutral"}}},
+    {txt:"🏴‍☠️ Explorar muelles",chance:.5,risky:true,fn:function(s){if(roll(.5)){return{msg:"¡Bandidos!",cls:"neutral",trigger:"combat"}}if(Math.random()>.5){s.inv.oro=(s.inv.oro||0)+3;return{msg:"+3 oro",cls:"good"}}return{msg:"Nada.",cls:"neutral"}}},
+    {txt:"⛵ Reparar barco",fn:function(s){if(s.inv.madera>=30&&s.inv.cuerda>=8&&(s.inv.hierro||0)>=5){s.inv.madera-=30;s.inv.cuerda-=8;s.inv.hierro-=5;s.inv.barco=true;return{msg:"Barco reparado!",cls:"good"}}return{msg:"Faltan materiales.",cls:"bad"}}},
+    {txt:"🚢 Escapar en barco",chance:.85,fn:function(s){if(!s.inv.barco)return{msg:"No tienes barco.",cls:"bad"};if(roll(.85)){s.escaped=true;return{msg:"LO LOGRASTE!",cls:"good"}}return{msg:"Falla el motor.",cls:"bad"}}},
+    {txt:"🏚️ Pueblo",fn:function(s){s.zone=7;return{msg:"Vas al pueblo...",cls:"neutral"}}},
+    {txt:"🗼 Faro",fn:function(s){s.zone=18;return{msg:"Vas al faro...",cls:"neutral"}}},
+    {txt:"🏝️ Playa",fn:function(s){s.zone=0;return{msg:"Vuelves.",cls:"neutral"}}}
+]},
+{name:"PUEBLO",icon:"🏚️",temp:19,options:[
+    {txt:"🏠 Registrar casas",chance:.7,fn:function(s){var r=luckChance();if(r>.7){s.inv.conservas=(s.inv.conservas||0)+2;s.inv.agua+=3;return{msg:"+2 conservas +3 agua",cls:"good"}}if(r>.4){s.inv.venda=(s.inv.venda||0)+2;s.inv.medicina=(s.inv.medicina||0)+1;return{msg:"+2 vendas +1 medicina",cls:"good"}}return{msg:"Casas vacías.",cls:"neutral"}}},
+    {txt:"🔋 Componentes",chance:.6,fn:function(s){if(roll(.6)){s.inv.componentes=(s.inv.componentes||0)+2;return{msg:"+2 componentes",cls:"good"}}return{msg:"Nada útil.",cls:"neutral"}}},
+    {txt:"🏚️ Entrar a casas (peligro)",chance:.5,risky:true,fn:function(s){if(roll(.5)){return{msg:"¡Saqueadores!",cls:"neutral",trigger:"combat"}}if(Math.random()>.5){s.inv.comida+=4;return{msg:"+4 comida",cls:"good"}}return{msg:"Casa vacía.",cls:"neutral"}}},
+    {txt:"🚪 Búnker (necesitas llave)",fn:function(s){if(!s.inv.llaveBunker)return{msg:"Necesitas la llave. Búscala en ruinas.",cls:"bad"};s.zone=20;return{msg:"Entras al búnker...",cls:"neutral"}}},
+    {txt:"🗼 Faro",fn:function(s){s.zone=18;return{msg:"Vas al faro...",cls:"neutral"}}},
+    {txt:"🌲 Bosque Profundo",fn:function(s){s.zone=11;return{msg:"Al bosque...",cls:"neutral"}}},
+    {txt:"🏛️ Ruinas",fn:function(s){s.zone=17;return{msg:"A las ruinas...",cls:"neutral"}}}
+]},
+{name:"CASCADA",icon:"💦",temp:20,options:[
+    {txt:"💧 Beber agua pura",fn:function(s){s.sed=Math.min(100,s.sed+50);return{msg:"+50 sed",cls:"good"}}},
+    {txt:"🐟 Pescar",chance:.8,fn:function(s){if(roll(.8)){var n=3+Math.floor(Math.random()*3);s.inv.comida+=n;return{msg:"+"+n+" comida",cls:"good"}}return{msg:"No picaron.",cls:"neutral"}}},
+    {txt:"🌿 Hierbas raras",chance:.5,fn:function(s){if(roll(.5)){s.inv.medicina=(s.inv.medicina||0)+2;return{msg:"+2 medicina",cls:"good"}}return{msg:"Hierba común.",cls:"neutral"}}},
+    {txt:"🏊 Bañarse",fn:function(s){s.energia=Math.min(100,s.energia+30);s.hp=Math.min(100,s.hp+10);return{msg:"+30 energía +10 HP",cls:"good"}}},
+    {txt:"🏝️ Playa",fn:function(s){s.zone=0;return{msg:"Vuelves.",cls:"neutral"}}},
+    {txt:"🏞️ Lago",fn:function(s){s.zone=10;return{msg:"Vas al lago...",cls:"neutral"}}}
+]},
+{name:"ACANTILADOS",icon:"🪨",temp:16,options:[
+    {txt:"🥚 Nidos de aves",chance:.6,fn:function(s){if(roll(.6)){s.inv.comida+=3;return{msg:"+3 comida",cls:"good"}}s.hp-=8;s.condiciones.herida=1;return{msg:"-8 HP + Herida",cls:"bad"}}},
+    {txt:"🎣 Pescar del borde",chance:.7,risky:true,fn:function(s){var bonus=WEATHERS[s.weatherIdx].fish;if(roll(.7*bonus)){var n=4+Math.floor(Math.random()*3);s.inv.comida+=n;return{msg:"+"+n+" comida",cls:"good"}}if(Math.random()>.9){s.hp-=25;s.condiciones.fractura=1;return{msg:"-25 HP + Fractura",cls:"bad"}}return{msg:"Nada picó.",cls:"neutral"}}},
+    {txt:"🔭 Mirar horizonte",fn:function(s){if(Math.random()>.9){s.inv.binoculares=true;return{msg:"¡Binoculares!",cls:"good"}}return{msg:"Solo mar.",cls:"neutral"}}},
+    {txt:"🗼 Faro",fn:function(s){s.zone=18;return{msg:"Vas al faro...",cls:"neutral"}}},
+    {txt:"⛰️ Montaña",fn:function(s){s.zone=2;return{msg:"Subes...",cls:"neutral"}}},
+    {txt:"🏝️ Playa",fn:function(s){s.zone=0;return{msg:"Vuelves.",cls:"neutral"}}}
+]},
+{name:"LAGO",icon:"🏞️",temp:18,options:[
+    {txt:"🎣 Pescar",chance:.8,fn:function(s){var bonus=WEATHERS[s.weatherIdx].fish;if(roll(.8*bonus)){var n=2+Math.floor(Math.random()*4);s.inv.comida+=n;return{msg:"+"+n+" comida",cls:"good"}}return{msg:"Nada.",cls:"neutral"}}},
+    {txt:"💧 Beber del lago",chance:.5,risky:true,fn:function(s){if(s.inv.purificador){s.sed=Math.min(100,s.sed+45);return{msg:"+45 sed",cls:"good"}}s.sed=Math.min(100,s.sed+35);if(roll(.5)){return{msg:"+35 sed",cls:"good"}}s.condiciones.infeccion=1;return{msg:"+35 sed + Infección",cls:"bad"}}},
+    {txt:"🌾 Recolectar cañas",fn:function(s){s.inv.fibra+=3;s.inv.madera+=1;return{msg:"+3 fibra +1 madera",cls:"good"}}},
+    {txt:"🐊 Cocodrilo",chance:.4,risky:true,fn:function(s){if(roll(.4)){return{msg:"¡Cocodrilo!",cls:"neutral",trigger:"combat",forceEnemy:"cocodrilo"}}return{msg:"Nada.",cls:"neutral"}}},
+    {txt:"🏝️ Playa",fn:function(s){s.zone=0;return{msg:"Vuelves.",cls:"neutral"}}},
+    {txt:"💦 Cascada",fn:function(s){s.zone=8;return{msg:"Vas a la cascada...",cls:"neutral"}}}
+]},
+{name:"BOSQUE",icon:"🌲",temp:17,options:[
+    {txt:"🪵 Talar",fn:function(s){var n=6+Math.floor(Math.random()*4);s.inv.madera+=n;s.energia-=10;return{msg:"+"+n+" madera",cls:"good"}}},
+    {txt:"🍄 Setas raras",chance:.5,risky:true,fn:function(s){if(roll(.5)){s.inv.comida+=3;s.inv.medicina=(s.inv.medicina||0)+1;return{msg:"+3 comida +1 medicina",cls:"good"}}s.hp-=12;s.condiciones.veneno=1;return{msg:"-12 HP + Envenenado",cls:"bad"}}},
+    {txt:"🐺 Cazar lobos",chance:.6,risky:true,fn:function(s){if(roll(.6)){return{msg:"¡Manada de lobos!",cls:"neutral",trigger:"combat"}}return{msg:"Nada.",cls:"neutral"}}},
+    {txt:"🌿 Fibra y hojas",fn:function(s){s.inv.fibra+=5;return{msg:"+5 fibra",cls:"good"}}},
+    {txt:"🏚️ Pueblo",fn:function(s){s.zone=7;return{msg:"Vas al pueblo...",cls:"neutral"}}},
+    {txt:"🏛️ Ruinas",fn:function(s){s.zone=17;return{msg:"Vas a las ruinas...",cls:"neutral"}}},
+    {txt:"🌿 Selva",fn:function(s){s.zone=1;return{msg:"Vuelves.",cls:"neutral"}}}
+]},
+{name:"NIEVE",icon:"🏔️",temp:-5,options:[
+    {txt:"🔥 Hoguera urgente",fn:function(s){if(s.inv.fosforos>0&&s.inv.madera>=3){s.inv.madera-=3;s.inv.fosforos--;s.hp=Math.min(100,s.hp+15);s.condiciones.hipotermia=0;return{msg:"+15 HP, hipotermia curada",cls:"good"}}return{msg:"Necesitas fuego urgente!",cls:"bad"}}},
+    {txt:"🐺 Cazar (lobos/osos)",chance:.6,risky:true,fn:function(s){if(roll(.6)){return{msg:"¡Bestia!",cls:"neutral",trigger:"combat"}}return{msg:"Nada.",cls:"neutral"}}},
+    {txt:"❄️ Recoger nieve",fn:function(s){if(s.inv.fosforos>0&&s.inv.madera>=1){s.inv.madera--;s.inv.fosforos--;s.inv.agua+=3;return{msg:"+3 agua (derretida)",cls:"good"}}s.inv.nieve=(s.inv.nieve||0)+2;return{msg:"+2 nieve",cls:"neutral"}}},
+    {txt:"💎 Cristales de hielo",chance:.3,fn:function(s){if(roll(.3)){s.inv.cristal=(s.inv.cristal||0)+2;return{msg:"+2 cristal",cls:"good"}}return{msg:"Sin cristales.",cls:"neutral"}}},
+    {txt:"🌋 Volcán",fn:function(s){s.zone=15;return{msg:"Bajas al volcán...",cls:"neutral"}}},
+    {txt:"💎 Cueva de Cristal",fn:function(s){s.zone=13;return{msg:"Buscas la cueva...",cls:"neutral"}}},
+    {txt:"⛰️ Montaña",fn:function(s){s.zone=2;return{msg:"Bajas.",cls:"neutral"}}}
+]},
+{name:"CRISTAL",icon:"💎",temp:10,options:[
+    {txt:"💎 Minar cristales (pico)",chance:.7,fn:function(s){if(!s.inv.pico)return{msg:"Necesitas un pico.",cls:"bad"};if(roll(.7)){s.inv.cristal=(s.inv.cristal||0)+3;return{msg:"+3 cristal",cls:"good"}}return{msg:"Cristal duro.",cls:"neutral"}}},
+    {txt:"✨ Observar cristales",fn:function(s){s.energia=Math.min(100,s.energia+20);s.sueno=Math.min(100,s.sueno+15);return{msg:"+20 energía +15 sueño",cls:"good"}}},
+    {txt:"🔍 Explorar galerías",chance:.6,risky:true,fn:function(s){var r=luckChance();if(r>.7){s.inv.cristal=(s.inv.cristal||0)+2;s.inv.hierro=(s.inv.hierro||0)+2;return{msg:"+2 cristal +2 hierro",cls:"good"}}if(r>.4){s.inv.mineralRaro=(s.inv.mineralRaro||0)+1;return{msg:"+1 mineral raro!",cls:"good"}}if(Math.random()>.6){return{msg:"¡Guardián!",cls:"neutral",trigger:"combat",forceEnemy:"jefeAntiguo"}}s.hp-=20;s.condiciones.herida=1;return{msg:"-20 HP + Herida",cls:"bad"}}},
+    {txt:"🏔️ Nieve",fn:function(s){s.zone=12;return{msg:"Sales a la nieve...",cls:"neutral"}}},
+    {txt:"🪨 Cueva",fn:function(s){s.zone=4;return{msg:"Vuelves.",cls:"neutral"}}}
+]},
+{name:"SUBMARINA",icon:"🌊",temp:8,options:[
+    {txt:"🐠 Recolectar peces",chance:.75,fn:function(s){if(!s.inv.alettas)return{msg:"Necesitas aletas.",cls:"bad"};if(roll(.75)){s.inv.comida+=4;return{msg:"+4 comida",cls:"good"}}return{msg:"Huyeron.",cls:"neutral"}}},
+    {txt:"💎 Buscar perlas",chance:.4,fn:function(s){if(roll(.4)){s.inv.perla=(s.inv.perla||0)+2;return{msg:"+2 perlas",cls:"good"}}return{msg:"Conchas vacías.",cls:"neutral"}}},
+    {txt:"🦈 Cazar tiburón",chance:.4,risky:true,fn:function(s){if(roll(.4)){return{msg:"¡Tiburón!",cls:"neutral",trigger:"combat",forceEnemy:"tiburon"}}return{msg:"Nada.",cls:"neutral"}}},
+    {txt:"🔍 Naufragio hundido",chance:.5,risky:true,fn:function(s){var r=luckChance();if(r>.7){s.inv.cofre=true;s.inv.hierro=(s.inv.hierro||0)+5;s.inv.componentes=(s.inv.componentes||0)+3;return{msg:"¡Cofre! +5 hierro +3 componentes",cls:"good"}}if(r>.4){s.inv.chatarra=(s.inv.chatarra||0)+4;return{msg:"+4 chatarra",cls:"good"}}s.hp-=15;s.condiciones.hipotermia=1;return{msg:"-15 HP + Hipotermia",cls:"bad"}}},
+    {txt:"🏝️ Playa Oculta",fn:function(s){s.zone=5;return{msg:"Sales.",cls:"neutral"}}}
+]},
+{name:"VOLCÁN",icon:"🌋",temp:45,options:[
+    {txt:"🔥 Recoger magma",chance:.4,risky:true,fn:function(s){if(roll(.4)){s.inv.magma=(s.inv.magma||0)+1;return{msg:"+1 magma",cls:"good"}}s.hp-=25;s.condiciones.herida=1;return{msg:"-25 HP + Herida",cls:"bad"}}},
+    {txt:"💎 Obsidiana (pico)",chance:.5,fn:function(s){if(!s.inv.pico)return{msg:"Necesitas pico.",cls:"bad"};if(roll(.5)){s.inv.obsidiana=(s.inv.obsidiana||0)+2;return{msg:"+2 obsidiana",cls:"good"}}return{msg:"Sin obsidiana.",cls:"neutral"}}},
+    {txt:"🔍 Tubos de lava",chance:.6,risky:true,fn:function(s){var r=luckChance();if(r>.7){s.inv.mineralRaro=(s.inv.mineralRaro||0)+2;s.inv.oro=(s.inv.oro||0)+3;return{msg:"+2 mineral raro +3 oro!",cls:"good"}}if(r>.4){s.inv.hierro=(s.inv.hierro||0)+3;return{msg:"+3 hierro",cls:"good"}}if(Math.random()>.7){return{msg:"¡Guardián!",cls:"neutral",trigger:"combat",forceEnemy:"jefeAntiguo"}}s.hp-=22;s.condiciones.insolacion=1;return{msg:"-22 HP + Insolación",cls:"bad"}}},
+    {txt:"⛏️ Mina",fn:function(s){s.zone=16;return{msg:"Entras...",cls:"neutral"}}},
+    {txt:"🏔️ Nieve",fn:function(s){s.zone=12;return{msg:"Subes...",cls:"neutral"}}},
+    {txt:"⛰️ Montaña",fn:function(s){s.zone=2;return{msg:"Bajas.",cls:"neutral"}}}
+]},
+{name:"MINA",icon:"⛏️",temp:15,options:[
+    {txt:"⛏️ Picar piedra",fn:function(s){if(!s.inv.pico)return{msg:"Necesitas pico.",cls:"bad"};s.inv.piedra+=4;s.energia-=8;return{msg:"+4 piedra",cls:"good"}}},
+    {txt:"💎 Buscar minerales",chance:.5,fn:function(s){var r=luckChance();if(r>.75){s.inv.oro=(s.inv.oro||0)+2;return{msg:"+2 oro!",cls:"good"}}if(r>.5){s.inv.hierro=(s.inv.hierro||0)+3;return{msg:"+3 hierro",cls:"good"}}if(r>.3){s.inv.carbon=(s.inv.carbon||0)+3;return{msg:"+3 carbón",cls:"good"}}return{msg:"Sin minerales.",cls:"neutral"}}},
+    {txt:"🕳️ Descender (antorcha)",chance:.6,risky:true,fn:function(s){if(!s.inv.antorcha)return{msg:"Necesitas antorcha.",cls:"bad"};var r=luckChance();if(r>.7){s.inv.mineralRaro=(s.inv.mineralRaro||0)+2;s.inv.oro=(s.inv.oro||0)+3;return{msg:"+2 mineral raro +3 oro",cls:"good"}}if(r>.4){s.inv.hierro=(s.inv.hierro||0)+5;return{msg:"+5 hierro",cls:"good"}}if(Math.random()>.7){return{msg:"¡Bandidos!",cls:"neutral",trigger:"combat"}}s.hp-=20;s.condiciones.herida=1;s.condiciones.fractura=1;return{msg:"-20 HP + Herida + Fractura",cls:"bad"}}},
+    {txt:"💎 Cueva de cristal",chance:.3,fn:function(s){if(roll(.3)){s.zone=13;return{msg:"¡Cueva de cristal!",cls:"good"}}return{msg:"Solo túneles.",cls:"neutral"}}},
+    {txt:"🪨 Cueva",fn:function(s){s.zone=4;return{msg:"Vuelves.",cls:"neutral"}}},
+    {txt:"🌋 Volcán",fn:function(s){s.zone=15;return{msg:"Subes...",cls:"neutral"}}}
+]},
+{name:"RUINAS",icon:"🏛️",temp:20,options:[
+    {txt:"🗿 Examinar inscripciones",fn:function(s){if(Math.random()>.7){s.inv.llaveBunker=true;return{msg:"¡Llave del búnker!",cls:"good"}}return{msg:"Símbolos indescifrables.",cls:"neutral"}}},
+    {txt:"🏺 Buscar tesoros",chance:.5,fn:function(s){var r=luckChance();if(r>.75){s.inv.oro=(s.inv.oro||0)+4;s.inv.mineralRaro=(s.inv.mineralRaro||0)+1;return{msg:"+4 oro +1 mineral raro",cls:"good"}}if(r>.45){s.inv.chatarra=(s.inv.chatarra||0)+3;s.inv.hierro=(s.inv.hierro||0)+2;return{msg:"+3 chatarra +2 hierro",cls:"good"}}return{msg:"Nada de valor.",cls:"neutral"}}},
+    {txt:"🔮 Altar misterioso",chance:.3,risky:true,fn:function(s){if(roll(.3)){s.suerte=Math.min(5,s.suerte+3);return{msg:"¡Bendición! +3 Suerte"+addLuck(3),cls:"good"}}s.hp-=20;s.condiciones.veneno=1;return{msg:"Maldición! -20 HP + Envenenado",cls:"bad"}}},
+    {txt:"🗿 Guardián despierta",chance:.4,risky:true,fn:function(s){if(roll(.4)){return{msg:"¡EL GUARDIÁN DESPIERTA!",cls:"bad",trigger:"combat",forceEnemy:"jefeAntiguo"}}return{msg:"Todo tranquilo.",cls:"neutral"}}},
+    {txt:"🌿 Selva",fn:function(s){s.zone=1;return{msg:"Vuelves.",cls:"neutral"}}},
+    {txt:"🏚️ Pueblo",fn:function(s){s.zone=7;return{msg:"Vas al pueblo...",cls:"neutral"}}}
+]},
+{name:"FARO",icon:"🗼",temp:18,options:[
+    {txt:"🔦 Encender faro",fn:function(s){if(s.inv.madera>=5&&s.inv.fosforos>0){s.inv.madera-=5;s.inv.fosforos--;s.faroEncendido=true;return{msg:"Faro encendido!",cls:"good"}}return{msg:"Faltan materiales.",cls:"bad"}}},
+    {txt:"📻 Usar radio",fn:function(s){if(!s.inv.radio||!s.inv.bateria)return{msg:"Necesitas radio y batería.",cls:"bad"};s.inv.bateria--;var bonus=s.inv.building_radio?.3:0;if(roll(.7+bonus)){s.rescate=1;return{msg:"¡Contactaste un barco! Aguanta 1 turno...",cls:"good"}}return{msg:"Solo estática.",cls:"neutral"}}},
+    {txt:"🔍 Explorar interior",chance:.6,fn:function(s){var r=luckChance();if(r>.7){s.inv.radio=true;s.inv.bateria=(s.inv.bateria||0)+2;return{msg:"¡Radio y 2 baterías!",cls:"good"}}if(r>.4){s.inv.venda=(s.inv.venda||0)+3;s.inv.medicina=(s.inv.medicina||0)+2;return{msg:"+3 vendas +2 medicina",cls:"good"}}return{msg:"Solo polvo.",cls:"neutral"}}},
+    {txt:"⚓ Puerto",fn:function(s){s.zone=6;return{msg:"Vas al puerto...",cls:"neutral"}}},
+    {txt:"🪨 Acantilados",fn:function(s){s.zone=9;return{msg:"Vas a los acantilados...",cls:"neutral"}}},
+    {txt:"🏚️ Pueblo",fn:function(s){s.zone=7;return{msg:"Vas al pueblo...",cls:"neutral"}}}
+]},
+{name:"LABORATORIO",icon:"🧪",temp:16,options:[
+    {txt:"🧪 Examinar experimentos",chance:.6,risky:true,fn:function(s){var r=luckChance();if(r>.7){s.inv.antibiotico=(s.inv.antibiotico||0)+3;s.inv.antidoto=(s.inv.antidoto||0)+3;return{msg:"+3 antibióticos +3 antídotos",cls:"good"}}if(r>.4){s.inv.medicina=(s.inv.medicina||0)+3;return{msg:"+3 medicina",cls:"good"}}s.hp-=18;s.condiciones.veneno=1;return{msg:"-18 HP + Envenenado",cls:"bad"}}},
+    {txt:"📋 Leer diarios",fn:function(s){if(Math.random()>.5){s.suerte=Math.min(5,s.suerte+2);return{msg:"+2 Suerte"+addLuck(2),cls:"good"}}return{msg:"Páginas rotas.",cls:"neutral"}}},
+    {txt:"🖥️ Usar computadora",fn:function(s){if(!s.inv.bateria)return{msg:"Necesitas batería.",cls:"bad"};s.inv.bateria--;return{msg:"Datos corruptos. +5 XP",xp:5,cls:"good"}}},
+    {txt:"🚪 Búnker",fn:function(s){s.zone=20;return{msg:"Vuelves al búnker...",cls:"neutral"}}}
+]},
+{name:"BÚNKER",icon:"🚪",temp:18,options:[
+    {txt:"🔍 Explorar habitaciones",chance:.7,fn:function(s){var r=luckChance();if(r>.7){s.inv.raciones=(s.inv.raciones||0)+3;s.inv.agua+=5;return{msg:"+3 raciones +5 agua",cls:"good"}}if(r>.4){s.inv.antibiotico=(s.inv.antibiotico||0)+2;s.inv.venda=(s.inv.venda||0)+3;return{msg:"+2 antibióticos +3 vendas",cls:"good"}}return{msg:"Habitaciones vacías.",cls:"neutral"}}},
+    {txt:"🔫 Buscar armas",chance:.4,fn:function(s){if(roll(.4)){s.inv.armaFuego=true;s.inv.balas=(s.inv.balas||0)+5;return{msg:"¡Arma! +5 balas",cls:"good"}}return{msg:"Cajas vacías.",cls:"neutral"}}},
+    {txt:"🔋 Generador",chance:.5,fn:function(s){if(roll(.5)){s.inv.generador=true;return{msg:"¡Generador!",cls:"good"}}return{msg:"Sin generador.",cls:"neutral"}}},
+    {txt:"🧪 Laboratorio",fn:function(s){s.zone=19;return{msg:"Entras al laboratorio...",cls:"neutral"}}},
+    {txt:"🏚️ Salir al Pueblo",fn:function(s){s.zone=7;return{msg:"Sales al pueblo...",cls:"neutral"}}}
+]}
+];
+
+/* ============ EVENTOS ============ */
+var RANDOM_EVENTS=[
+    {chance:.08,fn:function(s){s.hp-=15;return"Tormenta! -15 HP"},cabin:function(s){s.hp+=10},cabinMsg:" (cabaña protegió)"},
+    {chance:.06,fn:function(s){s.inv.comida=Math.max(0,s.inv.comida-2);return"Animales robaron comida! -2"},cabin:function(s){s.inv.comida++},cabinMsg:" (recuperaste 1)"},
+    {chance:.07,fn:function(s){var n=2+Math.floor(Math.random()*3);s.inv.comida+=n;return"Nido! +"+n},cabin:null},
+    {chance:.05,fn:function(s){s.inv.agua+=3;s.sed=Math.min(100,s.sed+20);return"Lluvia! +3 agua +20 sed"},cabin:null},
+    {chance:.04,fn:function(s){s.hp-=20;s.condiciones.veneno=1;return"Picadura venenosa! -20 HP"},cabin:function(s){s.hp+=12;s.condiciones.veneno=0},cabinMsg:" (cura)"},
+    {chance:.03,fn:function(s){s.inv.cuerda+=2;s.inv.fosforos++;return"Restos! +2 cuerda +1 fósforo"},cabin:null},
+    {chance:.04,fn:function(s){if(s.inv.trampa&&s.inv.trampa>0){var n=s.inv.trampa*2;s.inv.comida+=n;return"Trampas! +"+n}return null},cabin:null},
+    {chance:.03,fn:function(s){s.suerte=Math.min(5,(s.suerte||0)+1);return"Buena racha! +1 Suerte"},cabin:null},
+    {chance:.02,fn:function(s){s.suerte=Math.max(-5,(s.suerte||0)-1);return"Mala racha... -1 Suerte"},cabin:null},
+    {chance:.02,fn:function(s){s.condiciones.sangrado=1;return"Te cortaste! +Sangrado"},cabin:null},
+    {chance:.05,fn:function(s){if(Math.random()>.5)return null;var npc=NPCS[Math.floor(Math.random()*NPCS.length)];s.pendingNPC=npc.id;return"¡Un "+npc.name+" "+npc.icon+" aparece!"},cabin:null},
+    {chance:.03,fn:function(s){var d=DIARIES.find(function(x){return x.zone===s.zone&&!x.unlocked});if(d){d.unlocked=true;s.diariesFound++;return"📖 Encuentras: <b>"+d.title+"</b>"}return null},cabin:null}
+];
+
+/* ============ ESTADO ============ */
+var state={};
+
+function loadRecord(mode){
+    var key='mg_survival_record_'+(mode||'normal');
+    document.getElementById('recordDays').textContent=localStorage.getItem(key)||'0';
+    document.getElementById('totalGames').textContent=localStorage.getItem('mg_survival_games_'+(mode||'normal'))||'0';
+}
+function saveRecord(dias){
+    var mode=state.gameMode||'normal';
+    var key='mg_survival_record_'+mode;
+    var gamesKey='mg_survival_games_'+mode;
+    var r=parseInt(localStorage.getItem(key)||'0');
+    var g=parseInt(localStorage.getItem(gamesKey)||'0');
+    if(dias>r)localStorage.setItem(key,dias);
+    localStorage.setItem(gamesKey,g+1);
+    loadRecord(mode);
 }
 
-function saveRecord(dias) {
-    var r = parseInt(localStorage.getItem('mg_survival_record') || '0');
-    var g = parseInt(localStorage.getItem('mg_survival_games') || '0');
-    if(dias > r) localStorage.setItem('mg_survival_record', dias);
-    localStorage.setItem('mg_survival_games', g + 1);
-    loadRecord();
-}
-
-function resetGame() {
-    state = {
-        dia: 1, hp: 100, hambre: 100, sed: 100, zone: 0,
-        rescate: false, balsa: false, escaped: false,
-        inv: { madera: 0, comida: 3, agua: 2, lanza: false, cabana: false, fosforos: 1, anzuelo: false, cuerda: 0, trampa: 0, veneno: false, piedraAfilada: false, comidaCocida: false }
+function resetGame(skipModePicker){
+    if(!skipModePicker&&!state.gameMode){showModePicker();return}
+    var modeKey=state.gameMode||'normal';
+    var mode=GAME_MODES[modeKey];
+    state={
+        gameMode:modeKey,
+        dia:1,hp:Math.round(100*mode.hpMult),hambre:100,sed:100,energia:100,sueno:100,
+        suerte:0,xp:0,nivel:1,
+        zone:0,rescate:0,balsa:false,escaped:false,
+        weatherIdx:0,weatherDays:1,timeIdx:0,
+        visitedZones:[0],diariesFound:0,firstBlood:false,
+        companion:null,buildings:{},achievements:{},questsDone:{},
+        pendingNPC:null,combat:null,
+        condiciones:{sangrado:0,herida:0,infeccion:0,fiebre:0,veneno:0,fractura:0,hipotermia:0,insolacion:0},
+        inv:{madera:0,comida:3,agua:2,fibra:0,piedra:0,hierro:0,carbon:0,cristal:0,oro:0,
+            chatarra:0,componentes:0,bateria:0,mineralRaro:0,magma:0,obsidiana:0,
+            lanza:false,cabana:false,fosforos:1,anzuelo:false,cuerda:0,trampa:0,
+            venenoLanza:false,piedraAfilada:false,comidaCocida:false,
+            venda:0,medicina:0,antidoto:0,antibiotico:0,conservas:0,raciones:0,
+            pico:false,hacha:false,antorcha:false,red:false,purificador:false,
+            alettas:false,radio:false,generador:false,armaFuego:false,balas:0,
+            llaveBunker:false,binoculares:false,perla:0,piel:0,dienteTiburon:false,
+            cofre:false,nieve:0,
+            durabilidadLanza:20,durabilidadHacha:30,durabilidadPico:40,durabilidadArma:15}
     };
-    document.getElementById("overlay").className = "";
-    updateLog("Despiertas en una isla desierta. Sobrevive todo lo que puedas.", "neutral");
+    DIARIES.forEach(function(d){d.unlocked=false});
+    document.getElementById("overlay").className="";
+    document.getElementById("oButtons").innerHTML="";
+    document.getElementById("combatPanel").innerHTML="";
+    document.getElementById("log").innerHTML='<span class="neutral">Despiertas en una isla desierta. Sobrevive todo lo que puedas.</span>';
+    document.getElementById("modeDisplay").textContent=GAME_MODES[modeKey].icon+' '+mode.name;
     renderGame();
-    loadRecord();
+    loadRecord(modeKey);
 }
 
-function renderInventory() {
-    var inv = state.inv;
-    var html = '';
-    html += '<div class="inv-item">🪵 Madera: <span>' + inv.madera + '</span></div>';
-    html += '<div class="inv-item">🍖 Comida: <span>' + inv.comida + '</span></div>';
-    html += '<div class="inv-item">💧 Agua: <span>' + inv.agua + '</span></div>';
-    html += '<div class="inv-item">🧶 Cuerda: <span>' + inv.cuerda + '</span></div>';
-    html += '<div class="inv-item">🔥 Fosforos: <span>' + inv.fosforos + '</span></div>';
-    html += '<div class="inv-item">🗡️ Lanza: <span>' + (inv.lanza ? (inv.veneno ? "ENVENENADA" : (inv.piedraAfilada ? "MEJORADA" : "SI")) : "NO") + '</span></div>';
-    html += '<div class="inv-item">🏠 Cabana: <span>' + (inv.cabana ? "SI" : "NO") + '</span></div>';
-    if(inv.anzuelo) html += '<div class="inv-item">🪝 Anzuelo: <span>SI</span></div>';
-    if(inv.trampa) html += '<div class="inv-item">🪤 Trampas: <span>' + inv.trampa + '</span></div>';
-    document.getElementById('invDisplay').innerHTML = html;
+function showModePicker(){
+    var ov=document.getElementById("overlay");
+    ov.className="show";
+    document.getElementById("oTitle").textContent="MODO DE JUEGO";
+    document.getElementById("oMsg").textContent="Elige tu dificultad";
+    var detail=document.getElementById("oDetail");
+    detail.innerHTML='<div style="display:flex;flex-direction:column;gap:8px;margin-top:15px">';
+    Object.keys(GAME_MODES).forEach(function(k){
+        var m=GAME_MODES[k];
+        detail.innerHTML+='<div class="mode-item" onclick="pickMode(\''+k+'\')"><span class="a-icon">'+m.icon+'</span><div class="a-info"><div class="q-title">'+m.name+'</div><div class="q-desc">'+m.desc+'</div></div></div>';
+    });
+    detail.innerHTML+='</div>';
+    document.getElementById("oButtons").innerHTML="";
+}
+function pickMode(k){state.gameMode=k;document.getElementById("overlay").className="";resetGame(true)}
+
+/* ============ RENDER ============ */
+function renderInventory(){
+    var inv=state.inv;var h='';
+    h+='<div class="inv-item">🪵 <span>'+inv.madera+'</span></div>';
+    h+='<div class="inv-item">🍖 <span>'+inv.comida+'</span></div>';
+    h+='<div class="inv-item">💧 <span>'+inv.agua+'</span></div>';
+    h+='<div class="inv-item">🧶 <span>'+inv.cuerda+'</span></div>';
+    h+='<div class="inv-item">🔥 <span>'+inv.fosforos+'</span></div>';
+    h+='<div class="inv-item">🌿 <span>'+inv.fibra+'</span></div>';
+    if(inv.piedra)h+='<div class="inv-item">🪨 <span>'+inv.piedra+'</span></div>';
+    if(inv.hierro)h+='<div class="inv-item">⚙️ <span>'+inv.hierro+'</span></div>';
+    if(inv.carbon)h+='<div class="inv-item">🖤 <span>'+inv.carbon+'</span></div>';
+    if(inv.cristal)h+='<div class="inv-item">💎 <span>'+inv.cristal+'</span></div>';
+    if(inv.oro)h+='<div class="inv-item">🥇 <span>'+inv.oro+'</span></div>';
+    if(inv.chatarra)h+='<div class="inv-item">🔩 <span>'+inv.chatarra+'</span></div>';
+    if(inv.componentes)h+='<div class="inv-item">🔌 <span>'+inv.componentes+'</span></div>';
+    if(inv.bateria)h+='<div class="inv-item">🔋 <span>'+inv.bateria+'</span></div>';
+    if(inv.mineralRaro)h+='<div class="inv-item">⭐ <span>'+inv.mineralRaro+'</span></div>';
+    if(inv.perla)h+='<div class="inv-item">🦪 <span>'+inv.perla+'</span></div>';
+    if(inv.piel)h+='<div class="inv-item">🦴 <span>'+inv.piel+'</span></div>';
+    if(inv.venda)h+='<div class="inv-item">🩹 <span>'+inv.venda+'</span></div>';
+    if(inv.medicina)h+='<div class="inv-item">💊 <span>'+inv.medicina+'</span></div>';
+    if(inv.antibiotico)h+='<div class="inv-item">💉 <span>'+inv.antibiotico+'</span></div>';
+    if(inv.antidoto)h+='<div class="inv-item">🧪 <span>'+inv.antidoto+'</span></div>';
+    if(inv.conservas)h+='<div class="inv-item">🥫 <span>'+inv.conservas+'</span></div>';
+    if(inv.raciones)h+='<div class="inv-item">🍱 <span>'+inv.raciones+'</span></div>';
+    if(inv.lanza)h+='<div class="inv-item">🗡️ Lanza <span>'+(inv.venenoLanza?"☠️":"")+' ('+inv.durabilidadLanza+')</span></div>';
+    if(inv.cabana)h+='<div class="inv-item">🏠 <span>SI</span></div>';
+    if(inv.anzuelo)h+='<div class="inv-item">🪝 <span>SI</span></div>';
+    if(inv.pico)h+='<div class="inv-item">⛏️ <span>('+inv.durabilidadPico+')</span></div>';
+    if(inv.antorcha)h+='<div class="inv-item">🔥 Antorcha</div>';
+    if(inv.alettas)h+='<div class="inv-item">🤿 Aletas</div>';
+    if(inv.armaFuego)h+='<div class="inv-item">🔫 Arma <span>('+inv.durabilidadArma+', '+inv.balas+' balas)</span></div>';
+    if(state.companion)h+='<div class="inv-item">'+COMPANIONS[state.companion].icon+' <span>'+COMPANIONS[state.companion].name+'</span></div>';
+    document.getElementById('invDisplay').innerHTML=h;
 }
 
-function renderGame() {
-    document.getElementById("sDia").textContent = state.dia;
-    document.getElementById("sHp").textContent = Math.floor(state.hp);
-    document.getElementById("sHam").textContent = Math.floor(state.hambre);
-    document.getElementById("sSed").textContent = Math.floor(state.sed);
-    document.getElementById("bHp").style.width = state.hp + "%";
-    document.getElementById("bHam").style.width = state.hambre + "%";
-    document.getElementById("bSed").style.width = state.sed + "%";
+function renderStats(){
+    var sg=document.getElementById('statsGrid');
+    var condHtml='';
+    CONDITIONS.forEach(function(c){if(state.condiciones[c.id]>0)condHtml+='<div class="cond-tag '+c.id+'">'+c.icon+' '+c.name+'</div>'});
+    if(state.hambre<=10)condHtml+='<div class="cond-tag hambre">🍖 Hambre crítica</div>';
+    if(state.sed<=10)condHtml+='<div class="cond-tag sed">💧 Sed crítica</div>';
+    if(state.combat)condHtml+='<div class="cond-tag combate">⚔️ COMBATE</div>';
+    if(state.buildings.muralla)condHtml+='<div class="cond-tag buff">🧱 Muralla x'+state.buildings.muralla+'</div>';
+    if(state.buildings.enfermeria)condHtml+='<div class="cond-tag buff">🏥 Enfermería</div>';
+    document.getElementById('conditionsDisplay').innerHTML=condHtml;
 
-    renderInventory();
+    var xpNeed=state.nivel*100;
+    var xpPct=Math.min(100,Math.round(state.xp/xpNeed*100));
+    sg.innerHTML=
+    '<div class="stat-box"><div class="stat-label">DÍA</div><div class="stat-val lvl">'+state.dia+'</div></div>'+
+    '<div class="stat-box"><div class="stat-label">NIVEL</div><div class="stat-val lvl">'+state.nivel+'</div></div>'+
+    '<div class="stat-box"><div class="stat-label">HP</div><div class="stat-val hp">'+Math.floor(state.hp)+'</div><div class="bar-wrap"><div class="bar hp" style="width:'+Math.max(0,state.hp)+'%"></div></div></div>'+
+    '<div class="stat-box"><div class="stat-label">HAMBRE</div><div class="stat-val hunger">'+Math.floor(state.hambre)+'</div><div class="bar-wrap"><div class="bar hunger" style="width:'+state.hambre+'%"></div></div></div>'+
+    '<div class="stat-box"><div class="stat-label">SED</div><div class="stat-val thirst">'+Math.floor(state.sed)+'</div><div class="bar-wrap"><div class="bar thirst" style="width:'+state.sed+'%"></div></div></div>'+
+    '<div class="stat-box"><div class="stat-label">ENERGÍA</div><div class="stat-val energy">'+Math.floor(state.energia)+'</div><div class="bar-wrap"><div class="bar energy" style="width:'+Math.max(0,state.energia)+'%"></div></div></div>'+
+    '<div class="stat-box"><div class="stat-label">SUEÑO</div><div class="stat-val sleep">'+Math.floor(state.sueno)+'</div><div class="bar-wrap"><div class="bar sleep" style="width:'+Math.max(0,state.sueno)+'%"></div></div></div>'+
+    '<div class="stat-box"><div class="stat-label">SUERTE</div><div class="stat-val luck'+(state.suerte<0?' negative':'')+'">'+(state.suerte>0?'+':'')+state.suerte+'</div><div class="bar-wrap"><div class="bar luck" style="width:'+((state.suerte+5)/10*100)+'%"></div></div></div>'+
+    '<div class="stat-box"><div class="stat-label">XP</div><div class="stat-val xp">'+state.xp+'/'+xpNeed+'</div><div class="bar-wrap"><div class="bar xp" style="width:'+xpPct+'%"></div></div></div>';
+}
 
-    var zone = ZONES[state.zone];
-    document.getElementById("zoneName").textContent = zone.icon + " " + zone.name;
+function renderQuestBar(){
+    var qb=document.getElementById('questBar');
+    var q=QUESTS.find(function(x){return x.main&&!state.questsDone[x.id]});
+    if(!q){qb.innerHTML='<span class="quest-icon">🏆</span><span class="quest-text"><b>Todas las misiones principales completadas</b></span>';return}
+    qb.innerHTML='<span class="quest-icon">'+q.icon+'</span><span class="quest-text">Misión: <b>'+q.title+'</b> — '+q.desc+'</span>';
+}
 
-    var opts = document.getElementById("options");
-    opts.innerHTML = "";
-    zone.options.forEach(function(opt, i) {
-        var btn = document.createElement("button");
-        btn.className = "opt-btn";
-        btn.textContent = opt.txt;
-        btn.onclick = function() { doAction(i); };
+function renderCombatPanel(){
+    var cp=document.getElementById('combatPanel');
+    if(!state.combat){cp.innerHTML='';return}
+    var e=state.combat;
+    var p=Math.max(0,Math.round(e.hp/e.maxHp*100));
+    cp.innerHTML='<div class="combat-panel"><h3><span class="enemy-icon">'+e.icon+'</span>'+e.name+(e.boss?' (JEFE)':'')+'</h3>'+
+    '<div class="enemy-stats">HP: '+Math.max(0,Math.floor(e.hp))+' / '+e.maxHp+' · ATK: '+e.atk+'</div>'+
+    '<div class="enemy-hp-wrap"><div class="enemy-hp-bar" style="width:'+p+'%"></div></div></div>';
+}
+
+function renderGame(){
+    renderStats();renderInventory();renderQuestBar();renderCombatPanel();
+
+    var zone=ZONES[state.zone];
+    var weather=WEATHERS[state.weatherIdx];
+    var time=TIMES[state.timeIdx];
+    document.getElementById('weatherDisplay').textContent=weather.icon+' '+weather.name;
+    document.getElementById('timeDisplay').textContent=time.icon+' '+time.name;
+    document.getElementById('zoneName').innerHTML=zone.icon+' '+zone.name+' <span class="zone-temp">🌡️ '+zone.temp+'°C</span>';
+
+    checkQuests();
+
+    var unread=DIARIES.filter(function(d){return d.unlocked}).length;
+    var notif=document.getElementById('journalNotif');
+    if(unread>0){notif.style.display='inline-block';notif.textContent=unread}else notif.style.display='none';
+
+    var opts=document.getElementById("options");
+    opts.innerHTML="";
+    if(state.combat){renderCombatOptions(opts);return}
+    if(state.pendingNPC){renderNPCInteraction(opts);return}
+
+    zone.options.forEach(function(opt,i){
+        var btn=document.createElement("button");
+        btn.className="opt-btn";
+        var s1=document.createElement("span");s1.textContent=opt.txt;btn.appendChild(s1);
+        if(opt.chance!==undefined){
+            var s2=document.createElement("span");
+            s2.className="opt-chance"+(opt.risky?" risky":"");
+            s2.textContent=pct(opt.chance);
+            btn.appendChild(s2);
+        }
+        btn.onclick=function(){doAction(i)};
         opts.appendChild(btn);
     });
 }
 
-function updateLog(msg, cls) {
-    document.getElementById("log").innerHTML = '<span class="' + cls + '">' + msg + '</span>';
+function renderCombatOptions(opts){
+    var hit=Math.min(.95,.75+state.nivel*.02);
+    addOpt(opts,"⚔️ Atacar",pct(hit),combatAttack,'combat-btn');
+    addOpt(opts,"🛡️ Defender","—",combatDefend,'defend-btn');
+    addOpt(opts,"🏃 Huir",pct(.5),combatFlee,'flee-btn');
+    if(state.inv.medicina>0&&state.hp<60)addOpt(opts,"💊 Medicina (+40 HP)","—",combatHeal,'defend-btn');
 }
 
-function doAction(idx) {
-    var result = ZONES[state.zone].options[idx].fn(state);
+function addOpt(parent,txt,chance,onclick,cls){
+    var btn=document.createElement("button");
+    btn.className="opt-btn"+(cls?" "+cls:"");
+    var s=document.createElement("span");s.textContent=txt;btn.appendChild(s);
+    if(chance){var c=document.createElement("span");c.className="opt-chance neutral";c.textContent=chance;btn.appendChild(c)}
+    btn.onclick=onclick;parent.appendChild(btn);
+}
 
+/* ============ NPC ============ */
+function renderNPCInteraction(opts){
+    var npc=NPCS.find(function(n){return n.id===state.pendingNPC});
+    if(!npc){state.pendingNPC=null;renderGame();return}
+    var intro=document.createElement('div');
+    intro.style.cssText='padding:12px 16px;background:rgba(74,222,128,.1);border-left:3px solid #4ade80;border-radius:10px;margin-bottom:10px;font-size:.9em;color:#c0c0e0';
+    intro.innerHTML='<b>'+npc.icon+' '+npc.name+'</b><br>'+npc.desc;
+    opts.appendChild(intro);
+
+    if(npc.id==='comerciante'){
+        addOpt(opts,"💰 Vender 10 madera → 3 oro","—",function(){if(state.inv.madera>=10){state.inv.madera-=10;state.inv.oro=(state.inv.oro||0)+3;updateLog("Vendiste 10 madera por 3 oro","good")}else updateLog("No tienes 10 madera","bad");state.pendingNPC=null;renderGame()});
+        addOpt(opts,"💰 Comprar 5 comida → 2 oro","—",function(){if((state.inv.oro||0)>=2){state.inv.oro-=2;state.inv.comida+=5;updateLog("+5 comida","good")}else updateLog("Sin oro","bad");state.pendingNPC=null;renderGame()});
+        addOpt(opts,"💰 Comprar venda → 1 oro","—",function(){if((state.inv.oro||0)>=1){state.inv.oro--;state.inv.venda=(state.inv.venda||0)+1;updateLog("+1 venda","good")}else updateLog("Sin oro","bad");state.pendingNPC=null;renderGame()});
+    }else if(npc.id==='medico'){
+        addOpt(opts,"🩺 Curar heridas (5 comida)","—",function(){if(state.inv.comida>=5){state.inv.comida-=5;state.condiciones.sangrado=0;state.condiciones.herida=0;state.condiciones.infeccion=0;state.condiciones.fiebre=0;state.condiciones.veneno=0;state.condiciones.fractura=0;state.hp=Math.min(100,state.hp+30);updateLog("Médico +30 HP","good")}else updateLog("Necesitas 5 comida","bad");state.pendingNPC=null;renderGame()});
+        addOpt(opts,"💊 Comprar medicina (2 oro)","—",function(){if((state.inv.oro||0)>=2){state.inv.oro-=2;state.inv.medicina=(state.inv.medicina||0)+1;updateLog("+1 medicina","good")}else updateLog("Sin oro","bad");state.pendingNPC=null;renderGame()});
+    }else if(npc.id==='cientifico'){
+        addOpt(opts,"📖 Escuchar historia (+5 XP, +1 Suerte)","—",function(){state.xp+=5;state.suerte=Math.min(5,state.suerte+1);updateLog("+5 XP +1 Suerte"+addLuck(1),"good");checkLevelUp();state.pendingNPC=null;renderGame()});
+    }else if(npc.id==='cazador'){
+        addOpt(opts,"🎓 Aprender a cazar (+15 XP)","—",function(){state.xp+=15;updateLog("+15 XP","good");checkLevelUp();state.pendingNPC=null;renderGame()});
+        addOpt(opts,"🐺 Piel por 2 comida","—",function(){if(state.inv.comida>=2){state.inv.comida-=2;state.inv.piel=(state.inv.piel||0)+1;updateLog("+1 piel","good")}else updateLog("Sin comida","bad");state.pendingNPC=null;renderGame()});
+    }else if(npc.id==='naufrago'){
+        addOpt(opts,"💬 Escuchar historia (+10 XP)","—",function(){state.xp+=10;updateLog("+10 XP","good");checkLevelUp();state.pendingNPC=null;renderGame()});
+    }else if(npc.id==='soldado'){
+        addOpt(opts,"🔫 Arma (10 oro + 5 chatarra)","—",function(){if((state.inv.oro||0)>=10&&(state.inv.chatarra||0)>=5){state.inv.oro-=10;state.inv.chatarra-=5;state.inv.armaFuego=true;state.inv.balas=(state.inv.balas||0)+5;updateLog("¡Arma! +5 balas","good")}else updateLog("Necesitas 10 oro + 5 chatarra","bad");state.pendingNPC=null;renderGame()});
+        addOpt(opts,"💣 5 balas (3 oro)","—",function(){if((state.inv.oro||0)>=3){state.inv.oro-=3;state.inv.balas=(state.inv.balas||0)+5;updateLog("+5 balas","good")}else updateLog("Sin oro","bad");state.pendingNPC=null;renderGame()});
+    }
+    addOpt(opts,"👋 Despedirse","—",function(){state.pendingNPC=null;renderGame()},'flee-btn');
+}
+
+/* ============ COMBATE ============ */
+function startCombat(forceEnemyId){
+    var posibles=ZONE_ENEMIES[state.zone]||[];
+    if(posibles.length===0)return false;
+    var id=forceEnemyId||posibles[Math.floor(Math.random()*posibles.length)];
+    var base=ENEMIES[id];
+    var scale=1+(state.nivel-1)*.15;
+    var hp=Math.round(base.hp*scale);
+    state.combat={id:id,name:base.name,icon:base.icon,hp:hp,maxHp:hp,atk:Math.round(base.atk*scale),xp:base.xp,loot:base.loot,lootN:base.lootN,venom:base.venom||false,human:base.human||false,boss:base.boss||false};
+    updateLog("⚔️ ¡COMBATE! Un "+base.name+" "+base.icon+" te ataca!","combat");
+    renderGame();return true;
+}
+function combatAttack(){
+    var e=state.combat;if(!e)return;
+    var hit=Math.min(.95,.75+state.nivel*.02);
+    var crit=.15+state.suerte*.02;
+    var log='';
+    if(roll(hit)){
+        var dmg=8+state.nivel*2;
+        if(state.inv.armaFuego&&state.inv.balas>0){dmg+=15;state.inv.balas--;state.inv.durabilidadArma--;if(state.inv.durabilidadArma<=0){state.inv.armaFuego=false;log+='¡Arma rota! '}}
+        else if(state.inv.lanza){dmg+=10;state.inv.durabilidadLanza--;if(state.inv.venenoLanza)dmg+=5;if(state.inv.durabilidadLanza<=0){state.inv.lanza=false;state.inv.venenoLanza=false;log+='¡Lanza rota! '}}
+        else{dmg+=2}
+        if(Math.random()<crit){dmg=Math.round(dmg*2);log+='¡CRÍTICO! '}
+        e.hp-=dmg;log+='Le hiciste '+dmg+' daño. ';
+        if(e.hp<=0){killEnemy();return}
+    }else log+='¡Fallaste! ';
+    var ed=e.atk+Math.floor(Math.random()*5)-2;
+    if(e.venom&&Math.random()<.3){state.condiciones.veneno=1;log+='¡Te envenenó! '}
+    state.hp-=ed;log+='El '+e.name+' te hizo '+ed+' daño.';
+    if(state.hp<=0){endGame('dead');return}
+    updateLog(log,'combat');renderGame();
+}
+function combatDefend(){
+    var e=state.combat;if(!e)return;
+    var ed=Math.round((e.atk+Math.floor(Math.random()*5)-2)*.5);
+    state.hp-=ed;
+    if(state.hp<=0){endGame('dead');return}
+    updateLog("Te defiendes. Solo recibiste "+ed+" daño.",'combat');renderGame();
+}
+function combatFlee(){
+    var e=state.combat;if(!e)return;
+    if(roll(.5)){state.combat=null;updateLog("Lograste huir.","good");renderGame()}
+    else{var ed=e.atk+Math.floor(Math.random()*5)-2;state.hp-=ed;updateLog("¡No pudiste huir! "+ed+" daño.","bad");if(state.hp<=0){endGame('dead');return}renderGame()}
+}
+function combatHeal(){
+    if(state.inv.medicina<=0)return;
+    state.inv.medicina--;state.hp=Math.min(100,state.hp+40);
+    var e=state.combat;
+    if(e){var ed=e.atk+Math.floor(Math.random()*5)-2;state.hp-=ed;updateLog("Medicina (+40 HP). El "+e.name+" te hizo "+ed+" daño.","good");if(state.hp<=0){endGame('dead');return}}
+    renderGame();
+}
+function killEnemy(){
+    var e=state.combat;
+    var log='¡Mataste al '+e.name+'! +'+e.xp+' XP';
+    state.xp+=e.xp;
+    if(!state.firstBlood){state.firstBlood=true;unlockAchievement("first_blood")}
+    if(e.boss)unlockAchievement("boss_slayer");
+    if(e.loot){
+        var n=e.lootN||1;
+        if(e.loot==='armaFuego'){state.inv.armaFuego=true;state.inv.balas=(state.inv.balas||0)+10;log+=' ¡Arma +10 balas!'}
+        else if(e.loot==='dienteTiburon'){state.inv.dienteTiburon=true;log+=' ¡Diente!'}
+        else if(e.loot==='venenoLanza'){state.inv.venenoLanza=true;log+=' ¡Veneno!'}
+        else if(e.loot==='antidoto'){state.inv.antidoto=(state.inv.antidoto||0)+n;log+=' +'+n+' antídoto'}
+        else{state.inv[e.loot]=(state.inv[e.loot]||0)+n;log+=' +'+n+' '+e.loot}
+    }
+    if(e.boss){state.suerte=Math.min(5,state.suerte+2);log+=' +2 Suerte'}
+    state.combat=null;checkLevelUp();updateLog(log,"good");renderGame();
+}
+function checkLevelUp(){
+    var need=state.nivel*100;
+    while(state.xp>=need){
+        state.xp-=need;state.nivel++;
+        state.hp=100;state.hambre=100;state.sed=100;state.energia=100;state.sueno=100;
+        updateLog("🎉 ¡SUBISTE A NIVEL "+state.nivel+"!","good");
+        if(state.nivel>=10)unlockAchievement("veteran");
+        need=state.nivel*100;
+    }
+}
+
+/* ============ ACCIÓN ============ */
+function doAction(idx){
+    var result=ZONES[state.zone].options[idx].fn(state);
+    if(state.visitedZones.indexOf(state.zone)<0){state.visitedZones.push(state.zone);if(state.visitedZones.length>=10)unlockAchievement("explorer")}
     state.dia++;
-    var hungerDrain = 11 + Math.random() * 8;
-    var thirstDrain = 14 + Math.random() * 9;
-    state.hambre = Math.max(0, state.hambre - hungerDrain);
-    state.sed = Math.max(0, state.sed - thirstDrain);
-
-    if(state.inv.cabana) state.hp = Math.min(100, state.hp + 5);
-    if(state.hambre <= 0) state.hp -= 16;
-    if(state.sed <= 0) state.hp -= 20;
-
-    if(state.hambre < 20 && state.inv.comida > 0) {
-        state.inv.comida--;
-        var foodRestore = state.inv.comidaCocida ? 50 : 35;
-        state.hambre = Math.min(100, state.hambre + foodRestore);
-    }
-    if(state.sed < 20 && state.inv.agua > 0) {
-        state.inv.agua--;
-        state.sed = Math.min(100, state.sed + 40);
-    }
-
-    var eventMsg = '';
-    RANDOM_EVENTS.forEach(function(ev) {
-        if(Math.random() < ev.chance) {
-            var r = ev.fn(state);
-            if(r) {
-                if(state.inv.cabana && ev.cabin) ev.cabin(state);
-                eventMsg += ' | ' + r;
-            }
+    state.timeIdx=(state.timeIdx+1)%TIMES.length;
+    state.weatherDays--;
+    if(state.weatherDays<=0){state.weatherIdx=Math.floor(Math.random()*WEATHERS.length);state.weatherDays=2+Math.floor(Math.random()*3)}
+    var weather=WEATHERS[state.weatherIdx];
+    var mode=GAME_MODES[state.gameMode]||GAME_MODES.normal;
+    var hd=(11+Math.random()*8)*mode.hungerMult;
+    var td=(14+Math.random()*9)*mode.hungerMult;
+    if(weather.name==="Ola de calor")td*=1.6;
+    if(weather.name==="Ola de frío")hd*=1.3;
+    state.hambre=Math.max(0,state.hambre-hd);
+    state.sed=Math.max(0,state.sed-td);
+    state.energia=Math.max(0,state.energia-(5+Math.random()*5));
+    state.sueno=Math.max(0,state.sueno-(6+Math.random()*6));
+    var zt=ZONES[state.zone].temp+weather.temp;
+    if(zt<5)state.condiciones.hipotermia=1;else if(zt>38)state.condiciones.insolacion=1;
+    if(state.inv.cabana)state.hp=Math.min(100,state.hp+5);
+    if(state.buildings.enfermeria)state.hp=Math.min(100,state.hp+5);
+    if(state.hambre<=0)state.hp-=16;
+    if(state.sed<=0)state.hp-=20;
+    if(state.energia<=0)state.hp-=8;
+    if(state.sueno<=0)state.hp-=8;
+    if(state.hambre<20&&state.inv.comida>0){state.inv.comida--;var fr=state.inv.comidaCocida?50:35;state.hambre=Math.min(100,state.hambre+fr)}
+    if(state.sed<20&&state.inv.agua>0){state.inv.agua--;state.sed=Math.min(100,state.sed+40)}
+    if(state.buildings.huerto&&state.dia%4===0)state.inv.comida+=2;
+    if(state.buildings.corral)state.inv.comida+=1;
+    if(state.buildings.enfermeria&&Math.random()<.5){state.condiciones.infeccion=0;state.condiciones.sangrado=0}
+    if(state.companion==='mono'&&state.dia%3===0)state.inv.comida++;
+    var condDmg='';
+    CONDITIONS.forEach(function(c){if(state.condiciones[c.id]>0){state.hp-=c.dmg;condDmg+=' '+c.icon}});
+    var evMsg='';
+    RANDOM_EVENTS.forEach(function(ev){
+        if(Math.random()<ev.chance){
+            var r=ev.fn(state);
+            if(state.inv.cabana&&ev.cabin)ev.cabin(state);
+            if(r)evMsg+=' | '+r+(state.inv.cabana&&ev.cabinMsg?ev.cabinMsg:'');
         }
     });
-
-    state.hp = Math.max(0, Math.min(100, state.hp));
-
-    var logMsg = result.msg;
-    if(eventMsg) logMsg += '<br><span class="event">' + eventMsg.substring(3) + '</span>';
-    if(state.hp < 25) logMsg += ' <span class="bad">HP CRITICO!</span>';
-    if(state.hambre < 20 && state.inv.comida <= 0) logMsg += ' <span class="bad">Sin comida!</span>';
-    if(state.sed < 20 && state.inv.agua <= 0) logMsg += ' <span class="bad">Sin agua!</span>';
-
-    document.getElementById("log").innerHTML = '<span class="' + result.cls + '">' + logMsg + '</span>';
-
-    if(state.hp <= 0) endGame('dead');
-    else if(state.rescate) endGame('rescue');
-    else if(state.escaped) endGame('escape');
-    else renderGame();
+    state.xp+=2;
+    if(result.xp)state.xp+=result.xp;
+    var need=state.nivel*100;
+    if(state.xp>=need){state.xp-=need;state.nivel++;state.hp=100;state.hambre=100;state.sed=100;state.energia=100;state.sueno=100;evMsg+=' | 🎉 ¡NIVEL '+state.nivel+'!';if(state.nivel>=10)unlockAchievement("veteran")}
+    state.hp=Math.max(0,Math.min(100,state.hp));
+    var logMsg=result.msg;
+    if(evMsg)logMsg+='<br><span class="event">'+evMsg.substring(3)+'</span>';
+    if(condDmg)logMsg+='<br><span class="cond">Daño condiciones:'+condDmg+'</span>';
+    if(state.hp<25)logMsg+=' <span class="bad">HP CRÍTICO!</span>';
+    document.getElementById("log").innerHTML='<span class="'+result.cls+'">'+logMsg+'</span>';
+    if(state.dia>=20)unlockAchievement("survivor20");
+    if((state.inv.oro||0)>=50)unlockAchievement("rich");
+    if(state.diariesFound>=5)unlockAchievement("librarian");
+    if(state.hp<=0){endGame('dead');return}
+    if(state.escaped){unlockAchievement("escaped");endGame('escape');return}
+    if(state.rescate===1){state.rescate=2;renderGame();return}
+    if(state.rescate===2){unlockAchievement("rescued");endGame('rescue');return}
+    if(result.trigger==="combat"){startCombat(result.forceEnemy);return}
+    if(state.pendingNPC){renderGame();return}
+    renderGame();
 }
 
-function endGame(type) {
-    var ov = document.getElementById("overlay");
-    ov.className = "show";
-    var dias = state.dia - 1;
-    saveRecord(dias);
+function updateLog(msg,cls){document.getElementById("log").innerHTML='<span class="'+cls+'">'+msg+'</span>'}
 
-    if(type === 'dead') {
+/* ============ MISIONES Y LOGROS ============ */
+function checkQuests(){
+    QUESTS.forEach(function(q){
+        if(!state.questsDone[q.id]&&q.check(state)){
+            state.questsDone[q.id]=true;
+            if(q.reward.xp)state.xp+=q.reward.xp;
+            showToast("🎯 Misión: "+q.title);
+        }
+    });
+}
+function unlockAchievement(id){
+    if(state.achievements[id])return;
+    state.achievements[id]=true;
+    var a=ACHIEVEMENTS.find(function(x){return x.id===id});
+    if(a)setTimeout(function(){showToast("🏆 Logro: "+a.name)},300);
+}
+function showToast(msg){
+    var t=document.createElement('div');
+    t.style.cssText='position:fixed;top:80px;right:20px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:14px 22px;border-radius:12px;font-weight:700;z-index:9999;box-shadow:0 10px 30px rgba(0,0,0,.5)';
+    t.textContent=msg;document.body.appendChild(t);
+    setTimeout(function(){t.remove()},3500);
+}
+
+/* ============ MODALES ============ */
+function openModal(title,html){
+    document.getElementById('modalTitle').textContent=title;
+    document.getElementById('modalBody').innerHTML=html;
+    document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('show')}
+
+function openJournal(){
+    var html='<p style="color:#7070a0;margin-bottom:15px;font-size:.88em">Diarios: <b style="color:#22d3ee">'+state.diariesFound+'/'+DIARIES.length+'</b></p>';
+    DIARIES.forEach(function(d){
+        if(d.unlocked)html+='<div class="lore-item"><b style="color:#a78bfa">📖 '+d.title+'</b><br>'+d.text+'</div>';
+        else html+='<div class="lore-item" style="opacity:.4">🔒 <b>'+d.title+'</b><br><i>No descubierto...</i></div>';
+    });
+    openModal("📖 Diario",html);
+}
+function openBuild(){
+    var html='';
+    BUILDINGS.forEach(function(b){
+        var count=state.buildings[b.id]||0;
+        var maxed=b.max&&count>=b.max;
+        var canBuild=!maxed&&!(b.repeat===false&&count>0);
+        var costStr=Object.keys(b.cost).map(function(k){return k+': '+b.cost[k]}).join(' · ');
+        var hasAll=Object.keys(b.cost).every(function(k){return (state.inv[k]||0)>=b.cost[k]});
+        html+='<div class="build-item"><span class="b-icon">'+b.icon+'</span><div class="b-info"><div class="q-title">'+b.name+(count>0?' (x'+count+')':'')+'</div><div class="b-desc">'+b.desc+'</div><div class="b-cost">'+costStr+'</div></div>';
+        if(canBuild)html+='<button class="build-btn" '+(hasAll?'':'disabled')+' onclick="buildIt(\''+b.id+'\')">Construir</button>';
+        else html+='<span style="color:#4ade80;font-size:1.2em">✓</span>';
+        html+='</div>';
+    });
+    openModal("🔨 Construcciones",html);
+}
+function buildIt(id){
+    var b=BUILDINGS.find(function(x){return x.id===id});
+    if(!b)return;
+    var hasAll=Object.keys(b.cost).every(function(k){return (state.inv[k]||0)>=b.cost[k]});
+    if(!hasAll)return;
+    Object.keys(b.cost).forEach(function(k){state.inv[k]-=b.cost[k]});
+    state.buildings[b.id]=(state.buildings[b.id]||0)+1;
+    state.inv['building_'+b.id]=true;
+    if(b.id==='cabana'){state.inv.cabana=true;unlockAchievement("builder")}
+    if(b.id==='huerto')unlockAchievement("farmer");
+    updateLog("🔨 Construiste: "+b.name,"good");
+    closeModal();renderGame();
+}
+function openQuests(){
+    var html='<h3 style="color:#4ade80;font-size:.95em;margin-bottom:10px">MISIONES PRINCIPALES</h3>';
+    QUESTS.filter(function(q){return q.main}).forEach(function(q){
+        var done=state.questsDone[q.id];
+        html+='<div class="quest-item'+(done?' done':'')+'"><span class="q-icon">'+q.icon+'</span><div class="q-info"><div class="q-title">'+q.title+'</div><div class="q-desc">'+q.desc+'</div></div><span class="q-status">'+(done?'✅':'⏳')+'</span></div>';
+    });
+    html+='<h3 style="color:#22d3ee;font-size:.95em;margin:15px 0 10px">SECUNDARIAS</h3>';
+    QUESTS.filter(function(q){return !q.main}).forEach(function(q){
+        var done=state.questsDone[q.id];
+        html+='<div class="quest-item'+(done?' done':'')+'"><span class="q-icon">'+q.icon+'</span><div class="q-info"><div class="q-title">'+q.title+'</div><div class="q-desc">'+q.desc+'</div></div><span class="q-status">'+(done?'✅':'⏳')+'</span></div>';
+    });
+    openModal("📜 Misiones",html);
+}
+function openAchievements(){
+    var html='<p style="color:#7070a0;margin-bottom:15px;font-size:.88em">Desbloqueados: <b style="color:#fbbf24">'+Object.keys(state.achievements).length+'/'+ACHIEVEMENTS.length+'</b></p>';
+    ACHIEVEMENTS.forEach(function(a){
+        var u=state.achievements[a.id];
+        html+='<div class="achieve-item '+(u?'unlocked':'locked')+'"><span class="a-icon">'+a.icon+'</span><div class="a-info"><div class="q-title">'+a.name+'</div><div class="q-desc">'+a.desc+'</div></div>'+(u?'<span style="color:#4ade80">✓</span>':'')+'</div>';
+    });
+    openModal("🏆 Logros",html);
+}
+function openCompanions(){
+    var html='';
+    if(state.companion){
+        var c=COMPANIONS[state.companion];
+        html+='<div style="padding:20px;background:rgba(74,222,128,.1);border:1px solid #4ade80;border-radius:12px;text-align:center;margin-bottom:20px"><div style="font-size:3em">'+c.icon+'</div><div style="font-weight:700;font-size:1.2em;margin-top:10px">'+c.name+'</div><div style="color:#c0c0e0;font-size:.88em;margin-top:5px">'+c.desc+'</div></div>';
+        html+='<button class="build-btn" onclick="abandonCompanion()">Abandonar</button>';
+    }else{
+        html+='<p style="color:#7070a0;margin-bottom:15px;font-size:.9em">Adopta un compañero.</p>';
+        Object.keys(COMPANIONS).forEach(function(k){
+            var c=COMPANIONS[k];
+            var costStr=Object.keys(c.cost).map(function(x){return c.cost[x]+' '+x}).join(', ');
+            var hasAll=Object.keys(c.cost).every(function(x){return (state.inv[x]||0)>=c.cost[x]});
+            html+='<div class="build-item"><span class="b-icon">'+c.icon+'</span><div class="b-info"><div class="q-title">'+c.name+'</div><div class="b-desc">'+c.desc+'</div><div class="b-cost">Cuesta: '+costStr+'</div></div><button class="build-btn" '+(hasAll?'':'disabled')+' onclick="adoptCompanion(\''+k+'\')">Adoptar</button></div>';
+        });
+    }
+    openModal("🐕 Compañeros",html);
+}
+function adoptCompanion(k){
+    var c=COMPANIONS[k];
+    var hasAll=Object.keys(c.cost).every(function(x){return (state.inv[x]||0)>=c.cost[x]});
+    if(!hasAll)return;
+    Object.keys(c.cost).forEach(function(x){state.inv[x]-=c.cost[x]});
+    state.companion=k;unlockAchievement("companion");
+    updateLog("🐾 Adoptaste un "+c.name+"!","good");
+    closeModal();renderGame();
+}
+function abandonCompanion(){state.companion=null;closeModal();renderGame()}
+
+/* ============ FIN ============ */
+function endGame(type){
+    var ov=document.getElementById("overlay");
+    ov.className="show";
+    var dias=state.dia-1;
+    saveRecord(dias);
+    var allMain=QUESTS.filter(function(q){return q.main}).every(function(q){return state.questsDone[q.id]});
+    if(type==='dead'){
         ov.classList.add("dead");
-        document.getElementById("oTitle").textContent = "HAS MUERTO";
-        document.getElementById("oMsg").textContent = "Sobreviviste " + dias + " dias.";
-        document.getElementById("oDetail").textContent = "Causa: " + (state.hambre <= 0 && state.sed <= 0 ? "Hambre y sed" : state.hambre <= 0 ? "Hambre" : state.sed <= 0 ? "Deshidratacion" : "Heridas");
-    } else if(type === 'rescue') {
+        document.getElementById("oTitle").textContent="HAS MUERTO";
+        document.getElementById("oMsg").textContent="Sobreviviste "+dias+" días.";
+        var causas=[];
+        if(state.hambre<=0)causas.push("Hambre");
+        if(state.sed<=0)causas.push("Sed");
+        if(state.combat)causas.push("Combate con "+state.combat.name);
+        CONDITIONS.forEach(function(c){if(state.condiciones[c.id]>0)causas.push(c.name)});
+        if(causas.length===0)causas.push("Heridas");
+        document.getElementById("oDetail").innerHTML="Causa: "+causas.join(", ")+"<br>Nivel: "+state.nivel+"<br>Días: "+dias+"<br>Logros: "+Object.keys(state.achievements).length+"/"+ACHIEVEMENTS.length;
+        document.getElementById("oButtons").innerHTML='<button onclick="retry()">REINTENTAR</button><button onclick="showModePicker()">CAMBIAR MODO</button>';
+    }else if(type==='rescue'){
         ov.classList.add("win");
-        document.getElementById("oTitle").textContent = "RESCATADO!";
-        document.getElementById("oMsg").textContent = "Un barco te rescato el dia " + dias + ".";
-        document.getElementById("oDetail").textContent = "Metodo: Senal de humo desde la montana";
-    } else if(type === 'escape') {
-        ov.classList.add("win");
-        document.getElementById("oTitle").textContent = "ESCAPASTE!";
-        document.getElementById("oMsg").textContent = "Navegaste a tierra firme el dia " + dias + ".";
-        document.getElementById("oDetail").textContent = "Metodo: Balsa desde la playa oculta";
+        document.getElementById("oTitle").textContent="RESCATADO!";
+        document.getElementById("oMsg").textContent="Un barco te rescató el día "+dias+".";
+        document.getElementById("oDetail").innerHTML="Método: Radio/faro<br>Nivel: "+state.nivel+"<br>Logros: "+Object.keys(state.achievements).length+"/"+ACHIEVEMENTS.length;
+        document.getElementById("oButtons").innerHTML='<button onclick="retry()">REINTENTAR</button>';
+    }else if(type==='escape'){
+        if(allMain){
+            ov.classList.add("true-end");
+            document.getElementById("oTitle").textContent="FINAL VERDADERO 🎖️";
+            document.getElementById("oMsg").textContent="¡Escapaste Y descubriste el misterio!";
+            document.getElementById("oDetail").innerHTML="Completaste todas las misiones.<br>Días: "+dias+" · Nivel: "+state.nivel+"<br>¡Eres una leyenda!";
+        }else{
+            ov.classList.add("win");
+            document.getElementById("oTitle").textContent="ESCAPASTE!";
+            document.getElementById("oMsg").textContent="Navegaste a tierra firme el día "+dias+".";
+            document.getElementById("oDetail").innerHTML="Método: Balsa/barco<br>Nivel: "+state.nivel;
+        }
+        document.getElementById("oButtons").innerHTML='<button onclick="retry()">REINTENTAR</button>';
     }
 }
+function retry(){document.getElementById("overlay").className="";resetGame(true)}
 
-resetGame();
+/* ============ INICIO ============ */
+loadRecord('normal');
+showModePicker();
 </script>
 </body>
 </html>
