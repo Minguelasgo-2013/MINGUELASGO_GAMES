@@ -261,6 +261,13 @@ footer{background:var(--bg-secondary);padding:40px;text-align:center;border-top:
 .footer-text{color:var(--text-muted);font-size:.9em;margin-top:8px}
 .fade-in{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
 .fade-in.visible{opacity:1;transform:translateY(0)}
+/* ============ IFRAME UNITY ============ */
+.game-iframe-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);z-index:10000;align-items:center;justify-content:center;padding:20px}
+.game-iframe-overlay.active{display:flex}
+.game-iframe-container{width:100%;max-width:1300px;height:88vh;background:#000;border-radius:16px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.7)}
+.game-iframe-close{position:absolute;top:12px;right:12px;z-index:10;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:1.1em;width:42px;height:42px;border-radius:50%;cursor:pointer;backdrop-filter:blur(10px);transition:all .3s}
+.game-iframe-close:hover{background:rgba(245,87,108,.8);transform:scale(1.1)}
+.game-iframe-container iframe{width:100%;height:100%;border:none;display:block}
 @media(max-width:768px){
 nav{padding:12px 20px}
 .nav-links{display:none;position:absolute;top:100%;left:0;width:100%;background:var(--glass);backdrop-filter:blur(20px);flex-direction:column;padding:20px;gap:15px;border-bottom:1px solid var(--border);z-index:999}
@@ -282,6 +289,7 @@ section{padding:60px 20px}
 .minecraft-info h3{font-size:1.8em}
 .minecraft-features{gap:10px}
 .minecraft-features span{font-size:.8em;padding:6px 12px}
+.game-iframe-container{height:80vh;border-radius:10px}
 }
 @media(max-width:480px){
 .hero-logo{font-size:1.8em}
@@ -307,7 +315,7 @@ section{padding:60px 20px}
 <h2>Bienvenido a MINGUELASGO GAMES</h2>
 <p>La plataforma ha sido renovada con nuevas funciones.</p>
 <div class="welcome-features">
-<div class="welcome-feat">17 Juegos</div>
+<div class="welcome-feat">18 Juegos</div>
 <div class="welcome-feat">Ranking Global</div>
 <div class="welcome-feat">Chat en Vivo</div>
 <div class="welcome-feat">Logros</div>
@@ -367,10 +375,18 @@ section{padding:60px 20px}
 </div>
 </div>
 
+<!-- ============ IFRAME MODAL PARA JUEGOS UNITY ============ -->
+<div class="game-iframe-overlay" id="gameIframeOverlay" onclick="closeGameIframe()">
+<div class="game-iframe-container" onclick="event.stopPropagation()">
+<button class="game-iframe-close" onclick="closeGameIframe()">✖</button>
+<iframe id="gameIframe" src="" allowfullscreen></iframe>
+</div>
+</div>
+
 <section class="hero">
 <div class="hero-bg-anim"><div class="hero-orb"></div><div class="hero-orb"></div><div class="hero-orb"></div></div>
 <div class="hero-logo">MINGUELASGO GAMES</div>
-<p class="hero-tagline">Tu plataforma de juegos favorita, renovada. 17 juegos, ranking global, chat en vivo, logros y mucho mas.</p>
+<p class="hero-tagline">Tu plataforma de juegos favorita, renovada. 18 juegos, ranking global, chat en vivo, logros y mucho mas.</p>
 <div class="hero-stats">
 <div class="hero-stat"><div class="hero-stat-number" id="statGames">0</div><div class="hero-stat-label">Juegos</div></div>
 <div class="hero-stat"><div class="hero-stat-number" id="statPlayers">0</div><div class="hero-stat-label">Jugadores</div></div>
@@ -416,7 +432,7 @@ section{padding:60px 20px}
 </section>
 
 <section id="catalogo">
-<div class="section-header fade-in"><h2 class="section-title">Catalogo de Juegos</h2><p class="section-subtitle">Explora nuestros 17 juegos</p></div>
+<div class="section-header fade-in"><h2 class="section-title">Catalogo de Juegos</h2><p class="section-subtitle">Explora nuestros 18 juegos</p></div>
 <div class="search-bar fade-in"><span class="search-icon">&#128269;</span><input type="text" id="searchInput" placeholder="Buscar juegos..." oninput="searchGames()"></div>
 <div class="filter-tabs fade-in" id="filterTabs"></div>
 <div class="games-grid" id="gamesGrid"></div>
@@ -527,6 +543,27 @@ var auth=firebase.auth(),db=firebase.firestore(),currentUser=null,isLogin=true,c
 
 function esc(t){var d=document.createElement('div');d.textContent=t;return d.innerHTML;}
 
+/* ============ IFRAME UNITY ============ */
+function openGameIframe(folder){
+    var overlay=document.getElementById('gameIframeOverlay');
+    var iframe=document.getElementById('gameIframe');
+    iframe.src=folder+'/index.html';
+    overlay.classList.add('active');
+    document.body.style.overflow='hidden';
+}
+function closeGameIframe(){
+    var overlay=document.getElementById('gameIframeOverlay');
+    var iframe=document.getElementById('gameIframe');
+    overlay.classList.remove('active');
+    iframe.src='';
+    document.body.style.overflow='';
+}
+function launchGame(g,e){
+    if(e){e.preventDefault();e.stopPropagation();}
+    if(g.unity){openGameIframe(g.folder);}
+    else{window.location.href=g.folder+'/index.html';}
+}
+
 /* ============ KONAMI + VIP ============ */
 var konamiCode=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
 var konamiIndex=0;
@@ -620,6 +657,7 @@ document.addEventListener('click',function(e){
 
 /* ============ JUEGOS ============ */
 var GAMES=[
+    {name:'1v1.lol',folder:'1v1lol',icon:'🔫',cat:'Accion',grad:6,desc:'Duelos 1v1 con construccion y disparos',unity:true},
     {name:'BlockDash',folder:'BlockDash',icon:'🏃',cat:'Accion',grad:1,desc:'Corre, esquiva y sobrevive'},
     {name:'Bunker60',folder:'Bunker60',icon:'🏚️',cat:'Aventura',grad:2,desc:'Sobrevive en el bunker'},
     {name:'CazaPuntos',folder:'CazaPuntos',icon:'🎯',cat:'Arcade',grad:3,desc:'Atrapa todos los puntos'},
@@ -692,9 +730,10 @@ function renderFavGrid(){
         if(!g)return;
         var a=document.createElement('a');
         a.className='game-card visible';
-        a.href=g.folder+'/index.html';
+        a.href='#';
         a.setAttribute('data-cat',g.cat);
         a.setAttribute('data-name',g.name);
+        a.onclick=function(e){launchGame(g,e);};
         a.innerHTML=
             '<div class="game-thumb grad-'+g.grad+'">'+
                 '<button class="fav-btn active" data-fav="'+esc(g.name)+'" onclick="toggleFav(\''+g.name.replace(/'/g,"\\'")+'\',event)">&#128077;</button>'+
@@ -710,9 +749,10 @@ var grid=document.getElementById('gamesGrid');
 GAMES.forEach(function(g,i){
     var a=document.createElement('a');
     a.className='game-card';
-    a.href=g.folder+'/index.html';
+    a.href='#';
     a.setAttribute('data-cat',g.cat);
     a.setAttribute('data-name',g.name);
+    a.onclick=function(e){launchGame(g,e);};
     a.innerHTML=
         '<div class="game-thumb grad-'+g.grad+'">'+
             '<button class="fav-btn'+(isFav(g.name)?' active':'')+'" '+
@@ -732,7 +772,7 @@ GAMES.forEach(function(g,i){
 });
 renderFavGrid();
 
-/* ============ RECIENTES (delegación) ============ */
+/* ============ RECIENTES ============ */
 function loadRecentGames(){
     var recent=JSON.parse(localStorage.getItem('mg_recent')||'[]');
     var section=document.getElementById('recientes');
@@ -745,7 +785,8 @@ function loadRecentGames(){
         if(!g)return;
         var a=document.createElement('a');
         a.className='recent-item';
-        a.href=g.folder+'/index.html';
+        a.href='#';
+        a.onclick=function(e){launchGame(g,e);};
         a.innerHTML='<div class="recent-thumb grad-'+g.grad+'">'+g.icon+'</div><div class="recent-name">'+esc(g.name)+'</div>';
         scroll.appendChild(a);
     });
@@ -985,7 +1026,8 @@ function sendChatbotMsg(){
 function getBotResponse(q){
     if(q.includes('hola')||q.includes('hey')||q.includes('buenas')) return '¡Hola! ¿En qué puedo ayudarte?';
     if(q.includes('gracias')) return '¡De nada! Disfruta los juegos 🎮';
-    if(q.includes('juego')||q.includes('jugar')||q.includes('catalogo')||q.includes('catálogo')) return 'Tenemos 17 juegos disponibles. Los más populares son ZOMBIE ASSAULT, BlockDash y ExtremeCar. ¡Échale un ojo al catálogo!';
+    if(q.includes('1v1')||q.includes('lol')) return '1v1.lol está disponible 🔫. Es un juego de duelos con construcción tipo Fortnite. ¡Búscalo en el catálogo!';
+    if(q.includes('juego')||q.includes('jugar')||q.includes('catalogo')||q.includes('catálogo')) return 'Tenemos 18 juegos disponibles. Los más populares son 1v1.lol, ZOMBIE ASSAULT, BlockDash y ExtremeCar. ¡Échale un ojo al catálogo!';
     if(q.includes('ranking')||q.includes('top')||q.includes('mejores')) return 'En la sección "Ranking Global" ves el Top 10. También hay ranking por juego 🏆';
     if(q.includes('cuenta')||q.includes('registr')||q.includes('sesion')||q.includes('sesión')) return 'Haz clic en "Iniciar sesión" arriba a la derecha. Es gratis y desbloqueas chat, comentarios y logros.';
     if(q.includes('chat')) return 'El chat en vivo está en la sección "Chat". Necesitas iniciar sesión para participar.';
@@ -1144,13 +1186,11 @@ function startOnlinePresence(){
     if(onlineInterval) clearInterval(onlineInterval);
     if(!currentUser) return;
 
-    // Marca presencia inmediata
     db.collection('online').doc(currentUser.uid).set({
         lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
         name: currentPlayerName || 'Anónimo'
     });
 
-    // Refresca cada 60 segundos
     onlineInterval = setInterval(function(){
         if(!currentUser) return;
         db.collection('online').doc(currentUser.uid).set({
@@ -1167,7 +1207,6 @@ function stopOnlinePresence(){
     }
 }
 
-// Contar usuarios activos en los últimos 5 minutos
 db.collection('online').onSnapshot(function(snap){
     var now = Date.now();
     var count = 0;
@@ -1181,24 +1220,20 @@ db.collection('online').onSnapshot(function(snap){
     if(el) el.textContent = count;
 });
 
-// Marcar/limpiar presencia al iniciar/cerrar sesión
 auth.onAuthStateChanged(function(user){
     if(user){
-        // pequeño delay para que currentUser y currentPlayerName estén listos
         setTimeout(startOnlinePresence, 1200);
     } else {
         stopOnlinePresence();
     }
 });
 
-// Limpiar al cerrar la pestaña
 window.addEventListener('beforeunload', function(){
     if(currentUser){
         db.collection('online').doc(currentUser.uid).delete();
     }
 });
 
-// Actualiza el contador visualmente cada minuto (por si alguien expiró sin snapshot)
 setInterval(function(){
     db.collection('online').get().then(function(snap){
         var now = Date.now();
@@ -1214,7 +1249,7 @@ setInterval(function(){
     });
 }, 60000);
 
-/* ============ HERO STATS (con datos reales) ============ */
+/* ============ HERO STATS ============ */
 function animateNumber(el,target){
     var cur=0,step=Math.max(1,Math.ceil(target/40));
     if(target===0){el.textContent='0';return;}
@@ -1225,17 +1260,14 @@ function animateNumber(el,target){
     },40);
 }
 
-// Juegos: valor fijo real (17)
 setTimeout(function(){
-    animateNumber(document.getElementById('statGames'),17);
+    animateNumber(document.getElementById('statGames'),18);
 },700);
 
-// Jugadores reales (cuenta documentos en 'players')
 db.collection('players').onSnapshot(function(snap){
     animateNumber(document.getElementById('statPlayers'),snap.size);
 });
 
-// Opiniones reales (cuenta documentos en 'comments')
 db.collection('comments').onSnapshot(function(snap){
     animateNumber(document.getElementById('statReviews'),snap.size);
 });
