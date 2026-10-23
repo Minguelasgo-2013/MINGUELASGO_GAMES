@@ -301,48 +301,120 @@ section{padding:60px 20px}
 </style>
 </head>
 <body>
-<!-- Música de fondo: Miguel Phonk (Mega Miguel Funk), fragmento 0–16 s. -->
-<style>
-#musicToggle{position:fixed;right:16px;bottom:16px;z-index:10001;border:1px solid rgba(102,126,234,.8);border-radius:999px;padding:11px 15px;background:#161655;color:#fff;font:600 14px 'Segoe UI',sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.35);cursor:pointer}
-#musicToggle:hover{background:#24247a}
-#musicFrameWrap{position:fixed;width:200px;height:120px;left:-10000px;top:0;overflow:hidden;z-index:-1}
-#backgroundMusicPlayer{width:200px;height:120px;border:0}
-</style>
-<div id="musicFrameWrap" aria-hidden="true"><div id="backgroundMusicPlayer"></div></div>
-<button id="musicToggle" type="button">▶ Activar Miguel Miguel Funk 🎵</button>
+<!-- MINGUELASGO_YT_MUSIC_LOOP: canción original de YouTube, fragmento 0–16 s -->
+<div id="minguelasgoMusicPlayer" aria-hidden="true" style="position:fixed;left:-10000px;top:0;width:200px;height:200px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1"></div>
 <script>
-(function(){
-  var player=null,ready=false,playing=false,loopTimer=null;
-  var button=document.getElementById('musicToggle');
-  function start(){
-    if(!ready||!player)return;
-    playing=true;
-    player.seekTo(0,true);
-    player.playVideo();
-    button.textContent='⏸ Pausar Miguel Miguel Funk';
-    if(loopTimer)clearInterval(loopTimer);
-    loopTimer=setInterval(function(){
-      if(playing && player && player.getPlayerState && player.getPlayerState()===YT.PlayerState.PLAYING && player.getCurrentTime()>=15.8){
-        player.seekTo(0,true);player.playVideo();
+(function () {
+  'use strict';
+  var videoId = 'V0qszQnr5D4';
+  var player = null;
+  var ready = false;
+  var retryTimer = null;
+  var loopTimer = null;
+  var lastGesture = 0;
+
+  function startPlayback() {
+    if (!player || !ready) return;
+    try {
+      // Si el vídeo está fuera del fragmento elegido, volver al segundo 0.
+      var time = player.getCurrentTime();
+      if (time >= 15.8 || player.getPlayerState() === YT.PlayerState.ENDED) {
+        player.seekTo(0, true);
       }
-    },200);
+      player.playVideo();
+    } catch (e) {}
   }
-  button.addEventListener('click',function(){
-    if(!ready||!player){button.textContent='Cargando canción…';return;}
-    if(playing){playing=false;player.pauseVideo();button.textContent='▶ Reanudar Miguel Miguel Funk';}
-    else start();
-  });
-  window.onYouTubeIframeAPIReady=function(){
-    player=new YT.Player('backgroundMusicPlayer',{
-      width:'200',height:'120',
-      videoId:'52IoCmGPnx8',
-      playerVars:{autoplay:0,controls:0,playsinline:1,rel:0,start:0,origin:location.origin},
-      events:{onReady:function(){ready=true;button.textContent='▶ Activar Miguel Miguel Funk 🎵';},onError:function(){button.textContent='No se pudo cargar la canción';}}
+
+  function onPlayerReady(event) {
+    ready = true;
+    try {
+      event.target.mute();
+      event.target.seekTo(0, true);
+      event.target.playVideo();
+    } catch (e) {}
+    // El navegador puede permitir el inicio silenciado, pero bloquear el sonido.
+    // En la primera interacción del usuario se intenta activar el audio.
+    if (!loopTimer) {
+      loopTimer = setInterval(function () {
+        if (!player || !ready) return;
+        try {
+          var state = player.getPlayerState();
+          var time = player.getCurrentTime();
+          if (state === YT.PlayerState.ENDED || time >= 15.8) {
+            player.seekTo(0, true);
+            player.playVideo();
+          }
+        } catch (e) {}
+      }, 200);
+    }
+  }
+
+  function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.ENDED) {
+      try { player.seekTo(0, true); player.playVideo(); } catch (e) {}
+    }
+  }
+
+  function createPlayer() {
+    if (!window.YT || !window.YT.Player || player) return;
+    player = new YT.Player('minguelasgoMusicPlayer', {
+      width: '200',
+      height: '200',
+      videoId: videoId,
+      playerVars: {
+        autoplay: 1,
+        controls: 0,
+        start: 0,
+        playsinline: 1,
+        rel: 0,
+        loop: 1,
+        playlist: videoId,
+        disablekb: 1,
+        fs: 0
+      },
+      events: {
+        onReady: onPlayerReady,
+        onStateChange: onPlayerStateChange
+      }
     });
+  }
+
+  // Encadenar la función global por si otra parte de la página usa la API.
+  var previousReady = window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady = function () {
+    if (typeof previousReady === 'function') {
+      try { previousReady(); } catch (e) {}
+    }
+    createPlayer();
   };
-  var api=document.createElement('script');api.src='https://www.youtube.com/iframe_api';document.head.appendChild(api);
+
+  if (window.YT && window.YT.Player) {
+    createPlayer();
+  } else if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+    var apiScript = document.createElement('script');
+    apiScript.src = 'https://www.youtube.com/iframe_api';
+    apiScript.async = true;
+    document.head.appendChild(apiScript);
+  }
+
+  function userGesture() {
+    var now = Date.now();
+    if (now - lastGesture < 800) return;
+    lastGesture = now;
+    if (!player || !ready) return;
+    try {
+      player.unMute();
+      player.setVolume(65);
+      startPlayback();
+    } catch (e) {}
+  }
+  ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
+    document.addEventListener(type, userGesture, { passive: true });
+  });
 })();
 </script>
+<!-- Fin de la música de fondo -->
+
 <div class="loading-screen" id="loadingScreen">
 <div class="loading-logo">MINGUELASGO GAMES</div>
 <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
