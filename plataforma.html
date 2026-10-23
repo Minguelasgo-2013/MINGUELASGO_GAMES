@@ -301,6 +301,50 @@ section{padding:60px 20px}
 </style>
 </head>
 <body>
+<!-- Música de fondo: reproduce del segundo 0 al 16 y vuelve a empezar en bucle. -->
+<div id="musicBackground" aria-hidden="true" style="position:fixed;width:1px;height:1px;overflow:hidden;left:-10000px;top:-10000px;pointer-events:none">
+  <iframe
+    id="backgroundMusicPlayer"
+    width="1" height="1"
+    src="https://www.youtube-nocookie.com/embed/V0qszQnr5D4?start=0&end=16&autoplay=1&loop=1&playlist=V0qszQnr5D4&controls=0&playsinline=1&enablejsapi=1"
+    title="Música de fondo"
+    frameborder="0"
+    allow="autoplay; encrypted-media; picture-in-picture"
+    referrerpolicy="strict-origin-when-cross-origin">
+  </iframe>
+</div>
+<script>
+// Controla el fragmento de 0 a 16 segundos y vuelve al inicio en bucle.
+(function () {
+  var api = document.createElement('script');
+  api.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(api);
+  var player;
+  window.onYouTubeIframeAPIReady = function () {
+    player = new YT.Player('backgroundMusicPlayer', {
+      events: {
+        onReady: function (event) {
+          event.target.playVideo();
+          window.setInterval(function () {
+            if (!player || typeof player.getCurrentTime !== 'function') return;
+            var state = player.getPlayerState();
+            if (state === YT.PlayerState.PLAYING && player.getCurrentTime() >= 15.8) {
+              player.seekTo(0, true);
+              player.playVideo();
+            }
+          }, 250);
+        },
+        onStateChange: function (event) {
+          if (event.data === YT.PlayerState.ENDED) {
+            event.target.seekTo(0, true);
+            event.target.playVideo();
+          }
+        }
+      }
+    });
+  };
+})();
+</script>
 <div class="loading-screen" id="loadingScreen">
 <div class="loading-logo">MINGUELASGO GAMES</div>
 <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
