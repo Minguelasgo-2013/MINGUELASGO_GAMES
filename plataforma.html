@@ -301,7 +301,7 @@ section{padding:60px 20px}
 </style>
 </head>
 <body>
-<!-- MINGUELASGO_YT_MUSIC_LOOP: canción original de YouTube, fragmento 0–16 s -->
+<!-- MINGUELASGO_YT_MUSIC_LOOP: canción completa de YouTube en bucle -->
 <div id="minguelasgoMusicPlayer" aria-hidden="true" style="position:fixed;left:-10000px;top:0;width:200px;height:200px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1"></div>
 <script>
 (function () {
@@ -310,17 +310,12 @@ section{padding:60px 20px}
   var player = null;
   var ready = false;
   var retryTimer = null;
-  var loopTimer = null;
   var lastGesture = 0;
 
   function startPlayback() {
     if (!player || !ready) return;
     try {
-      // Si el vídeo está fuera del fragmento elegido, volver al segundo 0.
-      var time = player.getCurrentTime();
-      if (time >= 15.8 || player.getPlayerState() === YT.PlayerState.ENDED) {
-        player.seekTo(0, true);
-      }
+      // Reproducir la canción completa; el bucle se activa al terminar el vídeo.
       player.playVideo();
     } catch (e) {}
   }
@@ -328,28 +323,13 @@ section{padding:60px 20px}
   function onPlayerReady(event) {
     ready = true;
     try {
-      event.target.mute();
       event.target.seekTo(0, true);
       event.target.playVideo();
     } catch (e) {}
-    // El navegador puede permitir el inicio silenciado, pero bloquear el sonido.
-    // En la primera interacción del usuario se intenta activar el audio.
-    if (!loopTimer) {
-      loopTimer = setInterval(function () {
-        if (!player || !ready) return;
-        try {
-          var state = player.getPlayerState();
-          var time = player.getCurrentTime();
-          if (state === YT.PlayerState.ENDED || time >= 15.8) {
-            player.seekTo(0, true);
-            player.playVideo();
-          }
-        } catch (e) {}
-      }, 200);
-    }
   }
 
   function onPlayerStateChange(event) {
+    // Al terminar la canción completa, volver al principio y reproducirla otra vez.
     if (event.data === YT.PlayerState.ENDED) {
       try { player.seekTo(0, true); player.playVideo(); } catch (e) {}
     }
