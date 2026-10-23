@@ -1,611 +1,254 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BLOCK DASH CHAOS X</title>
+<html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BLOCK DASH CHAOS X 3D</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:radial-gradient(circle at top,#111,#000 70%);color:#00ffcc;font-family:Segoe UI,sans-serif;overflow:hidden;height:100vh;display:flex;justify-content:center;align-items:center;}
-.game-wrapper{display:flex;gap:20px;}
-.side-ui{width:270px;background:rgba(0,0,0,0.9);border:2px solid #00ffcc;border-radius:20px;padding:15px;box-shadow:0 0 30px rgba(0,255,204,0.3);overflow-y:auto;max-height:580px;}
-.title{text-align:center;font-size:22px;color:white;margin-bottom:12px;text-shadow:0 0 20px #00ffcc;}
-.card{background:#111;border:1px solid #00ffcc55;border-radius:12px;padding:10px;margin-bottom:10px;}
-.card span{color:white;}
-button{width:100%;padding:10px;margin-top:8px;border:none;border-radius:12px;background:#00ffcc;color:black;font-weight:bold;cursor:pointer;transition:0.25s;font-size:13px;}
-button:hover{transform:scale(1.04);box-shadow:0 0 20px #00ffcc;}
-canvas{border:3px solid #00ffcc;border-radius:20px;background:black;box-shadow:0 0 35px rgba(0,255,204,0.4);}
-.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.97);border:2px solid #00ffcc;border-radius:20px;width:440px;max-height:85vh;overflow-y:auto;padding:20px;display:none;z-index:100;box-shadow:0 0 40px rgba(0,255,204,0.5);}
-.modal h2{text-align:center;margin-bottom:15px;color:white;}
-.shop-tabs{display:flex;gap:8px;margin-bottom:15px;}
-.tab-btn{flex:1;padding:8px;border:1px solid #00ffcc55;border-radius:10px;background:#111;color:#00ffcc;font-weight:bold;font-size:12px;cursor:pointer;}
-.tab-btn.active{background:#00ffcc;color:black;}
-.shop-item{background:#111;border:1px solid #00ffcc33;border-radius:12px;padding:12px;margin-bottom:12px;}
-.shop-item.owned-mod{border-color:#00ffcc88;}
-.skin-preview{width:40px;height:40px;border-radius:10px;margin-bottom:8px;}
-#modifierText{font-size:18px;color:#ffcc00;text-shadow:0 0 10px #ffcc00;}
-.xp-bar{width:100%;height:14px;background:#222;border-radius:20px;overflow:hidden;margin-top:8px;}
-.xp-fill{width:0%;height:100%;background:#00ffcc;box-shadow:0 0 15px #00ffcc;transition:width 0.3s;}
-.code-input{width:100%;padding:10px;background:#111;border:1px solid #00ffcc55;border-radius:10px;color:#00ffcc;font-size:14px;text-align:center;letter-spacing:3px;margin-bottom:8px;outline:none;}
-.code-input::placeholder{letter-spacing:1px;color:#00ffcc55;}
-.mod-icon{font-size:24px;margin-bottom:6px;}
-.mod-badge{display:inline-block;padding:3px 8px;border-radius:8px;font-size:11px;margin-top:4px;}
-.mod-badge.active-mod{background:#00ffcc22;color:#00ffcc;border:1px solid #00ffcc44;}
-.mod-badge.inactive-mod{background:#ff000022;color:#ff4444;border:1px solid #ff444444;}
-.notif{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#00ffcc;color:black;padding:10px 24px;border-radius:12px;font-weight:bold;z-index:999;display:none;}
-
-/* PANTALLA DE BENDICION DIVINA */
-#godBlessing{
-  position:fixed;top:0;left:0;width:100vw;height:100vh;
-  background:radial-gradient(ellipse at center, rgba(255,215,0,0.25) 0%, rgba(0,0,0,0.97) 70%);
-  display:none;z-index:9999;
-  flex-direction:column;align-items:center;justify-content:center;
-  animation:godFadeIn 0.8s ease;
-}
-@keyframes godFadeIn{from{opacity:0;transform:scale(0.85);}to{opacity:1;transform:scale(1);}}
-@keyframes godGlow{0%,100%{text-shadow:0 0 30px #ffd700,0 0 60px #ffaa00;}50%{text-shadow:0 0 60px #ffffff,0 0 120px #ffd700;}}
-@keyframes rayRotate{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-.god-rays{position:absolute;width:500px;height:500px;animation:rayRotate 8s linear infinite;opacity:0.3;}
-.god-figure{font-size:110px;z-index:2;animation:godGlow 2s ease-in-out infinite;filter:drop-shadow(0 0 40px #ffd700);}
-.god-title{font-size:42px;font-weight:900;color:#ffd700;z-index:2;margin-top:20px;letter-spacing:4px;animation:godGlow 2s ease-in-out infinite;}
-.god-subtitle{font-size:22px;color:#fff;z-index:2;margin-top:12px;text-align:center;max-width:400px;line-height:1.5;text-shadow:0 0 20px #ffd700;}
-.god-bar{width:300px;height:6px;background:#333;border-radius:10px;margin-top:30px;z-index:2;overflow:hidden;}
-.god-bar-fill{height:100%;background:linear-gradient(90deg,#ffd700,#fff,#ffd700);border-radius:10px;width:0%;transition:width 0.1s linear;box-shadow:0 0 10px #ffd700;}
-.god-hint{font-size:13px;color:#aaa;margin-top:10px;z-index:2;}
-</style>
-</head>
-<body>
-
-<!-- PANTALLA DIOS -->
-<div id="godBlessing">
-  <svg class="god-rays" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-    <g transform="translate(250,250)">
-      <line x1="0" y1="-240" x2="0" y2="240" stroke="#ffd700" stroke-width="2"/>
-      <line x1="-240" y1="0" x2="240" y2="0" stroke="#ffd700" stroke-width="2"/>
-      <line x1="-170" y1="-170" x2="170" y2="170" stroke="#ffd700" stroke-width="2"/>
-      <line x1="170" y1="-170" x2="-170" y2="170" stroke="#ffd700" stroke-width="2"/>
-      <line x1="-220" y1="-90" x2="220" y2="90" stroke="#ffd700" stroke-width="1.5"/>
-      <line x1="220" y1="-90" x2="-220" y2="90" stroke="#ffd700" stroke-width="1.5"/>
-      <line x1="-90" y1="-220" x2="90" y2="220" stroke="#ffd700" stroke-width="1.5"/>
-      <line x1="90" y1="-220" x2="-90" y2="220" stroke="#ffd700" stroke-width="1.5"/>
-    </g>
-  </svg>
-  <div class="god-figure">🧔‍♂️</div>
-  <div class="god-title">✨ DIOS TE BENDICE ✨</div>
-  <div class="god-subtitle">Has desbloqueado la Skin más poderosa del universo.<br>Que la luz guíe tu camino, fiel jugador.</div>
-  <div class="god-bar"><div class="god-bar-fill" id="godBarFill"></div></div>
-  <div class="god-hint">La bendición dura 5 segundos...</div>
-</div>
-
+:root{color-scheme:dark;--c:#00ffcc;--card:#111;--mut:#aaa;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(circle at top,#111,#000 70%) fixed;color:var(--c);font-family:Segoe UI,sans-serif;min-height:100vh;display:flex;justify-content:center;align-items:center}
+.wrap{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;padding:10px}
+.side{width:270px;background:rgba(0,0,0,.9);border:2px solid var(--c);border-radius:20px;padding:15px;box-shadow:0 0 30px #0fc4;overflow-y:auto;max-height:580px}
+.title{text-align:center;font-size:22px;color:#fff;margin-bottom:12px;text-shadow:0 0 20px var(--c)}
+.card{background:var(--card);border:1px solid #0fc5;border-radius:12px;padding:10px;margin-bottom:10px}.card span{color:#fff}
+button{width:100%;padding:10px;margin-top:8px;border:none;border-radius:12px;background:var(--c);color:#000;font-weight:bold;cursor:pointer;transition:.25s;font-size:13px}
+button:hover{transform:scale(1.04);box-shadow:0 0 20px var(--c)}
+#game{position:relative;width:450px;max-width:100%;aspect-ratio:450/550;border:3px solid var(--c);border-radius:20px;overflow:hidden;background:#000;box-shadow:0 0 35px #0fc6;touch-action:none}
+#game canvas{display:block;width:100%;height:100%}
+#tx{position:absolute;top:10px;left:12px;color:#fc0;font-weight:bold;font-size:18px;text-shadow:0 0 10px #fc0;pointer-events:none}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.97);border:2px solid var(--c);border-radius:20px;width:440px;max-width:94vw;max-height:85vh;overflow-y:auto;padding:20px;display:none;z-index:100;box-shadow:0 0 40px #0fc8}
+.modal h2{text-align:center;margin-bottom:15px;color:#fff}
+.tabs{display:flex;gap:8px;margin-bottom:15px}.tabs button{margin:0;background:var(--card);color:var(--c);border:1px solid #0fc5;font-size:12px}.tabs button.on{background:var(--c);color:#000}
+.it{background:var(--card);border:1px solid #0fc3;border-radius:12px;padding:12px;margin-bottom:12px}
+.sp{width:40px;height:40px;border-radius:10px;flex:none}
+#modifierText{font-size:18px;color:#fc0;text-shadow:0 0 10px #fc0}
+.xp{width:100%;height:14px;background:#222;border-radius:20px;overflow:hidden;margin-top:8px}.xp i{display:block;width:0;height:100%;background:var(--c);box-shadow:0 0 15px var(--c);transition:width .3s}
+.ci{width:100%;padding:10px;background:var(--card);border:1px solid #0fc5;border-radius:10px;color:var(--c);font-size:14px;text-align:center;letter-spacing:3px;margin-bottom:8px;outline:none}
+.bd{display:inline-block;padding:3px 8px;border-radius:8px;font-size:11px;margin-top:4px}.ok{background:#0fc2;color:var(--c);border:1px solid #0fc4}.no{background:#f002;color:#f44;border:1px solid #f444}
+.notif{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--c);color:#000;padding:10px 24px;border-radius:12px;font-weight:bold;z-index:999;display:none}
+#god{position:fixed;inset:0;background:radial-gradient(ellipse at center,#ffd70040 0%,#000f 70%);display:none;z-index:9999;flex-direction:column;align-items:center;justify-content:center;animation:gi .8s}
+@keyframes gi{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes gg{0%,100%{text-shadow:0 0 30px #ffd700,0 0 60px #fa0}50%{text-shadow:0 0 60px #fff,0 0 120px #ffd700}}
+@keyframes rr{to{transform:rotate(360deg)}}
+.rays{position:absolute;width:500px;height:500px;animation:rr 8s linear infinite;opacity:.3}
+.gf{font-size:110px;z-index:2;animation:gg 2s infinite;filter:drop-shadow(0 0 40px #ffd700)}
+.gt{font-size:42px;font-weight:900;color:#ffd700;z-index:2;margin-top:20px;letter-spacing:4px;animation:gg 2s infinite;text-align:center}
+.gs{font-size:20px;color:#fff;z-index:2;margin-top:12px;text-align:center;max-width:400px;line-height:1.5}
+.gb{width:300px;height:6px;background:#333;border-radius:10px;margin-top:30px;z-index:2;overflow:hidden}.gb i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd700,#fff,#ffd700)}
+</style></head><body>
+<div id="god"><svg class="rays" viewBox="0 0 500 500"><g transform="translate(250,250)" stroke="#ffd700" stroke-width="2"><path d="M0-240V240M-240 0H240M-170-170L170 170M170-170L-170 170M-220-90L220 90M220-90L-220 90M-90-220L90 220M90-220L-90 220"/></g></svg>
+<div class="gf">🧔‍♂️</div><div class="gt">✨ DIOS TE BENDICE ✨</div>
+<div class="gs">Has desbloqueado la skin más poderosa del universo.<br>Que la luz guíe tu camino, fiel jugador.</div>
+<div class="gb"><i id="gbf"></i></div></div>
 <div class="notif" id="notif"></div>
-
-<div class="game-wrapper">
-  <div class="side-ui">
-    <div class="title">BLOCK DASH<br>CHAOS X</div>
-    <div class="card">SCORE: <span id="score">0</span></div>
-    <div class="card">MONEDAS: <span id="coins">0</span></div>
-    <div class="card">
-      NIVEL: <span id="level">1</span>
-      <div class="xp-bar"><div class="xp-fill" id="xpFill"></div></div>
-    </div>
-    <div class="card">
-      MODIFICADOR ACTIVO:<br>
-      <div id="modifierText">NORMAL</div>
-      <div id="modActivo" style="font-size:11px;color:#aaa;margin-top:4px;"></div>
-    </div>
-    <div class="card" style="padding:10px;">
-      <div style="font-size:12px;margin-bottom:6px;color:#aaa;">MODS EQUIPADOS:</div>
-      <div id="modEquipados" style="font-size:11px;color:#00ffcc;min-height:20px;">Ninguno</div>
-    </div>
-    <button onclick="togglePause()">⏸ PAUSA</button>
-    <button onclick="openShop()">🛒 TIENDA</button>
-    <button onclick="openCodes()">🎁 CÓDIGOS</button>
-  </div>
-  <canvas id="game" width="450" height="550"></canvas>
+<div class="wrap">
+<div class="side">
+<div class="title">BLOCK DASH<br>CHAOS X 3D</div>
+<div class="card">SCORE: <span id="score">0</span></div>
+<div class="card">MONEDAS: <span id="coins">0</span></div>
+<div class="card">NIVEL: <span id="level">1</span><div class="xp"><i id="xpFill"></i></div></div>
+<div class="card">MODIFICADOR ACTIVO:<br><div id="modifierText">NORMAL</div><div id="modActivo" style="font-size:11px;color:var(--mut);margin-top:4px"></div></div>
+<div class="card"><div style="font-size:12px;margin-bottom:6px;color:var(--mut)">MODS EQUIPADOS:</div><div id="modEq" style="font-size:11px;min-height:20px">Ninguno</div></div>
+<button onclick="togglePause()">⏸ PAUSA</button><button onclick="openM('shopMenu')">🛒 TIENDA</button><button onclick="openM('codesMenu')">🎁 CÓDIGOS</button>
 </div>
-
-<!-- SHOP -->
-<div class="modal" id="shopMenu">
-  <h2>🛒 TIENDA EXTREMA</h2>
-  <div class="shop-tabs">
-    <button class="tab-btn active" onclick="switchTab('skins',this)">SKINS</button>
-    <button class="tab-btn" onclick="switchTab('mods',this)">MODIFICADORES</button>
-  </div>
-  <div id="shopContainer"></div>
-  <button onclick="closeShop()">✕ CERRAR</button>
+<div id="game"><div id="tx"></div></div>
 </div>
+<div class="modal" id="shopMenu"><h2>🛒 TIENDA EXTREMA</h2>
+<div class="tabs"><button class="on" onclick="switchTab('skins',this)">SKINS 3D</button><button onclick="switchTab('mods',this)">MODIFICADORES</button></div>
+<div id="shopC"></div><button onclick="closeM('shopMenu')">✕ CERRAR</button></div>
+<div class="modal" id="codesMenu"><h2>🎁 CÓDIGOS</h2>
+<div style="text-align:center;margin-bottom:15px;font-size:13px;color:var(--mut)">Introduce un código para obtener recompensas especiales</div>
+<input class="ci" id="codeInput" placeholder="ESCRIBE EL CÓDIGO AQUÍ" maxlength="20" oninput="this.value=this.value.toUpperCase()">
+<button onclick="redeemCode()">🎮 CANJEAR CÓDIGO</button>
+<div style="margin-top:15px;border-top:1px solid #0fc2;padding-top:15px"><div style="font-size:13px;color:var(--mut);margin-bottom:10px">Códigos ya canjeados:</div><div id="redeemedList" style="font-size:12px;min-height:20px">Ninguno aún</div></div>
+<button onclick="closeM('codesMenu')" style="background:#333;color:var(--c)">✕ CERRAR</button></div>
+<div class="modal" id="gameOverMenu"><h2>💀 GAME OVER</h2><h1 id="finalScore" style="text-align:center;color:#fff;font-size:48px;margin:10px 0">0</h1>
+<p id="rewardText" style="text-align:center;color:#fc0;margin-bottom:10px"></p><button onclick="restartGame()">🔄 REINICIAR</button></div>
 
-<!-- CODES -->
-<div class="modal" id="codesMenu">
-  <h2>🎁 CÓDIGOS</h2>
-  <div style="text-align:center;margin-bottom:15px;font-size:13px;color:#aaa;">Introduce un código para obtener recompensas especiales</div>
-  <input class="code-input" id="codeInput" type="text" placeholder="ESCRIBE EL CÓDIGO AQUÍ" maxlength="20" oninput="this.value=this.value.toUpperCase()">
-  <button onclick="redeemCode()">🎮 CANJEAR CÓDIGO</button>
-  <div style="margin-top:15px;border-top:1px solid #00ffcc22;padding-top:15px;">
-    <div style="font-size:13px;color:#aaa;margin-bottom:10px;">Códigos ya canjeados:</div>
-    <div id="redeemedList" style="font-size:12px;color:#00ffcc88;min-height:20px;">Ninguno aún</div>
-  </div>
-  <div style="margin-top:12px;border-top:1px solid #00ffcc22;padding-top:12px;font-size:11px;color:#555;text-align:center;">
-    💡 Pista: los códigos pueden darte monedas, skins o modificadores especiales
-  </div>
-  <button onclick="closeModal('codesMenu')" style="margin-top:10px;background:#333;color:#00ffcc;">✕ CERRAR</button>
-</div>
-
-<!-- GAME OVER -->
-<div class="modal" id="gameOverMenu">
-  <h2>💀 GAME OVER</h2>
-  <h1 id="finalScore" style="text-align:center;color:white;font-size:48px;margin:10px 0;">0</h1>
-  <p id="rewardText" style="text-align:center;color:#ffcc00;margin-bottom:10px;"></p>
-  <button onclick="restartGame()">🔄 REINICIAR</button>
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
-const scoreEl=document.getElementById("score");
-const coinsEl=document.getElementById("coins");
-const levelEl=document.getElementById("level");
-const modifierText=document.getElementById("modifierText");
-const xpFill=document.getElementById("xpFill");
-const shopMenu=document.getElementById("shopMenu");
-const gameOverMenu=document.getElementById("gameOverMenu");
-const finalScore=document.getElementById("finalScore");
-const rewardText=document.getElementById("rewardText");
-const shopContainer=document.getElementById("shopContainer");
+const $=id=>document.getElementById(id);
+const L={g(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},s(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const W=450,H=550,box=$("game");
 
-// SAVE
-let coins=Number(localStorage.getItem("chaosCoins"))||0;
-let ownedSkins=JSON.parse(localStorage.getItem("ownedSkins"))||["cyan"];
-let currentSkin=localStorage.getItem("currentSkin")||"cyan";
-let ownedMods=JSON.parse(localStorage.getItem("ownedMods"))||[];
-let equippedMods=JSON.parse(localStorage.getItem("equippedMods"))||[];
-let redeemedCodes=JSON.parse(localStorage.getItem("redeemedCodes"))||[];
+/* ===== ESCENA 3D ===== */
+const R=new THREE.WebGLRenderer({antialias:true});
+R.setPixelRatio(Math.min(devicePixelRatio,2));R.setSize(W,H,false);R.shadowMap.enabled=true;
+R.outputEncoding=THREE.sRGBEncoding;R.toneMapping=THREE.ACESFilmicToneMapping;box.appendChild(R.domElement);
+const S=new THREE.Scene();S.background=new THREE.Color(0x03030a);S.fog=new THREE.Fog(0x03030a,16,46);
+const cam=new THREE.PerspectiveCamera(60,W/H,.1,100);cam.position.set(0,9,20);
+S.add(new THREE.HemisphereLight(0x88aaff,0x110022,.9));
+const sun=new THREE.DirectionalLight(0xffffff,1);sun.position.set(4,10,6);sun.castShadow=true;
+Object.assign(sun.shadow.camera,{left:-12,right:12,top:12,bottom:-12});sun.shadow.mapSize.set(1024,1024);S.add(sun);
+const pl=new THREE.PointLight(0x00ffcc,2.5,9);S.add(pl);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(80,120),new THREE.MeshStandardMaterial({color:0x05050f,metalness:.85,roughness:.3}));
+floor.rotation.x=-Math.PI/2;floor.position.z=-30;floor.receiveShadow=true;S.add(floor);
+const grid=new THREE.GridHelper(60,60,0x00ffcc,0x0b4a5a);grid.position.set(0,.01,-20);S.add(grid);
+[-7.6,7.6].forEach(x=>{const e=new THREE.Mesh(new THREE.BoxGeometry(.12,.12,80),new THREE.MeshBasicMaterial({color:0x00ffcc}));e.position.set(x,.06,-20);S.add(e)});
+const pillars=[];
+for(let s=-1;s<=1;s+=2)for(let i=0;i<14;i++){const h=2+Math.random()*8,c=new THREE.Color().setHSL(.5+Math.random()*.25,1,.5);
+ const m=new THREE.Mesh(new THREE.BoxGeometry(1.2,h,1.2),new THREE.MeshStandardMaterial({color:0x0a0a18,emissive:c,emissiveIntensity:.5,metalness:.8,roughness:.3}));
+ m.position.set(s*(9+Math.random()*3),h/2,16-i*4);m.castShadow=true;S.add(m);pillars.push(m)}
+const SN=350,sp=new Float32Array(SN*3);for(let i=0;i<SN;i++)sp.set([(Math.random()-.5)*70,1+Math.random()*25,-45+Math.random()*65],i*3);
+const sg=new THREE.BufferGeometry();sg.setAttribute("position",new THREE.BufferAttribute(sp,3));
+S.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0xaaccff,size:.12,fog:false})));
+/* partículas (estela + explosión) */
+const N=110,PP=new Float32Array(N*3),PC=new Float32Array(N*3),V=[];let ci=0;
+for(let i=0;i<N;i++)V.push({l:0});
+const pg2=new THREE.BufferGeometry();pg2.setAttribute("position",new THREE.BufferAttribute(PP,3));pg2.setAttribute("color",new THREE.BufferAttribute(PC,3));
+S.add(Object.assign(new THREE.Points(pg2,new THREE.PointsMaterial({size:.35,vertexColors:true,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false})),{frustumCulled:false}));
+function emit(x,y,z,vx,vy,vz,c){Object.assign(V[ci++%N],{l:1,x,y,z,vx,vy,vz,r:c.r,g:c.g,b:c.b})}
+function stepP(){for(let i=0;i<N;i++){const p=V[i];if(p.l>0){p.l-=.035;p.x+=p.vx;p.y+=p.vy;p.z+=p.vz;PP.set([p.x,p.y,p.z],i*3);PC.set([p.r*p.l,p.g*p.l,p.b*p.l],i*3)}else{PP[i*3+1]=-50;PC.set([0,0,0],i*3)}}pg2.attributes.position.needsUpdate=pg2.attributes.color.needsUpdate=true}
 
-// STATS
-let score=0,level=1,xp=0,paused=false,gameOver=false,reverseControls=false,rainbowHue=0;
-let activeShopTab="skins";
+/* ===== MODELOS (skins) ===== */
+let bodyMats=[];
+const mt=(c,e,ei)=>new THREE.MeshStandardMaterial({color:c,metalness:.7,roughness:.25,emissive:e||0,emissiveIntensity:ei||.35});
+const mk=(g,m,x,y,z)=>{const o=new THREE.Mesh(g,m);o.position.set(x||0,y||0,z||0);o.castShadow=true;return o};
+const bas=c=>new THREE.MeshBasicMaterial({color:c});
+const B=THREE.BoxGeometry,Cy=THREE.CylinderGeometry,Co=THREE.ConeGeometry,Sp=THREE.SphereGeometry;
+function buildModel(type,color,glow){
+ const g=new THREE.Group(),bd=mt(color==="rainbow"?0xffffff:color,glow),dk=mt(0x15151f,0),gl=new THREE.MeshStandardMaterial({color:0x66ddff,emissive:0x2288aa,metalness:1,roughness:.05});
+ bodyMats=[bd];const gc=bas(glow);
+ if(type==="cube"){g.add(mk(new B(2.6,2.6,2.6),bd));g.add(new THREE.LineSegments(new THREE.EdgesGeometry(new B(2.75,2.75,2.75)),new THREE.LineBasicMaterial({color:glow})))}
+ else if(type==="ship"){g.add(mk(new Co(.8,3.6,10).rotateX(-Math.PI/2),bd,0,0,-.6));g.add(mk(new Cy(.8,.9,1.8,10).rotateX(Math.PI/2),bd,0,0,1.5));
+  [-1,1].forEach(s=>{const w=mk(new B(2.6,.12,1.5),bd,s*1.6,0,.9);w.rotation.y=-s*.5;g.add(w);g.add(mk(new Sp(.3,10,8),gc,s*.4,0,2.45))});
+  g.add(mk(new B(.12,1,1.1),dk,0,.6,1.8));const c=mk(new Sp(.5,12,10),gl,0,.5,-.2);c.scale.z=1.7;g.add(c)}
+ else if(type==="car"){g.add(mk(new B(2,.6,4),bd,0,.5,0));g.add(mk(new B(1.6,.55,1.9),gl,0,1.05,.2));g.add(mk(new B(2.1,.1,.6),bd,0,1.15,1.85));
+  [-1,1].forEach(s=>{[-1.3,1.3].forEach(z=>g.add(mk(new Cy(.45,.45,.4,14).rotateZ(Math.PI/2),dk,s*1.1,.2,z)));g.add(mk(new B(.5,.2,.1),bas(0xffffcc),s*.6,.55,-2));g.add(mk(new B(.5,.15,.1),bas(0xff1122),s*.6,.55,2))});
+  g.add(mk(new B(2.02,.08,4.02),gc,0,.25,0))}
+ else if(type==="ufo"){const b=mk(new Sp(1.6,24,12),bd);b.scale.y=.35;g.add(b);g.add(mk(new Sp(.8,16,12),gl,0,.35,0));
+  g.add(Object.assign(mk(new THREE.TorusGeometry(1.6,.09,8,36),gc),{rotation:new THREE.Euler(Math.PI/2,0,0)}));
+  for(let i=0;i<6;i++){const a=i*Math.PI/3;g.add(mk(new Sp(.12,8,6),gc,Math.cos(a)*1.4,-.15,Math.sin(a)*1.4))}}
+ else if(type==="jet"){g.add(mk(new Cy(.2,.6,3.8,12).rotateX(-Math.PI/2),bd));const w=mk(new Co(2.2,2.4,3).rotateX(-Math.PI/2),bd,0,0,.7);w.scale.set(1.5,.12,1);g.add(w);
+  [-1,1].forEach(s=>{const t=mk(new B(.1,.8,.9),dk,s*.5,.5,1.4);t.rotation.z=-s*.3;g.add(t)});
+  g.add(mk(new Sp(.3,10,8),gc,0,0,1.95));const c=mk(new Sp(.35,12,10),gl,0,.3,-.4);c.scale.z=2;g.add(c)}
+ else{g.add(mk(new Cy(.7,.7,3,16).rotateX(Math.PI/2),bd));g.add(mk(new Co(.7,1.5,16).rotateX(-Math.PI/2),dk,0,0,-2.25));
+  for(let i=0;i<4;i++){const a=i*Math.PI/2,f=mk(new B(.1,1.3,1),dk,Math.cos(a)*.9,Math.sin(a)*.9,1.2);f.rotation.z=a-Math.PI/2;g.add(f)}
+  g.add(mk(new Co(.45,1.4,12).rotateX(Math.PI/2),gc,0,0,2.6));g.add(mk(new Sp(.28,10,8),gl,0,.55,-.7))}
+ return g}
 
-// PLAYER
-const player={x:190,y:470,w:40,h:40,speed:8};
-const enemy={x:100,y:-40,w:40,h:40,speed:5,multiplier:1};
-const keys={};
+/* ===== DATOS ===== */
+const K=(color,glow,price,m)=>({color,glow,price,m});
+const skins={cyan:K("#00ffcc","#00ffcc",0,"cube"),inferno:K("#ff0044","#ff3355",50,"car"),gold:K("#ffcc00","#ffee00",100,"car"),void:K("#7700ff","#aa55ff",150,"ufo"),matrix:K("#00ff00","#66ff66",250,"cube"),blood:K("#990000","#ff0000",300,"jet"),ocean:K("#0099ff","#33ccff",350,"ship"),toxic:K("#99ff00","#ccff00",400,"ufo"),lava:K("#ff5500","#ff8800",500,"rocket"),ice:K("#88eeff","#ccffff",600,"ship"),nitro:K("#ffee00","#ff8800",700,"car"),galaxy:K("#6633ff","#9966ff",800,"ship"),apollo:K("#eeeeee","#ff6600",900,"rocket"),cyber:K("#00ffff","#00ffff",1000,"jet"),shadow:K("#111111","#777777",1300,"jet"),plasma:K("#ff00aa","#ff55cc",1600,"car"),falcon:K("#99aabb","#44ccff",1800,"ship"),glitch:K("#ff00ff","#00ffff",2000,"ufo"),rainbow:K("rainbow","#ffffff",3000,"ship"),god:K("#ffffff","#ffd700",5000,"rocket")};
+const MI={cube:"🧊 Cubo",ship:"🚀 Nave",car:"🏎️ Coche",ufo:"🛸 OVNI",jet:"✈️ Jet",rocket:"🚀 Cohete"};
+const BASEY={cube:1.3,ship:1.5,car:.3,ufo:1.5,jet:1.5,rocket:1.5},MS={cube:1,ship:.75,car:.85,ufo:.85,jet:.75,rocket:1.1};
+const CODES={CHAOS2024:{t:"coins",a:500,d:"💰 +500 monedas"},ULTRABLOCK:{t:"coins",a:1000,d:"💰 +1000 monedas"},GODMODE:{t:"skin",s:"god",d:"👑 Skin GOD desbloqueada"},DARKFORCE:{t:"skin",s:"shadow",d:"🌑 Skin SHADOW desbloqueada"},RAINBOW99:{t:"skin",s:"rainbow",d:"🌈 Skin RAINBOW desbloqueada"},PLASMAGUN:{t:"skin",s:"plasma",d:"💜 Skin PLASMA desbloqueada"},GALAXYBRAIN:{t:"skin",s:"galaxy",d:"🌌 Skin GALAXY desbloqueada"},ICECOLD:{t:"skin",s:"ice",d:"❄️ Skin ICE desbloqueada"},MODMASTER:{t:"mod",m:"TIEMPO_EXTRA",d:"⏱️ TIEMPO EXTRA desbloqueado"},SHIELDME:{t:"mod",m:"ESCUDO",d:"🛡️ ESCUDO desbloqueado"},MAGNET99:{t:"mod",m:"IMAN",d:"🧲 IMÁN MEJORADO desbloqueado"},GHOSTMODE:{t:"mod",m:"FANTASMA",d:"👻 FANTASMA desbloqueado"},DOUBLEX2:{t:"mod",m:"DOBLE_XP",d:"⚡ DOBLE XP desbloqueado"},CHAOSDEV:{t:"bundle",c:2000,s:["glitch","cyber"],d:"🎮 BUNDLE DEV: 2000 monedas + Glitch + Cyber"},BLOCKFAN:{t:"coins",a:250,d:"💰 +250 monedas"},STARTPACK:{t:"bundle",c:100,s:["inferno","ocean"],d:"🚀 STARTER PACK: 100 monedas + Inferno + Ocean"}};
+const randomMods=["NORMAL","TURBO","SLOW MOTION","MICRO PLAYER","MEGA PLAYER","REVERSE CONTROLS","EARTHQUAKE","HYPER SPEED","FLASH","DARKNESS","CHAOS MODE","SPINNING SCREEN"];
+const buyMods={FANTASMA:{i:"👻",n:"FANTASMA",d:"El enemigo te atraviesa una vez por partida sin hacer daño",p:300,e:"Una vida extra contra colisiones"},ESCUDO:{i:"🛡️",n:"ESCUDO",d:"Escudo que absorbe 1 impacto y se recarga cada 10 esquivas",p:400,e:"Escudo automático"},"IMÁN":{i:"🧲",n:"IMÁN",d:"+2 monedas por esquiva",p:250,e:"+2 monedas por esquiva exitosa"},DOBLE_XP:{i:"⚡",n:"DOBLE XP",d:"El XP ganado se duplica durante toda la partida",p:500,e:"x2 XP en cada esquiva"},TIEMPO_EXTRA:{i:"⏱️",n:"TIEMPO EXTRA",d:"Al perder, reviven 3 segundos de invulnerabilidad (1 vez)",p:600,e:"1 segunda oportunidad por partida",co:1},IMAN:{i:"🧲",n:"IMÁN MEJORADO",d:"+5 monedas por esquiva",p:0,e:"+5 monedas por esquiva",co:1}};
 
-// ---- PANTALLA BENDICIÓN DIOS ----
-function showGodBlessing(onDone){
-  var overlay=document.getElementById("godBlessing");
-  var barFill=document.getElementById("godBarFill");
-  overlay.style.display="flex";
-  var duration=5000;
-  var start=Date.now();
-  var interval=setInterval(function(){
-    var elapsed=Date.now()-start;
-    var pct=Math.min(100,(elapsed/duration)*100);
-    barFill.style.width=pct+"%";
-    if(elapsed>=duration){
-      clearInterval(interval);
-      overlay.style.display="none";
-      barFill.style.width="0%";
-      if(onDone) onDone();
-    }
-  },50);
-}
+/* ===== ESTADO ===== */
+let coins=L.g("coins",0),ownedSkins=L.g("skins",["cyan"]),currentSkin=L.g("skin","cyan"),ownedMods=L.g("omods",[]),eqMods=L.g("emods",[]),redeemed=L.g("codes",[]);
+let score=0,level=1,xp=0,paused=false,gameOver=false,reverse=false,hue=0,tab="skins",curMod="NORMAL",shake=0,tilt=0;
+const player={x:190,y:470,w:40,h:40,speed:8},enemy={x:100,y:-40,w:40,h:40,speed:5,multiplier:1},keys={};
+let ms;
+function initMods(){ms={fan:false,shield:false,cd:0,extraUsed:false,extra:0,bonus:0,xpm:1};
+ if(eqMods.includes("IMÁN"))ms.bonus=2;if(eqMods.includes("IMAN"))ms.bonus=5;if(eqMods.includes("DOBLE_XP"))ms.xpm=2;if(eqMods.includes("ESCUDO"))ms.shield=true}
+initMods();
 
-// CÓDIGOS DE RECOMPENSA
-const CODES={
-  "CHAOS2024":{type:"coins",amount:500,desc:"💰 +500 monedas"},
-  "ULTRABLOCK":{type:"coins",amount:1000,desc:"💰 +1000 monedas"},
-  "GODMODE":{type:"skin",skin:"god",desc:"👑 Skin GOD desbloqueada"},
-  "DARKFORCE":{type:"skin",skin:"shadow",desc:"🌑 Skin SHADOW desbloqueada"},
-  "RAINBOW99":{type:"skin",skin:"rainbow",desc:"🌈 Skin RAINBOW desbloqueada"},
-  "PLASMAGUN":{type:"skin",skin:"plasma",desc:"💜 Skin PLASMA desbloqueada"},
-  "GALAXYBRAIN":{type:"skin",skin:"galaxy",desc:"🌌 Skin GALAXY desbloqueada"},
-  "ICECOLD":{type:"skin",skin:"ice",desc:"❄️ Skin ICE desbloqueada"},
-  "MODMASTER":{type:"mod",mod:"TIEMPO_EXTRA",desc:"⏱️ Modificador TIEMPO EXTRA desbloqueado"},
-  "SHIELDME":{type:"mod",mod:"ESCUDO",desc:"🛡️ Modificador ESCUDO desbloqueado"},
-  "MAGNET99":{type:"mod",mod:"IMAN",desc:"🧲 Modificador IMÁN desbloqueado"},
-  "GHOSTMODE":{type:"mod",mod:"FANTASMA",desc:"👻 Modificador FANTASMA desbloqueado"},
-  "DOUBLEX2":{type:"mod",mod:"DOBLE_XP",desc:"⚡ Modificador DOBLE XP desbloqueado"},
-  "CHAOSDEV":{type:"bundle",coins:2000,skins:["glitch","cyber"],desc:"🎮 BUNDLE DEV: 2000 monedas + Glitch + Cyber"},
-  "BLOCKFAN":{type:"coins",amount:250,desc:"💰 +250 monedas"},
-  "STARTPACK":{type:"bundle",coins:100,skins:["inferno","ocean"],desc:"🚀 STARTER PACK: 100 monedas + Inferno + Ocean"},
-};
+/* ===== OBJETOS 3D DEL JUEGO ===== */
+const pg=new THREE.Group();S.add(pg);let mdl=null,halo=null;
+const shield=new THREE.Mesh(new Sp(2.2,24,16),new THREE.MeshBasicMaterial({color:0x00ffcc,transparent:true,opacity:.22,blending:THREE.AdditiveBlending,depthWrite:false}));
+const ghost=new THREE.Mesh(new Sp(2,16,12),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.08,depthWrite:false}));
+pg.add(shield,ghost);
+function setSkin3D(){const k=skins[currentSkin];if(mdl)pg.remove(mdl);if(halo){pg.remove(halo);halo=null}
+ mdl=buildModel(k.m,k.color,k.glow);pg.add(mdl);pl.color.set(k.glow==="#777777"?"#ffffff":k.glow);
+ if(currentSkin==="god"){halo=new THREE.Mesh(new THREE.TorusGeometry(1.1,.07,8,32),bas(0xffd700));halo.position.y=2.2;halo.rotation.x=Math.PI/2;pg.add(halo)}}
+const eg=new THREE.Group(),em=mt(0xff1133,0xff0022,.7);
+eg.add(mk(new B(2.6,2.6,2.6),em),new THREE.LineSegments(new THREE.EdgesGeometry(new B(2.9,2.9,2.9)),new THREE.LineBasicMaterial({color:0xff8899})));
+const ep=new THREE.PointLight(0xff2244,2,6);eg.add(ep);eg.scale.setScalar(.5);S.add(eg);
 
-// SKINS
-const skins={
-  cyan:{color:"#00ffcc",glow:"#00ffcc",price:0},
-  inferno:{color:"#ff0044",glow:"#ff3355",price:50},
-  gold:{color:"#ffcc00",glow:"#ffee00",price:100},
-  void:{color:"#7700ff",glow:"#aa55ff",price:150},
-  matrix:{color:"#00ff00",glow:"#66ff66",price:250},
-  blood:{color:"#990000",glow:"#ff0000",price:300},
-  ocean:{color:"#0099ff",glow:"#33ccff",price:350},
-  toxic:{color:"#99ff00",glow:"#ccff00",price:400},
-  lava:{color:"#ff5500",glow:"#ff8800",price:500},
-  ice:{color:"#88eeff",glow:"#ccffff",price:600},
-  galaxy:{color:"#6633ff",glow:"#9966ff",price:800},
-  cyber:{color:"#00ffff",glow:"#00ffff",price:1000},
-  shadow:{color:"#111",glow:"#777",price:1300},
-  plasma:{color:"#ff00aa",glow:"#ff55cc",price:1600},
-  glitch:{color:"#ff00ff",glow:"#00ffff",price:2000},
-  rainbow:{color:"rainbow",glow:"#fff",price:3000},
-  god:{color:"#ffffff",glow:"#ffd700",price:5000}
-};
+/* ===== UI ===== */
+function showNotif(m,c){c=c||"#00ffcc";const n=$("notif");n.textContent=m;n.style.background=c;n.style.color=c==="#00ffcc"||c==="#ffd700"?"#000":"#fff";n.style.display="block";setTimeout(()=>n.style.display="none",2500)}
+function saveAll(){L.g;L.s("coins",coins);L.s("skins",ownedSkins);L.s("skin",currentSkin);L.s("omods",ownedMods);L.s("emods",eqMods);L.s("codes",redeemed)}
+function updateUI(){$("score").textContent=score;$("coins").textContent=coins;$("level").textContent=level;$("xpFill").style.width=xp+"%";
+ $("modEq").innerHTML=eqMods.length?eqMods.map(m=>buyMods[m]?buyMods[m].i+" "+buyMods[m].n:"").join("<br>"):"Ninguno"}
+function showGod(done){const o=$("god"),b=$("gbf");o.style.display="flex";const st=Date.now(),iv=setInterval(()=>{const e=Date.now()-st;b.style.width=Math.min(100,e/50)+"%";if(e>=5000){clearInterval(iv);o.style.display="none";b.style.width="0";done&&done()}},50)}
+function openM(id){paused=true;$(id).style.display="block"}
+function closeM(id){$(id).style.display="none";paused=false}
+function togglePause(){paused=!paused}
+function switchTab(t,b){tab=t;document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");shop()}
+function shop(){const c=$("shopC");c.innerHTML="";
+ if(tab==="skins")for(const n in skins){const d=skins[n],own=ownedSkins.includes(n),cur=currentSkin===n,el=document.createElement("div");el.className="it";
+  const bg=d.color==="rainbow"?"linear-gradient(45deg,red,orange,yellow,lime,cyan,blue,purple)":d.color;
+  el.innerHTML='<div style="display:flex;gap:12px;align-items:center"><div class="sp" style="background:'+bg+';box-shadow:0 0 20px '+d.glow+'"></div><div><b>'+n.toUpperCase()+'</b><br><span style="color:var(--mut);font-size:12px">'+MI[d.m]+" · "+d.price+' monedas</span></div></div><button onclick="'+(own?"equipSkin('"+n+"')":"buySkin('"+n+"',"+d.price+")")+'"'+(cur?' style="background:#fc0"':"")+">"+(cur?"✓ EQUIPADO":own?"EQUIPAR":"COMPRAR")+"</button>";c.appendChild(el)}
+ else{c.insertAdjacentHTML("beforeend",'<div style="font-size:12px;color:var(--mut);margin-bottom:12px;text-align:center">Los mods equipados se activan cada partida</div>');
+  for(const k in buyMods){const m=buyMods[k],own=ownedMods.includes(k),eq=eqMods.includes(k),el=document.createElement("div");el.className="it";
+   const b=m.co&&!own?'<button disabled style="background:#333;color:#555;cursor:not-allowed">🔒 SOLO POR CÓDIGO</button>':!own?'<button onclick="buyMod(\''+k+"',"+m.p+')">💰 '+m.p+" monedas</button>":eq?'<button onclick="unequipMod(\''+k+'\')" style="background:#f44;color:#fff">🔴 DESEQUIPAR</button>':'<button onclick="equipMod(\''+k+'\')">✅ EQUIPAR</button>';
+   el.innerHTML='<div style="font-size:24px">'+m.i+'</div><b style="color:#fff">'+m.n+'</b> <span class="bd '+(own?"ok":"no")+'">'+(own?"DESBLOQUEADO":"BLOQUEADO")+'</span><br><span style="color:var(--mut);font-size:12px">'+m.d+'</span><br><span style="font-size:11px;opacity:.6">Efecto: '+m.e+"</span>"+b;c.appendChild(el)}}}
+function buyMod(k,p){if(coins>=p){coins-=p;ownedMods.push(k);saveAll();shop();updateUI();showNotif("✅ Modificador desbloqueado")}else showNotif("❌ No tienes monedas","#f44")}
+function equipMod(k){if(!eqMods.includes(k))eqMods.push(k);saveAll();shop();updateUI();showNotif("✅ "+buyMods[k].n+" equipado")}
+function unequipMod(k){eqMods=eqMods.filter(m=>m!==k);saveAll();shop();updateUI();showNotif("🔴 "+buyMods[k].n+" desequipado")}
+function equipSkin(n){currentSkin=n;saveAll();setSkin3D();shop()}
+function buySkin(n,p){if(coins<p){showNotif("❌ No tienes monedas","#f44");return}
+ coins-=p;ownedSkins.push(n);equipSkin(n);updateUI();
+ if(n==="god"){$("shopMenu").style.display="none";showGod(()=>{showNotif("✅ Skin GOD comprada: Dios está contigo","#ffd700");paused=false})}else showNotif("✅ Skin "+n+" comprada")}
+function redeemCode(){const inp=$("codeInput"),code=inp.value.trim().toUpperCase();
+ if(!code)return showNotif("Introduce un código","#f44");if(redeemed.includes(code))return showNotif("❌ Código ya canjeado","#f44");
+ const d=CODES[code];if(!d)return showNotif("❌ Código inválido","#f44");
+ redeemed.push(code);inp.value="";let god=false;
+ if(d.t==="coins")coins+=d.a;
+ else if(d.t==="skin"){if(!ownedSkins.includes(d.s)){ownedSkins.push(d.s);god=d.s==="god"}}
+ else if(d.t==="mod"){if(!ownedMods.includes(d.m))ownedMods.push(d.m)}
+ else{coins+=d.c;d.s.forEach(s=>{if(!ownedSkins.includes(s))ownedSkins.push(s)})}
+ saveAll();$("redeemedList").innerHTML=redeemed.map(c=>'<span style="background:#0fc2;padding:2px 8px;border-radius:6px;margin:2px;display:inline-block">'+c+"</span>").join(" ");updateUI();shop();
+ if(god){$("codesMenu").style.display="none";showGod(()=>{showNotif("✅ "+d.d,"#ffd700");paused=false})}else showNotif("✅ "+d.d)}
 
-// MODIFICADORES ALEATORIOS
-const randomModifiers=["NORMAL","TURBO","SLOW MOTION","MICRO PLAYER","MEGA PLAYER","REVERSE CONTROLS","EARTHQUAKE","HYPER SPEED","FLASH","DARKNESS","CHAOS MODE","SPINNING SCREEN"];
-let currentModifier="NORMAL";
+/* ===== JUEGO ===== */
+addEventListener("keydown",e=>{keys[e.key]=true;if(e.key==="Escape")togglePause()});addEventListener("keyup",e=>keys[e.key]=false);
+box.addEventListener("pointermove",e=>{if(e.pointerType==="mouse"&&!e.buttons)return;const r=box.getBoundingClientRect();let x=(e.clientX-r.left)/r.width*W-player.w/2;if(reverse)x=W-player.w-x;player.x=Math.max(0,Math.min(W-player.w,x))});
+function activateMod(){reverse=false;player.w=player.h=40;player.speed=8;enemy.multiplier=1;document.body.style.filter="";box.style.transform="";
+ curMod=randomMods[Math.floor(Math.random()*randomMods.length)];$("modifierText").textContent=curMod;$("modActivo").textContent=curMod==="NORMAL"?"":"⚡ Activado en score "+score;
+ switch(curMod){case"TURBO":enemy.multiplier=2.5;break;case"SLOW MOTION":enemy.multiplier=.5;break;case"MICRO PLAYER":player.w=player.h=20;break;case"MEGA PLAYER":player.w=player.h=80;break;case"REVERSE CONTROLS":reverse=true;break;
+ case"EARTHQUAKE":box.style.transform="translate("+(Math.random()*10-5)+"px,"+(Math.random()*10-5)+"px)";shake=1;break;case"HYPER SPEED":player.speed=16;break;
+ case"FLASH":document.body.style.filter="brightness("+(1+Math.random()*2)+")";break;case"DARKNESS":document.body.style.filter="brightness(.4)";break;
+ case"CHAOS MODE":player.speed=5+Math.random()*15;enemy.multiplier=1+Math.random()*4;break;case"SPINNING SCREEN":box.style.transform="rotate("+(Math.random()*8-4)+"deg)";break}}
+function collision(){return player.x<enemy.x+enemy.w&&player.x+player.w>enemy.x&&player.y<enemy.y+enemy.h&&player.y+player.h>enemy.y}
+function hit(){
+ if(eqMods.includes("FANTASMA")&&!ms.fan){ms.fan=true;showNotif("👻 FANTASMA activado: esquiva salvada");enemy.y=H+50;shake=1;return false}
+ if(ms.shield){ms.shield=false;ms.cd=10;showNotif("🛡️ Escudo roto: recarga en 10 esquivas");enemy.y=H+50;shake=1;return false}
+ if(eqMods.includes("TIEMPO_EXTRA")&&!ms.extraUsed){ms.extraUsed=true;ms.extra=180;enemy.y=H+50;showNotif("⏱️ TIEMPO EXTRA: 3 segundos de invulnerabilidad","#fc0");return false}
+ return true}
+function step(){
+ let l=keys.ArrowLeft||keys.a,r=keys.ArrowRight||keys.d;if(reverse)[l,r]=[r,l];
+ if(l)player.x-=player.speed;if(r)player.x+=player.speed;if(currentSkin==="glitch")player.x+=Math.random()*6-3;
+ player.x=Math.max(0,Math.min(W-player.w,player.x));
+ enemy.y+=enemy.speed*enemy.multiplier;if(score>40)enemy.x+=Math.sin(Date.now()/100)*4;
+ if(enemy.y>H){enemy.y=-40;enemy.x=Math.random()*(W-enemy.w);score++;xp+=8*ms.xpm;coins+=ms.bonus;
+  if(eqMods.includes("ESCUDO")&&!ms.shield&&--ms.cd<=0){ms.shield=true;showNotif("🛡️ Escudo recargado")}
+  if(score%5===0)activateMod();if(xp>=100){xp=0;level++}saveAll();updateUI()}
+ const tx=$("tx");
+ if(ms.extra>0){ms.extra--;tx.textContent="⏱️ INVULNERABLE: "+Math.ceil(ms.extra/60)+"s"}else{tx.textContent="";if(collision()&&hit())endGame()}}
+function endGame(){gameOver=true;let rw=0;if(score>=30){rw=Math.floor(score*1.5);if(score>=100)rw+=500;if(score>=200)rw+=1500}
+ coins+=rw;saveAll();pg.visible=false;const c=new THREE.Color(skins[currentSkin].glow);
+ for(let i=0;i<60;i++)emit(pg.position.x,1.2,pg.position.z,(Math.random()-.5)*.4,Math.random()*.3,(Math.random()-.5)*.4,i%2?c:new THREE.Color(1,.2,.1));
+ shake=2;$("finalScore").textContent=score;$("rewardText").innerHTML="+"+rw+" MONEDAS<br><br>MODIFICADOR FINAL: <b>"+curMod+"</b>";
+ setTimeout(()=>$("gameOverMenu").style.display="block",700);updateUI()}
+function restartGame(){$("gameOverMenu").style.display="none";score=0;level=1;xp=0;gameOver=false;paused=false;shake=0;Object.assign(player,{x:190,y:470,w:40,h:40,speed:8});Object.assign(enemy,{x:100,y:-40,multiplier:1});
+ reverse=false;curMod="NORMAL";$("modifierText").textContent="NORMAL";$("modActivo").textContent="";document.body.style.filter="";box.style.transform="";pg.visible=true;initMods();updateUI()}
 
-// MODIFICADORES COMPRABLES
-const buyableMods={
-  "FANTASMA":{icon:"👻",name:"FANTASMA",desc:"El enemigo te atraviesa una vez por partida sin hacer daño",price:300,effect:"Una vida extra contra colisiones",codeOnly:false},
-  "ESCUDO":{icon:"🛡️",name:"ESCUDO",desc:"Genera un escudo que absorbe 1 impacto cada 10 puntos",price:400,effect:"Escudo automático cada 10 puntos",codeOnly:false},
-  "IMÁN":{icon:"🧲",name:"IMÁN",desc:"Atrae monedas bonus que caen del cielo (+2 monedas por esquiva)",price:250,effect:"+2 monedas por esquiva exitosa",codeOnly:false},
-  "DOBLE_XP":{icon:"⚡",name:"DOBLE XP",desc:"El XP ganado se duplica durante toda la partida",price:500,effect:"x2 XP en cada esquiva",codeOnly:false},
-  "TIEMPO_EXTRA":{icon:"⏱️",name:"TIEMPO EXTRA",desc:"Al perder, tienes 3 segundos para esquivar y revivir (1 vez)",price:600,effect:"1 segunda oportunidad por partida",codeOnly:true},
-  "IMAN":{icon:"🧲",name:"IMÁN MEJORADO",desc:"(Versión código) Imán más potente: +5 monedas por esquiva",price:0,effect:"+5 monedas por esquiva",codeOnly:true}
-};
-
-// Estado de mods activos en partida
-let modState={fantasmaUsed:false,shieldActive:false,shieldCooldown:0,extraTimeUsed:false,extraTimeActive:false,extraTimeTimer:0,bonusCoinsPerDodge:0,xpMultiplier:1};
-
-function initModState(){
-  modState={fantasmaUsed:false,shieldActive:false,shieldCooldown:0,extraTimeUsed:false,extraTimeActive:false,extraTimeTimer:0,bonusCoinsPerDodge:0,xpMultiplier:1};
-  if(equippedMods.includes("IMÁN")||equippedMods.includes("IMAN")) modState.bonusCoinsPerDodge=equippedMods.includes("IMAN")?5:2;
-  if(equippedMods.includes("DOBLE_XP")) modState.xpMultiplier=2;
-  if(equippedMods.includes("ESCUDO")) modState.shieldActive=true;
-}
-
-// NOTIFICACIÓN
-function showNotif(msg,color){
-  color=color||"#00ffcc";
-  var n=document.getElementById("notif");
-  n.textContent=msg;
-  n.style.background=color;
-  n.style.color=color==="#00ffcc"?"black":"white";
-  n.style.display="block";
-  setTimeout(function(){n.style.display="none";},2500);
-}
-
-// CANJEAR CÓDIGO
-function redeemCode(){
-  var input=document.getElementById("codeInput");
-  var code=input.value.trim().toUpperCase();
-  if(!code){showNotif("Introduce un código","#ff4444");return;}
-  if(redeemedCodes.includes(code)){showNotif("❌ Código ya canjeado","#ff4444");return;}
-  var data=CODES[code];
-  if(!data){showNotif("❌ Código inválido","#ff4444");return;}
-  redeemedCodes.push(code);
-  localStorage.setItem("redeemedCodes",JSON.stringify(redeemedCodes));
-  input.value="";
-  var unlockedGod=false;
-  if(data.type==="coins"){coins+=data.amount;saveCoins();}
-  else if(data.type==="skin"){
-    if(!ownedSkins.includes(data.skin)){
-      ownedSkins.push(data.skin);
-      localStorage.setItem("ownedSkins",JSON.stringify(ownedSkins));
-      if(data.skin==="god") unlockedGod=true;
-    }
-  }
-  else if(data.type==="mod"){if(!ownedMods.includes(data.mod)){ownedMods.push(data.mod);localStorage.setItem("ownedMods",JSON.stringify(ownedMods));}}
-  else if(data.type==="bundle"){
-    if(data.coins) coins+=data.coins;
-    if(data.skins) data.skins.forEach(function(s){if(!ownedSkins.includes(s))ownedSkins.push(s);});
-    saveCoins();
-    localStorage.setItem("ownedSkins",JSON.stringify(ownedSkins));
-  }
-  updateRedeemedList();
-  updateUI();
-  generateShop();
-  if(unlockedGod){
-    document.getElementById("codesMenu").style.display="none";
-    showGodBlessing(function(){
-      showNotif("✅ "+data.desc,"#ffd700");
-    });
-  } else {
-    showNotif("✅ "+data.desc,"#00ffcc");
-  }
-}
-
-function updateRedeemedList(){
-  var el=document.getElementById("redeemedList");
-  if(redeemedCodes.length===0){el.textContent="Ninguno aún";return;}
-  el.innerHTML=redeemedCodes.map(function(c){return '<span style="background:#00ffcc22;padding:2px 8px;border-radius:6px;margin:2px;display:inline-block;">'+c+'</span>';}).join(" ");
-}
-
-// TIENDA TABS
-function switchTab(tab,btn){
-  activeShopTab=tab;
-  document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("active");});
-  btn.classList.add("active");
-  generateShop();
-}
-
-function generateShop(){
-  shopContainer.innerHTML="";
-  if(activeShopTab==="skins") generateSkinsShop();
-  else generateModsShop();
-}
-
-function generateSkinsShop(){
-  for(var skin in skins){
-    var data=skins[skin];
-    var owned=ownedSkins.includes(skin);
-    var div=document.createElement("div");
-    div.className="shop-item";
-    var previewBg=data.color==="rainbow"?"linear-gradient(45deg,red,orange,yellow,lime,cyan,blue,purple)":data.color;
-    var btnStyle=currentSkin===skin?"background:#ffcc00;":"";
-    var btnLabel=currentSkin===skin?"✓ EQUIPADO":owned?"EQUIPAR":"COMPRAR";
-    var btnAction=owned?"equipSkin('"+skin+"')":'buySkin("'+skin+'",'+data.price+')';
-    div.innerHTML='<div class="skin-preview" style="background:'+previewBg+';box-shadow:0 0 20px '+data.glow+';"></div>'
-      +'<b>'+skin.toUpperCase()+'</b><br>'
-      +'<span style="color:#aaa;font-size:12px;">'+data.price+' monedas</span>'
-      +'<button onclick="'+btnAction+'" style="'+btnStyle+'">'+btnLabel+'</button>';
-    shopContainer.appendChild(div);
-  }
-}
-
-function generateModsShop(){
-  var hint=document.createElement("div");
-  hint.style.cssText="font-size:12px;color:#aaa;margin-bottom:12px;text-align:center;";
-  hint.textContent="Los mods equipados se activan automáticamente cada partida";
-  shopContainer.appendChild(hint);
-  for(var modKey in buyableMods){
-    var mod=buyableMods[modKey];
-    var owned=ownedMods.includes(modKey);
-    var equipped=equippedMods.includes(modKey);
-    var div=document.createElement("div");
-    div.className="shop-item"+(owned?" owned-mod":"");
-    var actionBtn="";
-    if(mod.codeOnly&&!owned){
-      actionBtn='<button disabled style="background:#333;color:#555;cursor:not-allowed;">🔒 SOLO POR CÓDIGO</button>';
-    } else if(!owned){
-      actionBtn='<button onclick="buyMod(\''+modKey+'\','+mod.price+')">💰 '+mod.price+' monedas</button>';
-    } else if(equipped){
-      actionBtn='<button onclick="unequipMod(\''+modKey+'\')" style="background:#ff4444;color:white;">🔴 DESEQUIPAR</button>';
-    } else {
-      actionBtn='<button onclick="equipMod(\''+modKey+'\')" style="background:#00ffcc;">✅ EQUIPAR</button>';
-    }
-    var badgeClass=owned?"active-mod":"inactive-mod";
-    var badgeText=owned?"DESBLOQUEADO":"BLOQUEADO";
-    div.innerHTML='<div class="mod-icon">'+mod.icon+'</div>'
-      +'<b style="color:white;">'+mod.name+'</b> '
-      +'<span class="mod-badge '+badgeClass+'">'+badgeText+'</span><br>'
-      +'<span style="color:#aaa;font-size:12px;">'+mod.desc+'</span><br>'
-      +'<span style="color:#00ffcc88;font-size:11px;display:block;margin-top:4px;">Efecto: '+mod.effect+'</span>'
-      +actionBtn;
-    shopContainer.appendChild(div);
-  }
-}
-
-generateShop();
-updateRedeemedList();
-
-// CONTROLES
-window.addEventListener("keydown",function(e){keys[e.key]=true;if(e.key==="Escape")togglePause();});
-window.addEventListener("keyup",function(e){keys[e.key]=false;});
-
-function movePlayer(){
-  var left=keys["ArrowLeft"]||keys["a"];
-  var right=keys["ArrowRight"]||keys["d"];
-  if(reverseControls){var tmp=left;left=right;right=tmp;}
-  if(left) player.x-=player.speed;
-  if(right) player.x+=player.speed;
-  if(player.x<0) player.x=0;
-  if(player.x>canvas.width-player.w) player.x=canvas.width-player.w;
-}
-
-function moveEnemy(){
-  enemy.y+=enemy.speed*enemy.multiplier;
-  if(score>40) enemy.x+=Math.sin(Date.now()/100)*4;
-  if(enemy.y>canvas.height){
-    enemy.y=-40;
-    enemy.x=Math.random()*(canvas.width-enemy.w);
-    score++;
-    var xpGain=8*modState.xpMultiplier;
-    xp+=xpGain;
-    coins+=modState.bonusCoinsPerDodge;
-    if(modState.bonusCoinsPerDodge>0) saveCoins();
-    if(equippedMods.includes("ESCUDO")&&!modState.shieldActive){
-      modState.shieldCooldown--;
-      if(modState.shieldCooldown<=0){modState.shieldActive=true;showNotif("🛡️ Escudo recargado");}
-    }
-    if(score%5===0) activateRandomModifier();
-    if(xp>=100){xp=0;level++;}
-    updateUI();
-  }
-}
-
-function activateRandomModifier(){
-  reverseControls=false;
-  player.w=40;player.h=40;player.speed=8;enemy.multiplier=1;
-  document.body.style.filter="";canvas.style.transform="";
-  currentModifier=randomModifiers[Math.floor(Math.random()*randomModifiers.length)];
-  modifierText.textContent=currentModifier;
-  document.getElementById("modActivo").textContent=currentModifier==="NORMAL"?"":"⚡ Activado al llegar a score "+score;
-  switch(currentModifier){
-    case "TURBO":enemy.multiplier=2.5;break;
-    case "SLOW MOTION":enemy.multiplier=0.5;break;
-    case "MICRO PLAYER":player.w=20;player.h=20;break;
-    case "MEGA PLAYER":player.w=80;player.h=80;break;
-    case "REVERSE CONTROLS":reverseControls=true;break;
-    case "EARTHQUAKE":canvas.style.transform="translate("+(Math.random()*10-5)+"px,"+(Math.random()*10-5)+"px)";break;
-    case "HYPER SPEED":player.speed=16;break;
-    case "FLASH":document.body.style.filter="brightness("+(1+Math.random()*2)+")";break;
-    case "DARKNESS":document.body.style.filter="brightness(0.4)";break;
-    case "CHAOS MODE":player.speed=5+Math.random()*15;enemy.multiplier=1+Math.random()*4;break;
-    case "SPINNING SCREEN":canvas.style.transform="rotate("+(Math.random()*8-4)+"deg)";break;
-  }
-}
-
-function drawPlayer(){
-  var skin=skins[currentSkin];
-  var color=skin.color;
-  if(color==="rainbow"){rainbowHue+=4;color="hsl("+rainbowHue+",100%,50%)";}
-  if(currentSkin==="glitch") player.x+=Math.random()*6-3;
-  ctx.fillStyle=color;
-  ctx.shadowBlur=currentSkin==="god"?40:20;
-  ctx.shadowColor=skin.glow;
-  ctx.fillRect(player.x,player.y,player.w,player.h);
-  if(modState.shieldActive){
-    ctx.strokeStyle="#00ffcc";
-    ctx.lineWidth=3;
-    ctx.shadowColor="#00ffcc";
-    ctx.shadowBlur=15;
-    ctx.strokeRect(player.x-5,player.y-5,player.w+10,player.h+10);
-    ctx.lineWidth=1;
-  }
-  if(equippedMods.includes("FANTASMA")&&!modState.fantasmaUsed){
-    ctx.fillStyle="rgba(255,255,255,0.15)";
-    ctx.fillRect(player.x-3,player.y-3,player.w+6,player.h+6);
-  }
-}
-
-function drawEnemy(){
-  ctx.fillStyle="#ff3333";
-  ctx.shadowBlur=20;
-  ctx.shadowColor="#ff3333";
-  ctx.fillRect(enemy.x,enemy.y,enemy.w,enemy.h);
-  ctx.shadowBlur=0;
-}
-
-function collision(){
-  return player.x<enemy.x+enemy.w&&player.x+player.w>enemy.x&&player.y<enemy.y+enemy.h&&player.y+player.h>enemy.y;
-}
-
-function handleCollision(){
-  if(equippedMods.includes("FANTASMA")&&!modState.fantasmaUsed){
-    modState.fantasmaUsed=true;
-    showNotif("👻 FANTASMA activado — esquiva salvada!");
-    enemy.y=canvas.height+50;
-    return false;
-  }
-  if(modState.shieldActive){
-    modState.shieldActive=false;
-    modState.shieldCooldown=10;
-    showNotif("🛡️ Escudo roto — recarga en 10 esquivas");
-    enemy.y=canvas.height+50;
-    return false;
-  }
-  if(equippedMods.includes("TIEMPO_EXTRA")&&!modState.extraTimeUsed&&!modState.extraTimeActive){
-    modState.extraTimeActive=true;
-    modState.extraTimeTimer=180;
-    modState.extraTimeUsed=true;
-    showNotif("⏱️ TIEMPO EXTRA — ¡Esquiva en 3 segundos!","#ffcc00");
-    return false;
-  }
-  return true;
-}
-
-function updateUI(){
-  scoreEl.textContent=score;
-  coinsEl.textContent=coins;
-  levelEl.textContent=level;
-  xpFill.style.width=xp+"%";
-  updateModEquipados();
-}
-
-function updateModEquipados(){
-  var el=document.getElementById("modEquipados");
-  if(equippedMods.length===0){el.textContent="Ninguno";return;}
-  el.innerHTML=equippedMods.map(function(m){
-    var mod=buyableMods[m];
-    return mod?'<span style="margin-right:4px;">'+mod.icon+' '+mod.name+'</span>':"";
-  }).join("<br>");
-}
-
-function openShop(){paused=true;shopMenu.style.display="block";}
-function closeShop(){paused=false;shopMenu.style.display="none";loop();}
-function openCodes(){paused=true;document.getElementById("codesMenu").style.display="block";}
-function closeModal(id){document.getElementById(id).style.display="none";paused=false;loop();}
-
-function buyMod(modKey,price){
-  if(coins>=price){coins-=price;ownedMods.push(modKey);localStorage.setItem("ownedMods",JSON.stringify(ownedMods));saveCoins();generateShop();updateUI();showNotif("✅ Modificador desbloqueado");}
-  else showNotif("❌ No tienes monedas","#ff4444");
-}
-
-function equipMod(modKey){
-  if(!equippedMods.includes(modKey)) equippedMods.push(modKey);
-  localStorage.setItem("equippedMods",JSON.stringify(equippedMods));
-  generateShop();updateModEquipados();
-  showNotif("✅ "+buyableMods[modKey].name+" equipado");
-}
-
-function unequipMod(modKey){
-  equippedMods=equippedMods.filter(function(m){return m!==modKey;});
-  localStorage.setItem("equippedMods",JSON.stringify(equippedMods));
-  generateShop();updateModEquipados();
-  showNotif("🔴 "+buyableMods[modKey].name+" desequipado");
-}
-
-function buySkin(name,price){
-  if(coins>=price){
-    coins-=price;
-    ownedSkins.push(name);
-    localStorage.setItem("ownedSkins",JSON.stringify(ownedSkins));
-    saveCoins();
-    equipSkin(name);
-    generateShop();
-    updateUI();
-    if(name==="god"){
-      // Cierra la tienda antes de mostrar la bendición
-      shopMenu.style.display="none";
-      showGodBlessing(function(){
-        showNotif("✅ Skin GOD comprada — ¡Dios está contigo!","#ffd700");
-        paused=false;
-        loop();
-      });
-    } else {
-      showNotif("✅ Skin "+name+" comprada");
-    }
-  } else {
-    showNotif("❌ No tienes monedas","#ff4444");
-  }
-}
-
-function equipSkin(name){currentSkin=name;localStorage.setItem("currentSkin",name);generateShop();}
-function saveCoins(){localStorage.setItem("chaosCoins",coins);}
-
-function endGame(){
-  gameOver=true;
-  var reward=0;
-  if(score>=30){reward=Math.floor(score*1.5);if(score>=100)reward+=500;if(score>=200)reward+=1500;}
-  coins+=reward;saveCoins();
-  finalScore.textContent=score;
-  rewardText.innerHTML="+"+reward+" MONEDAS<br><br>MODIFICADOR FINAL: <b>"+currentModifier+"</b>";
-  gameOverMenu.style.display="block";
-  updateUI();
-}
-
-function togglePause(){paused=!paused;if(!paused)loop();}
-function restartGame(){location.reload();}
-
-function loop(){
-  if(paused||gameOver) return;
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(modState.extraTimeActive){
-    modState.extraTimeTimer--;
-    ctx.fillStyle="rgba(255,204,0,"+(0.08+Math.sin(Date.now()/100)*0.05)+")";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle="#ffcc00";
-    ctx.font="bold 18px Segoe UI";
-    ctx.fillText("⏱️ ESQUIVA AHORA: "+Math.ceil(modState.extraTimeTimer/60)+"s",10,30);
-    if(modState.extraTimeTimer<=0){modState.extraTimeActive=false;endGame();return;}
-  }
-  movePlayer();
-  moveEnemy();
-  drawPlayer();
-  drawEnemy();
-  ctx.shadowBlur=0;
-  if(collision()){
-    var die=handleCollision();
-    if(die){endGame();return;}
-  }
-  requestAnimationFrame(loop);
-}
-
-initModState();
-updateUI();
-loop();
-</script>
-</body>
-</html>
+/* ===== RENDER ===== */
+const wx=(x,w)=>(x+w/2-225)/30,wz=(y,h)=>(y+h/2-275)/30;
+let tcx=0;
+function render(){
+ const t=performance.now()/1000,run=!paused&&!gameOver,spd=run?(.1+Math.min(score,150)*.002)*(.5+.5*enemy.multiplier):0;
+ grid.position.z=-20+((grid.position.z+20+spd)%1);
+ pillars.forEach(p=>{p.position.z+=spd*1.5;if(p.position.z>18)p.position.z-=56});
+ for(let i=0;i<SN;i++){sp[i*3+2]+=spd*.5;if(sp[i*3+2]>20)sp[i*3+2]=-45}sg.attributes.position.needsUpdate=true;
+ const k=skins[currentSkin],model=k.m,px=wx(player.x,player.w),pz=wz(player.y,player.h),prev=pg.position.x;
+ if(pg.visible){
+  pg.position.x+=(px-pg.position.x)*.4;pg.position.z=pz;pg.position.y=BASEY[model]*.5+(model==="car"?0:Math.sin(t*3)*.08);
+  tilt+=((prev-px)*.5-tilt)*.2;pg.rotation.z=tilt;pg.rotation.x=model==="car"?0:Math.sin(t*2)*.03;
+  const sc=player.w/40*MS[model]*.5;pg.scale.setScalar(pg.scale.x+(sc-pg.scale.x)*.2);
+  if(k.color==="rainbow"){hue=(hue+.006)%1;bodyMats.forEach(m=>{m.color.setHSL(hue,1,.5);m.emissive.setHSL(hue,1,.4)})}
+  if(model==="ufo")mdl.rotation.y=t*2;if(halo)halo.rotation.z=t*3;
+  shield.visible=ms.shield;shield.rotation.y=t;ghost.visible=eqMods.includes("FANTASMA")&&!ms.fan;ghost.scale.setScalar(1+(ms.extra>0?.2*Math.sin(t*20):0));
+  pl.position.set(pg.position.x,2,pz);
+  if(run){const c=k.color==="rainbow"?new THREE.Color().setHSL(hue,1,.5):new THREE.Color(k.glow==="#777777"?"#ffffff":k.glow);
+   const ry=pg.position.y+.1,rz=pz+sc*2.2;for(let s=0;s<2;s++)emit(pg.position.x+(Math.random()-.5)*.3,ry,rz,(Math.random()-.5)*.03,Math.random()*.02,.1+Math.random()*.06,c)}}
+ eg.position.set(wx(enemy.x,enemy.w),.9,wz(enemy.y,enemy.h));eg.rotation.y=t*2;eg.rotation.x=t;
+ if(run)stepP();else if(gameOver)stepP();
+ const cx=pg.position.x*.5;tcx+=(cx-tcx)*.1;shake*=.9;
+ cam.position.set(tcx+(Math.random()-.5)*shake*.4,9+(Math.random()-.5)*shake*.4,20);cam.lookAt(tcx,0,-2);
+ R.render(S,cam)}
+function frame(){requestAnimationFrame(frame);if(!paused&&!gameOver)step();render()}
+setSkin3D();shop();updateUI();$("redeemedList").textContent=redeemed.length?redeemed.join(", "):"Ninguno aún";frame();
+</script></body></html>
