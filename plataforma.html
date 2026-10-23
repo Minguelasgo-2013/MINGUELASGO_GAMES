@@ -1293,7 +1293,7 @@ db.collection('comments').onSnapshot(function(snap){
     '#adminStats{color:var(--text-muted);font-size:.85em;text-align:center;margin-top:4px}';
   document.head.appendChild(st);
 
-  /* ---------- HTML: panel + pantalla de baneado ---------- */
+   /* ---------- HTML: panel + pantalla de baneado ---------- */
   document.body.insertAdjacentHTML('beforeend',
     '<div class="auth-overlay" id="adminModal"><div class="auth-modal" style="max-width:640px;max-height:85vh;display:flex;flex-direction:column">'+
       '<button class="auth-close" id="adminClose">&times;</button>'+
@@ -1304,7 +1304,9 @@ db.collection('comments').onSnapshot(function(snap){
     '<div class="auth-overlay" id="bannedScreen" style="z-index:6000"><div class="auth-modal" style="text-align:center">'+
       '<div style="font-size:3.5em">🚫</div><h2>Cuenta baneada</h2>'+
       '<p style="color:var(--text-secondary);margin-bottom:8px">Un administrador ha suspendido tu cuenta.</p>'+
-      '<p style="color:var(--text-muted);font-size:.9em;margin-bottom:20px">Motivo: <span id="bannedReason"></span></p>'+
+      '<p style="color:var(--text-muted);font-size:.9em;margin-bottom:12px">Motivo: <span id="bannedReason"></span></p>'+
+      // AQUÍ ESTÁ EL MENSAJE NUEVO:
+      '<p style="color:#f5576c;font-size:.9em;font-weight:600;margin-bottom:20px;font-style:italic">debiste portarte bien con el dueño</p>'+
       '<button class="auth-submit" id="bannedOk">Entendido</button>'+
     '</div></div>');
 
