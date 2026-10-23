@@ -1400,5 +1400,78 @@ db.collection('comments').onSnapshot(function(snap){
 })();
 
 </script>
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Ayudas ----------
+    function signedIn() { return request.auth != null; }
+    // Admin = existe el documento admins/{tu uid} (solo se crea a mano en la consola de Firebase)
+    function isAdmin()  { return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    // Baneado = existe el documento bans/{uid}
+    function banned()   { return signedIn() && exists(/databases/$(database)/documents/bans/$(request.auth.uid)); }
+
+    // ---------- NUEVO: admins y baneos ----------
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    match /bans/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    // ---------- Tus reglas, con el control de baneo ----------
+    match /players/{userId} {
+      allow read: if true;
+      allow create: if signedIn() && request.auth.uid == userId;
+      allow update: if signedIn() && request.auth.uid == userId && !banned();
+    }
+
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create: if signedIn() && !banned();
+      allow delete: if isAdmin();
+    }
+
+    match /livechat/{msgId} {
+      allow read: if true;
+      allow create: if signedIn() && !banned();
+      allow delete: if isAdmin();
+    }
+
+    match /ratings/{ratingId} {
+      allow read: if true;
+      allow create, update: if signedIn() && !banned();
+    }
+
+    match /friends/{docId} {
+      allow read: if signedIn();
+      allow create, update, delete: if signedIn() && !banned();
+    }
+
+    match /notifications/{notifId} {
+      allow read, update: if signedIn() && request.auth.uid == resource.data.to;
+      allow create: if signedIn() && !banned();
+    }
+
+    // Ranking por juego
+    match /scores/{scoreId} {
+      allow read: if true;
+      allow create: if signedIn() && !banned();
+      allow delete: if isAdmin();
+    }
+
+    // Contador de usuarios online
+    match /online/{uid} {
+      allow read: if true;
+      allow create, update: if signedIn() && request.auth.uid == uid && !banned();
+      allow delete: if signedIn() && request.auth.uid == uid;
+    }
+  }
+}
+
+</script>    
 </body>
 </html>
