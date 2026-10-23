@@ -301,48 +301,46 @@ section{padding:60px 20px}
 </style>
 </head>
 <body>
-<!-- Música de fondo: reproduce del segundo 0 al 16 y vuelve a empezar en bucle. -->
-<div id="musicBackground" aria-hidden="true" style="position:fixed;width:1px;height:1px;overflow:hidden;left:-10000px;top:-10000px;pointer-events:none">
-  <iframe
-    id="backgroundMusicPlayer"
-    width="1" height="1"
-    src="https://www.youtube-nocookie.com/embed/V0qszQnr5D4?start=0&end=16&autoplay=1&loop=1&playlist=V0qszQnr5D4&controls=0&playsinline=1&enablejsapi=1"
-    title="Música de fondo"
-    frameborder="0"
-    allow="autoplay; encrypted-media; picture-in-picture"
-    referrerpolicy="strict-origin-when-cross-origin">
-  </iframe>
-</div>
+<!-- Música de fondo: Miguel Phonk (Mega Miguel Funk), fragmento 0–16 s. -->
+<style>
+#musicToggle{position:fixed;right:16px;bottom:16px;z-index:10001;border:1px solid rgba(102,126,234,.8);border-radius:999px;padding:11px 15px;background:#161655;color:#fff;font:600 14px 'Segoe UI',sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.35);cursor:pointer}
+#musicToggle:hover{background:#24247a}
+#musicFrameWrap{position:fixed;width:200px;height:120px;left:-10000px;top:0;overflow:hidden;z-index:-1}
+#backgroundMusicPlayer{width:200px;height:120px;border:0}
+</style>
+<div id="musicFrameWrap" aria-hidden="true"><div id="backgroundMusicPlayer"></div></div>
+<button id="musicToggle" type="button">▶ Activar Miguel Miguel Funk 🎵</button>
 <script>
-// Controla el fragmento de 0 a 16 segundos y vuelve al inicio en bucle.
-(function () {
-  var api = document.createElement('script');
-  api.src = 'https://www.youtube.com/iframe_api';
-  document.head.appendChild(api);
-  var player;
-  window.onYouTubeIframeAPIReady = function () {
-    player = new YT.Player('backgroundMusicPlayer', {
-      events: {
-        onReady: function (event) {
-          event.target.playVideo();
-          window.setInterval(function () {
-            if (!player || typeof player.getCurrentTime !== 'function') return;
-            var state = player.getPlayerState();
-            if (state === YT.PlayerState.PLAYING && player.getCurrentTime() >= 15.8) {
-              player.seekTo(0, true);
-              player.playVideo();
-            }
-          }, 250);
-        },
-        onStateChange: function (event) {
-          if (event.data === YT.PlayerState.ENDED) {
-            event.target.seekTo(0, true);
-            event.target.playVideo();
-          }
-        }
+(function(){
+  var player=null,ready=false,playing=false,loopTimer=null;
+  var button=document.getElementById('musicToggle');
+  function start(){
+    if(!ready||!player)return;
+    playing=true;
+    player.seekTo(0,true);
+    player.playVideo();
+    button.textContent='⏸ Pausar Miguel Miguel Funk';
+    if(loopTimer)clearInterval(loopTimer);
+    loopTimer=setInterval(function(){
+      if(playing && player && player.getPlayerState && player.getPlayerState()===YT.PlayerState.PLAYING && player.getCurrentTime()>=15.8){
+        player.seekTo(0,true);player.playVideo();
       }
+    },200);
+  }
+  button.addEventListener('click',function(){
+    if(!ready||!player){button.textContent='Cargando canción…';return;}
+    if(playing){playing=false;player.pauseVideo();button.textContent='▶ Reanudar Miguel Miguel Funk';}
+    else start();
+  });
+  window.onYouTubeIframeAPIReady=function(){
+    player=new YT.Player('backgroundMusicPlayer',{
+      width:'200',height:'120',
+      videoId:'52IoCmGPnx8',
+      playerVars:{autoplay:0,controls:0,playsinline:1,rel:0,start:0,origin:location.origin},
+      events:{onReady:function(){ready=true;button.textContent='▶ Activar Miguel Miguel Funk 🎵';},onError:function(){button.textContent='No se pudo cargar la canción';}}
     });
   };
+  var api=document.createElement('script');api.src='https://www.youtube.com/iframe_api';document.head.appendChild(api);
 })();
 </script>
 <div class="loading-screen" id="loadingScreen">
