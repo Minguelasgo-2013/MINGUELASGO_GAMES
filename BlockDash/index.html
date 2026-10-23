@@ -138,7 +138,7 @@ const buyMods={FANTASMA:{i:"👻",n:"FANTASMA",d:"El enemigo te atraviesa una ve
 /* ===== ESTADO ===== */
 let coins=L.g("coins",0),ownedSkins=L.g("skins",["cyan"]),currentSkin=L.g("skin","cyan"),ownedMods=L.g("omods",[]),eqMods=L.g("emods",[]),redeemed=L.g("codes",[]);
 let score=0,level=1,xp=0,paused=false,gameOver=false,reverse=false,hue=0,tab="skins",curMod="NORMAL",shake=0,tilt=0;
-const player={x:190,y:470,w:40,h:40,speed:8},enemy={x:100,y:-40,w:40,h:40,speed:5,multiplier:1},keys={};
+const player={x:190,y:470,w:40,h:40,speed:8},enemy={x:100,y:-40,w:40,h:40,speed:7,multiplier:1},keys={};
 let ms;
 function initMods(){ms={fan:false,shield:false,cd:0,extraUsed:false,extra:0,bonus:0,xpm:1};
  if(eqMods.includes("IMÁN"))ms.bonus=2;if(eqMods.includes("IMAN"))ms.bonus=5;if(eqMods.includes("DOBLE_XP"))ms.xpm=2;if(eqMods.includes("ESCUDO"))ms.shield=true}
@@ -201,7 +201,7 @@ function activateMod(){reverse=false;player.w=player.h=40;player.speed=8;enemy.m
  case"EARTHQUAKE":box.style.transform="translate("+(Math.random()*10-5)+"px,"+(Math.random()*10-5)+"px)";shake=1;break;case"HYPER SPEED":player.speed=16;break;
  case"FLASH":document.body.style.filter="brightness("+(1+Math.random()*2)+")";break;case"DARKNESS":document.body.style.filter="brightness(.4)";break;
  case"CHAOS MODE":player.speed=5+Math.random()*15;enemy.multiplier=1+Math.random()*4;break;case"SPINNING SCREEN":box.style.transform="rotate("+(Math.random()*8-4)+"deg)";break}}
-function collision(){return player.x<enemy.x+enemy.w&&player.x+player.w>enemy.x&&player.y<enemy.y+enemy.h&&player.y+player.h>enemy.y}
+function collision(){const py=enemy.py===undefined?enemy.y:Math.min(enemy.py,enemy.y);return player.x<enemy.x+enemy.w&&player.x+player.w>enemy.x&&player.y<enemy.y+enemy.h&&player.y+player.h>py}
 function hit(){
  if(eqMods.includes("FANTASMA")&&!ms.fan){ms.fan=true;showNotif("👻 FANTASMA activado: esquiva salvada");enemy.y=H+50;shake=1;return false}
  if(ms.shield){ms.shield=false;ms.cd=10;showNotif("🛡️ Escudo roto: recarga en 10 esquivas");enemy.y=H+50;shake=1;return false}
@@ -211,7 +211,7 @@ function step(){
  let l=keys.ArrowLeft||keys.a,r=keys.ArrowRight||keys.d;if(reverse)[l,r]=[r,l];
  if(l)player.x-=player.speed;if(r)player.x+=player.speed;if(currentSkin==="glitch")player.x+=Math.random()*6-3;
  player.x=Math.max(0,Math.min(W-player.w,player.x));
- enemy.y+=enemy.speed*enemy.multiplier;if(score>40)enemy.x+=Math.sin(Date.now()/100)*4;
+ enemy.py=enemy.y;enemy.y+=(enemy.speed+Math.min(score,120)*.12)*enemy.multiplier;if(score>25)enemy.x+=Math.sin(Date.now()/100)*4;
  if(enemy.y>H){enemy.y=-40;enemy.x=Math.random()*(W-enemy.w);score++;xp+=8*ms.xpm;coins+=ms.bonus;
   if(eqMods.includes("ESCUDO")&&!ms.shield&&--ms.cd<=0){ms.shield=true;showNotif("🛡️ Escudo recargado")}
   if(score%5===0)activateMod();if(xp>=100){xp=0;level++}saveAll();updateUI()}
@@ -229,7 +229,7 @@ function restartGame(){$("gameOverMenu").style.display="none";score=0;level=1;xp
 const wx=(x,w)=>(x+w/2-225)/30,wz=(y,h)=>(y+h/2-275)/30;
 let tcx=0;
 function render(){
- const t=performance.now()/1000,run=!paused&&!gameOver,spd=run?(.1+Math.min(score,150)*.002)*(.5+.5*enemy.multiplier):0;
+ const t=performance.now()/1000,run=!paused&&!gameOver,spd=run?(.14+Math.min(score,120)*.004)*(.5+.5*enemy.multiplier):0;
  grid.position.z=-20+((grid.position.z+20+spd)%1);
  pillars.forEach(p=>{p.position.z+=spd*1.5;if(p.position.z>18)p.position.z-=56});
  for(let i=0;i<SN;i++){sp[i*3+2]+=spd*.5;if(sp[i*3+2]>20)sp[i*3+2]=-45}sg.attributes.position.needsUpdate=true;
