@@ -1272,5 +1272,133 @@ db.collection('comments').onSnapshot(function(snap){
     animateNumber(document.getElementById('statReviews'),snap.size);
 });
 </script>
+<script>
+/* MINGUELASGO GAMES - Panel de admin y baneos
+   Se carga DESPUES del script principal de plataforma.html (usa auth, db, esc y showToast). */
+(function(){
+  var isAdmin=false,banUnsub=null,unsubs=[],players=[],bans={};
+
+  /* ---------- estilos ---------- */
+  var st=document.createElement('style');
+  st.textContent=
+    '.adm-list{overflow-y:auto;flex:1;margin-top:10px}'+
+    '.adm-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;background:var(--bg-primary)}'+
+    '.adm-row.banned{border-color:#f5576c;background:rgba(245,87,108,.08)}'+
+    '.adm-info{flex:1;min-width:0}'+
+    '.adm-name{font-weight:700;color:var(--text-primary)}'+
+    '.adm-sub{font-size:.75em;color:var(--text-muted);word-break:break-all;margin-top:2px}'+
+    '.adm-tag{background:#f5576c;color:#fff;font-size:.65em;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle}'+
+    '.adm-btn{padding:8px 16px;border:none;border-radius:8px;font-weight:600;cursor:pointer;color:#fff;flex-shrink:0}'+
+    '.adm-btn.ban{background:#f5576c}.adm-btn.unban{background:#4ade80;color:#000}'+
+    '#adminStats{color:var(--text-muted);font-size:.85em;text-align:center;margin-top:4px}';
+  document.head.appendChild(st);
+
+  /* ---------- HTML: panel + pantalla de baneado ---------- */
+  document.body.insertAdjacentHTML('beforeend',
+    '<div class="auth-overlay" id="adminModal"><div class="auth-modal" style="max-width:640px;max-height:85vh;display:flex;flex-direction:column">'+
+      '<button class="auth-close" id="adminClose">&times;</button>'+
+      '<h2>🛡️ Panel de Admin</h2>'+
+      '<input type="text" id="adminSearch" placeholder="Buscar jugador o ID..." style="margin-bottom:0">'+
+      '<div id="adminStats"></div><div class="adm-list" id="adminList"></div>'+
+    '</div></div>'+
+    '<div class="auth-overlay" id="bannedScreen" style="z-index:6000"><div class="auth-modal" style="text-align:center">'+
+      '<div style="font-size:3.5em">🚫</div><h2>Cuenta baneada</h2>'+
+      '<p style="color:var(--text-secondary);margin-bottom:8px">Un administrador ha suspendido tu cuenta.</p>'+
+      '<p style="color:var(--text-muted);font-size:.9em;margin-bottom:20px">Motivo: <span id="bannedReason"></span></p>'+
+      '<button class="auth-submit" id="bannedOk">Entendido</button>'+
+    '</div></div>');
+
+  /* ---------- boton en la barra (solo visible para admin) ---------- */
+  var li=document.createElement('li');li.id='adminArea';li.style.display='none';
+  li.innerHTML='<button class="auth-btn" id="adminOpen">🛡️ Admin</button>';
+  var authLi=document.getElementById('authArea');
+  authLi.parentNode.insertBefore(li,authLi);
+
+  function setAdmin(v){isAdmin=v;li.style.display=v?'block':'none';if(!v)closePanel();}
+
+  /* ---------- panel ---------- */
+  function openPanel(){
+    if(!isAdmin)return;
+    document.getElementById('adminModal').classList.add('active');
+    closeListeners();
+    unsubs.push(db.collection('players').onSnapshot(function(s){
+      players=s.docs.map(function(d){var x=d.data();return{uid:d.id,name:x.name||'Anónimo',score:x.score||0};});
+      render();
+    }));
+    unsubs.push(db.collection('bans').onSnapshot(function(s){
+      bans={};s.docs.forEach(function(d){bans[d.id]=d.data();});render();
+    }));
+  }
+  function closeListeners(){unsubs.forEach(function(u){u();});unsubs=[];}
+  function closePanel(){document.getElementById('adminModal').classList.remove('active');closeListeners();}
+
+  function render(){
+    var q=document.getElementById('adminSearch').value.trim().toLowerCase();
+    var all=players.slice();
+    Object.keys(bans).forEach(function(id){
+      if(!all.some(function(p){return p.uid===id;}))all.push({uid:id,name:bans[id].name||'(sin perfil)',score:0});
+    });
+    all=all.filter(function(p){return !q||p.name.toLowerCase().indexOf(q)>-1||p.uid.toLowerCase().indexOf(q)>-1;});
+    all.sort(function(a,b){return (bans[b.uid]?1:0)-(bans[a.uid]?1:0)||b.score-a.score;});
+    document.getElementById('adminStats').textContent=players.length+' jugadores, '+Object.keys(bans).length+' baneados';
+    document.getElementById('adminList').innerHTML=all.length?all.map(function(p){
+      var b=bans[p.uid];
+      return '<div class="adm-row'+(b?' banned':'')+'"><div class="adm-info"><div class="adm-name">'+esc(p.name)+(b?'<span class="adm-tag">BANEADO</span>':'')+'</div>'+
+        '<div class="adm-sub">'+esc(p.uid)+', '+p.score+' pts'+(b?'. Motivo: '+esc(b.reason||'sin motivo'):'')+'</div></div>'+
+        '<button class="adm-btn '+(b?'unban':'ban')+'" data-uid="'+encodeURIComponent(p.uid)+'">'+(b?'Desbanear':'Banear')+'</button></div>';
+    }).join(''):'<div class="notif-empty">Sin resultados</div>';
+  }
+
+  /* ---------- acciones ---------- */
+  function ban(uid){
+    if(auth.currentUser&&uid===auth.currentUser.uid){showToast('No puedes banearte a ti mismo','warning');return;}
+    var p=players.filter(function(x){return x.uid===uid;})[0];
+    var reason=prompt('Motivo del baneo (opcional):');
+    if(reason===null)return;
+    db.collection('bans').doc(uid).set({
+      name:p?p.name:'',
+      reason:reason.trim().slice(0,200)||'Sin motivo indicado',
+      time:firebase.firestore.FieldValue.serverTimestamp(),
+      by:auth.currentUser.uid
+    }).then(function(){showToast('Jugador baneado','success');})
+      .catch(function(e){showToast('Error: '+e.message,'warning');});
+  }
+  function unban(uid){
+    if(!confirm('¿Quitar el baneo a este jugador?'))return;
+    db.collection('bans').doc(uid).delete()
+      .then(function(){showToast('Baneo retirado','success');})
+      .catch(function(e){showToast('Error: '+e.message,'warning');});
+  }
+
+  document.getElementById('adminOpen').onclick=openPanel;
+  document.getElementById('adminClose').onclick=closePanel;
+  document.getElementById('adminSearch').oninput=render;
+  document.getElementById('bannedOk').onclick=function(){document.getElementById('bannedScreen').classList.remove('active');};
+  document.getElementById('adminList').addEventListener('click',function(e){
+    var b=e.target.closest('.adm-btn');if(!b||!isAdmin)return;
+    var uid=decodeURIComponent(b.getAttribute('data-uid'));
+    if(b.classList.contains('unban'))unban(uid);else ban(uid);
+  });
+
+  /* ---------- sesion: comprobar admin y baneo ---------- */
+  auth.onAuthStateChanged(function(user){
+    if(banUnsub){banUnsub();banUnsub=null;}
+    setAdmin(false);
+    if(!user)return;
+    /* admin = existe el documento admins/{tu uid} (solo se crea a mano en la consola de Firebase) */
+    db.collection('admins').doc(user.uid).get().then(function(d){
+      if(d.exists&&auth.currentUser&&auth.currentUser.uid===user.uid)setAdmin(true);
+    }).catch(function(){});
+    /* baneo en tiempo real: si te banean con la sesion abierta, te saca al momento */
+    banUnsub=db.collection('bans').doc(user.uid).onSnapshot(function(d){
+      if(!d.exists)return;
+      document.getElementById('bannedReason').textContent=d.data().reason||'Sin motivo indicado';
+      document.getElementById('bannedScreen').classList.add('active');
+      auth.signOut();
+    },function(){});
+  });
+})();
+
+</script>
 </body>
 </html>
