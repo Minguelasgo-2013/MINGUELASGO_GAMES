@@ -817,24 +817,16 @@ document.addEventListener('click',function(e){
 
 /* ============ JUEGOS ============ */
 var GAMES=[
-    {name:'1v1.lol',folder:'1v1.lol-main',icon:'🔫',cat:'Accion',grad:6,desc:'Duelos 1v1 con construccion y disparos',unity:true},{name:'1v1.lol',folder:'1v1.lol-main',icon:'🔫',cat:'Accion',grad:6,desc:'Duelos 1v1 con construccion y disparos',unity:true},
     {name:'BlockDash',folder:'BlockDash',icon:'🏃',cat:'Accion',grad:1,desc:'Corre, esquiva y sobrevive'},
     {name:'Bunker60',folder:'Bunker60',icon:'🏚️',cat:'Aventura',grad:2,desc:'Sobrevive en el bunker'},
     {name:'CazaPuntos',folder:'CazaPuntos',icon:'🎯',cat:'Arcade',grad:3,desc:'Atrapa todos los puntos'},
     {name:'ClickerGod',folder:'ClickerGod',icon:'👆',cat:'Estrategia',grad:4,desc:'Haz clic hasta ser un dios'},
-    {name:'ExtremeCar',folder:'ExtremeCar',icon:'🏎️',cat:'Accion',grad:5,desc:'Carreras al extremo'},
     {name:'HE BLACK HOLE',folder:'HEBLACKHOLEACCELERATOR',icon:'🕳️',cat:'Accion',grad:8,desc:'Acelera hacia el agujero negro'},
     {name:'Miextrix',folder:'Miextrix',icon:'🟩',cat:'Arcade',grad:1,desc:'Puzzle de bloques'},
     {name:'Mins',folder:'Mins',icon:'⏱️',cat:'Arcade',grad:2,desc:'Contra el reloj'},
-    {name:'NOTOQUES',folder:'NOTOQUES',icon:'🚫',cat:'Arcade',grad:3,desc:'No toques lo que no debes'},
-    {name:'OXIGEN',folder:'OXIGEN',icon:'💨',cat:'Aventura',grad:5,desc:'Lucha por respirar'},
-    {name:'VaporMon',folder:'VaporMon',icon:'👾',cat:'Aventura',grad:8,desc:'Captura criaturas vapor'},
-    {name:'VirusBroma',folder:'VirusBroma',icon:'🧪',cat:'Estrategia',grad:1,desc:'El virus broma original'},
-    {name:'VirusBroma 2',folder:'VirusBroma2',icon:'🧬',cat:'Estrategia',grad:2,desc:'La secuela del virus'},
     {name:'Wasteland',folder:'Wasteland',icon:'🏜️',cat:'Accion',grad:3,desc:'Sobrevive en el paramo'},
     {name:'ZOMBIE ASSAULT',folder:'ZOMBIEASSAULT',icon:'🧟',cat:'Accion',grad:4,desc:'Elimina zombies sin parar'},
     {name:'Juego 3',folder:'juego3',icon:'🎲',cat:'Otros',grad:5,desc:'Un juego misterioso'},
-    {name:'Vapor Chronicles',folder:'vapor-chronicles',icon:'📖',cat:'Aventura',grad:6,desc:'Cronicas del vapor'}
 ];
 
 /* ============ BUSCAR / FILTRAR ============ */
@@ -1186,8 +1178,7 @@ function sendChatbotMsg(){
 function getBotResponse(q){
     if(q.includes('hola')||q.includes('hey')||q.includes('buenas')) return '¡Hola! ¿En qué puedo ayudarte?';
     if(q.includes('gracias')) return '¡De nada! Disfruta los juegos 🎮';
-    if(q.includes('1v1')||q.includes('lol')) return '1v1.lol está disponible 🔫. Es un juego de duelos con construcción tipo Fortnite. ¡Búscalo en el catálogo!';
-    if(q.includes('juego')||q.includes('jugar')||q.includes('catalogo')||q.includes('catálogo')) return 'Tenemos 18 juegos disponibles. Los más populares son 1v1.lol, ZOMBIE ASSAULT, BlockDash y ExtremeCar. ¡Échale un ojo al catálogo!';
+    if(q.includes('juego')||q.includes('jugar')||q.includes('catalogo')||q.includes('catálogo')) return 'Tenemos 9 juegos disponibles. Puedes explorar el catálogo y descubrir tus favoritos. ¡Échale un ojo!';
     if(q.includes('ranking')||q.includes('top')||q.includes('mejores')) return 'En la sección "Ranking Global" ves el Top 10. También hay ranking por juego 🏆';
     if(q.includes('cuenta')||q.includes('registr')||q.includes('sesion')||q.includes('sesión')) return 'Haz clic en "Iniciar sesión" arriba a la derecha. Es gratis y desbloqueas chat, comentarios y logros.';
     if(q.includes('chat')) return 'El chat en vivo está en la sección "Chat". Necesitas iniciar sesión para participar.';
