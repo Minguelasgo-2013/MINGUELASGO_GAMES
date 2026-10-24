@@ -299,6 +299,72 @@ section{padding:60px 20px}
 .profiles-grid{grid-template-columns:1fr}
 }
 </style>
+
+<style id="minguelasgo-futuristic-facelift">
+/* MINGUELASGO GAMES — FUTURISTIC FACELIFT (visual overrides only) */
+:root[data-theme="dark"]{
+ --bg-primary:#050711;--bg-secondary:#0a1020;--bg-card:rgba(12,20,38,.88);--bg-card-hover:rgba(17,34,59,.96);
+ --text-primary:#eefcff;--text-secondary:#a5c2d4;--text-muted:#68869a;
+ --accent:#00f5ff;--accent-secondary:#9b5cff;--border:rgba(0,245,255,.22);--shadow:rgba(0,0,0,.5);--glass:rgba(5,10,24,.78)
+}
+:root[data-theme="light"]{
+ --bg-primary:#eef8ff;--bg-secondary:#dceeff;--bg-card:rgba(255,255,255,.9);--bg-card-hover:#fff;
+ --text-primary:#0b2033;--text-secondary:#36566b;--text-muted:#66869a;
+ --accent:#007eae;--accent-secondary:#7144c8;--border:rgba(0,126,174,.24);--shadow:rgba(20,60,90,.14);--glass:rgba(239,249,255,.86)
+}
+html{scroll-padding-top:90px}
+body{background:var(--bg-primary);background-image:radial-gradient(ellipse at 15% 0%,rgba(0,245,255,.10),transparent 35%),radial-gradient(ellipse at 85% 20%,rgba(155,92,255,.12),transparent 32%),linear-gradient(rgba(0,245,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,.025) 1px,transparent 1px);background-size:auto,auto,42px 42px,42px 42px;color:var(--text-primary)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:linear-gradient(120deg,transparent 0%,rgba(0,245,255,.025) 45%,transparent 60%);opacity:.8}
+#particles{z-index:0;opacity:.48}
+nav{padding:14px clamp(16px,4vw,48px);background:rgba(4,8,20,.82);border-bottom:1px solid rgba(0,245,255,.3);box-shadow:0 8px 32px rgba(0,0,0,.25),0 1px 18px rgba(0,245,255,.06);backdrop-filter:blur(22px) saturate(150%)}
+.nav-logo,.footer-logo{letter-spacing:.12em;text-transform:uppercase;text-shadow:0 0 18px rgba(0,245,255,.35)}
+.nav-links a{border-radius:999px;padding:9px 13px;transition:color .2s,background .2s,box-shadow .2s}
+.nav-links a:hover{background:rgba(0,245,255,.09);color:var(--accent);box-shadow:inset 0 0 0 1px rgba(0,245,255,.2)}
+.theme-toggle,.auth-btn,.notif-btn,.welcome-btn,.comment-submit,.livechat-send{border:1px solid rgba(0,245,255,.38);box-shadow:0 0 18px rgba(0,245,255,.08);transition:transform .2s,box-shadow .2s,filter .2s}
+.theme-toggle:hover,.auth-btn:hover,.notif-btn:hover,.welcome-btn:hover,.comment-submit:hover,.livechat-send:hover{transform:translateY(-2px);box-shadow:0 0 24px rgba(0,245,255,.2);filter:brightness(1.08)}
+.hero{isolation:isolate;min-height:90vh}
+.hero::before{content:"";position:absolute;width:min(72vw,760px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(0,245,255,.09);box-shadow:0 0 0 34px rgba(0,245,255,.018),0 0 0 80px rgba(155,92,255,.018),inset 0 0 80px rgba(0,245,255,.025);z-index:-1;pointer-events:none;animation:mg-orbit-glow 8s ease-in-out infinite}
+@keyframes mg-orbit-glow{0%,100%{transform:scale(.98);opacity:.7}50%{transform:scale(1.03);opacity:1}}
+.hero h1,.hero-title{letter-spacing:-.035em;text-shadow:0 0 34px rgba(0,245,255,.14)}
+.section-header{position:relative}
+.section-title{background:linear-gradient(100deg,#e9fdff 0%,#00f5ff 38%,#aa7aff 75%,#e9fdff 100%);background-size:200% auto;animation:mg-title-shimmer 8s linear infinite;-webkit-background-clip:text;background-clip:text}
+@keyframes mg-title-shimmer{to{background-position:200% center}}
+.section-subtitle{color:var(--text-secondary)}
+.games-grid,.profiles-grid{gap:clamp(14px,2vw,25px)}
+.game-card,.ranking-table,.livechat-box,.comment-form,.comment-list,.welcome-modal,.notif-dropdown,.ai-chatbot,.seasonal-banner{background:var(--glass);backdrop-filter:blur(16px) saturate(135%);border:1px solid var(--border);box-shadow:0 14px 36px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.035)}
+.game-card{position:relative;border-radius:18px;box-shadow:0 10px 28px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.035);transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease,background .28s ease}
+.game-card::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(135deg,rgba(0,245,255,.10),transparent 38%,rgba(155,92,255,.09));opacity:0;transition:opacity .25s}
+.game-card:hover{transform:translateY(-7px);border-color:rgba(0,245,255,.65);box-shadow:0 18px 44px rgba(0,0,0,.32),0 0 28px rgba(0,245,255,.10)}
+.game-card:hover::after{opacity:1}
+.game-card img,.game-card .game-image{transition:transform .45s ease,filter .45s ease}
+.game-card:hover img,.game-card:hover .game-image{transform:scale(1.035);filter:saturate(1.12)}
+input,textarea,select,.chatbot-input input,.livechat-input input,.comment-textarea{background:rgba(3,9,20,.72);color:var(--text-primary);border:1px solid var(--border);border-radius:12px;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,textarea:focus,select:focus,.chatbot-input input:focus,.livechat-input input:focus,.comment-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,245,255,.09),0 0 20px rgba(0,245,255,.07)}
+button{transition:transform .2s ease,filter .2s ease,box-shadow .2s ease}
+button:active{transform:scale(.98)}
+.ranking-row{border-bottom:1px solid rgba(0,245,255,.08)}
+.ranking-row.header{background:rgba(0,245,255,.075);color:var(--accent)}
+.ranking-row:hover{background:rgba(0,245,255,.055)}
+.ranking-row.top-1{background:linear-gradient(90deg,rgba(255,215,0,.09),transparent)}
+.profiles-grid>*{border-radius:16px;transition:transform .25s,border-color .25s,box-shadow .25s}
+.profiles-grid>*:hover{transform:translateY(-4px);border-color:rgba(0,245,255,.42);box-shadow:0 12px 30px rgba(0,0,0,.2)}
+.welcome-modal{border-radius:24px;box-shadow:0 24px 90px rgba(0,0,0,.55),0 0 48px rgba(0,245,255,.08)}
+.welcome-modal h2{letter-spacing:-.025em}
+.welcome-feat{border:1px solid rgba(0,245,255,.18);background:rgba(0,245,255,.045);border-radius:12px}
+.toast{backdrop-filter:blur(14px);border:1px solid var(--border);box-shadow:0 12px 32px rgba(0,0,0,.28)}
+.ai-chatbot{border-radius:20px;overflow:hidden}
+.chatbot-header{background:linear-gradient(110deg,rgba(0,245,255,.12),rgba(155,92,255,.12));border-bottom:1px solid var(--border)}
+.chatbot-fab{box-shadow:0 0 26px rgba(0,245,255,.2)}
+footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));border-top:1px solid rgba(0,245,255,.2)}
+.footer-text{color:var(--text-muted)}
+.loading-screen{background:radial-gradient(ellipse at center, #101b37 0%,#050711 68%)}
+.loading-logo{display:inline-block;width:max-content;max-width:92vw;background:linear-gradient(100deg,#f1ffff 0%,#00f5ff 35%,#9b5cff 70%,#f1ffff 100%)!important;background-size:250% auto!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;color:transparent!important;animation:pulse-load 1.5s infinite,mg-title-shimmer 5s linear infinite;text-align:center}
+.loading-fill{background:linear-gradient(90deg,#00f5ff,#9b5cff,#00f5ff);background-size:200% 100%}
+.vip-section{background:linear-gradient(125deg,#ffe98a,#d4a51e 45%,#8d6410);box-shadow:0 0 40px rgba(255,215,0,.12)}
+@media(max-width:700px){nav{padding:12px 16px}.nav-logo{font-size:.92em;letter-spacing:.06em}.hero{min-height:78vh;padding-top:110px}.section-title{font-size:clamp(1.65em,7vw,2.2em)}.games-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,245px),1fr))}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+</style>
+
 </head>
 <body>
 <!-- MINGUELASGO_YT_MUSIC_LOOP: canción completa de YouTube en bucle -->
