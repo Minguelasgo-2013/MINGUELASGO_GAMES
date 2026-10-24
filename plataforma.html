@@ -365,6 +365,15 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 </style>
 
+<style id="mg-general-update-styles">
+/* MINGUELASGO GAMES — actualización general y Arena semanal */
+.mg-season-banner{position:relative;overflow:hidden;background:radial-gradient(ellipse at 80% 0%,rgba(149,76,255,.34),transparent 44%),linear-gradient(120deg,#071527,#11102e 58%,#071b28)!important;border:1px solid rgba(0,245,255,.38);box-shadow:0 0 34px rgba(0,245,255,.10),inset 0 0 38px rgba(125,70,255,.08);}
+.mg-season-banner:after{content:'✦  ·  ✧  ·  ✦';position:absolute;right:5%;bottom:12%;font-size:clamp(22px,5vw,50px);letter-spacing:.35em;color:rgba(0,245,255,.28);pointer-events:none}
+.mg-season-kicker{font:700 11px monospace;letter-spacing:.22em;color:#00f5ff;margin-bottom:12px}.mg-season-banner h3{color:#f3fbff!important;text-shadow:0 0 20px rgba(0,245,255,.45)}.mg-season-banner p{max-width:650px}.mg-season-pills{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.mg-season-pills span{border:1px solid rgba(0,245,255,.3);border-radius:999px;padding:7px 11px;background:rgba(0,245,255,.06);font-size:12px;color:#dffcff}
+.mg-update-section,.mg-tournament-section{padding:55px 5%;position:relative;z-index:1}.mg-update-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;max-width:1180px;margin:auto}.mg-update-card,.mg-tournament-panel,.mg-tournament-board{background:linear-gradient(145deg,rgba(15,25,48,.92),rgba(7,12,27,.94));border:1px solid rgba(0,245,255,.18);border-radius:18px;box-shadow:0 12px 38px rgba(0,0,0,.22)}.mg-update-card{padding:24px;transition:transform .2s,border-color .2s}.mg-update-card:hover{transform:translateY(-4px);border-color:rgba(0,245,255,.55)}.mg-update-card>span{font:700 10px monospace;letter-spacing:.15em;color:#00f5ff}.mg-update-icon{font-size:32px;margin:18px 0 10px}.mg-update-card h3{margin:0 0 9px;color:#f1f7ff}.mg-update-card p{margin:0;color:#aab8d0;line-height:1.65;font-size:14px}
+.mg-tournament-panel{max-width:1000px;margin:0 auto 22px;padding:clamp(18px,4vw,34px);background:radial-gradient(ellipse at 100% 0%,rgba(116,66,255,.18),transparent 45%),linear-gradient(145deg,rgba(12,25,47,.97),rgba(5,10,24,.98))}.mg-tournament-top{display:flex;align-items:center;gap:9px;flex-wrap:wrap;color:#8efcff;font:700 11px monospace;letter-spacing:.14em}.mg-live-dot{width:8px;height:8px;border-radius:50%;background:#35ffb5;box-shadow:0 0 12px #35ffb5;animation:mgPulse 1.4s infinite}.mg-week-chip{margin-left:auto;border:1px solid rgba(0,245,255,.25);padding:6px 9px;border-radius:7px;color:#d8dfff}.mg-tournament-main{display:flex;gap:18px;align-items:center;margin:25px 0}.mg-trophy{font-size:clamp(40px,7vw,66px);filter:drop-shadow(0 0 15px rgba(0,245,255,.25))}.mg-tournament-label{font:700 10px monospace;letter-spacing:.18em;color:#a77bff}.mg-tournament-main h3{font-size:clamp(22px,4vw,34px);margin:7px 0;color:#fff}.mg-tournament-main p{margin:0;color:#aab8d0;line-height:1.5}.mg-tournament-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.mg-tournament-stats>div{padding:14px;border-radius:10px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);min-width:0}.mg-tournament-stats span,.mg-tournament-stats strong{display:block}.mg-tournament-stats span{font:10px monospace;letter-spacing:.1em;color:#8292ae;margin-bottom:8px}.mg-tournament-stats strong{font-size:14px;color:#e7faff;overflow-wrap:anywhere}.mg-tournament-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:18px}.mg-tournament-btn{border:0;border-radius:9px;padding:12px 18px;font-weight:800;letter-spacing:.05em;color:#03111d;background:linear-gradient(100deg,#00f5ff,#a46bff);cursor:pointer;box-shadow:0 0 20px rgba(0,245,255,.15)}.mg-tournament-btn:hover{filter:brightness(1.12);transform:translateY(-1px)}#mgTournamentStatus{font-size:13px;color:#aab8d0}.mg-tournament-note{margin-top:18px;color:#71809b;font-size:11px;line-height:1.6}.mg-tournament-board{max-width:1000px;margin:auto;padding:22px}.mg-tournament-board h3{font-size:14px;letter-spacing:.08em}.mg-tournament-player{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07);color:#eaf5ff}.mg-tournament-player:last-child{border-bottom:0}.mg-tournament-player small{display:block;color:#8494ae;margin-top:3px}.mg-tournament-player .mg-player-rank{color:#00f5ff;font:700 12px monospace;width:25px}.mg-tournament-empty{color:#8292ae;font-size:13px}@keyframes mgPulse{50%{opacity:.45;box-shadow:0 0 3px #35ffb5}}
+@media(max-width:600px){.mg-tournament-stats{grid-template-columns:1fr}.mg-tournament-main{align-items:flex-start}.mg-week-chip{margin-left:0}.mg-tournament-actions{align-items:flex-start;flex-direction:column}}
+</style>
 </head>
 <body>
 <!-- MINGUELASGO_YT_MUSIC_LOOP: canción completa de YouTube en bucle -->
@@ -546,7 +555,7 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 <section class="hero">
 <div class="hero-bg-anim"><div class="hero-orb"></div><div class="hero-orb"></div><div class="hero-orb"></div></div>
 <div class="hero-logo">MINGUELASGO GAMES</div>
-<p class="hero-tagline">Tu plataforma de juegos favorita, renovada. 18 juegos, ranking global, chat en vivo, logros y mucho mas.</p>
+<p class="hero-tagline">Tu universo gaming futurista: nuevos retos, eventos rotativos, ranking global y torneos semanales.</p>
 <div class="hero-stats">
 <div class="hero-stat"><div class="hero-stat-number" id="statGames">0</div><div class="hero-stat-label">Juegos</div></div>
 <div class="hero-stat"><div class="hero-stat-number" id="statPlayers">0</div><div class="hero-stat-label">Jugadores</div></div>
@@ -580,10 +589,11 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 </section>
 
 <section class="featured" id="destacado">
-<div class="section-header fade-in"><h2 class="section-title">Temas Estacionales 🎃🎄</h2><p class="section-subtitle">Disfruta de eventos especiales</p></div>
-<div class="seasonal-banner">
-<h3>🎃 Halloween 2026</h3>
-<p>Desbloquea recompensas especiales</p>
+<div class="section-header fade-in"><h2 class="section-title">EVENTO GLOBAL · TEMPORADA 01</h2><p class="section-subtitle">Una nueva misión cada semana. La competición no se detiene.</p></div>
+<div class="seasonal-banner mg-season-banner">
+<div class="mg-season-kicker">MINGUELASGO PROTOCOL // LIVE</div><h3>⚡ OPERACIÓN NEÓN</h3>
+<p>Completa desafíos, escala posiciones y deja tu marca en la comunidad.</p>
+<div class="mg-season-pills"><span>🛰️ Retos rotativos</span><span>🏆 Torneos semanales</span><span>💠 Recompensas de temporada</span></div>
 </div>
 <div class="featured-card fade-in">
 <div class="featured-image">🧟</div>
@@ -596,6 +606,27 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 <div class="search-bar fade-in"><span class="search-icon">&#128269;</span><input type="text" id="searchInput" placeholder="Buscar juegos..." oninput="searchGames()"></div>
 <div class="filter-tabs fade-in" id="filterTabs"></div>
 <div class="games-grid" id="gamesGrid"></div>
+</section>
+
+<section class="mg-update-section" id="actualizacion">
+ <div class="section-header fade-in"><h2 class="section-title">ACTUALIZACIÓN GENERAL 2026.10</h2><p class="section-subtitle">Nuevo ciclo de contenido para MINGUELASGO GAMES</p></div>
+ <div class="mg-update-grid">
+  <article class="mg-update-card"><span>01 / EVENTOS</span><div class="mg-update-icon">🌌</div><h3>Operación Neón</h3><p>El evento de temporada sustituye la temática de Halloween. El banner cambia a una identidad futurista permanente.</p></article>
+  <article class="mg-update-card"><span>02 / COMPETICIÓN</span><div class="mg-update-icon">🏆</div><h3>Torneos automáticos</h3><p>El torneo activo se rota cada lunes y muestra una cuenta atrás hasta el siguiente reinicio.</p></article>
+  <article class="mg-update-card"><span>03 / PLATAFORMA</span><div class="mg-update-icon">🛠️</div><h3>Mejoras generales</h3><p>Paneles renovados, información de estado y acceso rápido a la competición semanal.</p></article>
+ </div>
+</section>
+
+<section class="mg-tournament-section" id="torneos">
+ <div class="section-header fade-in"><h2 class="section-title">🏆 ARENA SEMANAL</h2><p class="section-subtitle">El calendario se renueva automáticamente cada lunes.</p></div>
+ <div class="mg-tournament-panel">
+  <div class="mg-tournament-top"><span class="mg-live-dot"></span><span>TORNEO ACTIVO</span><span class="mg-week-chip" id="mgTournamentWeek">SEMANA —</span></div>
+  <div class="mg-tournament-main"><div class="mg-trophy">🏆</div><div><div class="mg-tournament-label">DESAFÍO DE LA SEMANA</div><h3 id="mgTournamentTitle">Cargando torneo…</h3><p id="mgTournamentDesc">Preparando el siguiente desafío.</p></div></div>
+  <div class="mg-tournament-stats"><div><span>REINICIO EN</span><strong id="mgTournamentCountdown">—</strong></div><div><span>FORMATO</span><strong id="mgTournamentFormat">Puntos de comunidad</strong></div><div><span>PREMIO</span><strong id="mgTournamentPrize">Insignia semanal</strong></div></div>
+  <div class="mg-tournament-actions"><button class="mg-tournament-btn" id="mgTournamentJoin" onclick="joinWeeklyTournament()">⚡ INSCRIBIRME</button><span id="mgTournamentStatus" aria-live="polite">Inicia sesión para guardar tu inscripción.</span></div>
+  <div class="mg-tournament-note">La rotación y el contador son automáticos. La clasificación competitiva requiere que los juegos envíen puntuaciones al sistema; inscribirse no inventa resultados.</div>
+ </div>
+ <div class="mg-tournament-board"><h3>📡 INSCRITOS ESTA SEMANA</h3><div id="mgTournamentPlayers"><p class="mg-tournament-empty">Cargando participantes…</p></div></div>
 </section>
 
 <section class="news" id="novedades">
@@ -718,8 +749,30 @@ function closeGameIframe(){
     iframe.src='';
     document.body.style.overflow='';
 }
+// XP: se concede una sola vez por juego y cuenta para evitar farmear
+// experiencia abriendo/cerrando repetidamente el mismo juego.
+function recordGameLaunch(gameId){
+    if(!currentUser || !gameId || !db) return;
+    var ref=db.collection('players').doc(currentUser.uid);
+    db.runTransaction(function(tx){
+        return tx.get(ref).then(function(doc){
+            if(!doc.exists) return null;
+            var data=doc.data()||{};
+            var played=Array.isArray(data.playedGames)?data.playedGames:[];
+            if(played.indexOf(gameId)!==-1) return null;
+            var xp=Math.max(0,Number(data.xp)||0)+10;
+            played.push(gameId);
+            var level=(typeof xpLevelInfo==='function')?xpLevelInfo(xp).level:1;
+            tx.update(ref,{xp:xp,level:level,games:Math.max(0,Number(data.games)||0)+1,playedGames:played,xpUpdatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+            return {xp:xp};
+        });
+    }).then(function(result){
+        if(result && typeof showToast==='function') showToast('🎮 +10 XP por descubrir un juego nuevo','success');
+    }).catch(function(err){console.warn('No se pudo actualizar XP:',err);});
+}
 function launchGame(g,e){
     if(e){e.preventDefault();e.stopPropagation();}
+    recordGameLaunch(g.folder || g.name || g.id);
     if(g.unity){openGameIframe(g.folder);}
     else{window.location.href=g.folder+'/index.html';}
 }
@@ -1039,7 +1092,7 @@ function handleAuth(){
         auth.createUserWithEmailAndPassword(email,pass)
             .then(function(cred){
                 return db.collection('players').doc(cred.user.uid).set({
-                    name:name,score:0,level:1,games:0,
+                    name:name,score:0,xp:0,level:1,games:0,playedGames:[],
                     joined:firebase.firestore.FieldValue.serverTimestamp()
                 });
             })
@@ -1054,9 +1107,18 @@ auth.onAuthStateChanged(function(user){
         currentUser=user;
         notifArea.style.display='block';
         db.collection('players').doc(user.uid).get().then(function(doc){
-            currentPlayerName=doc.exists?doc.data().name:'Jugador';
-            area.innerHTML='<div style="display:flex;gap:8px;align-items:center"><div style="font-size:.9em;color:var(--accent);font-weight:600">'+esc(currentPlayerName)+'</div><button class="auth-btn" onclick="auth.signOut()">Salir</button></div>';
-        });
+            if(!doc.exists){
+                return db.collection('players').doc(user.uid).set({name:user.displayName||'Jugador',score:0,xp:0,level:1,games:0,playedGames:[],joined:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){currentPlayerName=user.displayName||'Jugador';});
+            }
+            var pdata=doc.data()||{};
+            currentPlayerName=pdata.name||user.displayName||'Jugador';
+            // Migración compatible: no inventa XP a partir de puntuaciones antiguas.
+            if(typeof pdata.xp!=='number'){
+                return db.collection('players').doc(user.uid).update({xp:0,playedGames:Array.isArray(pdata.playedGames)?pdata.playedGames:[],level:1});
+            }
+        }).then(function(){
+            area.innerHTML='<div style="display:flex;gap:8px;align-items:center"><div style="font-size:.9em;color:var(--accent);font-weight:600">'+esc(currentPlayerName||user.displayName||'Jugador')+'</div><button class="auth-btn" onclick="auth.signOut()">Salir</button></div>';
+        }).catch(function(err){console.warn('Perfil XP:',err);});
         document.getElementById('commentText').disabled=false;
         document.getElementById('commentBtn').disabled=false;
         document.getElementById('commentLoginMsg').style.display='none';
@@ -1082,7 +1144,7 @@ db.collection('players').orderBy('score','desc').limit(10).onSnapshot(function(s
     snap.docs.forEach(function(doc,i){
         var d=doc.data(),row=document.createElement('div');
         row.className='ranking-row'+(i<3?' top-'+(i+1):'');
-        row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+(emojis[i]||'🎮')+'</div><span class="ranking-name">'+esc(d.name||'Anónimo')+'</span><span class="ranking-score">'+(d.score||0)+'</span><span class="ranking-level">'+(d.level||1)+'</span>';
+        row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+(emojis[i]||'🎮')+'</div><span class="ranking-name">'+esc(d.name||'Anónimo')+'</span><span class="ranking-score">'+(Number(d.xp)||0)+'</span><span class="ranking-level">'+xpLevelInfo(d.xp).level+'</span>';
         table.appendChild(row);
     });
 });
@@ -1109,32 +1171,37 @@ db.collection('scores').orderBy('score','desc').limit(10).onSnapshot(function(sn
     }
 });
 
-/* ============ PERFILES ============ */
+/* ============ PERFILES + XP REAL ============ */
+function xpLevelInfo(totalXP){
+    totalXP=Math.max(0,Number(totalXP)||0);
+    // Cada nivel cuesta 100 XP adicionales: 100 para nivel 2, 200 más para nivel 3...
+    var level=1,remaining=totalXP,needed=100;
+    while(remaining>=needed && level<999){remaining-=needed;level++;needed=level*100;}
+    return {level:level,current:remaining,needed:needed,percent:Math.max(0,Math.min(100,Math.round(remaining/needed*100)))};
+}
 db.collection('players').orderBy('score','desc').limit(8).onSnapshot(function(snap){
     var pgrid=document.getElementById('profilesGrid');
+    if(!pgrid)return;
     pgrid.innerHTML='';
     var titles=['Leyenda','Experto','Veterano','Destacado','Activo','Aspirante','Novato','Jugador'];
     var emojis=['😎','🎯','🐺','⭐','⚡','👑','🦸','🎮'];
     snap.docs.forEach(function(doc,i){
-        var d=doc.data(),card=document.createElement('div');
+        var d=doc.data()||{},card=document.createElement('div');
         card.className='profile-card';
-        var lvl=d.level||1;
-        var xpNeeded=lvl*100;
-        var xpCurrent=(d.score||0)%xpNeeded;
-        var xpPct=Math.min(100,Math.round(xpCurrent/xpNeeded*100));
-        card.innerHTML='<div class="profile-avatar">'+emojis[i]+'</div>'+
-            '<div class="profile-name">'+esc(d.name||'Anónimo')+'</div>'+
-            '<span class="profile-level-badge">Lvl '+lvl+'</span>'+
-            '<div class="profile-title">'+titles[i]+'</div>'+
-            '<div class="profile-stats">'+
-                '<div><div class="profile-stat-value">'+(d.games||0)+'</div><div class="profile-stat-label">Partidas</div></div>'+
-                '<div><div class="profile-stat-value">'+(d.score||0)+'</div><div class="profile-stat-label">Puntos</div></div>'+
-            '</div>'+
-            '<div class="profile-xp-bar"><div class="profile-xp-fill" style="width:'+xpPct+'%"></div></div>'+
-            '<div class="profile-xp-label">'+xpCurrent+' / '+xpNeeded+' XP para nivel '+(lvl+1)+'</div>';
+        var info=xpLevelInfo(d.xp);
+        card.innerHTML='<div class="profile-avatar">'+emojis[i]+'</div>'+ 
+            '<div class="profile-name">'+esc(d.name||'Anónimo')+'</div>'+ 
+            '<span class="profile-level-badge">Lvl '+info.level+'</span>'+ 
+            '<div class="profile-title">'+(titles[Math.min(info.level-1,titles.length-1)])+'</div>'+ 
+            '<div class="profile-stats">'+ 
+                '<div><div class="profile-stat-value">'+(Number(d.games)||0)+'</div><div class="profile-stat-label">Juegos probados</div></div>'+ 
+                '<div><div class="profile-stat-value">'+(Number(d.xp)||0)+'</div><div class="profile-stat-label">XP total</div></div>'+ 
+            '</div>'+ 
+            '<div class="profile-xp-bar"><div class="profile-xp-fill" style="width:'+info.percent+'%"></div></div>'+ 
+            '<div class="profile-xp-label">'+info.current+' / '+info.needed+' XP para nivel '+(info.level+1)+'</div>';
         pgrid.appendChild(card);
     });
-});
+},function(err){console.error('Error cargando perfiles XP:',err);});
 
 /* ============ CHATBOT IA ============ */
 function toggleChatbot(){
@@ -1626,5 +1693,31 @@ service cloud.firestore {
 }
 
 </script>    
+<script id="mg-weekly-tournament-system">
+/* ============ ARENA SEMANAL AUTOMATIZADA ============
+   Rotación semanal calculada por fecha. Inscripciones compartidas vía Firestore.
+   No fabrica puntuaciones: los juegos deben enviar sus scores para una clasificación real.
+*/
+(function(){
+ const challenges=[
+  {title:'Speedrun relámpago',desc:'Consigue tu mejor tiempo en los juegos de habilidad y supera tu propio récord.',format:'Mejor tiempo',prize:'Insignia SPEEDRUN'},
+  {title:'Supervivencia extrema',desc:'Aguanta todo lo posible y demuestra que eres el último jugador en pie.',format:'Mayor puntuación',prize:'Insignia SURVIVOR'},
+  {title:'Precisión de élite',desc:'Completa retos con el máximo de aciertos y minimiza los errores.',format:'Precisión',prize:'Insignia PRECISION'},
+  {title:'Explorador digital',desc:'Descubre juegos distintos y suma participación durante toda la semana.',format:'Retos completados',prize:'Insignia EXPLORER'},
+  {title:'Caos arcade',desc:'Semana arcade: persigue tu récord y escala puestos con tus mejores partidas.',format:'Mejor puntuación',prize:'Insignia ARCADE'},
+  {title:'Maratón gamer',desc:'Juega con constancia, prueba categorías distintas y completa el desafío semanal.',format:'Puntos de desafío',prize:'Insignia MARATHON'},
+  {title:'Reto de leyendas',desc:'El cierre del ciclo: busca tu mejor resultado antes del reinicio semanal.',format:'Récord semanal',prize:'Insignia LEGEND'}
+ ];
+ function mondayStart(d){const x=new Date(d);x.setHours(0,0,0,0);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);return x;}
+ function getTournament(){const now=new Date(),start=mondayStart(now),week=Math.floor(start.getTime()/604800000),end=new Date(start);end.setDate(end.getDate()+7);return {now,start,end,week,index:((week%challenges.length)+challenges.length)%challenges.length,number:Math.floor((start-new Date(start.getFullYear(),0,1))/604800000)+1};}
+ function fmt(ms){if(ms<0)ms=0;const total=Math.floor(ms/1000),d=Math.floor(total/86400),h=Math.floor(total%86400/3600),m=Math.floor(total%3600/60),s=total%60;return (d?d+'d ':'')+[h,m,s].map(v=>String(v).padStart(2,'0')).join(':');}
+ function renderTournament(){const t=getTournament(),c=challenges[t.index];const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};set('mgTournamentTitle',c.title);set('mgTournamentDesc',c.desc);set('mgTournamentFormat',c.format);set('mgTournamentPrize',c.prize);set('mgTournamentWeek','SEMANA '+String(t.number).padStart(2,'0'));set('mgTournamentCountdown',fmt(t.end-Date.now()));const b=document.getElementById('mgTournamentJoin');if(b)b.disabled=!currentUser;loadTournamentPlayers(t.week);updateJoinStatus(t.week);}
+ function updateJoinStatus(week){const status=document.getElementById('mgTournamentStatus');if(!status)return;if(!currentUser){status.textContent='Inicia sesión para guardar tu inscripción.';return;}db.collection('weeklyTournaments').doc(String(week)).collection('players').doc(currentUser.uid).get().then(doc=>{status.textContent=doc.exists?'✅ Ya estás inscrito esta semana.':'Inscripción abierta: participa con tu cuenta.';}).catch(()=>{status.textContent='No se pudo consultar la inscripción. Comprueba la conexión.';});}
+ function loadTournamentPlayers(week){const el=document.getElementById('mgTournamentPlayers');if(!el)return;if(!window.db){el.innerHTML='<p class="mg-tournament-empty">No se pudo conectar con el servicio.</p>';return;}db.collection('weeklyTournaments').doc(String(week)).collection('players').orderBy('joinedAt','asc').limit(50).get().then(snap=>{if(!snap.size){el.innerHTML='<p class="mg-tournament-empty">Aún no hay inscritos. ¡Sé el primero!</p>';return;}el.innerHTML='';snap.forEach((doc,i)=>{const d=doc.data()||{},row=document.createElement('div');row.className='mg-tournament-player';const rank=document.createElement('span');rank.className='mg-player-rank';rank.textContent='#'+(i+1);const info=document.createElement('div');const name=document.createElement('strong');name.textContent=d.name||'Jugador';const small=document.createElement('small');small.textContent='Inscrito en el torneo semanal';info.append(name,small);row.append(rank,info);el.appendChild(row);});}).catch(()=>{el.innerHTML='<p class="mg-tournament-empty">No se pudieron cargar los inscritos. Revisa las reglas de Firestore.</p>';});}
+ window.joinWeeklyTournament=async function(){if(!currentUser){const s=document.getElementById('mgTournamentStatus');if(s)s.textContent='Inicia sesión primero para inscribirte.';if(typeof showToast==='function')showToast('Inicia sesión para participar','warning');return;}const t=getTournament();const b=document.getElementById('mgTournamentJoin');if(b)b.disabled=true;try{await db.collection('weeklyTournaments').doc(String(t.week)).collection('players').doc(currentUser.uid).set({uid:currentUser.uid,name:currentPlayerName||currentUser.displayName||'Jugador',joinedAt:firebase.firestore.FieldValue.serverTimestamp(),week:t.week},{merge:true});const s=document.getElementById('mgTournamentStatus');if(s)s.textContent='✅ Inscripción guardada. ¡A por el reto!';loadTournamentPlayers(t.week);if(typeof showToast==='function')showToast('¡Inscripción al torneo semanal completada!','success');}catch(e){const s=document.getElementById('mgTournamentStatus');if(s)s.textContent='No se pudo guardar. Comprueba que Firestore permita escribir en weeklyTournaments.';console.error('Torneo semanal:',e);}finally{if(b)b.disabled=!currentUser;}};
+ document.addEventListener('DOMContentLoaded',()=>{renderTournament();setInterval(()=>{const t=getTournament();const el=document.getElementById('mgTournamentCountdown');if(el)el.textContent=fmt(t.end-Date.now());},1000);});
+ window.addEventListener('focus',()=>{renderTournament();});
+})();
+</script>
 </body>
 </html>
