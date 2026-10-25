@@ -376,95 +376,110 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 </style>
 </head>
 <body>
-<!-- MINGUELASGO_YT_MUSIC_LOOP: canción completa de YouTube en bucle -->
+<!-- Música de fondo: https://www.youtube.com/watch?v=kGDC5r01hV0 -> suena entera y se repite solo al terminar -->
+<style>
+.music-btn{position:fixed;left:18px;bottom:18px;z-index:1997;display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--glass,rgba(4,5,13,.75));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--border,rgba(0,229,255,.25));border-radius:4px;color:var(--text-secondary,#a9bbd6);font:700 11px 'Orbitron','Segoe UI',sans-serif;letter-spacing:.18em;cursor:pointer;transition:.3s}
+.music-btn:hover{border-color:var(--accent,#00e5ff);color:var(--accent,#00e5ff);box-shadow:0 0 18px -4px var(--accent,#00e5ff)}
+.music-btn.on{color:var(--accent,#00e5ff)}
+.music-btn .eq{display:flex;gap:2px;align-items:flex-end;height:14px}
+.music-btn .eq i{display:block;width:3px;height:3px;background:var(--accent,#00e5ff)}
+.music-btn.on .eq i{animation:mgEq 1s ease-in-out infinite}
+.music-btn .eq i:nth-child(2){animation-delay:.2s}.music-btn .eq i:nth-child(3){animation-delay:.4s}.music-btn .eq i:nth-child(4){animation-delay:.6s}
+@keyframes mgEq{0%,100%{height:3px}50%{height:14px}}
+@media(max-width:480px){.music-btn .music-txt{display:none}.music-btn{padding:10px 12px}}
+</style>
 <div id="minguelasgoMusicPlayer" aria-hidden="true" style="position:fixed;left:-10000px;top:0;width:200px;height:200px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1"></div>
+<button id="musicBtn" class="music-btn" type="button" aria-label="Activar o pausar la música" title="Música"><span class="eq"><i></i><i></i><i></i><i></i></span><span class="music-txt">MÚSICA</span></button>
 <script>
 (function () {
   'use strict';
-  var videoId = 'V0qszQnr5D4';
-  var player = null;
-  var ready = false;
-  var retryTimer = null;
-  var lastGesture = 0;
+  var VIDEO_ID = 'kGDC5r01hV0', KEY = 'mg_music_pos_' + VIDEO_ID;
+  var player = null, ready = false, started = false, gestured = false, userPaused = false, pausedByGame = false, errs = 0, audio = null, lastT = 0;
+  var btn = document.getElementById('musicBtn');
+  function ui(on) { if (btn) btn.classList.toggle('on', !!on); }
 
-  function startPlayback() {
-    if (!player || !ready) return;
-    try {
-      // Reproducir la canción completa; el bucle se activa al terminar el vídeo.
-      player.playVideo();
-    } catch (e) {}
+  function savedPos() {
+    try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); return s && Date.now() - s.ts < 600000 ? s.t : 0; } catch (e) { return 0; }
   }
 
-  function onPlayerReady(event) {
+  function onReady() {
     ready = true;
-    try {
-      event.target.seekTo(0, true);
-      event.target.playVideo();
-    } catch (e) {}
+    try { var t = savedPos(); if (t > 1) { lastT = t; player.seekTo(t, true); } player.setVolume(65); player.playVideo(); } catch (e) {}
+    // Vigilante: si la canción vuelve atrás sin haber terminado (reinicio inesperado), la devuelve a donde iba.
+    setInterval(function () {
+      if (!ready || audio) return;
+      try {
+        if (player.getPlayerState() !== 1) return;
+        var t = player.getCurrentTime(), d = player.getDuration();
+        if (lastT > 5 && t < lastT - 2 && lastT < d - 4) { player.seekTo(lastT, true); return; }
+        lastT = t;
+        localStorage.setItem(KEY, JSON.stringify({ t: t, ts: Date.now() }));
+      } catch (e) {}
+    }, 500);
   }
-
-  function onPlayerStateChange(event) {
-    // Al terminar la canción completa, volver al principio y reproducirla otra vez.
-    if (event.data === YT.PlayerState.ENDED) {
-      try { player.seekTo(0, true); player.playVideo(); } catch (e) {}
+  function onState(e) {
+    if (e.data === 1) { started = true; errs = 0; ui(true); }
+    else if (e.data === 2) ui(false);
+    else if (e.data === 0) {                        // solo repite cuando la canción termina de verdad
+      ui(false); lastT = 0;
+      try { localStorage.removeItem(KEY); player.loadVideoById(VIDEO_ID, 0); } catch (err) {}
     }
+  }
+  function onError() {
+    errs++;
+    if (errs <= 2) { setTimeout(function () { try { player.loadVideoById(VIDEO_ID, lastT > 1 ? lastT : 0); } catch (e) {} }, 2500); return; }
+    // Respaldo: si YouTube no deja reproducirla, usa musica.mp3 (súbelo junto a plataforma.html)
+    audio = new Audio('musica.mp3'); audio.loop = true; audio.volume = 0.65;
+    audio.onplay = function () { ui(true); }; audio.onpause = function () { ui(false); };
+    audio.onerror = function () { if (btn) { btn.querySelector('.music-txt').textContent = 'SIN MÚSICA'; ui(false); } };
+    audio.play().catch(function () {});
   }
 
   function createPlayer() {
-    if (!window.YT || !window.YT.Player || player) return;
+    if (player || !window.YT || !YT.Player) return;
+    // Sin "loop" ni "playlist": el bucle nativo de YouTube es lo que reinicia la canción antes de tiempo.
     player = new YT.Player('minguelasgoMusicPlayer', {
-      width: '200',
-      height: '200',
-      videoId: videoId,
-      playerVars: {
-        autoplay: 1,
-        controls: 0,
-        start: 0,
-        playsinline: 1,
-        rel: 0,
-        loop: 1,
-        playlist: videoId,
-        disablekb: 1,
-        fs: 0
-      },
-      events: {
-        onReady: onPlayerReady,
-        onStateChange: onPlayerStateChange
-      }
+      width: '200', height: '200', videoId: VIDEO_ID,
+      playerVars: { autoplay: 1, controls: 0, playsinline: 1, rel: 0, disablekb: 1, fs: 0, iv_load_policy: 3 },
+      events: { onReady: onReady, onStateChange: onState, onError: onError }
     });
   }
-
-  // Encadenar la función global por si otra parte de la página usa la API.
-  var previousReady = window.onYouTubeIframeAPIReady;
-  window.onYouTubeIframeAPIReady = function () {
-    if (typeof previousReady === 'function') {
-      try { previousReady(); } catch (e) {}
-    }
-    createPlayer();
-  };
-
-  if (window.YT && window.YT.Player) {
-    createPlayer();
-  } else if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
-    var apiScript = document.createElement('script');
-    apiScript.src = 'https://www.youtube.com/iframe_api';
-    apiScript.async = true;
-    document.head.appendChild(apiScript);
+  var prev = window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady = function () { if (typeof prev === 'function') { try { prev(); } catch (e) {} } createPlayer(); };
+  if (window.YT && window.YT.Player) createPlayer();
+  else if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
+    var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; s.async = true; document.head.appendChild(s);
   }
 
-  function userGesture() {
-    var now = Date.now();
-    if (now - lastGesture < 800) return;
-    lastGesture = now;
-    if (!player || !ready) return;
+  function play() {
     try {
-      player.unMute();
-      player.setVolume(65);
-      startPlayback();
+      if (audio) { audio.play().catch(function () {}); return; }
+      if (!ready) return;
+      player.unMute(); player.setVolume(65); player.playVideo();
     } catch (e) {}
   }
-  ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) {
-    document.addEventListener(type, userGesture, { passive: true });
+  function pause() { try { if (audio) audio.pause(); else if (ready) player.pauseVideo(); } catch (e) {} }
+
+  // Primer toque: el navegador por fin permite el sonido. Reintenta hasta que suene y luego no vuelve a tocar nada.
+  function gesture(e) {
+    if (btn && e && btn.contains(e.target)) return;
+    if (userPaused || pausedByGame || (gestured && started)) return;
+    gestured = true; play();
+  }
+  ['pointerdown', 'keydown', 'touchstart'].forEach(function (t) { document.addEventListener(t, gesture, { passive: true }); });
+
+  if (btn) btn.addEventListener('click', function () {
+    if (btn.classList.contains('on')) { userPaused = true; pause(); } else { userPaused = false; play(); }
+  });
+
+  // Se pausa mientras juegas dentro del modal y sigue al cerrarlo.
+  document.addEventListener('DOMContentLoaded', function () {
+    var o = document.getElementById('gameIframeOverlay'); if (!o) return;
+    new MutationObserver(function () {
+      var open = o.classList.contains('active');
+      if (open) { pausedByGame = true; pause(); }
+      else if (pausedByGame) { pausedByGame = false; if (!userPaused) play(); }
+    }).observe(o, { attributes: true, attributeFilter: ['class'] });
   });
 })();
 </script>
@@ -1620,79 +1635,7 @@ db.collection('comments').onSnapshot(function(snap){
 })();
 
 </script>
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
 
-    // ---------- Ayudas ----------
-    function signedIn() { return request.auth != null; }
-    // Admin = existe el documento admins/{tu uid} (solo se crea a mano en la consola de Firebase)
-    function isAdmin()  { return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
-    // Baneado = existe el documento bans/{uid}
-    function banned()   { return signedIn() && exists(/databases/$(database)/documents/bans/$(request.auth.uid)); }
-
-    // ---------- NUEVO: admins y baneos ----------
-    match /admins/{uid} {
-      allow read: if signedIn() && request.auth.uid == uid;
-      allow write: if false;
-    }
-
-    match /bans/{uid} {
-      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
-      allow write: if isAdmin();
-    }
-
-    // ---------- Tus reglas, con el control de baneo ----------
-    match /players/{userId} {
-      allow read: if true;
-      allow create: if signedIn() && request.auth.uid == userId;
-      allow update: if signedIn() && request.auth.uid == userId && !banned();
-    }
-
-    match /comments/{commentId} {
-      allow read: if true;
-      allow create: if signedIn() && !banned();
-      allow delete: if isAdmin();
-    }
-
-    match /livechat/{msgId} {
-      allow read: if true;
-      allow create: if signedIn() && !banned();
-      allow delete: if isAdmin();
-    }
-
-    match /ratings/{ratingId} {
-      allow read: if true;
-      allow create, update: if signedIn() && !banned();
-    }
-
-    match /friends/{docId} {
-      allow read: if signedIn();
-      allow create, update, delete: if signedIn() && !banned();
-    }
-
-    match /notifications/{notifId} {
-      allow read, update: if signedIn() && request.auth.uid == resource.data.to;
-      allow create: if signedIn() && !banned();
-    }
-
-    // Ranking por juego
-    match /scores/{scoreId} {
-      allow read: if true;
-      allow create: if signedIn() && !banned();
-      allow delete: if isAdmin();
-    }
-
-    // Contador de usuarios online
-    match /online/{uid} {
-      allow read: if true;
-      allow create, update: if signedIn() && request.auth.uid == uid && !banned();
-      allow delete: if signedIn() && request.auth.uid == uid;
-    }
-  }
-}
-
-</script>    
 <script id="mg-weekly-tournament-system">
 /* ============ ARENA SEMANAL AUTOMATIZADA ============
    Rotación semanal calculada por fecha. Inscripciones compartidas vía Firestore.
@@ -1711,12 +1654,13 @@ service cloud.firestore {
  function mondayStart(d){const x=new Date(d);x.setHours(0,0,0,0);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);return x;}
  function getTournament(){const now=new Date(),start=mondayStart(now),week=Math.floor(start.getTime()/604800000),end=new Date(start);end.setDate(end.getDate()+7);return {now,start,end,week,index:((week%challenges.length)+challenges.length)%challenges.length,number:Math.floor((start-new Date(start.getFullYear(),0,1))/604800000)+1};}
  function fmt(ms){if(ms<0)ms=0;const total=Math.floor(ms/1000),d=Math.floor(total/86400),h=Math.floor(total%86400/3600),m=Math.floor(total%3600/60),s=total%60;return (d?d+'d ':'')+[h,m,s].map(v=>String(v).padStart(2,'0')).join(':');}
- function renderTournament(){const t=getTournament(),c=challenges[t.index];const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};set('mgTournamentTitle',c.title);set('mgTournamentDesc',c.desc);set('mgTournamentFormat',c.format);set('mgTournamentPrize',c.prize);set('mgTournamentWeek','SEMANA '+String(t.number).padStart(2,'0'));set('mgTournamentCountdown',fmt(t.end-Date.now()));const b=document.getElementById('mgTournamentJoin');if(b)b.disabled=!currentUser;loadTournamentPlayers(t.week);updateJoinStatus(t.week);}
+ function renderTournament(){const t=getTournament(),c=challenges[t.index];const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};set('mgTournamentTitle',c.title);set('mgTournamentDesc',c.desc);set('mgTournamentFormat',c.format);set('mgTournamentPrize',c.prize);set('mgTournamentWeek','SEMANA '+String(t.number).padStart(2,'0'));set('mgTournamentCountdown',fmt(t.end-Date.now()));const b=document.getElementById('mgTournamentJoin');if(b)b.disabled=false;loadTournamentPlayers(t.week);updateJoinStatus(t.week);}
  function updateJoinStatus(week){const status=document.getElementById('mgTournamentStatus');if(!status)return;if(!currentUser){status.textContent='Inicia sesión para guardar tu inscripción.';return;}db.collection('weeklyTournaments').doc(String(week)).collection('players').doc(currentUser.uid).get().then(doc=>{status.textContent=doc.exists?'✅ Ya estás inscrito esta semana.':'Inscripción abierta: participa con tu cuenta.';}).catch(()=>{status.textContent='No se pudo consultar la inscripción. Comprueba la conexión.';});}
  function loadTournamentPlayers(week){const el=document.getElementById('mgTournamentPlayers');if(!el)return;if(!window.db){el.innerHTML='<p class="mg-tournament-empty">No se pudo conectar con el servicio.</p>';return;}db.collection('weeklyTournaments').doc(String(week)).collection('players').orderBy('joinedAt','asc').limit(50).get().then(snap=>{if(!snap.size){el.innerHTML='<p class="mg-tournament-empty">Aún no hay inscritos. ¡Sé el primero!</p>';return;}el.innerHTML='';snap.forEach((doc,i)=>{const d=doc.data()||{},row=document.createElement('div');row.className='mg-tournament-player';const rank=document.createElement('span');rank.className='mg-player-rank';rank.textContent='#'+(i+1);const info=document.createElement('div');const name=document.createElement('strong');name.textContent=d.name||'Jugador';const small=document.createElement('small');small.textContent='Inscrito en el torneo semanal';info.append(name,small);row.append(rank,info);el.appendChild(row);});}).catch(()=>{el.innerHTML='<p class="mg-tournament-empty">No se pudieron cargar los inscritos. Revisa las reglas de Firestore.</p>';});}
- window.joinWeeklyTournament=async function(){if(!currentUser){const s=document.getElementById('mgTournamentStatus');if(s)s.textContent='Inicia sesión primero para inscribirte.';if(typeof showToast==='function')showToast('Inicia sesión para participar','warning');return;}const t=getTournament();const b=document.getElementById('mgTournamentJoin');if(b)b.disabled=true;try{await db.collection('weeklyTournaments').doc(String(t.week)).collection('players').doc(currentUser.uid).set({uid:currentUser.uid,name:currentPlayerName||currentUser.displayName||'Jugador',joinedAt:firebase.firestore.FieldValue.serverTimestamp(),week:t.week},{merge:true});const s=document.getElementById('mgTournamentStatus');if(s)s.textContent='✅ Inscripción guardada. ¡A por el reto!';loadTournamentPlayers(t.week);if(typeof showToast==='function')showToast('¡Inscripción al torneo semanal completada!','success');}catch(e){const s=document.getElementById('mgTournamentStatus');if(s)s.textContent='No se pudo guardar. Comprueba que Firestore permita escribir en weeklyTournaments.';console.error('Torneo semanal:',e);}finally{if(b)b.disabled=!currentUser;}};
+ window.joinWeeklyTournament=async function(){if(!currentUser){const s=document.getElementById('mgTournamentStatus');if(s)s.textContent='Inicia sesión primero para inscribirte.';if(typeof showToast==='function')showToast('Inicia sesión para participar','warning');if(typeof openAuth==='function')openAuth();return;}const t=getTournament();const b=document.getElementById('mgTournamentJoin');if(b)b.disabled=true;try{await db.collection('weeklyTournaments').doc(String(t.week)).collection('players').doc(currentUser.uid).set({uid:currentUser.uid,name:currentPlayerName||currentUser.displayName||'Jugador',joinedAt:firebase.firestore.FieldValue.serverTimestamp(),week:t.week},{merge:true});const s=document.getElementById('mgTournamentStatus');if(s)s.textContent='✅ Inscripción guardada. ¡A por el reto!';loadTournamentPlayers(t.week);if(typeof showToast==='function')showToast('¡Inscripción al torneo semanal completada!','success');}catch(e){const s=document.getElementById('mgTournamentStatus');if(s)s.textContent=(e&&e.code==='permission-denied')?'Sin permiso: publica las reglas nuevas de Firestore (weeklyTournaments).':'No se pudo guardar la inscripción. Inténtalo de nuevo.';if(typeof showToast==='function')showToast('No se pudo completar la inscripción','warning');console.error('Torneo semanal:',e);}finally{if(b)b.disabled=false;}};
  document.addEventListener('DOMContentLoaded',()=>{renderTournament();setInterval(()=>{const t=getTournament();const el=document.getElementById('mgTournamentCountdown');if(el)el.textContent=fmt(t.end-Date.now());},1000);});
  window.addEventListener('focus',()=>{renderTournament();});
+ if(window.auth&&auth.onAuthStateChanged)auth.onAuthStateChanged(()=>{renderTournament();});
 })();
 </script>
 </body>
