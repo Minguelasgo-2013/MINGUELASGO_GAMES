@@ -499,7 +499,7 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 <h2>Bienvenido a MINGUELASGO GAMES</h2>
 <p>La plataforma ha sido renovada con nuevas funciones.</p>
 <div class="welcome-features">
-<div class="welcome-feat">18 Juegos</div>
+<div class="welcome-feat" id="featGames">11 Juegos</div>
 <div class="welcome-feat">Ranking Global</div>
 <div class="welcome-feat">Chat en Vivo</div>
 <div class="welcome-feat">Logros</div>
@@ -617,7 +617,7 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 </section>
 
 <section id="catalogo">
-<div class="section-header fade-in"><h2 class="section-title">Catalogo de Juegos</h2><p class="section-subtitle">Explora nuestros 18 juegos</p></div>
+<div class="section-header fade-in"><h2 class="section-title">Catalogo de Juegos</h2><p class="section-subtitle" id="catSub">Explora nuestros 11 juegos</p></div>
 <div class="search-bar fade-in"><span class="search-icon">&#128269;</span><input type="text" id="searchInput" placeholder="Buscar juegos..." oninput="searchGames()"></div>
 <div class="filter-tabs fade-in" id="filterTabs"></div>
 <div class="games-grid" id="gamesGrid"></div>
@@ -895,7 +895,10 @@ var GAMES=[
     {name:'Wasteland',folder:'Wasteland',icon:'🏜️',cat:'Accion',grad:3,desc:'Sobrevive en el paramo'},
     {name:'ZOMBIE ASSAULT',folder:'ZOMBIEASSAULT',icon:'🧟',cat:'Accion',grad:4,desc:'Elimina zombies sin parar'},
     {name:'Juego 3',folder:'juego3',icon:'🎲',cat:'Otros',grad:5,desc:'Un juego misterioso'},
+    {name:'Astro Rush 3D',folder:'AstroRush',icon:'🚀',cat:'Accion',grad:6,desc:'Esquiva asteroides en 3D a toda velocidad'},
 ];
+/* El número de juegos se calcula solo a partir de GAMES */
+(function(){var n=GAMES.length,a=document.getElementById('featGames'),b=document.getElementById('catSub');if(a)a.textContent=n+' Juegos';if(b)b.textContent='Explora nuestros '+n+' juegos';})();
 
 /* ============ BUSCAR / FILTRAR ============ */
 function searchGames(){
@@ -1260,7 +1263,7 @@ function sendChatbotMsg(){
 function getBotResponse(q){
     if(q.includes('hola')||q.includes('hey')||q.includes('buenas')) return '¡Hola! ¿En qué puedo ayudarte?';
     if(q.includes('gracias')) return '¡De nada! Disfruta los juegos 🎮';
-    if(q.includes('juego')||q.includes('jugar')||q.includes('catalogo')||q.includes('catálogo')) return 'Tenemos 9 juegos disponibles. Puedes explorar el catálogo y descubrir tus favoritos. ¡Échale un ojo!';
+    if(q.includes('juego')||q.includes('jugar')||q.includes('catalogo')||q.includes('catálogo')) return 'Tenemos '+GAMES.length+' juegos disponibles. Puedes explorar el catálogo y descubrir tus favoritos. ¡Échale un ojo!';
     if(q.includes('ranking')||q.includes('top')||q.includes('mejores')) return 'En la sección "Ranking Global" ves el Top 10. También hay ranking por juego 🏆';
     if(q.includes('cuenta')||q.includes('registr')||q.includes('sesion')||q.includes('sesión')) return 'Haz clic en "Iniciar sesión" arriba a la derecha. Es gratis y desbloqueas chat, comentarios y logros.';
     if(q.includes('chat')) return 'El chat en vivo está en la sección "Chat". Necesitas iniciar sesión para participar.';
@@ -1494,7 +1497,7 @@ function animateNumber(el,target){
 }
 
 setTimeout(function(){
-    animateNumber(document.getElementById('statGames'),18);
+    animateNumber(document.getElementById('statGames'),GAMES.length);
 },700);
 
 db.collection('players').onSnapshot(function(snap){
