@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Miguelasgo FC</title>
+<title>Manager</title>
 <style>
 :root{--bg:#f2f6f1;--card:#fff;--tx:#14231a;--mut:#667a6c;--ac:#14a14a;--ac2:#f5b301;--bd:#d9e4da;--bad:#d64545;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1a12;--card:#16281c;--tx:#e8f3ea;--mut:#8fa896;--ac:#2bd46a;--ac2:#ffc933;--bd:#25402c;--bad:#ff6b6b;color-scheme:dark}}
@@ -33,6 +33,13 @@ input{font:inherit;padding:9px;border-radius:10px;border:1px solid var(--bd);bac
 h1{text-transform:uppercase;font-style:italic;letter-spacing:1px;font-weight:900}
 button.on,button.p{color:#fff}.card{border-radius:6px}button{border-radius:6px;text-transform:uppercase;font-size:13px;letter-spacing:.5px}
 :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#0a0a0c;--card:#16161a;--tx:#f1f1f1;--mut:#8b8b95;--ac:#e5173f;--ac2:#ffc400;--bd:#2a2a31;--bad:#ff7a00;color-scheme:dark}
+.pit{position:relative;height:430px;border-radius:8px;background:repeating-linear-gradient(#1c7a3a 0 40px,#218c43 40px 80px);border:2px solid rgba(255,255,255,.35);overflow:hidden}
+.pit:before{content:"";position:absolute;left:0;right:0;top:50%;border-top:2px solid rgba(255,255,255,.35)}
+.pit:after{content:"";position:absolute;left:50%;top:50%;width:90px;height:90px;margin:-45px;border:2px solid rgba(255,255,255,.35);border-radius:50%}
+.pl{position:absolute;transform:translate(-50%,-50%);text-align:center;cursor:pointer;width:70px;z-index:1}
+.pl b{display:flex;width:38px;height:38px;margin:0 auto;border-radius:50%;background:var(--ac);color:#fff;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px #0008}
+.pl.s b{background:var(--ac2);color:#000;transform:scale(1.15)}.pl b.bd{background:var(--bad)}
+.pl span{display:block;font-size:11px;color:#fff;text-shadow:0 1px 3px #000;margin-top:2px}
 </style></head><body><div id="app"></div>
 <script>
 const FN=["Leo","Marc","Iker","Dani","Pablo","Hugo","Alex","Sergio","Raúl","Nico","Adri","Joel","Bruno","Luka","Theo","Dario","Mateo","Ivan","Omar","Kai"];
@@ -63,11 +70,26 @@ const cpuTeams=()=>[0,1,2].map(i=>{const b=clamp(54+S.round*1.3+i*7,50,84),sq=mk
  return{name:CL[(S.round+i*3)%CL.length],squad:sq,form:f,xi:autoXI(sq,f),prize:2+i*2.5,lab:["Fácil","Medio","Difícil"][i]}});
 const market=()=>{const r=rng(S.seed+S.round*977),L=[];
  for(let i=0;i<10;i++){L.push(mkP(r,"m"+S.round+"-"+i,["POR","DEF","DEF","MED","MED","DEL","DEL","MED","DEF","DEL"][i],62+Math.min(S.round,10)))}return L.filter(p=>!S.squad.some(x=>x.id===p.id))};
-function newState(name){const seed=hash(name+(uid||Math.random()));const sq=mkSquad(seed,62,"p");
- return{name,seed,squad:sq,form:"4-4-2",xi:autoXI(sq,"4-4-2"),budget:30,pts:0,w:0,d:0,l:0,gf:0,ga:0,round:0,streak:0}}
-async function save(){try{localStorage.setItem("gaffer",JSON.stringify(S))}catch(e){}
+function newState(name,slot){const seed=hash(name+(uid||Math.random()));const sq=mkSquad(seed,60,"p");
+ const o={name,slot,seed,squad:sq,form:"4-4-2",xi:autoXI(sq,"4-4-2"),budget:30,pts:0,w:0,d:0,l:0,gf:0,ga:0,round:0,streak:0,div:3,season:1};newLeague(o);return o}
+async function save(){try{localStorage.setItem("mgfc_s"+S.slot,JSON.stringify(S))}catch(e){}
  if(db&&uid&&S){try{await db.doc("managers/"+uid).set({name:S.name,pts:S.pts,w:S.w,d:S.d,l:S.l,gf:S.gf,ga:S.ga,ovr:ovrT(S),st:JSON.stringify(S),t:Date.now()})}catch(e){}}}
 const pick=a=>a[Math.floor(Math.random()*a.length)];
+const DIV=["Primera","Segunda","Tercera","Regional"],PR=[10,7,5,3];let scr="menu";
+const slotD=n=>{try{return JSON.parse(localStorage.getItem("mgfc_s"+n))}catch(e){return null}};
+function newLeague(o){const r=rng(o.seed+o.season*101),b=[74,68,62,56][o.div],ns=[...CL].sort(()=>r()-.5).slice(0,7),z=()=>({pts:0,gf:0,ga:0,w:0,d:0,l:0});
+ o.lg={rd:0,t:[{n:o.name,b:60,me:1,...z()},...ns.map(n=>({n,b:Math.round(b+(r()-.5)*10),...z()}))],ord:[1,2,3,4,5,6,7].sort(()=>r()-.5)}}
+const rec=(t,x,y)=>{t.gf+=x;t.ga+=y;if(x>y){t.w++;t.pts+=3}else if(x===y){t.d++;t.pts++}else t.l++};
+const qg=l=>{let g=0,p=Math.exp(-l),c=p,u=Math.random();while(u>c&&g<9){g++;p*=l/g;c+=p}return g};
+const sortT=L=>[...L.t].sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf);
+function nextOpp(){const L=S.lg,i=L.ord[L.rd],t=L.t[i],sq=mkSquad(S.seed+S.season*131+i,t.b,"c"+i),f=["4-4-2","4-3-3","3-5-2"][i%3];
+ return{name:t.n,squad:sq,form:f,xi:autoXI(sq,f),prize:PR[S.div],lg:1,li:i}}
+function pitch(){const sl=slots(S.form),f=FORM[S.form],rows=[[0,1,90],[1,1+f[0],72],[1+f[0],1+f[0]+f[1],48],[1+f[0]+f[1],11,20]];
+ return`<div class="pit">${rows.map(([a,b,y])=>{const n=b-a;return S.xi.slice(a,b).map((id,i)=>{const p=S.squad.find(x=>x.id===id),bad=p.pos!==sl[a+i];return`<div class="pl${sel===id?" s":""}" data-a="pick" data-id="${id}" style="left:${(i+1)/(n+1)*100}%;top:${y}%"><b class="${bad?"bd":""}">${p.ovr}</b><span>${esc(p.n.split(". ")[1]||p.n)}</span></div>`}).join("")}).join("")}</div>`}
+function vMenu(){if(scr==="new")return`<h1>Nueva carrera</h1><div class="card"><input id="nm" maxlength="22" placeholder="Nombre de tu club"><div class="mut" style="margin:10px 0 6px">Elige hueco de guardado</div><div class="row">${[1,2,3].map(n=>`<button class="p" data-a="start" data-n="${n}">Hueco ${n}${slotD(n)?" (sobrescribir)":""}</button>`).join("")}</div></div><button data-a="back" style="width:100%">Volver</button>`;
+ return`<h1 style="font-size:30px;text-align:center;margin:30px 0 16px">Manager</h1><button class="p" data-a="new" style="width:100%;padding:14px">Nueva carrera</button><h2>Partidas guardadas</h2>`+[1,2,3].map(n=>{const d=slotD(n);return`<div class="card row"><div class="n"><b>Hueco ${n}</b><div class="mut">${d?esc(d.name)+" · "+DIV[d.div]+" · temporada "+d.season:"Vacío"}</div></div>${d?`<button class="p" data-a="load" data-n="${n}" style="flex:0 0 auto">Cargar</button><button data-a="del" data-n="${n}" style="flex:0 0 auto">Borrar</button>`:""}</div>`}).join("")}
+function vTable(){const L=S.lg,T=sortT(L),pos=T.findIndex(x=>x.me)+1;
+ return`<h2>${DIV[S.div]} · temporada ${S.season}</h2><div class="card">${T.map((x,i)=>`<div class="r" style="cursor:default;${x.me?"background:var(--bg)":""}"><span class="pos">${i+1}º</span><span class="n" style="${i<2&&S.div>0?"color:var(--ac)":i>5&&S.div<3?"color:var(--bad)":""}">${esc(x.n)}</span><span class="mut">${x.w}-${x.d}-${x.l}</span><b>${x.pts}</b></div>`).join("")}</div><div class="mut">Los 2 primeros suben de división y los 2 últimos bajan.</div>`+(L.rd>=7?`<div class="card"><b>Fin de temporada: ${pos}º</b><button class="p" data-a="season" style="width:100%;margin-top:8px">Siguiente temporada</button></div>`:"")}
 function simulate(A,B){const a=parts(A),b=parts(B),T=[a,b],ev=[];let sc=[0,0];
  const scorer=(q,side)=>{const L=[...q.g.DEL.flatMap(x=>[x,x,x,x]),...q.g.MED.flatMap(x=>[x,x]),...q.g.DEF];return pick(L).p};
  for(let m=1;m<=90;m++){
@@ -85,6 +107,7 @@ function tick(){if(!M)return;M.min++;M.ev.filter(e=>e.m===M.min).forEach(e=>{if(
 function skip(){while(M&&M.min<90){M.min++;M.ev.filter(e=>e.m===M.min).forEach(e=>{if(e.g){e.s?M.ag++:M.hg++}M.log.unshift({m:e.m,t:e.t,s:e.s,g:e.g})})}finish();render()}
 function finish(){if(M.done)return;clearInterval(M.iv);M.done=true;const h=M.hg,a=M.ag;
  S.gf+=h;S.ga+=a;S.round++;let res;
+ if(M.opp.lg){const L=S.lg,o=L.t[M.opp.li];rec(L.t[0],h,a);rec(o,a,h);const q=[1,2,3,4,5,6,7].filter(i=>i!==M.opp.li).sort(()=>Math.random()-.5);for(let k=0;k<6;k+=2){const A=L.t[q[k]],B=L.t[q[k+1]],g1=qg(1.3*Math.pow(A.b/B.b,3)),g2=qg(1.3*Math.pow(B.b/A.b,3));rec(A,g1,g2);rec(B,g2,g1)}L.rd++}
  if(h>a){S.w++;S.pts+=3;S.streak++;S.budget+=M.opp.prize||3;res="PALIZA. Esto es Miguelasgo."}else if(h===a){S.d++;S.pts++;S.budget+=1;S.streak=0;res="Empate. Sabe a poco."}else{S.l++;S.streak=0;res="Derrota. Hoy toca tragársela."}
  const best={};M.ev.filter(e=>e.g&&!e.s).forEach(e=>best[e.p]=(best[e.p]||0)+1);
  const mv=Object.entries(best).sort((x,y)=>y[1]-x[1])[0];let up="";
@@ -95,25 +118,31 @@ function ovc(o){return o>=75?"hi":o<55?"lo":""}
 function row(p,s,i){const bad=s&&p.pos!==s;return`<div class="r${sel===p.id?" s":""}" data-a="pick" data-id="${p.id}"><span class="pos">${s||p.pos}</span><span class="n">${esc(p.n)} ${bad?'<span class="lo">⚠ '+p.pos+"</span>":""}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span></div>`}
 function vClub(){const sl=slots(S.form),bench=S.squad.filter(p=>!S.xi.includes(p.id));
  return`<div class="row">${Object.keys(FORM).map(f=>`<button class="${S.form===f?"on":""}" data-a="form" data-f="${f}">${f}</button>`).join("")}</div>
- <h2>Once inicial · media ${ovrT(S)}</h2><div class="card">${S.xi.map((id,i)=>row(S.squad.find(p=>p.id===id),sl[i])).join("")}</div>
+ <h2>Once inicial · media ${ovrT(S)}</h2>${pitch()}
  <h2>Banquillo (${bench.length})</h2><div class="mut">Toca un titular y luego un suplente para cambiarlos.</div><div class="card">${bench.map(p=>`<div class="r${sel===p.id?" s":""}" data-a="pick" data-id="${p.id}"><span class="pos">${p.pos}</span><span class="n">${esc(p.n)}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span><button data-a="sell" data-id="${p.id}">Vender ${(p.v*.7).toFixed(1)}M</button></div>`).join("")}</div>
  <button data-a="auto" style="width:100%">Alineación automática</button>`}
 function vMarket(){return`<h2>Mercado · jornada ${S.round+1}</h2><div class="mut">Se renueva tras cada partido. Plantilla ${S.squad.length}/24.</div>`+market().map(p=>`<div class="card r" style="cursor:default"><span class="pos">${p.pos}</span><span class="n">${esc(p.n)}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span><button class="p" data-a="buy" data-id="${p.id}" ${S.budget<p.v||S.squad.length>=24?"disabled":""}>${p.v.toFixed(1)}M</button></div>`).join("")}
-function vPlay(){const c=cpuTeams(),on=peers.filter(p=>p.id!==uid);
- return`<h2>Liga CPU · jornada ${S.round+1}</h2>`+c.map((t,i)=>`<div class="card row"><div class="n"><b>${esc(t.name)}</b><div class="mut">${t.lab} · media ${ovrT(t)} · premio ${t.prize}M</div></div><button class="p" data-a="cpu" data-i="${i}" style="flex:0 0 auto">Jugar</button></div>`).join("")
+function vPlay(){const L=S.lg,on=peers.filter(p=>p.id!==uid),t=L.t[L.ord[L.rd]]||{};
+ return`<h2>${DIV[S.div]} · jornada ${Math.min(L.rd+1,7)}/7</h2>`+(L.rd>=7?`<div class="card">Temporada terminada. Mira la pestaña Tabla.</div>`:`<div class="card row"><div class="n"><b>${esc(t.n)}</b><div class="mut">media ~${t.b} · premio ${PR[S.div]}M</div></div><button class="p" data-a="cpu" style="flex:0 0 auto">Jugar</button></div>`)
  +`<h2>Retos online: a por ellos</h2>`+(db?(on.length?on.map(p=>`<div class="card row"><div class="n"><b>${esc(p.d.name)}</b><div class="mut">media ${p.d.ovr} · ${p.d.pts} pts</div></div><button class="p" data-a="on" data-id="${p.id}" style="flex:0 0 auto">Machacar</button></div>`).join(""):'<div class="mut">Aún no hay otros managers. ¡Comparte el enlace!</div>'):'<div class="mut">Modo online no disponible en esta vista. Comparte el enlace con permiso de colaborar para jugar contra amigos.</div>')}
 function vLeague(){const L=[...peers].sort((a,b)=>b.d.pts-a.d.pts||(b.d.gf-b.d.ga)-(a.d.gf-a.d.ga));
  return`<h2>Clasificación online</h2><div class="card">`+(L.length?L.map((p,i)=>`<div class="r" style="cursor:default"><span class="pos">${i+1}º</span><span class="n">${esc(p.d.name)}${p.id===uid?" (tú)":""}</span><span class="mut">${p.d.w}-${p.d.d}-${p.d.l}</span><b>${p.d.pts}</b></div>`).join(""):'<div class="mut">Sin datos online todavía.</div>')+`</div><h2>Últimos partidos</h2><div class="card">`+(feed.length?feed.map(f=>`<div class="mut">${esc(f.a)} <b>${f.ga}-${f.gb}</b> ${esc(f.b)}</div>`).join(""):'<div class="mut">Nada aún.</div>')+"</div>"}
 function vMatch(){return`<div class="card"><div class="mut" style="text-align:center">${esc(S.name)} vs ${esc(M.opp.name)} · min ${Math.min(M.min,90)}'</div><div class="score">${M.hg} - ${M.ag}</div><div class="pitch" style="width:${M.min/.9}%"></div></div>
  ${M.done?`<div class="card" style="text-align:center"><b>${M.res}</b></div><button class="p" style="width:100%" data-a="close">Continuar</button>`:`<button style="width:100%" data-a="skip">Saltar ⏩</button>`}
  <div class="card log">${M.log.map(l=>`<div class="${l.g?(l.s?"gb":"g"):""}">${l.m}' ${esc(l.t)}</div>`).join("")||'<div class="mut">Pitido inicial…</div>'}</div>`}
-function render(){const el=$("#app");if(!S){el.innerHTML=`<h1>Miguelasgo FC</h1><div class="card"><p>Aquí no se viene a hacer amigos. Ficha, alinea y aplasta a los demás managers.</p><input id="nm" maxlength="22" value="Miguelasgo FC" placeholder="Nombre de tu club"><br><br><button class="p" data-a="start" style="width:100%">Empezar</button></div>`;return}
- let b;if(M)b=vMatch();else b={club:vClub,market:vMarket,play:vPlay,league:vLeague}[tab]();
- el.innerHTML=`<div class="top"><h1>${esc(S.name)}</h1><span class="mut">${db?"🟢 online":"⚪ solo"}</span></div>
- <div class="chips"><span class="chip">💰 ${S.budget.toFixed(1)}M</span><span class="chip">${S.pts} pts</span><span class="chip">${S.w}V ${S.d}E ${S.l}D</span><span class="chip">racha ${S.streak}</span><span class="chip">Media ${ovrT(S)}</span></div>
- ${M?"":`<div class="tabs">${[["club","Club"],["market","Mercado"],["play","Jugar"],["league","Liga"]].map(([k,l])=>`<button class="${tab===k?"on":""}" data-a="tab" data-k="${k}">${l}</button>`).join("")}</div>`}${b}`}
+function render(){const el=$("#app");if(!S){el.innerHTML=vMenu();return}
+ let b;if(M)b=vMatch();else b={club:vClub,market:vMarket,play:vPlay,table:vTable,league:vLeague}[tab]();
+ el.innerHTML=`<div class="top"><h1>${esc(S.name)}</h1><span class="mut">${db?"🟢 online":"⚪ solo"} <button data-a="menu" style="padding:4px 8px">Menú</button></span></div>
+ <div class="chips"><span class="chip">${DIV[S.div]}</span><span class="chip">💰 ${S.budget.toFixed(1)}M</span><span class="chip">${S.pts} pts</span><span class="chip">${S.w}V ${S.d}E ${S.l}D</span><span class="chip">racha ${S.streak}</span><span class="chip">Media ${ovrT(S)}</span></div>
+ ${M?"":`<div class="tabs">${[["club","Club"],["market","Mercado"],["play","Jugar"],["table","Tabla"],["league","Online"]].map(([k,l])=>`<button class="${tab===k?"on":""}" data-a="tab" data-k="${k}">${l}</button>`).join("")}</div>`}${b}`}
 document.addEventListener("click",e=>{const t=e.target.closest("[data-a]");if(!t)return;e.stopPropagation();const a=t.dataset.a,id=t.dataset.id;
- if(a==="start"){const n=$("#nm").value.trim()||"Miguelasgo FC";S=newState(n);save()}
+ if(a==="start"){const n=$("#nm").value.trim()||"Mi club";S=newState(n,+t.dataset.n);scr="menu";tab="club";save()}
+ else if(a==="new"){scr="new"}
+ else if(a==="back"){scr="menu"}
+ else if(a==="load"){S=slotD(+t.dataset.n);tab="club"}
+ else if(a==="del"){try{localStorage.removeItem("mgfc_s"+t.dataset.n)}catch(x){}}
+ else if(a==="menu"){save();S=null;sel=null;tab="club"}
+ else if(a==="season"){const pos=sortT(S.lg).findIndex(x=>x.me)+1;S.budget=Math.round((S.budget+(pos<=3?PR[S.div]*2:PR[S.div]))*10)/10;if(pos<=2&&S.div>0)S.div--;else if(pos>=7&&S.div<3)S.div++;S.season++;newLeague(S);tab="play";save()}
  else if(a==="tab"){tab=t.dataset.k;sel=null}
  else if(a==="form"){S.form=t.dataset.f;S.xi=autoXI(S.squad,S.form);sel=null;save()}
  else if(a==="auto"){S.xi=autoXI(S.squad,S.form);sel=null;save()}
@@ -121,15 +150,15 @@ document.addEventListener("click",e=>{const t=e.target.closest("[data-a]");if(!t
    if(i>=0&&j>=0){[S.xi[i],S.xi[j]]=[S.xi[j],S.xi[i]]}else if(i>=0)S.xi[i]=id;else if(j>=0)S.xi[j]=sel;sel=null;save()}}
  else if(a==="sell"){const p=S.squad.find(x=>x.id===id);if(S.squad.length>16){S.budget=Math.round((S.budget+p.v*.7)*10)/10;S.squad=S.squad.filter(x=>x.id!==id);save()}}
  else if(a==="buy"){const p=market().find(x=>x.id===id);if(p&&S.budget>=p.v){S.budget=Math.round((S.budget-p.v)*10)/10;S.squad.push(p);save()}}
- else if(a==="cpu"){play(cpuTeams()[+t.dataset.i]);return}
+ else if(a==="cpu"){play(nextOpp());return}
  else if(a==="on"){const p=peers.find(x=>x.id===id);try{const o=JSON.parse(p.d.st);play({name:o.name,squad:o.squad,xi:o.xi,form:o.form,online:1,prize:3});return}catch(x){}}
  else if(a==="skip"){skip();return}
  else if(a==="close"){M=null;tab="club"}
  render()});
-(async()=>{let ls=null;try{ls=JSON.parse(localStorage.getItem("gaffer"))}catch(e){}S=ls;render();
+(async()=>{render();
  try{if(window.claude){const u=await claude.use("user");uid=u?await u.id():null;db=uid?await claude.use("db"):null}}catch(e){}
- if(db){try{const d=await db.doc("managers/"+uid).get();if(d.exists&&d.data().st)S=JSON.parse(d.data().st)}catch(e){}
-  try{db.collection("managers").onSnapshot(s=>{peers=s.docs.map(x=>({id:x.id,d:x.data()}));if(!M)render()})}catch(e){}
+ if(db){
+  try{db.collection("managers").onSnapshot(s=>{peers=s.docs.map(x=>({id:x.id,d:x.data()}));if(!M&&S)render()})}catch(e){}
   try{db.collection("results").limit(40).onSnapshot(s=>{feed=s.docs.map(x=>x.data()).sort((a,b)=>b.t-a.t).slice(0,8);if(!M&&tab==="league")render()})}catch(e){}}
- render()})();
+ if(S)render()})();
 </script></body></html>
