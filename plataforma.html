@@ -577,6 +577,7 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 <div class="auth-modal">
 <button class="auth-close" onclick="closeAuth()">&times;</button>
 <h2 id="authTitle">Iniciar Sesion</h2>
+<div id="authNote" style="display:none;text-align:center;color:var(--text-muted);font-size:.9em;margin:-12px 0 16px"></div>
 <div id="authNameGroup" style="display:none"><input type="text" id="authName" placeholder="Nombre de jugador"></div>
 <input type="email" id="authEmail" placeholder="Correo electronico">
 <input type="password" id="authPass" placeholder="Contraseña">
@@ -812,8 +813,16 @@ function recordGameLaunch(gameId){
         if(result && typeof showToast==='function') showToast('🎮 +10 XP por descubrir un juego nuevo','success');
     }).catch(function(err){console.warn('No se pudo actualizar XP:',err);});
 }
+var pendingGame=null,authReady=false;
+function resumeGame(){
+    if(pendingGame){var g=pendingGame;pendingGame=null;setTimeout(function(){launchGame(g);},500);}
+}
 function launchGame(g,e){
     if(e){e.preventDefault();e.stopPropagation();}
+    if(!authReady){showToast('Comprobando tu sesión, inténtalo de nuevo en un segundo…','info');return;}
+    if(!currentUser&&auth.currentUser)currentUser=auth.currentUser;
+    if(!currentUser){pendingGame=g;openAuth(true);return;}
+    pendingGame=null;
     recordGameLaunch(g.folder || g.name || g.id);
     if(g.unity){openGameIframe(g.folder);}
     else{window.location.href=g.folder+'/index.html';}
@@ -1108,8 +1117,17 @@ function renderAchievements(){
 renderAchievements();
 
 /* ============ AUTH ============ */
-function openAuth(){document.getElementById('authModal').classList.add('active');}
+function openAuth(needLogin){
+    var n=document.getElementById('authNote');
+    if(needLogin===true){
+        if(isLogin)switchAuthMode();
+        n.textContent='Regístrate o inicia sesión para poder jugar';
+        n.style.display='block';
+    } else {n.style.display='none';}
+    document.getElementById('authModal').classList.add('active');
+}
 function closeAuth(){
+    pendingGame=null;
     document.getElementById('authModal').classList.remove('active');
     document.getElementById('authError').textContent='';
 }
@@ -1130,7 +1148,7 @@ function handleAuth(){
     if(!email||!pass){errEl.textContent='Completa todos los campos';return;}
     if(isLogin){
         auth.signInWithEmailAndPassword(email,pass)
-            .then(function(){closeAuth();showToast('Bienvenido de vuelta!','success');})
+            .then(function(){var pg=pendingGame;closeAuth();pendingGame=pg;showToast('Bienvenido de vuelta!','success');resumeGame();})
             .catch(function(e){errEl.textContent='Error: '+e.message;});
     } else {
         var name=document.getElementById('authName').value.trim();
@@ -1142,11 +1160,12 @@ function handleAuth(){
                     joined:firebase.firestore.FieldValue.serverTimestamp()
                 });
             })
-            .then(function(){closeAuth();showToast('Cuenta creada!','success');sendConfetti();})
+            .then(function(){var pg=pendingGame;closeAuth();pendingGame=pg;showToast('Cuenta creada!','success');sendConfetti();resumeGame();})
             .catch(function(e){errEl.textContent='Error: '+e.message;});
     }
 }
 auth.onAuthStateChanged(function(user){
+    authReady=true;
     var area=document.getElementById('authArea');
     var notifArea=document.getElementById('notifArea');
     if(user){
