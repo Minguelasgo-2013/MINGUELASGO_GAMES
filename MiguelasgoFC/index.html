@@ -40,10 +40,22 @@ button.on,button.p{color:#fff}.card{border-radius:6px}button{border-radius:6px;t
 .pl b{display:flex;width:38px;height:38px;margin:0 auto;border-radius:50%;background:var(--ac);color:#fff;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px #0008}
 .pl.s b{background:var(--ac2);color:#000;transform:scale(1.15)}.pl b.bd{background:var(--bad)}
 .pl span{display:block;font-size:11px;color:#fff;text-shadow:0 1px 3px #000;margin-top:2px}
+.mp{height:390px}.gp{position:absolute;left:34%;width:32%;height:13%;border:2px solid rgba(255,255,255,.35)}
+.d{position:absolute;width:14px;height:14px;margin:-7px;border-radius:50%;border:2px solid #fff;transition:left .5s ease,top .5s ease}.d.m{background:var(--ac)}.d.o{background:var(--ac2)}
+.ball{position:absolute;width:12px;height:12px;margin:-6px;border-radius:50%;background:#fff;box-shadow:0 0 8px #fff;transition:left .35s ease,top .35s ease;z-index:3}
+.gol{position:absolute;left:0;right:0;top:42%;text-align:center;font-size:44px;font-weight:900;color:#fff;text-shadow:0 2px 10px #000;z-index:4}
 </style></head><body><div id="app"></div>
 <script>
 const FN=["Leo","Marc","Iker","Dani","Pablo","Hugo","Alex","Sergio","Raúl","Nico","Adri","Joel","Bruno","Luka","Theo","Dario","Mateo","Ivan","Omar","Kai"];
 const LN=["Vega","Torres","Ríos","Costa","Navas","Ferrer","Soler","Pires","Maldini","Okoro","Silva","Duarte","Lobo","Ortiz","Bravo","Ruiz","Kane","Moreno","Sanz","Rey","Cruz","Blanco","Mora","Diop"];
+const NM=[{f:["Pablo","Sergio","Raúl","Iker","Dani","Álvaro","Jesús","Marcos","Adrián","Diego","Nacho","Rubén","Borja","Unai","Jordi","Fran"],l:["García","Fernández","Ruiz","Sanz","Navarro","Ortega","Molina","Iglesias","Santos","Cabrera","Vega","Peña","Domínguez","Ramos","Gallego","Mora"]},
+{f:["Jack","Harry","Oliver","Charlie","George","Tom","Jamie","Declan","Callum","Ben","Luke","Reece","Mason","Kyle","Ryan","Liam"],l:["Smith","Taylor","Walker","Wright","Hughes","Foster","Bennett","Cooper","Palmer","Rooney","Barnes","Hargreaves","Murphy","Knight","Sutton","Webb"]},
+{f:["Marco","Luca","Matteo","Andrea","Davide","Federico","Gianluca","Stefano","Alessio","Simone","Lorenzo","Fabio","Nicolò","Riccardo","Paolo","Enzo"],l:["Rossi","Esposito","Romano","Colombo","Ricci","Marino","Greco","Bruno","Gallo","Conti","De Luca","Costa","Fontana","Moretti","Barbieri","Ferrari"]},
+{f:["Lukas","Jonas","Felix","Maximilian","Tobias","Jan","Florian","Moritz","Leon","Niklas","Kai","Timo","Dennis","Sven","Jürgen","Matthias"],l:["Müller","Schmidt","Schneider","Fischer","Weber","Wagner","Becker","Hoffmann","Schäfer","Koch","Richter","Klein","Wolf","Neumann","Schwarz","Krüger"]}];
+const FUN=[["Atlético Tortilla","Real Siesta CF","Deportivo La Chancla","Racing de mi Cuñado","Sporting Croquetas","CD Paella Mixta","UD Jamón Serrano","Athletic Pa Dentro","Real Sociedad Limitada","Club Churros con Chocolate","Deportivo Alcachofa","Atlético Pueblo Perdido","Los Manolos FC","Real Madriguera","Racing de la Barra","CF Botellón Unido"],
+["Fish & Chips United","Tea Time Rovers","Sunday Roast Athletic","Soggy Biscuit City","Mushy Peas Wanderers","Rainy Day Town","Pie & Mash FC","Cheeky Pint United","Queue Jumpers FC","Crumpet Rovers","Marmite Athletic","Bangers & Mash Town","Wet Wednesday City","Scone Zone United","Pub Crawl Wanderers","Offside Gentlemen FC"],
+["Pizza Margherita FC","Spaghetti Calcio","Gelato Sciolto United","AC Cappuccino","Tiramisù Atletico","Lasagna Rovers","US Mozzarella","Virtus Parmigiano","Nonna Sgrida FC","Vespa Rotta 1908","AS Pasta Scotta","Fuorigioco Club","Pomodoro Sportiva","Limoncello Boys","Bruschetta FC","Gnocchi Furiosi"],
+["FC Bratwurst","SV Bierfass","Sauerkraut Kickers","Brezel United 04","Wurstsalat Eintracht","FC Currywurst","Schnitzel Sportfreunde","SG Pünktlichkeit","Kartoffelsalat FC","Lederhosen Union","Fußball Verein Gemütlich","Bierbauch Borussia","Rasenmäher Rangers","VfB Verspätung","TSV Schwarzbrot","Gurkensalat 09"]];
 const CL=["Los Cuchillos FC","Atlético Barrizal","Real Pelotazo","Deportivo Tarjeta","Unión Patadón","Racing Chusma","CF Navaja","Sporting Chapuza"];
 const FORM={"4-4-2":[4,4,2],"4-3-3":[4,3,3],"3-5-2":[3,5,2],"5-3-2":[5,3,2]};
 const $=s=>document.querySelector(s);
@@ -52,10 +64,10 @@ const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const hash=s=>[...String(s)].reduce((a,c)=>(a*31+c.charCodeAt(0))|0,7);
 function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const slots=f=>["POR",...Array(FORM[f][0]).fill("DEF"),...Array(FORM[f][1]).fill("MED"),...Array(FORM[f][2]).fill("DEL")];
-function mkP(r,id,pos,base){const o=clamp(Math.round(base+(r()-.5)*18),42,92);
- return{id,n:FN[Math.floor(r()*FN.length)][0]+". "+LN[Math.floor(r()*LN.length)],pos,ovr:o,v:Math.round(Math.pow(o/50,5)*8)/10}}
-function mkSquad(seed,base,tag){const r=rng(seed),L=[];
- ["POR","POR",..."DEF,DEF,DEF,DEF,DEF,DEF,MED,MED,MED,MED,MED,MED,DEL,DEL,DEL,DEL".split(",")].forEach((p,i)=>L.push(mkP(r,tag+i,p,base)));return L}
+function mkP(r,id,pos,base,k){k=k||0;const o=clamp(Math.round(base+(r()-.5)*18),42,92),na=r()<.75?k:Math.floor(r()*12),s=NM[[0,1,2,3,2,0,0,0,3,0,1,3][na]];
+ return{id,nat:na,n:s.f[Math.floor(r()*s.f.length)][0]+". "+s.l[Math.floor(r()*s.l.length)],pos,ovr:o,v:Math.round(Math.pow(o/50,5)*8)/10}}
+function mkSquad(seed,base,tag,k){const r=rng(seed),L=[];
+ ["POR","POR",..."DEF,DEF,DEF,DEF,DEF,DEF,MED,MED,MED,MED,MED,MED,DEL,DEL,DEL,DEL".split(",")].forEach((p,i)=>L.push(mkP(r,tag+i,p,base,k)));return L}
 function autoXI(sq,f){const used=new Set();return slots(f).map(s=>{
  let c=sq.filter(p=>!used.has(p.id)&&p.pos===s).sort((a,b)=>b.ovr-a.ovr)[0]||sq.filter(p=>!used.has(p.id)).sort((a,b)=>b.ovr-a.ovr)[0];
  used.add(c.id);return c.id})}
@@ -69,8 +81,8 @@ let db=null,uid=null,S=null,tab="club",sel=null,M=null,peers=[],feed=[];
 const cpuTeams=()=>[0,1,2].map(i=>{const b=clamp(54+S.round*1.3+i*7,50,84),sq=mkSquad(S.seed+S.round*31+i,b,"c"+i),f=["4-4-2","4-3-3","3-5-2"][i];
  return{name:CL[(S.round+i*3)%CL.length],squad:sq,form:f,xi:autoXI(sq,f),prize:2+i*2.5,lab:["Fácil","Medio","Difícil"][i]}});
 const market=()=>{const r=rng(S.seed+S.round*977),L=[];
- for(let i=0;i<10;i++){L.push(mkP(r,"m"+S.round+"-"+i,["POR","DEF","DEF","MED","MED","DEL","DEL","MED","DEF","DEL"][i],62+Math.min(S.round,10)))}return L.filter(p=>!S.squad.some(x=>x.id===p.id))};
-function newState(name,slot){const seed=hash(name+(uid||Math.random()));const sq=mkSquad(seed,60,"p");
+ for(let i=0;i<10;i++){L.push(mkP(r,"m"+S.round+"-"+i,["POR","DEF","DEF","MED","MED","DEL","DEL","MED","DEF","DEL"][i],62+Math.min(S.round,10),S.ctry||0))}return L.filter(p=>!S.squad.some(x=>x.id===p.id))};
+function newState(name,slot){const seed=hash(name+(uid||Math.random()));const sq=mkSquad(seed,60,"p",nc);
  const o={name,slot,ctry:nc,seed,squad:sq,form:"4-4-2",xi:autoXI(sq,"4-4-2"),budget:30,pts:0,w:0,d:0,l:0,gf:0,ga:0,round:0,streak:0,div:3,season:1};newLeague(o);return o}
 async function save(){try{localStorage.setItem("mgfc_s"+S.slot,JSON.stringify(S))}catch(e){}
  if(mode==="online"&&db&&uid&&S){try{await db.doc("managers/"+uid).set({name:S.name,pts:S.pts,w:S.w,d:S.d,l:S.l,gf:S.gf,ga:S.ga,ovr:ovrT(S),st:JSON.stringify(S),t:Date.now()})}catch(e){}}}
@@ -79,17 +91,24 @@ const C=[{n:"España",d:["LaLiga","Segunda","Primera RFEF","Segunda RFEF"],s:0,p
 {n:"Inglaterra",d:["Premier","Championship","League One","League Two"],s:1,p:["United","City","Town","Rovers","Athletic","Wanderers"],c:["Leeds","Bristol","Norwich","Derby","Leicester","Brighton","Hull","Stoke","Preston","Reading","Luton","Burnley","Ipswich","Wigan","Bolton","Swansea"]},
 {n:"Italia",d:["Serie A","Serie B","Serie C","Serie D"],s:0,p:["AC","US","AS","FC","Calcio","Virtus"],c:["Torino","Génova","Bolonia","Parma","Verona","Cagliari","Lecce","Udine","Bari","Pisa","Brescia","Como","Padua","Siena","Empoli","Perugia"]},
 {n:"Alemania",d:["Bundesliga","2. Bundesliga","3. Liga","Regionalliga"],s:0,p:["FC","SV","VfB","Eintracht","Fortuna","Union"],c:["Bremen","Colonia","Hamburgo","Leipzig","Mainz","Bochum","Kiel","Dresde","Fürth","Ulm","Aachen","Jena","Rostock","Essen","Bonn","Hannover"]}];
-const dv=o=>C[o.ctry||0].d[o.div],PR=[10,7,5,3];let scr="menu",mode=null,nc=0,nname="";
+const dv=o=>C[o.ctry||0].d[o.div],PR=[10,7,5,3];let scr="menu",mode=null,nc=0,nname="",Z=null;
 const slotD=n=>{try{return JSON.parse(localStorage.getItem("mgfc_s"+n))}catch(e){return null}};
-function newLeague(o){const r=rng(o.seed+o.season*101+o.div*7),K=C[o.ctry||0],b=[74,68,62,56][o.div],cs=[...K.c].sort(()=>r()-.5).slice(0,11),z=()=>({pts:0,gf:0,ga:0,w:0,d:0,l:0}),nm=c=>{const p=K.p[Math.floor(r()*K.p.length)];return K.s?c+" "+p:p+" "+c};
- o.lg={rd:0,t:[{n:o.name,b:60,me:1,...z()},...cs.map(c=>({n:nm(c),b:Math.round(b+(r()-.5)*12),...z()}))],ord:Array.from({length:11},(_,i)=>i+1).sort(()=>r()-.5)}}
+function newLeague(o){const r=rng(o.seed+o.season*101+o.div*7),K=C[o.ctry||0],b=[74,68,62,56][o.div],cs=[...FUN[o.ctry||0]].sort(()=>r()-.5).slice(0,11),z=()=>({pts:0,gf:0,ga:0,w:0,d:0,l:0}),nm=c=>{const p=K.p[Math.floor(r()*K.p.length)];return K.s?c+" "+p:p+" "+c};
+ o.lg={rd:0,t:[{n:o.name,b:60,me:1,...z()},...cs.map(c=>({n:c,b:Math.round(b+(r()-.5)*12),...z()}))],ord:Array.from({length:11},(_,i)=>i+1).sort(()=>r()-.5)}}
 const rec=(t,x,y)=>{t.gf+=x;t.ga+=y;if(x>y){t.w++;t.pts+=3}else if(x===y){t.d++;t.pts++}else t.l++};
 const qg=l=>{let g=0,p=Math.exp(-l),c=p,u=Math.random();while(u>c&&g<9){g++;p*=l/g;c+=p}return g};
 const sortT=L=>[...L.t].sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf);
-function nextOpp(){const L=S.lg,i=L.ord[L.rd],t=L.t[i],sq=mkSquad(S.seed+S.season*131+i,t.b,"c"+i),f=["4-4-2","4-3-3","3-5-2"][i%3];
+function nextOpp(){const L=S.lg,i=L.ord[L.rd],t=L.t[i],sq=mkSquad(S.seed+S.season*131+i,t.b,"c"+i,S.ctry||0),f=["4-4-2","4-3-3","3-5-2"][i%3];
  return{name:t.n,squad:sq,form:f,xi:autoXI(sq,f),prize:PR[S.div],lg:1,li:i}}
 function pitch(){const sl=slots(S.form),f=FORM[S.form],rows=[[0,1,90],[1,1+f[0],72],[1+f[0],1+f[0]+f[1],48],[1+f[0]+f[1],11,20]];
  return`<div class="pit">${rows.map(([a,b,y])=>{const n=b-a;return S.xi.slice(a,b).map((id,i)=>{const p=S.squad.find(x=>x.id===id),bad=p.pos!==sl[a+i];return`<div class="pl${sel===id?" s":""}" data-a="pick" data-id="${id}" style="left:${(i+1)/(n+1)*100}%;top:${y}%"><b class="${bad?"bd":""}">${p.ovr}</b><span>${esc(p.n.split(". ")[1]||p.n)}</span></div>`}).join("")}).join("")}</div>`}
+const NAT=[["España","🇪🇸"],["Inglaterra","🇬🇧"],["Italia","🇮🇹"],["Alemania","🇩🇪"],["Francia","🇫🇷"],["Portugal","🇵🇹"],["Brasil","🇧🇷"],["Argentina","🇦🇷"],["Países Bajos","🇳🇱"],["Marruecos","🇲🇦"],["Nigeria","🇳🇬"],["Croacia","🇭🇷"]];
+const nat=p=>NAT[p.nat!=null?p.nat:Math.floor(rng(hash(p.id+"n"))()*NAT.length)];
+const OFF={POR:[-20,-30,-8,-25,4,0],DEF:[-6,-18,-6,-14,6,4],MED:[-4,-6,5,3,-8,-4],DEL:[4,6,-6,5,-22,-6]};
+const pst=p=>{const r=rng(hash(p.id+"s"));return OFF[p.pos].map(o=>Math.round(clamp(p.ovr+o+(r()-.5)*10,30,99)))};
+function rad6(p){const v=pst(p),L=["RIT","DIS","PAS","REG","DEF","FIS"],cx=150,cy=140,R=95,ang=i=>-Math.PI/2+i*Math.PI/3,pt=(i,x)=>{const r=R*clamp((x-30)/70,0,1);return[cx+r*Math.cos(ang(i)),cy+r*Math.sin(ang(i))]},f=n=>n.toFixed(1),ring=q=>L.map((_,i)=>pt(i,30+70*q).map(f).join(",")).join(" ");
+ return`<svg viewBox="0 0 300 285" style="width:100%;max-width:320px;display:block;margin:auto">${[.25,.5,.75,1].map(q=>`<polygon points="${ring(q)}" fill="none" stroke="var(--bd)"/>`).join("")}${L.map((n,i)=>{const e=pt(i,100),lx=cx+(R+22)*Math.cos(ang(i)),ly=cy+(R+16)*Math.sin(ang(i));return`<line x1="${cx}" y1="${cy}" x2="${f(e[0])}" y2="${f(e[1])}" stroke="var(--bd)"/><text x="${f(lx)}" y="${f(ly)}" fill="var(--tx)" font-size="11" text-anchor="middle" dominant-baseline="middle">${n} ${v[i]}</text>`}).join("")}<polygon points="${v.map((x,i)=>pt(i,x).map(f).join(",")).join(" ")}" fill="var(--ac)" fill-opacity=".4" stroke="var(--ac)" stroke-width="2"/></svg>`}
+const vSign=()=>{const n=nat(Z);return`<div class="card" style="text-align:center"><div class="mut">Nuevo fichaje</div><h1 style="margin:4px 0">${esc(Z.n)}</h1><div>${n[1]} ${n[0]} · ${Z.pos} · media ${Z.ovr}</div>${rad6(Z)}</div><button class="p" style="width:100%;padding:14px" data-a="zok">Continuar</button>`};
 function radar(A,B){const a=parts(A),b=parts(B),ax=[["POR",a.gk,b.gk],["DEF",a.def,b.def],["MED",a.mid,b.mid],["ATA",a.att,b.att],["MEDIA",ovrT(A),ovrT(B)]],cx=150,cy=145,R=100,ang=i=>-Math.PI/2+i*2*Math.PI/5,pt=(i,v)=>{const r=R*clamp((v-30)/65,0,1);return[cx+r*Math.cos(ang(i)),cy+r*Math.sin(ang(i))]},f=n=>n.toFixed(1),poly=k=>ax.map((x,i)=>pt(i,x[k]).map(f).join(",")).join(" ");
  return`<svg viewBox="0 0 300 300" style="width:100%;max-width:340px;display:block;margin:auto">${[.25,.5,.75,1].map(q=>`<polygon points="${ax.map((x,i)=>pt(i,30+65*q).map(f).join(",")).join(" ")}" fill="none" stroke="var(--bd)"/>`).join("")}${ax.map((x,i)=>{const e=pt(i,95),lx=cx+(R+18)*Math.cos(ang(i)),ly=cy+(R+14)*Math.sin(ang(i));return`<line x1="${cx}" y1="${cy}" x2="${f(e[0])}" y2="${f(e[1])}" stroke="var(--bd)"/><text x="${f(lx)}" y="${f(ly)}" fill="var(--tx)" font-size="11" text-anchor="middle" dominant-baseline="middle">${x[0]} ${Math.round(x[1])}-${Math.round(x[2])}</text>`}).join("")}<polygon points="${poly(2)}" fill="var(--ac2)" fill-opacity=".3" stroke="var(--ac2)" stroke-width="2"/><polygon points="${poly(1)}" fill="var(--ac)" fill-opacity=".35" stroke="var(--ac)" stroke-width="2"/></svg>`}
 function vMenu(){if(!mode)return`<h1 style="font-size:30px;text-align:center;margin:30px 0 16px">Manager</h1><div class="card"><b>¿Cómo quieres jugar?</b><div class="mut" style="margin:6px 0 10px">Online: clasificación y retos contra otros managers.${db?"":" (No disponible aquí ahora mismo)"}</div><div class="row"><button class="p" data-a="mode" data-m="online" ${db?"":"disabled"}>Jugar online</button><button class="p" data-a="mode" data-m="solo">Jugar solo</button></div></div>`;
@@ -107,9 +126,14 @@ function simulate(A,B){const a=parts(A),b=parts(B),T=[a,b],ev=[];let sc=[0,0];
    else if(Math.random()<.3)ev.push({m,s,t:pick(["Entrada criminal, el árbitro mira para otro lado.","Falta dura en la frontal, se calienta el partido.","Barullo en el área y nadie la empuja.","Tarjeta amarilla por una patada de las feas."])})}
   ev.push({m,x:1,sc:[...sc]})}
  return{ev:ev.filter(e=>!e.x||e.m%1===0),sc}}
-function play(opp){const r=simulate(S,opp);M={opp,pre:1,ev:r.ev.filter(e=>!e.x),sc:r.sc,min:0,hg:0,ag:0,log:[],done:false,iv:null};render()}
-function tick(){if(!M)return;M.min++;M.ev.filter(e=>e.m===M.min).forEach(e=>{if(e.g){e.s?M.ag++:M.hg++}M.log.unshift({m:e.m,t:e.t,s:e.s,g:e.g})});
- if(M.min>=90)finish();render()}
+function play(opp){const r=simulate(S,opp);M={opp,pre:1,bx:50,by:50,gt:0,pos:0,ev:r.ev.filter(e=>!e.x),sc:r.sc,min:0,hg:0,ag:0,log:[],done:false,iv:null};render()}
+function dots(){const out=[];[[S,0],[M.opp,1]].forEach(([t,flip])=>{const f=FORM[t.form],sl=[[0,1],[1,1+f[0]],[1+f[0],1+f[0]+f[1]],[1+f[0]+f[1],11]],ys=flip?[6,18,32,44]:[94,82,68,56];sl.forEach(([a,b],ri)=>{const n=b-a;for(let i=0;i<n;i++)out.push([(i+1)/(n+1)*100+(M.bx-50)*.12,clamp(ys[ri]+(M.by-50)*(ri?.18:.05),3,97)])})});return out}
+function mpit(){const P=dots();return`<div class="pit mp"><div class="gp" style="top:0"></div><div class="gp" style="bottom:0"></div>${P.map((p,i)=>`<i class="d ${i<11?"m":"o"}" style="left:${p[0]}%;top:${p[1]}%"></i>`).join("")}<i class="ball" style="left:${M.bx}%;top:${M.by}%"></i><div class="gol" id="gl" style="display:${M.gt>0?"block":"none"}">¡GOL!</div></div>`}
+const lgH=()=>M.log.map(l=>`<div class="${l.g?(l.s?"gb":"g"):""}">${l.m}' ${esc(l.t)}</div>`).join("")||'<div class="mut">Pitido inicial…</div>';
+function ball(m){const e=M.ev.filter(x=>x.m===m)[0];if(e){const up=e.s===0;if(e.g)M.gt=9;M.bx=45+Math.random()*10;M.by=e.g?(up?3:97):(up?14:86);M.pos=up?0:1}else{M.bx=15+Math.random()*70;M.by=clamp(50+(M.pos===0?-1:1)*Math.random()*12+(Math.random()-.5)*30,22,78)}}
+function mupd(){const els=document.querySelectorAll(".mp .d"),b=$(".mp .ball");if(els.length!==22||!b){render();return}dots().forEach((p,i)=>{els[i].style.left=p[0]+"%";els[i].style.top=p[1]+"%"});b.style.left=M.bx+"%";b.style.top=M.by+"%";$("#sc").textContent=M.hg+" - "+M.ag;$("#mn").textContent=Math.min(M.min,90);$("#gl").style.display=M.gt>0?"block":"none";$("#lg").innerHTML=lgH();$("#bar").style.width=M.min/.9+"%"}
+function tick(){if(!M)return;M.min++;if(M.gt>0)M.gt--;M.ev.filter(e=>e.m===M.min).forEach(e=>{if(e.g){e.s?M.ag++:M.hg++}M.log.unshift({m:e.m,t:e.t,s:e.s,g:e.g})});ball(M.min);
+ if(M.min>=90){finish();render()}else mupd()}
 function skip(){while(M&&M.min<90){M.min++;M.ev.filter(e=>e.m===M.min).forEach(e=>{if(e.g){e.s?M.ag++:M.hg++}M.log.unshift({m:e.m,t:e.t,s:e.s,g:e.g})})}finish();render()}
 function finish(){if(M.done)return;clearInterval(M.iv);M.done=true;const h=M.hg,a=M.ag;
  S.gf+=h;S.ga+=a;S.round++;let res;
@@ -125,20 +149,20 @@ function row(p,s,i){const bad=s&&p.pos!==s;return`<div class="r${sel===p.id?" s"
 function vClub(){const sl=slots(S.form),bench=S.squad.filter(p=>!S.xi.includes(p.id));
  return`<div class="row">${Object.keys(FORM).map(f=>`<button class="${S.form===f?"on":""}" data-a="form" data-f="${f}">${f}</button>`).join("")}</div>
  <h2>Once inicial · media ${ovrT(S)}</h2>${pitch()}
- <h2>Banquillo (${bench.length})</h2><div class="mut">Toca un titular y luego un suplente para cambiarlos.</div><div class="card">${bench.map(p=>`<div class="r${sel===p.id?" s":""}" data-a="pick" data-id="${p.id}"><span class="pos">${p.pos}</span><span class="n">${esc(p.n)}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span><button data-a="sell" data-id="${p.id}">Vender ${(p.v*.7).toFixed(1)}M</button></div>`).join("")}</div>
+ <h2>Banquillo (${bench.length})</h2><div class="mut">Toca un titular y luego un suplente para cambiarlos.</div><div class="card">${bench.map(p=>`<div class="r${sel===p.id?" s":""}" data-a="pick" data-id="${p.id}"><span class="pos">${p.pos}</span><span class="n">${nat(p)[1]} ${esc(p.n)}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span><button data-a="sell" data-id="${p.id}">Vender ${(p.v*.7).toFixed(1)}M</button></div>`).join("")}</div>
  <button data-a="auto" style="width:100%">Alineación automática</button>`}
-function vMarket(){return`<h2>Mercado · jornada ${S.round+1}</h2><div class="mut">Se renueva tras cada partido. Plantilla ${S.squad.length}/24.</div>`+market().map(p=>`<div class="card r" style="cursor:default"><span class="pos">${p.pos}</span><span class="n">${esc(p.n)}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span><button class="p" data-a="buy" data-id="${p.id}" ${S.budget<p.v||S.squad.length>=24?"disabled":""}>${p.v.toFixed(1)}M</button></div>`).join("")}
+function vMarket(){return`<h2>Mercado · jornada ${S.round+1}</h2><div class="mut">Se renueva tras cada partido. Plantilla ${S.squad.length}/24.</div>`+market().map(p=>`<div class="card r" style="cursor:default"><span class="pos">${p.pos}</span><span class="n">${nat(p)[1]} ${esc(p.n)}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span><button class="p" data-a="buy" data-id="${p.id}" ${S.budget<p.v||S.squad.length>=24?"disabled":""}>${p.v.toFixed(1)}M</button></div>`).join("")}
 function vPlay(){const L=S.lg,on=peers.filter(p=>p.id!==uid),t=L.t[L.ord[L.rd]]||{};
  return`<h2>${dv(S)} · jornada ${Math.min(L.rd+1,L.ord.length)}/${L.ord.length}</h2>`+(L.rd>=L.ord.length?`<div class="card">Temporada terminada. Mira la pestaña Tabla.</div>`:`<div class="card row"><div class="n"><b>${esc(t.n)}</b><div class="mut">media ~${t.b} · premio ${PR[S.div]}M</div></div><button class="p" data-a="cpu" style="flex:0 0 auto">Jugar</button></div>`)
  +(mode!=="online"?"":`<h2>Retos online: a por ellos</h2>`+(db?(on.length?on.map(p=>`<div class="card row"><div class="n"><b>${esc(p.d.name)}</b><div class="mut">media ${p.d.ovr} · ${p.d.pts} pts</div></div><button class="p" data-a="on" data-id="${p.id}" style="flex:0 0 auto">Machacar</button></div>`).join(""):'<div class="mut">Aún no hay otros managers. ¡Comparte el enlace!</div>'):'<div class="mut">Modo online no disponible en esta vista. Comparte el enlace con permiso de colaborar para jugar contra amigos.</div>'))}
 function vLeague(){const L=[...peers].sort((a,b)=>b.d.pts-a.d.pts||(b.d.gf-b.d.ga)-(a.d.gf-a.d.ga));
  return`<h2>Clasificación online</h2><div class="card">`+(L.length?L.map((p,i)=>`<div class="r" style="cursor:default"><span class="pos">${i+1}º</span><span class="n">${esc(p.d.name)}${p.id===uid?" (tú)":""}</span><span class="mut">${p.d.w}-${p.d.d}-${p.d.l}</span><b>${p.d.pts}</b></div>`).join(""):'<div class="mut">Sin datos online todavía.</div>')+`</div><h2>Últimos partidos</h2><div class="card">`+(feed.length?feed.map(f=>`<div class="mut">${esc(f.a)} <b>${f.ga}-${f.gb}</b> ${esc(f.b)}</div>`).join(""):'<div class="mut">Nada aún.</div>')+"</div>"}
 function vMatch(){if(M.pre)return`<div class="card"><div class="mut" style="text-align:center">${esc(S.name)} vs ${esc(M.opp.name)}</div>${radar(S,M.opp)}<div class="row" style="justify-content:center;margin:6px 0"><span class="chip" style="border-color:var(--ac)">● ${esc(S.name)}</span><span class="chip" style="border-color:var(--ac2)">● ${esc(M.opp.name)}</span></div></div><button class="p" style="width:100%;padding:14px" data-a="kick">Pitido inicial</button>`;
- return`<div class="card"><div class="mut" style="text-align:center">${esc(S.name)} vs ${esc(M.opp.name)} · min ${Math.min(M.min,90)}'</div><div class="score">${M.hg} - ${M.ag}</div><div class="pitch" style="width:${M.min/.9}%"></div></div>
+ return`<div class="card"><div class="mut" style="text-align:center">${esc(S.name)} vs ${esc(M.opp.name)} · min <span id="mn">${Math.min(M.min,90)}</span>'</div><div class="score" id="sc">${M.hg} - ${M.ag}</div><div class="pitch" id="bar" style="width:${M.min/.9}%"></div></div>${mpit()}
  ${M.done?`<div class="card" style="text-align:center"><b>${M.res}</b></div><button class="p" style="width:100%" data-a="close">Continuar</button>`:`<button style="width:100%" data-a="skip">Saltar ⏩</button>`}
- <div class="card log">${M.log.map(l=>`<div class="${l.g?(l.s?"gb":"g"):""}">${l.m}' ${esc(l.t)}</div>`).join("")||'<div class="mut">Pitido inicial…</div>'}</div>`}
+ <div class="card log" id="lg">${M.log.map(l=>`<div class="${l.g?(l.s?"gb":"g"):""}">${l.m}' ${esc(l.t)}</div>`).join("")||'<div class="mut">Pitido inicial…</div>'}</div>`}
 function render(){const el=$("#app");if(!S){el.innerHTML=vMenu();return}
- let b;if(M)b=vMatch();else b={club:vClub,market:vMarket,play:vPlay,table:vTable,league:vLeague}[tab]();
+ let b;if(M)b=vMatch();else if(Z)b=vSign();else b={club:vClub,market:vMarket,play:vPlay,table:vTable,league:vLeague}[tab]();
  el.innerHTML=`<div class="top"><h1>${esc(S.name)}</h1><span class="mut">${mode==="online"?"🟢 online":"⚪ solo"} <button data-a="menu" style="padding:4px 8px">Menú</button></span></div>
  <div class="chips"><span class="chip">${dv(S)}</span><span class="chip">💰 ${S.budget.toFixed(1)}M</span><span class="chip">${S.pts} pts</span><span class="chip">${S.w}V ${S.d}E ${S.l}D</span><span class="chip">racha ${S.streak}</span><span class="chip">Media ${ovrT(S)}</span></div>
  ${M?"":`<div class="tabs">${[["club","Club"],["market","Mercado"],["play","Jugar"],["table","Tabla"],...(mode==="online"?[["league","Online"]]:[])].map(([k,l])=>`<button class="${tab===k?"on":""}" data-a="tab" data-k="${k}">${l}</button>`).join("")}</div>`}${b}`}
@@ -152,15 +176,16 @@ document.addEventListener("click",e=>{const t=e.target.closest("[data-a]");if(!t
  else if(a==="del"){try{localStorage.removeItem("mgfc_s"+t.dataset.n)}catch(x){}}
  else if(a==="menu"){save();S=null;sel=null;tab="club"}
  else if(a==="season"){const pos=sortT(S.lg).findIndex(x=>x.me)+1;(S.hist=S.hist||[]).push({s:S.season,d:S.div,p:pos});S.budget=Math.round((S.budget+(pos<=3?PR[S.div]*2:PR[S.div]))*10)/10;if(pos<=2&&S.div>0)S.div--;else if(pos>=S.lg.t.length-1&&S.div<3)S.div++;S.season++;newLeague(S);tab="play";save()}
- else if(a==="tab"){tab=t.dataset.k;sel=null}
+ else if(a==="tab"){tab=t.dataset.k;sel=null;Z=null}
  else if(a==="form"){S.form=t.dataset.f;S.xi=autoXI(S.squad,S.form);sel=null;save()}
  else if(a==="auto"){S.xi=autoXI(S.squad,S.form);sel=null;save()}
  else if(a==="pick"){if(!sel)sel=id;else if(sel===id)sel=null;else{const i=S.xi.indexOf(sel),j=S.xi.indexOf(id);
    if(i>=0&&j>=0){[S.xi[i],S.xi[j]]=[S.xi[j],S.xi[i]]}else if(i>=0)S.xi[i]=id;else if(j>=0)S.xi[j]=sel;sel=null;save()}}
  else if(a==="sell"){const p=S.squad.find(x=>x.id===id);if(S.squad.length>16){S.budget=Math.round((S.budget+p.v*.7)*10)/10;S.squad=S.squad.filter(x=>x.id!==id);save()}}
- else if(a==="buy"){const p=market().find(x=>x.id===id);if(p&&S.budget>=p.v){S.budget=Math.round((S.budget-p.v)*10)/10;S.squad.push(p);save()}}
+ else if(a==="buy"){const p=market().find(x=>x.id===id);if(p&&S.budget>=p.v){S.budget=Math.round((S.budget-p.v)*10)/10;S.squad.push(p);Z=p;save()}}
  else if(a==="cpu"){play(nextOpp());return}
  else if(a==="on"){const p=peers.find(x=>x.id===id);try{const o=JSON.parse(p.d.st);play({name:o.name,squad:o.squad,xi:o.xi,form:o.form,online:1,prize:3});return}catch(x){}}
+ else if(a==="zok"){Z=null}
  else if(a==="kick"){M.pre=0;M.iv=setInterval(()=>tick(),130)}
  else if(a==="skip"){skip();return}
  else if(a==="close"){M=null;tab="club"}
