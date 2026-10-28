@@ -59,6 +59,13 @@ const FUN=[["Atlético Tortilla","Real Siesta CF","Deportivo La Chancla","Racing
 const CL=["Los Cuchillos FC","Atlético Barrizal","Real Pelotazo","Deportivo Tarjeta","Unión Patadón","Racing Chusma","CF Navaja","Sporting Chapuza"];
 const FORM={"4-4-2":[4,4,2],"4-3-3":[4,3,3],"3-5-2":[3,5,2],"5-3-2":[5,3,2]};
 const $=s=>document.querySelector(s);
+const FBC={apiKey:"AIzaSyCyKZLCvvj6rW8VktyLjF53Smc7o9Q4LbY",authDomain:"miguelasgo-games.firebaseapp.com",projectId:"miguelasgo-games",storageBucket:"miguelasgo-games.firebasestorage.app",messagingSenderId:"17704257603",appId:"1:17704257603:web:544bc481254462d2846cf6"};
+let P="";
+const ld=u=>new Promise((ok,no)=>{const s=document.createElement("script");s.src=u;s.onload=ok;s.onerror=no;document.head.appendChild(s)});
+async function fbInit(){const B="https://www.gstatic.com/firebasejs/10.12.0/";for(const f of ["app","auth","firestore"])await ld(B+"firebase-"+f+"-compat.js");
+ if(!firebase.apps.length)firebase.initializeApp(FBC);
+ const u=await new Promise(ok=>{const off=firebase.auth().onAuthStateChanged(x=>{off();ok(x)})});
+ if(u){uid=u.uid;db=firebase.firestore();P="mgfc_"}}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const hash=s=>[...String(s)].reduce((a,c)=>(a*31+c.charCodeAt(0))|0,7);
@@ -85,7 +92,7 @@ const market=()=>{const r=rng(S.seed+S.round*977),L=[];
 function newState(name,slot){const seed=hash(name+(uid||Math.random()));const sq=mkSquad(seed,60,"p",nc);
  const o={name,slot,ctry:nc,seed,squad:sq,form:"4-4-2",xi:autoXI(sq,"4-4-2"),budget:30,pts:0,w:0,d:0,l:0,gf:0,ga:0,round:0,streak:0,div:3,season:1};newLeague(o);return o}
 async function save(){try{localStorage.setItem("mgfc_s"+S.slot,JSON.stringify(S))}catch(e){}
- if(mode==="online"&&db&&uid&&S){try{await db.doc("managers/"+uid).set({name:S.name,pts:S.pts,w:S.w,d:S.d,l:S.l,gf:S.gf,ga:S.ga,ovr:ovrT(S),st:JSON.stringify(S),t:Date.now()})}catch(e){}}}
+ if(mode==="online"&&db&&uid&&S){try{await db.doc(P+"managers/"+uid).set({name:S.name,pts:S.pts,w:S.w,d:S.d,l:S.l,gf:S.gf,ga:S.ga,ovr:ovrT(S),st:JSON.stringify(S),t:Date.now()})}catch(e){}}}
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const C=[{n:"España",d:["LaLiga","Segunda","Primera RFEF","Segunda RFEF"],s:0,p:["Real","Atlético","Deportivo","Racing","CD","Sporting"],c:["Sevilla","Valencia","Bilbao","Vigo","Málaga","Zaragoza","Granada","Oviedo","Gijón","Murcia","Alicante","Córdoba","Vitoria","Pamplona","Santander","Almería"]},
 {n:"Inglaterra",d:["Premier","Championship","League One","League Two"],s:1,p:["United","City","Town","Rovers","Athletic","Wanderers"],c:["Leeds","Bristol","Norwich","Derby","Leicester","Brighton","Hull","Stoke","Preston","Reading","Luton","Burnley","Ipswich","Wigan","Bolton","Swansea"]},
@@ -111,7 +118,7 @@ function rad6(p){const v=pst(p),L=["RIT","DIS","PAS","REG","DEF","FIS"],cx=150,c
 const vSign=()=>{const n=nat(Z);return`<div class="card" style="text-align:center"><div class="mut">Nuevo fichaje</div><h1 style="margin:4px 0">${esc(Z.n)}</h1><div>${n[1]} ${n[0]} · ${Z.pos} · media ${Z.ovr}</div>${rad6(Z)}</div><button class="p" style="width:100%;padding:14px" data-a="zok">Continuar</button>`};
 function radar(A,B){const a=parts(A),b=parts(B),ax=[["POR",a.gk,b.gk],["DEF",a.def,b.def],["MED",a.mid,b.mid],["ATA",a.att,b.att],["MEDIA",ovrT(A),ovrT(B)]],cx=150,cy=145,R=100,ang=i=>-Math.PI/2+i*2*Math.PI/5,pt=(i,v)=>{const r=R*clamp((v-30)/65,0,1);return[cx+r*Math.cos(ang(i)),cy+r*Math.sin(ang(i))]},f=n=>n.toFixed(1),poly=k=>ax.map((x,i)=>pt(i,x[k]).map(f).join(",")).join(" ");
  return`<svg viewBox="0 0 300 300" style="width:100%;max-width:340px;display:block;margin:auto">${[.25,.5,.75,1].map(q=>`<polygon points="${ax.map((x,i)=>pt(i,30+65*q).map(f).join(",")).join(" ")}" fill="none" stroke="var(--bd)"/>`).join("")}${ax.map((x,i)=>{const e=pt(i,95),lx=cx+(R+18)*Math.cos(ang(i)),ly=cy+(R+14)*Math.sin(ang(i));return`<line x1="${cx}" y1="${cy}" x2="${f(e[0])}" y2="${f(e[1])}" stroke="var(--bd)"/><text x="${f(lx)}" y="${f(ly)}" fill="var(--tx)" font-size="11" text-anchor="middle" dominant-baseline="middle">${x[0]} ${Math.round(x[1])}-${Math.round(x[2])}</text>`}).join("")}<polygon points="${poly(2)}" fill="var(--ac2)" fill-opacity=".3" stroke="var(--ac2)" stroke-width="2"/><polygon points="${poly(1)}" fill="var(--ac)" fill-opacity=".35" stroke="var(--ac)" stroke-width="2"/></svg>`}
-function vMenu(){if(!mode)return`<h1 style="font-size:30px;text-align:center;margin:30px 0 16px">Manager</h1><div class="card"><b>¿Cómo quieres jugar?</b><div class="mut" style="margin:6px 0 10px">Online: clasificación y retos contra otros managers.${db?"":" (No disponible aquí ahora mismo)"}</div><div class="row"><button class="p" data-a="mode" data-m="online" ${db?"":"disabled"}>Jugar online</button><button class="p" data-a="mode" data-m="solo">Jugar solo</button></div></div>`;
+function vMenu(){if(!mode)return`<h1 style="font-size:30px;text-align:center;margin:30px 0 16px">Manager</h1><div class="card"><b>¿Cómo quieres jugar?</b><div class="mut" style="margin:6px 0 10px">Online: clasificación y retos contra otros managers.${db?"":" (Inicia sesión en la plataforma para jugar online)"}</div><div class="row"><button class="p" data-a="mode" data-m="online" ${db?"":"disabled"}>Jugar online</button><button class="p" data-a="mode" data-m="solo">Jugar solo</button></div></div>`;
  if(scr==="new")return`<h1>Nueva carrera</h1><div class="card"><input id="nm" maxlength="22" value="${esc(nname)}" placeholder="Nombre de tu club"><div class="mut" style="margin:10px 0 6px">País y liga</div><div class="row">${C.map((c,i)=>`<button class="${nc===i?"on":""}" data-a="ctry" data-i="${i}">${c.n}</button>`).join("")}</div><div class="mut" style="margin:10px 0 6px">Elige hueco de guardado</div><div class="row">${[1,2,3].map(n=>`<button class="p" data-a="start" data-n="${n}">Hueco ${n}${slotD(n)?" (sobrescribir)":""}</button>`).join("")}</div></div><button data-a="back" style="width:100%">Volver</button>`;
  return`<h1 style="font-size:30px;text-align:center;margin:30px 0 16px">Manager</h1><button class="p" data-a="new" style="width:100%;padding:14px">Nueva carrera</button><h2>Partidas guardadas</h2>`+[1,2,3].map(n=>{const d=slotD(n);return`<div class="card row"><div class="n"><b>Hueco ${n}</b><div class="mut">${d?esc(d.name)+" · "+dv(d)+" · temporada "+d.season:"Vacío"}</div></div>${d?`<button class="p" data-a="load" data-n="${n}" style="flex:0 0 auto">Cargar</button><button data-a="del" data-n="${n}" style="flex:0 0 auto">Borrar</button>`:""}</div>`}).join("")+`<button data-a="mode" data-m="" style="width:100%;margin-top:10px">Cambiar modo (${mode})</button>`}
 function vTable(){const L=S.lg,T=sortT(L),pos=T.findIndex(x=>x.me)+1,N=L.t.length;
@@ -143,7 +150,7 @@ function finish(){if(M.done)return;clearInterval(M.iv);M.done=true;const h=M.hg,
  const mv=Object.entries(best).sort((x,y)=>y[1]-x[1])[0];let up="";
  if(mv){const p=S.squad.find(x=>x.id===mv[0]);if(p&&p.ovr<95){p.ovr++;p.v=Math.round(Math.pow(p.ovr/50,5)*8)/10;up=" · "+esc(p.n)+" sube a "+p.ovr}}
  M.res=res+up;S.budget=Math.round(S.budget*10)/10;save();
- if(db&&M.opp.online){db.collection("results").add({a:S.name,b:M.opp.name,ga:h,gb:a,t:Date.now()}).catch(()=>{})}}
+ if(db&&M.opp.online){db.collection(P+"results").add({a:S.name,b:M.opp.name,ga:h,gb:a,t:Date.now()}).catch(()=>{})}}
 function ovc(o){return o>=75?"hi":o<55?"lo":""}
 function row(p,s,i){const bad=s&&p.pos!==s;return`<div class="r${sel===p.id?" s":""}" data-a="pick" data-id="${p.id}"><span class="pos">${s||p.pos}</span><span class="n">${esc(p.n)} ${bad?'<span class="lo">⚠ '+p.pos+"</span>":""}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span></div>`}
 function vClub(){const sl=slots(S.form),bench=S.squad.filter(p=>!S.xi.includes(p.id));
@@ -192,8 +199,9 @@ document.addEventListener("click",e=>{const t=e.target.closest("[data-a]");if(!t
  render()});
 (async()=>{render();
  try{if(window.claude){const u=await claude.use("user");uid=u?await u.id():null;db=uid?await claude.use("db"):null}}catch(e){}
+ if(!db){try{await fbInit()}catch(e){}}
  if(db){
-  try{db.collection("managers").onSnapshot(s=>{peers=s.docs.map(x=>({id:x.id,d:x.data()}));if(!M&&S)render()})}catch(e){}
-  try{db.collection("results").limit(40).onSnapshot(s=>{feed=s.docs.map(x=>x.data()).sort((a,b)=>b.t-a.t).slice(0,8);if(!M&&tab==="league")render()})}catch(e){}}
+  try{db.collection(P+"managers").onSnapshot(s=>{peers=s.docs.map(x=>({id:x.id,d:x.data()}));if(!M&&S)render()})}catch(e){}
+  try{db.collection(P+"results").limit(40).onSnapshot(s=>{feed=s.docs.map(x=>x.data()).sort((a,b)=>b.t-a.t).slice(0,8);if(!M&&tab==="league")render()})}catch(e){}}
  if(S||scr==="menu")render()})();
 </script></body></html>
