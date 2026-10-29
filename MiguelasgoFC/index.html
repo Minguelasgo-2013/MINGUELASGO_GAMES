@@ -122,7 +122,7 @@ function vMenu(){if(!mode)return`<h1 style="font-size:30px;text-align:center;mar
  if(scr==="new")return`<h1>Nueva carrera</h1><div class="card"><input id="nm" maxlength="22" value="${esc(nname)}" placeholder="Nombre de tu club"><div class="mut" style="margin:10px 0 6px">País y liga</div><div class="row">${C.map((c,i)=>`<button class="${nc===i?"on":""}" data-a="ctry" data-i="${i}">${c.n}</button>`).join("")}</div><div class="mut" style="margin:10px 0 6px">Elige hueco de guardado</div><div class="row">${[1,2,3].map(n=>`<button class="p" data-a="start" data-n="${n}">Hueco ${n}${slotD(n)?" (sobrescribir)":""}</button>`).join("")}</div></div><button data-a="back" style="width:100%">Volver</button>`;
  return`<h1 style="font-size:30px;text-align:center;margin:30px 0 16px">Manager</h1><button class="p" data-a="new" style="width:100%;padding:14px">Nueva carrera</button><h2>Partidas guardadas</h2>`+[1,2,3].map(n=>{const d=slotD(n);return`<div class="card row"><div class="n"><b>Hueco ${n}</b><div class="mut">${d?esc(d.name)+" · "+dv(d)+" · temporada "+d.season:"Vacío"}</div></div>${d?`<button class="p" data-a="load" data-n="${n}" style="flex:0 0 auto">Cargar</button><button data-a="del" data-n="${n}" style="flex:0 0 auto">Borrar</button>`:""}</div>`}).join("")+`<button data-a="mode" data-m="" style="width:100%;margin-top:10px">Cambiar modo (${mode})</button>`}
 function vTable(){const L=S.lg,T=sortT(L),pos=T.findIndex(x=>x.me)+1,N=L.t.length;
- return`<h2>${dv(S)} · temporada ${S.season}</h2><div class="card">${T.map((x,i)=>`<div class="r" style="cursor:default;${x.me?"background:var(--bg)":""}"><span class="pos">${i+1}º</span><span class="n" style="${i<2&&S.div>0?"color:var(--ac)":i>=N-2&&S.div<3?"color:var(--bad)":""}">${esc(x.n)}</span><span class="mut">${x.w}-${x.d}-${x.l}</span><b>${x.pts}</b></div>`).join("")}</div><div class="mut">Los 2 primeros suben de división y los 2 últimos bajan.</div>`+(L.rd>=L.ord.length?`<div class="card"><b>Fin de temporada: ${pos}º</b><button class="p" data-a="season" style="width:100%;margin-top:8px">Siguiente temporada</button></div>`:"")+((S.hist||[]).length?`<h2>Historial</h2><div class="card">${S.hist.map(h=>`<div class="mut">Temp. ${h.s}: ${h.p}º en ${C[S.ctry||0].d[h.d]}</div>`).join("")}</div>`:"")}
+ return`<h2>${dv(S)} · temporada ${S.season}</h2><div class="card">${T.map((x,i)=>`<div class="r" style="cursor:default;${x.me?"background:var(--bg)":""}"><span class="pos">${i+1}º</span><span class="n" style="${i<2&&S.div>0?"color:var(--ac)":i>=N-2&&S.div<3?"color:var(--bad)":""}">${esc(x.n)}</span><span class="mut">${x.w}-${x.d}-${x.l}</span><b>${x.pts}</b></div>`).join("")}</div><div class="mut">Los 2 primeros suben de división y los 2 últimos bajan.</div>`+(L.rd>=L.ord.length?`<div class="card"><b>Fin de temporada: ${pos}º</b>${pos===1&&S.div===0?`<p>¡Campeón de primera división! Te espera la Champions de los campeones nacionales.</p><button class="p" data-a="season" style="width:100%;margin-top:8px">Clasificar a Champions</button>`:`<button class="p" data-a="season" style="width:100%;margin-top:8px">Siguiente temporada</button>`}</div>`:"")+((S.hist||[]).length?`<h2>Historial</h2><div class="card">${S.hist.map(h=>`<div class="mut">Temp. ${h.s}: ${h.p}º en ${C[S.ctry||0].d[h.d]}</div>`).join("")}</div>`:"")}
 function simulate(A,B){const a=parts(A),b=parts(B),T=[a,b],ev=[];let sc=[0,0];
  const scorer=(q,side)=>{const L=[...q.g.DEL.flatMap(x=>[x,x,x,x]),...q.g.MED.flatMap(x=>[x,x]),...q.g.DEF];return pick(L).p};
  for(let m=1;m<=90;m++){
@@ -143,7 +143,21 @@ function tick(){if(!M)return;M.min++;if(M.gt>0)M.gt--;M.ev.filter(e=>e.m===M.min
  if(M.min>=90){finish();render()}else mupd()}
 function skip(){while(M&&M.min<90){M.min++;M.ev.filter(e=>e.m===M.min).forEach(e=>{if(e.g){e.s?M.ag++:M.hg++}M.log.unshift({m:e.m,t:e.t,s:e.s,g:e.g})})}finish();render()}
 function finish(){if(M.done)return;clearInterval(M.iv);M.done=true;const h=M.hg,a=M.ag;
- S.gf+=h;S.ga+=a;S.round++;let res;
+ let res;
+ if(M.opp.cup){
+  const T=S.champCup;
+  if(T.stage==="semi"){
+   const won=h===a?Math.random()<.5:h>a;
+   if(won){T.stage="final";T.finalOpponent=T.otherSemi.team;T.result="Semifinal ganada "+h+"-"+a;}
+   else{T.stage="done";T.won=false;T.result="Eliminado en semifinales "+h+"-"+a;}
+  }else if(T.stage==="final"){
+   T.stage="done";T.won=h===a?Math.random()<.5:h>a;T.result="Final "+h+"-"+a+(h===a?" (decidida en penaltis)":"");
+  }
+  if(T.stage==="done"&&T.won)S.budget+=10;
+  M.res=(T.result||"Partido terminado")+(T.stage==="done"&&T.won?" · PREMIO +10M":"");
+  save();return;
+ }
+ S.gf+=h;S.ga+=a;S.round++;
  if(M.opp.lg){const L=S.lg,o=L.t[M.opp.li];rec(L.t[0],h,a);rec(o,a,h);const q=L.ord.filter(i=>i!==M.opp.li).sort(()=>Math.random()-.5);for(let k=0;k<q.length-1;k+=2){const A=L.t[q[k]],B=L.t[q[k+1]],g1=qg(1.3*Math.pow(A.b/B.b,3)),g2=qg(1.3*Math.pow(B.b/A.b,3));rec(A,g1,g2);rec(B,g2,g1)}L.rd++}
  if(h>a){S.w++;S.pts+=3;S.streak++;S.budget+=M.opp.prize||3;res="PALIZA. Esto es Miguelasgo."}else if(h===a){S.d++;S.pts++;S.budget+=1;S.streak=0;res="Empate. Sabe a poco."}else{S.l++;S.streak=0;res="Derrota. Hoy toca tragársela."}
  const best={};M.ev.filter(e=>e.g&&!e.s).forEach(e=>best[e.p]=(best[e.p]||0)+1);
@@ -162,6 +176,42 @@ function vMarket(){return`<h2>Mercado · jornada ${S.round+1}</h2><div class="mu
 function vPlay(){const L=S.lg,on=peers.filter(p=>p.id!==uid),t=L.t[L.ord[L.rd]]||{};
  return`<h2>${dv(S)} · jornada ${Math.min(L.rd+1,L.ord.length)}/${L.ord.length}</h2>`+(L.rd>=L.ord.length?`<div class="card">Temporada terminada. Mira la pestaña Tabla.</div>`:`<div class="card row"><div class="n"><b>${esc(t.n)}</b><div class="mut">media ~${t.b} · premio ${PR[S.div]}M</div></div><button class="p" data-a="cpu" style="flex:0 0 auto">Jugar</button></div>`)
  +(mode!=="online"?"":`<h2>Retos online: a por ellos</h2>`+(db?(on.length?on.map(p=>`<div class="card row"><div class="n"><b>${esc(p.d.name)}</b><div class="mut">media ${p.d.ovr} · ${p.d.pts} pts</div></div><button class="p" data-a="on" data-id="${p.id}" style="flex:0 0 auto">Machacar</button></div>`).join(""):'<div class="mut">Aún no hay otros managers. ¡Comparte el enlace!</div>'):'<div class="mut">Modo online no disponible en esta vista. Comparte el enlace con permiso de colaborar para jugar contra amigos.</div>'))}
+
+function cupTeam(country,seed,base){
+ const r=rng(seed),K=C[country],names=[...FUN[country]];
+ const club=(K.s?pick(K.c)+" "+pick(K.p):pick(K.p)+" "+pick(K.c));
+ const squad=mkSquad(seed,base,"cup"+country,country),form=["4-4-2","4-3-3","3-5-2"][country%3];
+ return {name:club,squad,form,xi:autoXI(squad,form),prize:0,cup:1,country};
+}
+function startChampions(){
+ const others=[0,1,2,3].filter(i=>i!==S.ctry);
+ const r=rng(S.seed+S.season*991);
+ const rival=others.splice(Math.floor(r()*others.length),1)[0];
+ const rest=others;
+ const A=cupTeam(rival,S.seed+S.season*701+rival*31,78);
+ const B=cupTeam(rest[0],S.seed+S.season*811+rest[0]*31,77);
+ const D=cupTeam(rest[1],S.seed+S.season*911+rest[1]*31,79);
+ const g1=qg(1.4*Math.pow(B.squad.reduce((a,p)=>a+p.ovr,0)/D.squad.reduce((a,p)=>a+p.ovr,0),3));
+ const g2=qg(1.4*Math.pow(D.squad.reduce((a,p)=>a+p.ovr,0)/B.squad.reduce((a,p)=>a+p.ovr,0),3));
+ const winner=g1===g2?(Math.random()<.5?B:D):(g1>g2?B:D);
+ S.champCup={stage:"semi",semiOpponent:A,otherSemi:{a:B.name,b:D.name,score:g1+"-"+g2,winner:winner.name,team:winner},result:null};
+ tab="cup";
+}
+function vCup(){
+ const T=S.champCup;
+ if(!T)return `<h2>Champions Miguelasgo</h2><div class="card">Clasifícate primero en ${C[S.ctry].d[0]} para disputar las semifinales europeas.</div>`;
+ if(T.stage==="semi")return `<h2>🏆 Champions Miguelasgo</h2><div class="card"><b>SEMIFINAL</b><p>${esc(S.name)} 🇪🇸 vs ${esc(T.semiOpponent.name)} (${C[T.semiOpponent.country].n})</p><div class="mut">La otra semifinal: ${esc(T.otherSemi.a)} ${T.otherSemi.score} ${esc(T.otherSemi.b)} · pasa ${esc(T.otherSemi.winner)}</div><button class="p" style="width:100%;margin-top:8px" data-a="cupmatch">Jugar semifinal</button></div>`;
+ if(T.stage==="final")return `<h2>🏆 Champions Miguelasgo</h2><div class="card"><b>FINAL EUROPEA</b><p>${esc(S.name)} vs ${esc(T.finalOpponent.name)} (${C[T.finalOpponent.country].n})</p><button class="p" style="width:100%;margin-top:8px" data-a="cupmatch">Jugar la final</button></div>`;
+ return `<h2>🏆 ${T.won?"¡CAMPEONES DE EUROPA!":"Champions Miguelasgo"}</h2><div class="card"><b>${T.won?"¡Has ganado la Champions!":"Fin de la Champions"}</b><p>${esc(T.result||"Torneo terminado")}</p><button class="p" style="width:100%" data-a="season">Empezar siguiente temporada</button></div>`;
+}
+function advanceSeason(){
+ const pos=sortT(S.lg).findIndex(x=>x.me)+1;
+ (S.hist=S.hist||[]).push({s:S.season,d:S.div,p:pos});
+ S.budget=Math.round((S.budget+(pos<=3?PR[S.div]*2:PR[S.div]))*10)/10;
+ if(pos<=2&&S.div>0)S.div--;else if(pos>=S.lg.t.length-1&&S.div<3)S.div++;
+ S.season++;delete S.champCup;newLeague(S);tab="play";save();
+}
+
 function vLeague(){const L=[...peers].sort((a,b)=>b.d.pts-a.d.pts||(b.d.gf-b.d.ga)-(a.d.gf-a.d.ga));
  return`<h2>Clasificación online</h2><div class="card">`+(L.length?L.map((p,i)=>`<div class="r" style="cursor:default"><span class="pos">${i+1}º</span><span class="n">${esc(p.d.name)}${p.id===uid?" (tú)":""}</span><span class="mut">${p.d.w}-${p.d.d}-${p.d.l}</span><b>${p.d.pts}</b></div>`).join(""):'<div class="mut">Sin datos online todavía.</div>')+`</div><h2>Últimos partidos</h2><div class="card">`+(feed.length?feed.map(f=>`<div class="mut">${esc(f.a)} <b>${f.ga}-${f.gb}</b> ${esc(f.b)}</div>`).join(""):'<div class="mut">Nada aún.</div>')+"</div>"}
 function vMatch(){if(M.pre)return`<div class="card"><div class="mut" style="text-align:center">${esc(S.name)} vs ${esc(M.opp.name)}</div>${radar(S,M.opp)}<div class="row" style="justify-content:center;margin:6px 0"><span class="chip" style="border-color:var(--ac)">● ${esc(S.name)}</span><span class="chip" style="border-color:var(--ac2)">● ${esc(M.opp.name)}</span></div></div><button class="p" style="width:100%;padding:14px" data-a="kick">Pitido inicial</button>`;
@@ -169,10 +219,10 @@ function vMatch(){if(M.pre)return`<div class="card"><div class="mut" style="text
  ${M.done?`<div class="card" style="text-align:center"><b>${M.res}</b></div><button class="p" style="width:100%" data-a="close">Continuar</button>`:`<button style="width:100%" data-a="skip">Saltar ⏩</button>`}
  <div class="card log" id="lg">${M.log.map(l=>`<div class="${l.g?(l.s?"gb":"g"):""}">${l.m}' ${esc(l.t)}</div>`).join("")||'<div class="mut">Pitido inicial…</div>'}</div>`}
 function render(){const el=$("#app");if(!S){el.innerHTML=vMenu();return}
- let b;if(M)b=vMatch();else if(Z)b=vSign();else b={club:vClub,market:vMarket,play:vPlay,table:vTable,league:vLeague}[tab]();
+ let b;if(M)b=vMatch();else if(Z)b=vSign();else b={club:vClub,market:vMarket,play:vPlay,table:vTable,league:vLeague,cup:vCup}[tab]();
  el.innerHTML=`<div class="top"><h1>${esc(S.name)}</h1><span class="mut">${mode==="online"?"🟢 online":"⚪ solo"} <button data-a="menu" style="padding:4px 8px">Menú</button></span></div>
  <div class="chips"><span class="chip">${dv(S)}</span><span class="chip">💰 ${S.budget.toFixed(1)}M</span><span class="chip">${S.pts} pts</span><span class="chip">${S.w}V ${S.d}E ${S.l}D</span><span class="chip">racha ${S.streak}</span><span class="chip">Media ${ovrT(S)}</span></div>
- ${M?"":`<div class="tabs">${[["club","Club"],["market","Mercado"],["play","Jugar"],["table","Tabla"],...(mode==="online"?[["league","Online"]]:[])].map(([k,l])=>`<button class="${tab===k?"on":""}" data-a="tab" data-k="${k}">${l}</button>`).join("")}</div>`}${b}`}
+ ${M?"":`<div class="tabs">${[["club","Club"],["market","Mercado"],["play","Jugar"],["table","Tabla"],...(mode==="online"?[["league","Online"]]:[]),...(S.champCup?[["cup","🏆 Champions"]]:[])].map(([k,l])=>`<button class="${tab===k?"on":""}" data-a="tab" data-k="${k}">${l}</button>`).join("")}</div>`}${b}`}
 document.addEventListener("click",e=>{const t=e.target.closest("[data-a]");if(!t)return;e.stopPropagation();const a=t.dataset.a,id=t.dataset.id;
  if(a==="start"){const n=$("#nm").value.trim()||"Mi club";S=newState(n,+t.dataset.n);scr="menu";tab="club";save()}
  else if(a==="mode"){mode=t.dataset.m||null}
@@ -182,7 +232,8 @@ document.addEventListener("click",e=>{const t=e.target.closest("[data-a]");if(!t
  else if(a==="load"){S=slotD(+t.dataset.n);tab="club"}
  else if(a==="del"){try{localStorage.removeItem("mgfc_s"+t.dataset.n)}catch(x){}}
  else if(a==="menu"){save();S=null;sel=null;tab="club"}
- else if(a==="season"){const pos=sortT(S.lg).findIndex(x=>x.me)+1;(S.hist=S.hist||[]).push({s:S.season,d:S.div,p:pos});S.budget=Math.round((S.budget+(pos<=3?PR[S.div]*2:PR[S.div]))*10)/10;if(pos<=2&&S.div>0)S.div--;else if(pos>=S.lg.t.length-1&&S.div<3)S.div++;S.season++;newLeague(S);tab="play";save()}
+ else if(a==="season"){if(S.champCup&&S.champCup.stage==="done"){advanceSeason()}else{const pos=sortT(S.lg).findIndex(x=>x.me)+1;if(pos===1&&S.div===0){startChampions();save()}else advanceSeason()}}
+  else if(a==="cupmatch"){const T=S.champCup;if(T){const opp=T.stage==="semi"?T.semiOpponent:T.finalOpponent;play({...opp,cup:1,prize:0});return}}
  else if(a==="tab"){tab=t.dataset.k;sel=null;Z=null}
  else if(a==="form"){S.form=t.dataset.f;S.xi=autoXI(S.squad,S.form);sel=null;save()}
  else if(a==="auto"){S.xi=autoXI(S.squad,S.form);sel=null;save()}
