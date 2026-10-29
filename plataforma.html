@@ -1213,6 +1213,7 @@ auth.onAuthStateChanged(function(user){
     if(user){
         currentUser=user;
         notifArea.style.display='block';
+        listenUserNotifications(user);
         db.collection('players').doc(user.uid).get().then(function(doc){
             if(!doc.exists){
                 return db.collection('players').doc(user.uid).set({name:user.displayName||'Jugador',score:0,xp:0,level:1,games:0,playedGames:[],joined:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){currentPlayerName=user.displayName||'Jugador';});
@@ -1233,6 +1234,7 @@ auth.onAuthStateChanged(function(user){
         document.getElementById('livechatBtn').disabled=false;
     } else {
         currentUser=null;currentPlayerName='';
+        listenUserNotifications(null);
         notifArea.style.display='none';
         area.innerHTML='<button class="auth-btn" onclick="openAuth()">Iniciar sesion</button>';
         document.getElementById('commentText').disabled=true;
@@ -1481,28 +1483,27 @@ function sendConfetti(){
     }
 }
 
-/* ============ NOTIFICACIONES FIRESTORE ============ */
-db.collection('notifications').orderBy('time','desc').limit(10).onSnapshot(function(snap){
-    var list=document.getElementById('notifList');
-    var badge=document.getElementById('notifBadge');
-    list.innerHTML='';
-    var unread=0;
-    if(snap.empty){
-        list.innerHTML='<div class="notif-empty">Sin notificaciones</div>';
-        badge.style.display='none';
-        return;
-    }
-    snap.docs.forEach(function(doc){
-        var d=doc.data();
-        if(!d.read) unread++;
-        var item=document.createElement('div');
-        item.className='notif-item'+(d.read?'':' unread');
-        item.textContent=d.text||'';
-        list.appendChild(item);
-    });
-    if(unread>0){badge.textContent=unread;badge.style.display='flex';}
-    else{badge.style.display='none';}
-});
+/* ============ NOTIFICACIONES FIRESTORE POR USUARIO ============ */
+var notificationsUnsub=null;
+function listenUserNotifications(user){
+    if(notificationsUnsub){notificationsUnsub();notificationsUnsub=null;}
+    var list=document.getElementById('notifList'),badge=document.getElementById('notifBadge');
+    if(!user){list.innerHTML='<div class="notif-empty">Inicia sesión para ver tus notificaciones</div>';badge.style.display='none';return;}
+    // La consulta se limita al UID autenticado, como exigen las reglas de Firestore.
+    notificationsUnsub=db.collection('notifications').where('to','==',user.uid).orderBy('time','desc').limit(20).onSnapshot(function(snap){
+        list.innerHTML='';var unread=0;
+        if(snap.empty){list.innerHTML='<div class="notif-empty">Sin notificaciones</div>';badge.style.display='none';return;}
+        snap.docs.forEach(function(doc){
+            var d=doc.data()||{};if(!d.read)unread++;
+            var item=document.createElement('div');item.className='notif-item'+(d.read?'':' unread');
+            var title=document.createElement('strong');title.textContent=d.title||'MINGUELASGO GAMES';title.style.display='block';title.style.marginBottom='4px';title.style.color='var(--text-primary)';
+            var body=document.createElement('span');body.textContent=d.text||'';item.appendChild(title);item.appendChild(body);
+            item.addEventListener('click',function(){if(!d.read)doc.ref.update({read:true}).catch(function(e){console.warn('No se pudo marcar como leída:',e);});});
+            list.appendChild(item);
+        });
+        if(unread>0){badge.textContent=unread>99?'99+':unread;badge.style.display='flex';}else badge.style.display='none';
+    },function(err){console.error('Notificaciones:',err);list.innerHTML='<div class="notif-empty">No se pudieron cargar. Revisa las reglas de Firestore.</div>';badge.style.display='none';});
+}
 
 /* ============ ONLINE COUNT (real con Firestore) ============ */
 var onlineInterval=null;
@@ -1615,7 +1616,13 @@ db.collection('comments').onSnapshot(function(snap){
     '.adm-tag{background:#f5576c;color:#fff;font-size:.65em;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle}'+
     '.adm-btn{padding:8px 16px;border:none;border-radius:8px;font-weight:600;cursor:pointer;color:#fff;flex-shrink:0}'+
     '.adm-btn.ban{background:#f5576c}.adm-btn.unban{background:#4ade80;color:#000}'+
-    '#adminStats{color:var(--text-muted);font-size:.85em;text-align:center;margin-top:4px}';
+    '#adminStats{color:var(--text-muted);font-size:.85em;text-align:center;margin-top:4px}'+
+    '.adm-notif-box{border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 0;background:var(--bg-primary)}'+
+    '.adm-notif-box h3{font-size:1em;margin-bottom:10px;color:var(--text-primary)}'+
+    '.adm-notif-box input,.adm-notif-box textarea,.adm-notif-box select{display:block;width:100%;margin:7px 0;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-card);color:var(--text-primary);font:inherit}'+
+    '.adm-notif-box textarea{min-height:75px;resize:vertical}'+
+    '.adm-notif-send{width:100%;padding:11px;border:0;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-secondary));color:#fff;font-weight:800;cursor:pointer}'+
+    '.adm-notif-send:disabled{opacity:.55;cursor:wait}';
   document.head.appendChild(st);
 
    /* ---------- HTML: panel + pantalla de baneado ---------- */
@@ -1623,6 +1630,11 @@ db.collection('comments').onSnapshot(function(snap){
     '<div class="auth-overlay" id="adminModal"><div class="auth-modal" style="max-width:640px;max-height:85vh;display:flex;flex-direction:column">'+
       '<button class="auth-close" id="adminClose">&times;</button>'+
       '<h2>🛡️ Panel de Admin</h2>'+
+      '<div class="adm-notif-box"><h3>📣 Enviar notificación</h3>'+
+      '<input id="adminNotifTitle" maxlength="80" placeholder="Título de la notificación">'+
+      '<textarea id="adminNotifText" maxlength="500" placeholder="Escribe el mensaje (máximo 500 caracteres)"></textarea>'+
+      '<select id="adminNotifTarget"><option value="all">📢 Todos los jugadores activos</option></select>'+
+      '<button class="adm-notif-send" id="adminNotifSend" type="button">Enviar notificación</button></div>'+
       '<input type="text" id="adminSearch" placeholder="Buscar jugador o ID..." style="margin-bottom:0">'+
       '<div id="adminStats"></div><div class="adm-list" id="adminList"></div>'+
     '</div></div>'+
@@ -1668,6 +1680,8 @@ db.collection('comments').onSnapshot(function(snap){
     all=all.filter(function(p){return !q||p.name.toLowerCase().indexOf(q)>-1||p.uid.toLowerCase().indexOf(q)>-1;});
     all.sort(function(a,b){return (bans[b.uid]?1:0)-(bans[a.uid]?1:0)||b.score-a.score;});
     document.getElementById('adminStats').textContent=players.length+' jugadores, '+Object.keys(bans).length+' baneados';
+    var target=document.getElementById('adminNotifTarget');
+    if(target){var chosen=target.value;target.innerHTML='<option value="all">📢 Todos los jugadores activos</option>'+players.filter(function(p){return !bans[p.uid];}).map(function(p){return '<option value="'+encodeURIComponent(p.uid)+'">'+esc(p.name)+' — '+esc(p.uid.slice(0,10))+'</option>';}).join('');if(chosen!=='all'&&players.some(function(p){return encodeURIComponent(p.uid)===chosen&&!bans[p.uid];}))target.value=chosen;}
     document.getElementById('adminList').innerHTML=all.length?all.map(function(p){
       var b=bans[p.uid];
       return '<div class="adm-row'+(b?' banned':'')+'"><div class="adm-info"><div class="adm-name">'+esc(p.name)+(b?'<span class="adm-tag">BANEADO</span>':'')+'</div>'+
@@ -1697,6 +1711,28 @@ db.collection('comments').onSnapshot(function(snap){
       .catch(function(e){showToast('Error: '+e.message,'warning');});
   }
 
+  function sendAdminNotification(){
+    if(!isAdmin||!auth.currentUser){showToast('Solo los administradores pueden enviar notificaciones','warning');return;}
+    var title=document.getElementById('adminNotifTitle').value.trim();
+    var message=document.getElementById('adminNotifText').value.trim();
+    var target=document.getElementById('adminNotifTarget').value;
+    var btn=document.getElementById('adminNotifSend');
+    if(!title||!message){showToast('Escribe un título y un mensaje','warning');return;}
+    var recipients=target==='all'?players.filter(function(p){return !bans[p.uid];}).map(function(p){return p.uid;}):[decodeURIComponent(target)];
+    if(!recipients.length){showToast('No hay destinatarios disponibles','warning');return;}
+    btn.disabled=true;btn.textContent='Enviando 0/'+recipients.length+'…';
+    var chunks=[];for(var i=0;i<recipients.length;i+=400)chunks.push(recipients.slice(i,i+400));
+    var sent=0;
+    chunks.reduce(function(chain,chunk){return chain.then(function(){
+      var batch=db.batch();chunk.forEach(function(uid){var ref=db.collection('notifications').doc();batch.set(ref,{to:uid,title:title,text:message,read:false,time:firebase.firestore.FieldValue.serverTimestamp(),from:auth.currentUser.uid});});
+      return batch.commit().then(function(){sent+=chunk.length;btn.textContent='Enviando '+sent+'/'+recipients.length+'…';});
+    });},Promise.resolve()).then(function(){
+      document.getElementById('adminNotifTitle').value='';document.getElementById('adminNotifText').value='';
+      showToast('Notificación enviada a '+sent+' jugador(es)','success');
+    }).catch(function(e){console.error('Error enviando notificaciones:',e);showToast('No se pudo enviar: '+(e.message||'revisa las reglas de Firestore'),'warning');})
+    .finally(function(){btn.disabled=false;btn.textContent='Enviar notificación';});
+  }
+  document.getElementById('adminNotifSend').onclick=sendAdminNotification;
   document.getElementById('adminOpen').onclick=openPanel;
   document.getElementById('adminClose').onclick=closePanel;
   document.getElementById('adminSearch').oninput=render;
