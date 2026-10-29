@@ -181,6 +181,13 @@ section{padding:80px 40px;position:relative;z-index:1}
 .fav-btn{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);width:38px;height:38px;border-radius:10px;font-size:1.2em;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
 .fav-btn:hover{background:rgba(102,126,234,.4);border-color:rgba(102,126,234,.5);transform:scale(1.1);color:#fff}
 .fav-btn.active{background:rgba(102,126,234,.7);border-color:var(--accent);color:#fff}
+.game-thumb{overflow:hidden}
+.game-thumb .fav-btn{z-index:5}
+.gt-wrap{position:absolute;inset:0;overflow:hidden;border-radius:inherit}
+.gt-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3.5rem}
+.gt-prev{position:absolute;top:0;left:0;border:0;transform-origin:0 0;pointer-events:none;opacity:0;transition:opacity .5s;background:#000}
+.gt-prev.on{opacity:1}
+.gt-cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .fav-section{background:var(--bg-secondary)}
 .game-tag{padding:3px 10px;background:rgba(102,126,234,.15);border-radius:10px;font-size:.75em;color:var(--accent)}
 .grad-1{background:linear-gradient(135deg,#667eea,#764ba2)}.grad-2{background:linear-gradient(135deg,#f093fb,#f5576c)}.grad-3{background:linear-gradient(135deg,#4facfe,#00f2fe)}.grad-4{background:linear-gradient(135deg,#43e97b,#38f9d7)}.grad-5{background:linear-gradient(135deg,#fa709a,#fee140)}.grad-6{background:linear-gradient(135deg,#30cfd0,#330867)}.grad-8{background:linear-gradient(135deg,#a8edea,#fed6e3)}
@@ -920,6 +927,41 @@ document.addEventListener('click',function(e){
 })();
 
 /* ============ JUEGOS ============ */
+/* ============ PORTADAS VISUALES ============
+   Cada juego muestra una vista previa real (el juego en miniatura, sin sonido y sin poder tocarlo).
+   Si prefieres una imagen, añade cover:'Carpeta/portada.jpg' al juego en GAMES. */
+var coverObs=('IntersectionObserver' in window)?new IntersectionObserver(function(es){
+    es.forEach(function(en){if(en.isIntersecting)loadCover(en.target);else unloadCover(en.target);});
+},{rootMargin:'200px'}):null;
+function attachCover(card){
+    var g=GAMES.find(function(x){return x.name===card.getAttribute('data-name');});
+    var th=card.querySelector('.game-thumb');
+    if(!g||!th||th.querySelector('.gt-wrap'))return;
+    var w=document.createElement('div');w.className='gt-wrap';
+    w.setAttribute('data-folder',g.folder);w.setAttribute('data-cover',g.cover||'');
+    var ic=document.createElement('span');ic.className='gt-icon';ic.textContent=g.icon||'🎮';w.appendChild(ic);
+    th.insertBefore(w,th.firstChild);
+    if(coverObs)coverObs.observe(w);else loadCover(w);
+}
+function loadCover(w){
+    if(w.querySelector('iframe,img'))return;
+    var ic=w.querySelector('.gt-icon'),cv=w.getAttribute('data-cover');
+    if(cv){
+        var im=new Image();im.className='gt-cover';im.alt='';im.onload=function(){if(ic)ic.style.display='none';};im.src=cv;w.appendChild(im);return;
+    }
+    var f=document.createElement('iframe');
+    f.className='gt-prev';f.setAttribute('tabindex','-1');f.setAttribute('aria-hidden','true');f.setAttribute('title','Vista previa');
+    f.setAttribute('sandbox','allow-scripts');f.setAttribute('scrolling','no');
+    var s=Math.max(.1,w.clientWidth/1000);
+    f.style.width='1000px';f.style.height=Math.round(w.clientHeight/s)+'px';f.style.transform='scale('+s+')';
+    f.onload=function(){f.classList.add('on');if(ic)ic.style.display='none';};
+    f.src=w.getAttribute('data-folder')+'/index.html';
+    w.appendChild(f);
+}
+function unloadCover(w){
+    var f=w.querySelector('iframe');
+    if(f){f.src='about:blank';f.remove();var ic=w.querySelector('.gt-icon');if(ic)ic.style.display='flex';}
+}
 var GAMES=[
     {name:'BlockDash',folder:'BlockDash',icon:'🏃',cat:'Accion',grad:1,desc:'Corre, esquiva y sobrevive'},
     {name:'Bunker60',folder:'Bunker60',icon:'🏚️',cat:'Aventura',grad:2,desc:'Sobrevive en el bunker'},
@@ -1000,7 +1042,7 @@ function renderFavGrid(){
             '</div>'+
             '<div class="game-info"><h4>'+esc(g.name)+'</h4><p>'+esc(g.desc)+'</p>'+
             '<div class="game-bottom"><div class="game-tags"><span class="game-tag">'+esc(g.cat)+'</span></div></div></div>';
-        fg.appendChild(a);
+        fg.appendChild(a);attachCover(a);
     });
 }
 
@@ -1027,7 +1069,7 @@ GAMES.forEach(function(g,i){
                 '<div class="game-tags"><span class="game-tag">'+esc(g.cat)+'</span></div>'+
             '</div>'+
         '</div>';
-    grid.appendChild(a);
+    grid.appendChild(a);attachCover(a);
     setTimeout(function(){a.classList.add('visible');},80*i);
 });
 renderFavGrid();
