@@ -1202,7 +1202,7 @@ auth.onAuthStateChanged(function(user){
 });
 
 /* ============ RANKING GLOBAL ============ */
-db.collection('players').orderBy('score','desc').limit(10).onSnapshot(function(snap){
+db.collection('players').orderBy('xp','desc').limit(10).onSnapshot(function(snap){
     var table=document.getElementById('rankingTable');
     table.querySelectorAll('.ranking-row:not(.header)').forEach(function(r){r.remove();});
     var emojis=['😎','🎯','🐺','⭐','⚡','👑','🦸','🎮','🔥','💎'];
