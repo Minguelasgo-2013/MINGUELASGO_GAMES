@@ -1,262 +1,549 @@
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Manager</title>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SURVIVAL VIP - MINGUELASGO GAMES</title>
 <style>
-:root{--bg:#f2f6f1;--card:#fff;--tx:#14231a;--mut:#667a6c;--ac:#14a14a;--ac2:#f5b301;--bd:#d9e4da;--bad:#d64545;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1a12;--card:#16281c;--tx:#e8f3ea;--mut:#8fa896;--ac:#2bd46a;--ac2:#ffc933;--bd:#25402c;--bad:#ff6b6b;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0d1a12;--card:#16281c;--tx:#e8f3ea;--mut:#8fa896;--ac:#2bd46a;--ac2:#ffc933;--bd:#25402c;--bad:#ff6b6b;color-scheme:dark}
-*{box-sizing:border-box}html,body{margin:0}
-body{background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100%}
-#app{max-width:680px;margin:0 auto;padding:12px}
-h1{margin:0;font-size:20px}h2{font-size:16px;margin:14px 0 6px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
-.chip{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:3px 10px;font-size:13px}
-.tabs{display:flex;gap:4px;margin:8px 0;position:sticky;top:0;background:var(--bg);padding:4px 0;z-index:2}
-.tabs button{flex:1}
-button{font:inherit;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;cursor:pointer}
-button.on,button.p{background:var(--ac);color:#04200f;border-color:var(--ac);font-weight:700}
-button:disabled{opacity:.4;cursor:default}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px;margin:6px 0}
-.r{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;border:1px solid transparent}
-.r:hover{background:var(--bg)}.r.s{border-color:var(--ac2);background:var(--bg)}
-.pos{width:36px;font-size:12px;font-weight:700;color:var(--mut)}
-.n{flex:1}.ovr{font-weight:800;min-width:28px;text-align:center;border-radius:6px;padding:1px 4px;background:var(--bg)}
-.hi{color:var(--ac)}.lo{color:var(--bad)}.mut{color:var(--mut);font-size:13px}
-.score{font-size:34px;font-weight:900;text-align:center;letter-spacing:2px}
-.log{max-height:300px;overflow:auto;font-size:14px}.log div{padding:3px 0;border-bottom:1px dashed var(--bd)}
-.g{color:var(--ac);font-weight:700}.gb{color:var(--bad);font-weight:700}
-.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.row>*{flex:1}
-input{font:inherit;padding:9px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);width:100%}
-.pitch{background:var(--ac);height:6px;border-radius:3px;margin:4px 0}
-h1{text-transform:uppercase;font-style:italic;letter-spacing:1px;font-weight:900}
-button.on,button.p{color:#fff}.card{border-radius:6px}button{border-radius:6px;text-transform:uppercase;font-size:13px;letter-spacing:.5px}
-:root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#0a0a0c;--card:#16161a;--tx:#f1f1f1;--mut:#8b8b95;--ac:#e5173f;--ac2:#ffc400;--bd:#2a2a31;--bad:#ff7a00;color-scheme:dark}
-.pit{position:relative;height:430px;border-radius:8px;background:repeating-linear-gradient(#1c7a3a 0 40px,#218c43 40px 80px);border:2px solid rgba(255,255,255,.35);overflow:hidden}
-.pit:before{content:"";position:absolute;left:0;right:0;top:50%;border-top:2px solid rgba(255,255,255,.35)}
-.pit:after{content:"";position:absolute;left:50%;top:50%;width:90px;height:90px;margin:-45px;border:2px solid rgba(255,255,255,.35);border-radius:50%}
-.pl{position:absolute;transform:translate(-50%,-50%);text-align:center;cursor:pointer;width:70px;z-index:1}
-.pl b{display:flex;width:38px;height:38px;margin:0 auto;border-radius:50%;background:var(--ac);color:#fff;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 6px #0008}
-.pl.s b{background:var(--ac2);color:#000;transform:scale(1.15)}.pl b.bd{background:var(--bad)}
-.pl span{display:block;font-size:11px;color:#fff;text-shadow:0 1px 3px #000;margin-top:2px}
-.mp{height:390px}.gp{position:absolute;left:34%;width:32%;height:13%;border:2px solid rgba(255,255,255,.35)}
-.d{position:absolute;width:14px;height:14px;margin:-7px;border-radius:50%;border:2px solid #fff;transition:left .5s ease,top .5s ease}.d.m{background:var(--ac)}.d.o{background:var(--ac2)}
-.ball{position:absolute;width:12px;height:12px;margin:-6px;border-radius:50%;background:#fff;box-shadow:0 0 8px #fff;transition:left .35s ease,top .35s ease;z-index:3}
-.gol{position:absolute;left:0;right:0;top:42%;text-align:center;font-size:44px;font-weight:900;color:#fff;text-shadow:0 2px 10px #000;z-index:4}
-</style></head><body><div id="app"></div>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    background: #0a0a2e;
+    color: #e0e0ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+h1 {
+    font-size: 2.2em;
+    font-weight: 900;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 20px 0 5px;
+    letter-spacing: 2px;
+}
+.vip-tag {
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    color: #000;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+#game {
+    width: 100%;
+    max-width: 650px;
+    background: #111145;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.15);
+}
+.stats { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+.stat-box {
+    flex: 1; min-width: 80px;
+    background: #161655;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    transition: all 0.3s;
+}
+.stat-box:hover { border-color: rgba(102, 126, 234, 0.5); }
+.stat-label { font-size: 0.7em; color: #7070a0; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+.stat-val { font-size: 1.3em; font-weight: 700; }
+.stat-val.hp { color: #ff4466; }
+.stat-val.hunger { color: #ff9900; }
+.stat-val.thirst { color: #4facfe; }
+.stat-val.day { color: #667eea; }
+.bar-wrap { background: #0a0a2e; border-radius: 4px; height: 6px; margin-top: 6px; }
+.bar { height: 6px; border-radius: 4px; transition: width 0.4s; }
+.bar.hp { background: linear-gradient(90deg, #ff4466, #ff6b8a); }
+.bar.hunger { background: linear-gradient(90deg, #ff9900, #ffcc00); }
+.bar.thirst { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+
+.inventory {
+    background: #0a0a2e;
+    border: 1px solid rgba(102, 126, 234, 0.15);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 0.85em;
+    color: #7070a0;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+}
+.inv-item { display: flex; align-items: center; gap: 4px; }
+.inv-item span { color: #667eea; font-weight: 600; }
+
+.zone {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #ffd700;
+    margin-bottom: 10px;
+    padding: 8px 14px;
+    background: rgba(255, 215, 0, 0.08);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    display: inline-block;
+}
+#log {
+    background: #0a0a2e;
+    border-left: 3px solid #667eea;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 0.9em;
+    color: #c0c0e0;
+    min-height: 70px;
+    margin-bottom: 18px;
+    line-height: 1.7;
+}
+#log .good { color: #4ade80; }
+#log .bad { color: #ff4466; }
+#log .neutral { color: #c0c0e0; }
+#log .event { color: #fbbf24; }
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+.opt-btn {
+    background: transparent;
+    border: 1.5px solid rgba(102, 126, 234, 0.4);
+    color: #e0e0ff;
+    padding: 13px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-size: 0.9em;
+    text-align: left;
+    transition: all 0.2s;
+}
+.opt-btn:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    transform: translateY(-1px);
+}
+.opt-btn:active { transform: translateY(0); }
+
+#overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 46, 0.95);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+    backdrop-filter: blur(10px);
+}
+#overlay.show { display: flex; }
+#overlay h2 { font-size: 2.8em; margin-bottom: 10px; }
+#overlay p { color: #7070a0; margin-bottom: 10px; font-size: 1.1em; }
+#overlay .score-detail { color: #c0c0e0; font-size: 0.9em; margin-bottom: 25px; }
+#overlay button {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 12px;
+    font-size: 1.1em;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    transition: all 0.3s;
+}
+#overlay button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+.dead h2 { color: #ff4466; }
+.win h2 { color: #ffd700; }
+
+.record-bar {
+    background: #161655;
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 10px;
+    padding: 8px 14px;
+    margin-bottom: 16px;
+    font-size: 0.8em;
+    color: #7070a0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.record-bar .record-val { color: #ffd700; font-weight: 700; }
+
+footer {
+    margin-top: 30px;
+    color: #7070a0;
+    font-size: 0.8em;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@media(max-width:480px) {
+    h1 { font-size: 1.6em; }
+    #game { padding: 16px; }
+    .stat-box { min-width: 70px; padding: 8px; }
+    .stat-val { font-size: 1.1em; }
+}
+</style>
+</head>
+<body>
+<h1>SURVIVAL</h1>
+<div class="vip-tag">VIP EXCLUSIVE</div>
+<div id="game">
+    <div class="record-bar">
+        <span>Record: <span class="record-val" id="recordDays">0</span> dias</span>
+        <span>Partidas: <span class="record-val" id="totalGames">0</span></span>
+    </div>
+    <div class="stats">
+        <div class="stat-box"><div class="stat-label">DIA</div><div class="stat-val day" id="sDia">1</div></div>
+        <div class="stat-box"><div class="stat-label">HP</div><div class="stat-val hp" id="sHp">100</div><div class="bar-wrap"><div class="bar hp" id="bHp" style="width:100%"></div></div></div>
+        <div class="stat-box"><div class="stat-label">HAMBRE</div><div class="stat-val hunger" id="sHam">100</div><div class="bar-wrap"><div class="bar hunger" id="bHam" style="width:100%"></div></div></div>
+        <div class="stat-box"><div class="stat-label">SED</div><div class="stat-val thirst" id="sSed">100</div><div class="bar-wrap"><div class="bar thirst" id="bSed" style="width:100%"></div></div></div>
+    </div>
+    <div class="inventory" id="invDisplay"></div>
+    <div class="zone" id="zoneName"></div>
+    <div id="log">Bienvenido a la isla. Sobrevive el maximo posible.</div>
+    <div class="options" id="options"></div>
+</div>
+
+<div id="overlay">
+    <h2 id="oTitle"></h2>
+    <p id="oMsg"></p>
+    <p class="score-detail" id="oDetail"></p>
+    <button onclick="resetGame()">REINTENTAR</button>
+</div>
+<footer>&copy; 2026 MINGUELASGO GAMES</footer>
+
 <script>
-const FN=["Leo","Marc","Iker","Dani","Pablo","Hugo","Alex","Sergio","Raúl","Nico","Adri","Joel","Bruno","Luka","Theo","Dario","Mateo","Ivan","Omar","Kai"];
-const LN=["Vega","Torres","Ríos","Costa","Navas","Ferrer","Soler","Pires","Maldini","Okoro","Silva","Duarte","Lobo","Ortiz","Bravo","Ruiz","Kane","Moreno","Sanz","Rey","Cruz","Blanco","Mora","Diop"];
-const NM=[{f:["Pablo","Sergio","Raúl","Iker","Dani","Álvaro","Jesús","Marcos","Adrián","Diego","Nacho","Rubén","Borja","Unai","Jordi","Fran"],l:["García","Fernández","Ruiz","Sanz","Navarro","Ortega","Molina","Iglesias","Santos","Cabrera","Vega","Peña","Domínguez","Ramos","Gallego","Mora"]},
-{f:["Jack","Harry","Oliver","Charlie","George","Tom","Jamie","Declan","Callum","Ben","Luke","Reece","Mason","Kyle","Ryan","Liam"],l:["Smith","Taylor","Walker","Wright","Hughes","Foster","Bennett","Cooper","Palmer","Rooney","Barnes","Hargreaves","Murphy","Knight","Sutton","Webb"]},
-{f:["Marco","Luca","Matteo","Andrea","Davide","Federico","Gianluca","Stefano","Alessio","Simone","Lorenzo","Fabio","Nicolò","Riccardo","Paolo","Enzo"],l:["Rossi","Esposito","Romano","Colombo","Ricci","Marino","Greco","Bruno","Gallo","Conti","De Luca","Costa","Fontana","Moretti","Barbieri","Ferrari"]},
-{f:["Lukas","Jonas","Felix","Maximilian","Tobias","Jan","Florian","Moritz","Leon","Niklas","Kai","Timo","Dennis","Sven","Jürgen","Matthias"],l:["Müller","Schmidt","Schneider","Fischer","Weber","Wagner","Becker","Hoffmann","Schäfer","Koch","Richter","Klein","Wolf","Neumann","Schwarz","Krüger"]}];
-const FUN=[["Atlético Tortilla","Real Siesta CF","Deportivo La Chancla","Racing de mi Cuñado","Sporting Croquetas","CD Paella Mixta","UD Jamón Serrano","Athletic Pa Dentro","Real Sociedad Limitada","Club Churros con Chocolate","Deportivo Alcachofa","Atlético Pueblo Perdido","Los Manolos FC","Real Madriguera","Racing de la Barra","CF Botellón Unido"],
-["Fish & Chips United","Tea Time Rovers","Sunday Roast Athletic","Soggy Biscuit City","Mushy Peas Wanderers","Rainy Day Town","Pie & Mash FC","Cheeky Pint United","Queue Jumpers FC","Crumpet Rovers","Marmite Athletic","Bangers & Mash Town","Wet Wednesday City","Scone Zone United","Pub Crawl Wanderers","Offside Gentlemen FC"],
-["Pizza Margherita FC","Spaghetti Calcio","Gelato Sciolto United","AC Cappuccino","Tiramisù Atletico","Lasagna Rovers","US Mozzarella","Virtus Parmigiano","Nonna Sgrida FC","Vespa Rotta 1908","AS Pasta Scotta","Fuorigioco Club","Pomodoro Sportiva","Limoncello Boys","Bruschetta FC","Gnocchi Furiosi"],
-["FC Bratwurst","SV Bierfass","Sauerkraut Kickers","Brezel United 04","Wurstsalat Eintracht","FC Currywurst","Schnitzel Sportfreunde","SG Pünktlichkeit","Kartoffelsalat FC","Lederhosen Union","Fußball Verein Gemütlich","Bierbauch Borussia","Rasenmäher Rangers","VfB Verspätung","TSV Schwarzbrot","Gurkensalat 09"]];
-const CL=["Los Cuchillos FC","Atlético Barrizal","Real Pelotazo","Deportivo Tarjeta","Unión Patadón","Racing Chusma","CF Navaja","Sporting Chapuza"];
-const FORM={"4-4-2":[4,4,2],"4-3-3":[4,3,3],"3-5-2":[3,5,2],"5-3-2":[5,3,2],"4-5-1":[4,5,1],"3-4-3":[3,4,3],"5-4-1":[5,4,1],"4-2-4":[4,2,4]};
-const $=s=>document.querySelector(s);
-const FBC={apiKey:"AIzaSyCyKZLCvvj6rW8VktyLjF53Smc7o9Q4LbY",authDomain:"miguelasgo-games.firebaseapp.com",projectId:"miguelasgo-games",storageBucket:"miguelasgo-games.firebasestorage.app",messagingSenderId:"17704257603",appId:"1:17704257603:web:544bc481254462d2846cf6"};
-let P="";
-const ld=u=>new Promise((ok,no)=>{const s=document.createElement("script");s.src=u;s.onload=ok;s.onerror=no;document.head.appendChild(s)});
-async function fbInit(){const B="https://www.gstatic.com/firebasejs/10.12.0/";for(const f of ["app","auth","firestore"])await ld(B+"firebase-"+f+"-compat.js");
- if(!firebase.apps.length)firebase.initializeApp(FBC);
- const u=await new Promise(ok=>{const off=firebase.auth().onAuthStateChanged(x=>{off();ok(x)})});
- if(u){uid=u.uid;db=firebase.firestore();P="mgfc_"}}
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
-const hash=s=>[...String(s)].reduce((a,c)=>(a*31+c.charCodeAt(0))|0,7);
-function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
-const PW=[{p:["Atlético","Real","Deportivo","Racing","Sporting","Unión","CD","Club"],w:["Tortilla","Siesta","Chancla","Croquetas","Paella","Jamón","Botellón","Alcachofa"],s:0},
-{p:["United","City","Town","Rovers","Athletic","Wanderers","Albion","Rangers"],w:["Fish & Chips","Soggy Biscuit","Mushy Peas","Tea Time","Rainy Day","Cheeky Pint","Crumpet","Marmite"],s:1},
-{p:["AC","US","AS","FC","Virtus","Atletico","Sporting","Union"],w:["Pizza","Spaghetti","Gelato","Cappuccino","Tiramisù","Lasagna","Mozzarella","Gnocchi"],s:0},
-{p:["FC","SV","VfB","Eintracht","Fortuna","Union","Borussia","TSV"],w:["Bratwurst","Bierfass","Sauerkraut","Brezel","Currywurst","Schnitzel","Kartoffelsalat","Schwarzbrot"],s:0}];
-const POOL=PW.map((o,k)=>{const r=rng(777+k),L=[];o.p.forEach(p=>o.w.forEach(w=>L.push(o.s?w+" "+p:p+" "+w)));return L.sort(()=>r()-.5).slice(0,48)});
-const STAD=[["Estadio El Botijo","Campo de la Siesta","Estadio de la Tortilla","Estadio Los Churros","El Cuñado Arena","Estadio La Verbena","Campo Pueblo Perdido","Estadio El Bocata"],
-["Tea Park","Fish Lane","Soggy Ground","Drizzle Road","The Pint Stadium","Crumpet Park","Brolly Arena","Queue Road"],
-["Stadio Nonna","Stadio Gelato","Campo La Pasta","Stadio Il Pomodoro","Stadio Vespa","Arena Cappuccino","Stadio Limoncello","Campo Il Nonno"],
-["Wurst-Arena","Bierfass-Stadion","Brezel-Park","Stadion am Sauerkraut","Gemütlichkeit-Arena","Kartoffel-Stadion","Pünktlich-Platz","Schwarzbrot-Arena"]];
-const stad=(n,k)=>STAD[k||0][Math.abs(hash(n))%8];
-const REW=[60,30,16,8],FAC=[1.6,1.4,1.2,1,.9,.8,.7,.6,.5,.4,.3,.2],MINB=[80,40,22,12],CAP=[8000,15000,25000,40000,60000],UP=[6,12,25,50];
-const slots=f=>["POR",...Array(FORM[f][0]).fill("DEF"),...Array(FORM[f][1]).fill("MED"),...Array(FORM[f][2]).fill("DEL")];
-function mkP(r,id,pos,base,k){k=k||0;const o=clamp(Math.round(base+(r()-.5)*18),42,92),na=r()<.75?k:Math.floor(r()*12),s=NM[[0,1,2,3,2,0,0,0,3,0,1,3][na]];
- return{id,nat:na,n:s.f[Math.floor(r()*s.f.length)][0]+". "+s.l[Math.floor(r()*s.l.length)],pos,ovr:o,v:Math.round(Math.pow(o/50,5)*8)/10}}
-function mkSquad(seed,base,tag,k){const r=rng(seed),L=[];
- ["POR","POR",..."DEF,DEF,DEF,DEF,DEF,DEF,MED,MED,MED,MED,MED,MED,DEL,DEL,DEL,DEL".split(",")].forEach((p,i)=>L.push(mkP(r,tag+i,p,base,k)));return L}
-function autoXI(sq,f){const used=new Set();return slots(f).map(s=>{
- let c=sq.filter(p=>!used.has(p.id)&&p.pos===s).sort((a,b)=>b.ovr-a.ovr)[0]||sq.filter(p=>!used.has(p.id)).sort((a,b)=>b.ovr-a.ovr)[0];
- used.add(c.id);return c.id})}
-const eff=(p,s)=>p.pos===s?p.ovr:p.ovr-(s==="POR"||p.pos==="POR"?35:12);
-function parts(t){const sl=slots(t.form),g={POR:[],DEF:[],MED:[],DEL:[]};
- t.xi.forEach((id,i)=>{const p=t.squad.find(x=>x.id===id);if(p)g[sl[i]].push({p,e:eff(p,sl[i])})});
- const av=a=>a.length?a.reduce((s,x)=>s+x.e,0)/a.length:30;
- return{g,gk:av(g.POR),def:av(g.DEF),mid:av(g.MED),att:av(g.DEL)}}
-const ovrT=t=>{const q=parts(t);return Math.round((q.gk+q.def*4+q.mid*3+q.att*3)/11)};
-let db=null,uid=null,S=null,tab="club",sel=null,M=null,peers=[],feed=[];
-const cpuTeams=()=>[0,1,2].map(i=>{const b=clamp(54+S.round*1.3+i*7,50,84),sq=mkSquad(S.seed+S.round*31+i,b,"c"+i),f=["4-4-2","4-3-3","3-5-2"][i];
- return{name:CL[(S.round+i*3)%CL.length],squad:sq,form:f,xi:autoXI(sq,f),prize:2+i*2.5,lab:["Fácil","Medio","Difícil"][i]}});
-const market=()=>{const r=rng(S.seed+Math.floor(S.round/5)*977),L=[];
- for(let i=0;i<10;i++){L.push(mkP(r,"m"+Math.floor(S.round/5)+"-"+i,["POR","DEF","DEF","MED","MED","DEL","DEL","MED","DEF","DEL"][i],[80,74,68,62][S.div]+Math.min(S.season,4),S.ctry||0))}return L.filter(p=>!S.squad.some(x=>x.id===p.id))};
-function newState(name,slot){const seed=hash(name+(uid||Math.random()));const sq=mkSquad(seed,60,"p",nc);
- const o={name,slot,ctry:nc,seed,squad:sq,form:"4-4-2",xi:autoXI(sq,"4-4-2"),budget:15,stl:1,pts:0,w:0,d:0,l:0,gf:0,ga:0,round:0,streak:0,div:3,season:1};newLeague(o);return o}
-async function save(){try{localStorage.setItem("mgfc_s"+S.slot,JSON.stringify(S))}catch(e){}
- if(mode==="online"&&db&&uid&&S){try{await db.doc(P+"managers/"+uid).set({name:S.name,pts:S.pts,w:S.w,d:S.d,l:S.l,gf:S.gf,ga:S.ga,ovr:ovrT(S),st:JSON.stringify(S),t:Date.now()})}catch(e){}}}
-const pick=a=>a[Math.floor(Math.random()*a.length)];
-const C=[{n:"España",d:["LaLiga","Segunda","Primera RFEF","Segunda RFEF"],s:0,p:["Real","Atlético","Deportivo","Racing","CD","Sporting"],c:["Sevilla","Valencia","Bilbao","Vigo","Málaga","Zaragoza","Granada","Oviedo","Gijón","Murcia","Alicante","Córdoba","Vitoria","Pamplona","Santander","Almería"]},
-{n:"Inglaterra",d:["Premier","Championship","League One","League Two"],s:1,p:["United","City","Town","Rovers","Athletic","Wanderers"],c:["Leeds","Bristol","Norwich","Derby","Leicester","Brighton","Hull","Stoke","Preston","Reading","Luton","Burnley","Ipswich","Wigan","Bolton","Swansea"]},
-{n:"Italia",d:["Serie A","Serie B","Serie C","Serie D"],s:0,p:["AC","US","AS","FC","Calcio","Virtus"],c:["Torino","Génova","Bolonia","Parma","Verona","Cagliari","Lecce","Udine","Bari","Pisa","Brescia","Como","Padua","Siena","Empoli","Perugia"]},
-{n:"Alemania",d:["Bundesliga","2. Bundesliga","3. Liga","Regionalliga"],s:0,p:["FC","SV","VfB","Eintracht","Fortuna","Union"],c:["Bremen","Colonia","Hamburgo","Leipzig","Mainz","Bochum","Kiel","Dresde","Fürth","Ulm","Aachen","Jena","Rostock","Essen","Bonn","Hannover"]}];
-const dv=o=>C[o.ctry||0].d[o.div],PR=[10,7,5,3];let scr="menu",mode=null,nc=0,nname="",Z=null;
-const slotD=n=>{try{return JSON.parse(localStorage.getItem("mgfc_s"+n))}catch(e){return null}};
-const RN8=["Cuartos","Semifinales","Final"],RN4=["Semifinales","Final"],RNN=["Ronda previa","Dieciseisavos","Octavos","Cuartos","Semifinales","Final"];
-const koSim=(a,b)=>{const x=qg(1.3*Math.pow(a.b/b.b,3)),y=qg(1.3*Math.pow(b.b/a.b,3));return x===y?Math.random()<.5:x>y};
-function koDraw(K){if(K.pairs)return;const pl=(K.r===0&&K.by?K.alive.filter(i=>!K.by.includes(i)):K.alive).slice().sort(()=>Math.random()-.5);
- const m=pl.indexOf(0);if(m>0){pl.splice(m,1);pl.unshift(0)}K.pairs=[];for(let i=0;i+1<pl.length;i+=2)K.pairs.push([pl[i],pl[i+1]])}
-function koResolve(K,myWin){const w=K.pairs.map(p=>p.includes(0)?(myWin?0:(p[0]===0?p[1]:p[0])):(koSim(K.t[p[0]],K.t[p[1]])?p[0]:p[1]));
- K.alive=(K.r===0&&K.by?K.by.slice():[]).concat(w);K.r++;K.pairs=null;
- if(!myWin||K.alive.length===1)K.st=K.alive.includes(0)?"won":"out"}
-function koNew(nm,t,rn,by){const K={nm,t,rn,r:0,alive:t.map((_,i)=>i),st:"play",pairs:null,by:by||null};
- if(by){koDraw(K);if(!K.pairs.some(p=>p.includes(0)))koResolve(K,true)}return K}
-function newNat(o){const r=rng(o.seed+o.season*53),k=o.ctry||0,B=[74,68,62,56],t=[{n:o.name,b:ovrT(o),k,d:o.div}];
- for(let d=0;d<4;d++)POOL[k].slice(d*12,d*12+(d===o.div?11:12)).forEach(n=>t.push({n,b:Math.round(B[d]+(r()-.5)*12),k,d}));
- const by=t.map((x,i)=>i).sort((a,b)=>t[b].b-t[a].b).slice(0,16);
- o.nat=koNew("Copa Nacional",t,RNN,by)}
-function newLeague(o){const r=rng(o.seed+o.season*101+o.div*7),k=o.ctry||0,b=[74,68,62,56][o.div],z=()=>({pts:0,gf:0,ga:0,w:0,d:0,l:0}),ai=POOL[k].slice(o.div*12,o.div*12+11),sh=()=>Array.from({length:11},(_,i)=>i+1).sort(()=>r()-.5);
- o.lg={rd:0,t:[{n:o.name,b:60,me:1,...z()},...ai.map(n=>({n,b:Math.round(b+(r()-.5)*12),...z()}))],ord:[...sh(),...sh()]};newNat(o)}
-const rec=(t,x,y)=>{t.gf+=x;t.ga+=y;if(x>y){t.w++;t.pts+=3}else if(x===y){t.d++;t.pts++}else t.l++};
-const qg=l=>{let g=0,p=Math.exp(-l),c=p,u=Math.random();while(u>c&&g<9){g++;p*=l/g;c+=p}return g};
-const sortT=L=>[...L.t].sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf);
-function nextOpp(){const L=S.lg,i=L.ord[L.rd],t=L.t[i],sq=mkSquad(S.seed+S.season*131+i,t.b,"c"+i,S.ctry||0),f=["4-4-2","4-3-3","3-5-2","4-5-1"][i%4],hm=L.rd%2===0;
- return{name:t.n,squad:sq,form:f,xi:autoXI(sq,f),lg:1,li:i,std:hm?(S.stn||"Estadio "+S.name):stad(t.n,S.ctry||0)}}
-function pitch(){const sl=slots(S.form),f=FORM[S.form],rows=[[0,1,90],[1,1+f[0],72],[1+f[0],1+f[0]+f[1],48],[1+f[0]+f[1],11,20]];
- return`<div class="pit">${rows.map(([a,b,y])=>{const n=b-a;return S.xi.slice(a,b).map((id,i)=>{const p=S.squad.find(x=>x.id===id),bad=p.pos!==sl[a+i];return`<div class="pl${sel===id?" s":""}" data-a="pick" data-id="${id}" style="left:${(i+1)/(n+1)*100}%;top:${y}%"><b class="${bad?"bd":""}">${p.ovr}</b><span>${esc(p.n.split(". ")[1]||p.n)}</span></div>`}).join("")}).join("")}</div>`}
-const NAT=[["España","🇪🇸"],["Inglaterra","🇬🇧"],["Italia","🇮🇹"],["Alemania","🇩🇪"],["Francia","🇫🇷"],["Portugal","🇵🇹"],["Brasil","🇧🇷"],["Argentina","🇦🇷"],["Países Bajos","🇳🇱"],["Marruecos","🇲🇦"],["Nigeria","🇳🇬"],["Croacia","🇭🇷"]];
-const nat=p=>NAT[p.nat!=null?p.nat:Math.floor(rng(hash(p.id+"n"))()*NAT.length)];
-const OFF={POR:[-20,-30,-8,-25,4,0],DEF:[-6,-18,-6,-14,6,4],MED:[-4,-6,5,3,-8,-4],DEL:[4,6,-6,5,-22,-6]};
-const pst=p=>{const r=rng(hash(p.id+"s"));return OFF[p.pos].map(o=>Math.round(clamp(p.ovr+o+(r()-.5)*10,30,99)))};
-function rad6(p){const v=pst(p),L=["RIT","DIS","PAS","REG","DEF","FIS"],cx=150,cy=140,R=95,ang=i=>-Math.PI/2+i*Math.PI/3,pt=(i,x)=>{const r=R*clamp((x-30)/70,0,1);return[cx+r*Math.cos(ang(i)),cy+r*Math.sin(ang(i))]},f=n=>n.toFixed(1),ring=q=>L.map((_,i)=>pt(i,30+70*q).map(f).join(",")).join(" ");
- return`<svg viewBox="0 0 300 285" style="width:100%;max-width:320px;display:block;margin:auto">${[.25,.5,.75,1].map(q=>`<polygon points="${ring(q)}" fill="none" stroke="var(--bd)"/>`).join("")}${L.map((n,i)=>{const e=pt(i,100),lx=cx+(R+22)*Math.cos(ang(i)),ly=cy+(R+16)*Math.sin(ang(i));return`<line x1="${cx}" y1="${cy}" x2="${f(e[0])}" y2="${f(e[1])}" stroke="var(--bd)"/><text x="${f(lx)}" y="${f(ly)}" fill="var(--tx)" font-size="11" text-anchor="middle" dominant-baseline="middle">${n} ${v[i]}</text>`}).join("")}<polygon points="${v.map((x,i)=>pt(i,x).map(f).join(",")).join(" ")}" fill="var(--ac)" fill-opacity=".4" stroke="var(--ac)" stroke-width="2"/></svg>`}
-const vSign=()=>{const n=nat(Z);return`<div class="card" style="text-align:center"><div class="mut">Nuevo fichaje</div><h1 style="margin:4px 0">${esc(Z.n)}</h1><div>${n[1]} ${n[0]} · ${Z.pos} · media ${Z.ovr}</div>${rad6(Z)}</div><button class="p" style="width:100%;padding:14px" data-a="zok">Continuar</button>`};
-function radar(A,B){const a=parts(A),b=parts(B),ax=[["POR",a.gk,b.gk],["DEF",a.def,b.def],["MED",a.mid,b.mid],["ATA",a.att,b.att],["MEDIA",ovrT(A),ovrT(B)]],cx=150,cy=145,R=100,ang=i=>-Math.PI/2+i*2*Math.PI/5,pt=(i,v)=>{const r=R*clamp((v-30)/65,0,1);return[cx+r*Math.cos(ang(i)),cy+r*Math.sin(ang(i))]},f=n=>n.toFixed(1),poly=k=>ax.map((x,i)=>pt(i,x[k]).map(f).join(",")).join(" ");
- return`<svg viewBox="0 0 300 300" style="width:100%;max-width:340px;display:block;margin:auto">${[.25,.5,.75,1].map(q=>`<polygon points="${ax.map((x,i)=>pt(i,30+65*q).map(f).join(",")).join(" ")}" fill="none" stroke="var(--bd)"/>`).join("")}${ax.map((x,i)=>{const e=pt(i,95),lx=cx+(R+18)*Math.cos(ang(i)),ly=cy+(R+14)*Math.sin(ang(i));return`<line x1="${cx}" y1="${cy}" x2="${f(e[0])}" y2="${f(e[1])}" stroke="var(--bd)"/><text x="${f(lx)}" y="${f(ly)}" fill="var(--tx)" font-size="11" text-anchor="middle" dominant-baseline="middle">${x[0]} ${Math.round(x[1])}-${Math.round(x[2])}</text>`}).join("")}<polygon points="${poly(2)}" fill="var(--ac2)" fill-opacity=".3" stroke="var(--ac2)" stroke-width="2"/><polygon points="${poly(1)}" fill="var(--ac)" fill-opacity=".35" stroke="var(--ac)" stroke-width="2"/></svg>`}
-function vMenu(){if(!mode)return`<h1 style="font-size:30px;text-align:center;margin:30px 0 16px">Manager</h1><div class="card"><b>¿Cómo quieres jugar?</b><div class="mut" style="margin:6px 0 10px">Online: clasificación y retos contra otros managers.${db?"":" (Inicia sesión en la plataforma para jugar online)"}</div><div class="row"><button class="p" data-a="mode" data-m="online" ${db?"":"disabled"}>Jugar online</button><button class="p" data-a="mode" data-m="solo">Jugar solo</button></div></div>`;
- if(scr==="new")return`<h1>Nueva carrera</h1><div class="card"><input id="nm" maxlength="22" value="${esc(nname)}" placeholder="Nombre de tu club"><div class="mut" style="margin:10px 0 6px">País y liga</div><div class="row">${C.map((c,i)=>`<button class="${nc===i?"on":""}" data-a="ctry" data-i="${i}">${c.n}</button>`).join("")}</div><div class="mut" style="margin:10px 0 6px">Elige hueco de guardado</div><div class="row">${[1,2,3].map(n=>`<button class="p" data-a="start" data-n="${n}">Hueco ${n}${slotD(n)?" (sobrescribir)":""}</button>`).join("")}</div></div><button data-a="back" style="width:100%">Volver</button>`;
- return`<h1 style="font-size:30px;text-align:center;margin:30px 0 16px">Manager</h1><button class="p" data-a="new" style="width:100%;padding:14px">Nueva carrera</button><h2>Partidas guardadas</h2>`+[1,2,3].map(n=>{const d=slotD(n);return`<div class="card row"><div class="n"><b>Hueco ${n}</b><div class="mut">${d?esc(d.name)+" · "+dv(d)+" · temporada "+d.season:"Vacío"}</div></div>${d?`<button class="p" data-a="load" data-n="${n}" style="flex:0 0 auto">Cargar</button><button data-a="del" data-n="${n}" style="flex:0 0 auto">Borrar</button>`:""}</div>`}).join("")+`<button data-a="mode" data-m="" style="width:100%;margin-top:10px">Cambiar modo (${mode})</button>`}
-const koPay=(K,w,f)=>!K?0:K.st==="won"?w:(K.r>=K.rn.length?f:0);
-const income=pos=>Math.round(REW[S.div]*FAC[pos-1]+2*(S.stl||1)+koPay(S.nat,10,4)+koPay(S.eu,S.eu&&S.eu.nm==="Champions"?30:10,S.eu&&S.eu.nm==="Champions"?14:4));
-function euSetup(){if(S.eu!==undefined||S.lg.rd<S.lg.ord.length)return;const T=sortT(S.lg),pos=T.findIndex(x=>x.me)+1;
- if(S.div!==0||pos>3){S.eu=null;return}
- const r=rng(S.seed+S.season*313),k0=S.ctry||0,ks=[0,1,2,3].filter(k=>k!==k0),me={n:S.name,b:ovrT(S),k:k0};
- const pk=(k,n,b)=>[...POOL[k].slice(0,12)].sort(()=>r()-.5).slice(0,n).map(x=>({n:x,b:Math.round(b+(r()-.5)*8),k}));
- if(pos<=2){const mate=T.find((x,i)=>!x.me&&i<2),t=[me,{n:mate.n,b:mate.b,k:k0}];ks.forEach(k=>t.push(...pk(k,2,78)));S.eu=koNew("Champions",t,RN8)}
- else{const t=[me];ks.forEach(k=>t.push(...pk(k,1,72)));S.eu=koNew("Copa Plata",t,RN4)}}
-const dueNat=()=>{const K=S.nat;return!!K&&K.st==="play"&&S.lg.rd>=3*(K.r+1)};
-function koCard(K,key){if(!K.pairs)K.t[0].b=ovrT(S);koDraw(K);const pr=K.pairs.find(p=>p.includes(0));if(!pr)return"";const o=K.t[pr[0]===0?pr[1]:pr[0]];
- return`<h2>${K.nm} · ${K.rn[K.r]}</h2><div class="card row"><div class="n"><b>${esc(o.n)}</b><div class="mut">${C[o.k].n} · media ~${o.b} · ${esc(stad(o.n,o.k))}</div></div><button class="p" data-a="ko" data-k="${key}" style="flex:0 0 auto">Jugar</button></div>`}
-function koOpp(key){const K=S[key];koDraw(K);const pr=K.pairs.find(p=>p.includes(0)),i=pr[0]===0?pr[1]:pr[0],o=K.t[i],sq=mkSquad(S.seed+S.season*977+i,o.b,"k"+i,o.k),f=["4-3-3","4-4-2","3-5-2","4-5-1"][i%4];
- return{name:o.n,squad:sq,form:f,xi:autoXI(sq,f),cup:key,std:stad(o.n,o.k)}}
-const koStat=K=>K?`<div class="card"><b>${K.nm}</b> · ${K.st==="won"?"¡Campeón!":K.st==="out"?"Eliminado":"en juego: "+K.rn[K.r]}</div>`:"";
-function cupBox(pos){const L=S.lg;if(L.rd<L.ord.length)return"";euSetup();const K=S.eu;
- let h=`<div class="card"><b>Fin de temporada: ${pos}º</b>`;
- if(S.div===0&&pos<=2)h+=`<div class="mut" style="margin:6px 0">Clasificado para la Champions.</div>`;else if(S.div===0&&pos===3)h+=`<div class="mut" style="margin:6px 0">Clasificado para la Copa Plata.</div>`;
- if(K&&K.st==="play")h+=`<div class="mut" style="margin:6px 0">${K.nm} en juego: ve a la pestaña Jugar.</div>`;
- else h+=`<div class="mut" style="margin:6px 0">Ingresos de temporada: ${income(pos)}M (puesto, división, estadio y copas)</div><button class="p" data-a="season" style="width:100%;margin-top:8px">Siguiente temporada</button>`;
- return h+"</div>"}
-function vTable(){const L=S.lg,T=sortT(L),pos=T.findIndex(x=>x.me)+1,N=L.t.length;
- return`<h2>${dv(S)} · temporada ${S.season}</h2><div class="card">${T.map((x,i)=>`<div class="r" style="cursor:default;${x.me?"background:var(--bg)":""}"><span class="pos">${i+1}º</span><span class="n" style="${i<2?"color:var(--ac)":i===2&&S.div===0?"color:var(--ac2)":i>=N-2&&S.div<3?"color:var(--bad)":""}">${esc(x.n)}</span><span class="mut">${x.w}-${x.d}-${x.l}</span><b>${x.pts}</b></div>`).join("")}</div><div class="mut">${S.div===0?"Los 2 primeros: Champions. El 3.º: Copa Plata. Los 2 últimos bajan.":"Los 2 primeros suben de división y los 2 últimos bajan."}</div>`+cupBox(pos)+koStat(S.nat)+koStat(S.eu)+((S.hist||[]).length?`<h2>Historial</h2><div class="card">${S.hist.map(h=>`<div class="mut">Temp. ${h.s}: ${h.p}º en ${C[S.ctry||0].d[h.d]}</div>`).join("")}</div>`:"")}
-function simulate(A,B){const a=parts(A),b=parts(B),T=[a,b],ev=[];let sc=[0,0];
- const scorer=(q,side)=>{const L=[...q.g.DEL.flatMap(x=>[x,x,x,x]),...q.g.MED.flatMap(x=>[x,x]),...q.g.DEF];return pick(L).p};
- for(let m=1;m<=90;m++){
-  if(Math.random()<.2){const w=Math.pow(a.mid,3)/(Math.pow(a.mid,3)+Math.pow(b.mid,3)),s=Math.random()<w?0:1,q=T[s],o=T[1-s];
-   if(Math.random()<clamp(.5*Math.pow(q.att/o.def,2.5),.12,.9)){
-    if(Math.random()<clamp(.3*Math.pow(q.att/o.gk,1.5),.08,.6)){const p=scorer(q,s);sc[s]++;ev.push({m,s,g:1,p:p.id,t:"GOL de "+p.n+". "+pick(["Misil a la escuadra, el portero ni lo vio.","Se la clava sin piedad.","Cabezazo de campeón, que se jodan.","Rosca al palo largo. Sentencia.","Lo borra del mapa y la mete."])})}
-    else ev.push({m,s,t:pick(["El portero se la come de milagro.","Rozando el poste, casi se cae el estadio.","Larguerazo que retumba.","Despeje a lo bestia bajo palos."])})}
-   else if(Math.random()<.3)ev.push({m,s,t:pick(["Entrada criminal, el árbitro mira para otro lado.","Falta dura en la frontal, se calienta el partido.","Barullo en el área y nadie la empuja.","Tarjeta amarilla por una patada de las feas."])})}
-  ev.push({m,x:1,sc:[...sc]})}
- return{ev:ev.filter(e=>!e.x||e.m%1===0),sc}}
-function play(opp){const r=simulate(S,opp);M={opp,pre:1,bx:50,by:50,gt:0,pos:0,ev:r.ev.filter(e=>!e.x),sc:r.sc,min:0,hg:0,ag:0,log:[],done:false,iv:null};render()}
-function dots(){const out=[];[[S,0],[M.opp,1]].forEach(([t,flip])=>{const f=FORM[t.form],sl=[[0,1],[1,1+f[0]],[1+f[0],1+f[0]+f[1]],[1+f[0]+f[1],11]],ys=flip?[6,18,32,44]:[94,82,68,56];sl.forEach(([a,b],ri)=>{const n=b-a;for(let i=0;i<n;i++)out.push([(i+1)/(n+1)*100+(M.bx-50)*.12,clamp(ys[ri]+(M.by-50)*(ri?.18:.05),3,97)])})});return out}
-function mpit(){const P=dots();return`<div class="pit mp"><div class="gp" style="top:0"></div><div class="gp" style="bottom:0"></div>${P.map((p,i)=>`<i class="d ${i<11?"m":"o"}" style="left:${p[0]}%;top:${p[1]}%"></i>`).join("")}<i class="ball" style="left:${M.bx}%;top:${M.by}%"></i><div class="gol" id="gl" style="display:${M.gt>0?"block":"none"}">¡GOL!</div></div>`}
-const lgH=()=>M.log.map(l=>`<div class="${l.g?(l.s?"gb":"g"):""}">${l.m}' ${esc(l.t)}</div>`).join("")||'<div class="mut">Pitido inicial…</div>';
-function ball(m){const e=M.ev.filter(x=>x.m===m)[0];if(e){const up=e.s===0;if(e.g)M.gt=9;M.bx=45+Math.random()*10;M.by=e.g?(up?3:97):(up?14:86);M.pos=up?0:1}else{M.bx=15+Math.random()*70;M.by=clamp(50+(M.pos===0?-1:1)*Math.random()*12+(Math.random()-.5)*30,22,78)}}
-function mupd(){const els=document.querySelectorAll(".mp .d"),b=$(".mp .ball");if(els.length!==22||!b){render();return}dots().forEach((p,i)=>{els[i].style.left=p[0]+"%";els[i].style.top=p[1]+"%"});b.style.left=M.bx+"%";b.style.top=M.by+"%";$("#sc").textContent=M.hg+" - "+M.ag;$("#mn").textContent=Math.min(M.min,90);$("#gl").style.display=M.gt>0?"block":"none";$("#lg").innerHTML=lgH();$("#bar").style.width=M.min/.9+"%"}
-function tick(){if(!M)return;M.min++;if(M.gt>0)M.gt--;M.ev.filter(e=>e.m===M.min).forEach(e=>{if(e.g){e.s?M.ag++:M.hg++}M.log.unshift({m:e.m,t:e.t,s:e.s,g:e.g})});ball(M.min);
- if(M.min>=90){finish();render()}else mupd()}
-function skip(){while(M&&M.min<90){M.min++;M.ev.filter(e=>e.m===M.min).forEach(e=>{if(e.g){e.s?M.ag++:M.hg++}M.log.unshift({m:e.m,t:e.t,s:e.s,g:e.g})})}finish();render()}
-function finish(){if(M.done)return;clearInterval(M.iv);M.done=true;const h=M.hg,a=M.ag;
- if(M.opp.cup){const K=S[M.opp.cup];let win=h>a,pen="";if(h===a){win=Math.random()<.5;pen=win?" Ganas en los penaltis.":" Pierdes en los penaltis."}
-  S.round++;koResolve(K,win);
-  if(!win)M.res="Eliminado de "+K.nm+"."+pen;else if(K.st==="won"){S.trophies=(S.trophies||0)+1;M.res="¡CAMPEONES DE LA "+K.nm.toUpperCase()+"!"+pen}else M.res="¡Pasas de ronda! Siguiente: "+K.rn[K.r]+"."+pen;
-  save();return}
- S.gf+=h;S.ga+=a;S.round++;let res;
- if(M.opp.lg){const L=S.lg,o=L.t[M.opp.li];rec(L.t[0],h,a);rec(o,a,h);const q=Array.from({length:L.t.length-1},(_,i)=>i+1).filter(i=>i!==M.opp.li).sort(()=>Math.random()-.5);for(let k=0;k<q.length-1;k+=2){const A=L.t[q[k]],B=L.t[q[k+1]],g1=qg(1.3*Math.pow(A.b/B.b,3)),g2=qg(1.3*Math.pow(B.b/A.b,3));rec(A,g1,g2);rec(B,g2,g1)}L.rd++;if(L.rd>=L.ord.length)euSetup()}
- if(h>a){S.w++;S.pts+=3;S.streak++;res="PALIZA. Esto es Miguelasgo."}else if(h===a){S.d++;S.pts++;S.streak=0;res="Empate. Sabe a poco."}else{S.l++;S.streak=0;res="Derrota. Hoy toca tragársela."}
- const best={};M.ev.filter(e=>e.g&&!e.s).forEach(e=>best[e.p]=(best[e.p]||0)+1);
- const mv=Object.entries(best).sort((x,y)=>y[1]-x[1])[0];let up="";
- if(mv){const p=S.squad.find(x=>x.id===mv[0]);if(p&&p.ovr<95){p.ovr++;p.v=Math.round(Math.pow(p.ovr/50,5)*8)/10;up=" · "+esc(p.n)+" sube a "+p.ovr}}
- M.res=res+up;S.budget=Math.round(S.budget*10)/10;save();
- if(db&&M.opp.online){db.collection(P+"results").add({a:S.name,b:M.opp.name,ga:h,gb:a,t:Date.now()}).catch(()=>{})}}
-function ovc(o){return o>=75?"hi":o<55?"lo":""}
-function row(p,s,i){const bad=s&&p.pos!==s;return`<div class="r${sel===p.id?" s":""}" data-a="pick" data-id="${p.id}"><span class="pos">${s||p.pos}</span><span class="n">${esc(p.n)} ${bad?'<span class="lo">⚠ '+p.pos+"</span>":""}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span></div>`}
-function vClub(){const sl=slots(S.form),bench=S.squad.filter(p=>!S.xi.includes(p.id));
- return`<div class="row">${Object.keys(FORM).map(f=>`<button class="${S.form===f?"on":""}" data-a="form" data-f="${f}">${f}</button>`).join("")}</div>
- <h2>Once inicial · media ${ovrT(S)}</h2>${pitch()}
- <h2>Banquillo (${bench.length})</h2><div class="mut">Toca un titular y luego un suplente para cambiarlos.</div><div class="card">${bench.map(p=>`<div class="r${sel===p.id?" s":""}" data-a="pick" data-id="${p.id}"><span class="pos">${p.pos}</span><span class="n">${nat(p)[1]} ${esc(p.n)}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span><button data-a="sell" data-id="${p.id}">Vender ${(p.v*.7).toFixed(1)}M</button></div>`).join("")}</div>
- <button data-a="auto" style="width:100%">Alineación automática</button>${stCard()}`}
-function vMarket(){return`<h2>Mercado</h2><div class="mut">Se renueva cada 5 partidos (faltan ${5-S.round%5}). Plantilla ${S.squad.length}/24.</div>`+market().map(p=>`<div class="card r" style="cursor:default"><span class="pos">${p.pos}</span><span class="n">${nat(p)[1]} ${esc(p.n)}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span><button class="p" data-a="buy" data-id="${p.id}" ${S.budget<p.v||S.squad.length>=24?"disabled":""}>${p.v.toFixed(1)}M</button></div>`).join("")}
-function vPlay(){const L=S.lg,on=peers.filter(p=>p.id!==uid),t=L.t[L.ord[L.rd]]||{},end=L.rd>=L.ord.length,hm=L.rd%2===0;euSetup();let h="";
- if(dueNat())h+=koCard(S.nat,"nat");else if(end&&S.eu&&S.eu.st==="play")h+=koCard(S.eu,"eu");
- h+=`<h2>${dv(S)} · jornada ${Math.min(L.rd+1,L.ord.length)}/${L.ord.length}</h2>`;
- h+=end?`<div class="card">Liga terminada. Mira la pestaña Tabla.</div>`:dueNat()?`<div class="card mut">Primero juega el partido de copa.</div>`:`<div class="card row"><div class="n"><b>${esc(t.n)}</b><div class="mut">${hm?"Local":"Visitante"} · media ~${t.b} · ${esc(hm?(S.stn||"Estadio "+S.name):stad(t.n,S.ctry||0))}</div></div><button class="p" data-a="cpu" style="flex:0 0 auto">Jugar</button></div>`;
- return h+(mode!=="online"?"":`<h2>Retos online: a por ellos</h2>`+(db?(on.length?on.map(p=>`<div class="card row"><div class="n"><b>${esc(p.d.name)}</b><div class="mut">media ${p.d.ovr} · ${p.d.pts} pts</div></div><button class="p" data-a="on" data-id="${p.id}" style="flex:0 0 auto">Machacar</button></div>`).join(""):'<div class="mut">Aún no hay otros managers. ¡Comparte el enlace!</div>'):'<div class="mut">Modo online no disponible en esta vista. Comparte el enlace con permiso de colaborar para jugar contra amigos.</div>'))}
-function stCard(){const l=S.stl||1;return`<h2>Estadio</h2><div class="card row"><div class="n"><b>${esc(S.stn||"Estadio "+S.name)}</b><div class="mut">Nivel ${l} · aforo ${CAP[l-1].toLocaleString("es-ES")} · +${2*l}M por temporada</div></div>${l<5?`<button class="p" data-a="stup" ${S.budget<UP[l-1]?"disabled":""} style="flex:0 0 auto">Mejorar ${UP[l-1]}M</button>`:'<span class="chip">Máximo</span>'}</div>`}
-function vLeague(){const L=[...peers].sort((a,b)=>b.d.pts-a.d.pts||(b.d.gf-b.d.ga)-(a.d.gf-a.d.ga));
- return`<h2>Clasificación online</h2><div class="card">`+(L.length?L.map((p,i)=>`<div class="r" style="cursor:default"><span class="pos">${i+1}º</span><span class="n">${esc(p.d.name)}${p.id===uid?" (tú)":""}</span><span class="mut">${p.d.w}-${p.d.d}-${p.d.l}</span><b>${p.d.pts}</b></div>`).join(""):'<div class="mut">Sin datos online todavía.</div>')+`</div><h2>Últimos partidos</h2><div class="card">`+(feed.length?feed.map(f=>`<div class="mut">${esc(f.a)} <b>${f.ga}-${f.gb}</b> ${esc(f.b)}</div>`).join(""):'<div class="mut">Nada aún.</div>')+"</div>"}
-function vMatch(){if(M.pre)return`<div class="card"><div class="mut" style="text-align:center">${esc(S.name)} vs ${esc(M.opp.name)}</div><div class="mut" style="text-align:center">🏟 ${esc(M.opp.std||"")}</div>${radar(S,M.opp)}<div class="row" style="justify-content:center;margin:6px 0"><span class="chip" style="border-color:var(--ac)">● ${esc(S.name)}</span><span class="chip" style="border-color:var(--ac2)">● ${esc(M.opp.name)}</span></div></div><button class="p" style="width:100%;padding:14px" data-a="kick">Pitido inicial</button>`;
- return`<div class="card"><div class="mut" style="text-align:center">${esc(S.name)} vs ${esc(M.opp.name)} · 🏟 ${esc(M.opp.std||"")} · min <span id="mn">${Math.min(M.min,90)}</span>'</div><div class="score" id="sc">${M.hg} - ${M.ag}</div><div class="pitch" id="bar" style="width:${M.min/.9}%"></div></div>${mpit()}
- ${M.done?`<div class="card" style="text-align:center"><b>${M.res}</b></div><button class="p" style="width:100%" data-a="close">Continuar</button>`:`<button style="width:100%" data-a="skip">Saltar ⏩</button>`}
- <div class="card log" id="lg">${M.log.map(l=>`<div class="${l.g?(l.s?"gb":"g"):""}">${l.m}' ${esc(l.t)}</div>`).join("")||'<div class="mut">Pitido inicial…</div>'}</div>`}
-function render(){const el=$("#app");if(!S){el.innerHTML=vMenu();return}
- let b;if(M)b=vMatch();else if(Z)b=vSign();else b={club:vClub,market:vMarket,play:vPlay,table:vTable,league:vLeague}[tab]();
- el.innerHTML=`<div class="top"><h1>${esc(S.name)}</h1><span class="mut">${mode==="online"?"🟢 online":"⚪ solo"} <button data-a="menu" style="padding:4px 8px">Menú</button></span></div>
- <div class="chips"><span class="chip">${dv(S)}</span><span class="chip">💰 ${S.budget.toFixed(1)}M</span><span class="chip">${S.pts} pts</span><span class="chip">${S.w}V ${S.d}E ${S.l}D</span><span class="chip">racha ${S.streak}</span><span class="chip">Media ${ovrT(S)}</span>${S.trophies?`<span class="chip">Copas: ${S.trophies}</span>`:""}</div>
- ${M?"":`<div class="tabs">${[["club","Club"],["market","Mercado"],["play","Jugar"],["table","Tabla"],...(mode==="online"?[["league","Online"]]:[])].map(([k,l])=>`<button class="${tab===k?"on":""}" data-a="tab" data-k="${k}">${l}</button>`).join("")}</div>`}${b}`}
-document.addEventListener("click",e=>{const t=e.target.closest("[data-a]");if(!t)return;e.stopPropagation();const a=t.dataset.a,id=t.dataset.id;
- if(a==="start"){const n=$("#nm").value.trim()||"Mi club";S=newState(n,+t.dataset.n);scr="menu";tab="club";save()}
- else if(a==="mode"){mode=t.dataset.m||null}
- else if(a==="new"){scr="new";nname=""}
- else if(a==="ctry"){nname=$("#nm").value;nc=+t.dataset.i}
- else if(a==="back"){scr="menu"}
- else if(a==="load"){S=slotD(+t.dataset.n);tab="club"}
- else if(a==="del"){try{localStorage.removeItem("mgfc_s"+t.dataset.n)}catch(x){}}
- else if(a==="menu"){save();S=null;sel=null;tab="club"}
- else if(a==="ko"){play(koOpp(t.dataset.k));return}
- else if(a==="stup"){const l=S.stl||1;if(l<5&&S.budget>=UP[l-1]){S.budget=Math.round((S.budget-UP[l-1])*10)/10;S.stl=l+1;save()}}
- else if(a==="season"){const pos=sortT(S.lg).findIndex(x=>x.me)+1;S.budget=Math.round((S.budget+income(pos))*10)/10;(S.hist=S.hist||[]).push({s:S.season,d:S.div,p:pos});
-  if(pos<=2&&S.div>0)S.div--;else if(pos>=S.lg.t.length-1&&S.div<3)S.div++;
-  S.budget=Math.max(S.budget,MINB[S.div]);S.season++;S.eu=undefined;newLeague(S);tab="play";save()}
- else if(a==="tab"){tab=t.dataset.k;sel=null;Z=null}
- else if(a==="form"){S.form=t.dataset.f;S.xi=autoXI(S.squad,S.form);sel=null;save()}
- else if(a==="auto"){S.xi=autoXI(S.squad,S.form);sel=null;save()}
- else if(a==="pick"){if(!sel)sel=id;else if(sel===id)sel=null;else{const i=S.xi.indexOf(sel),j=S.xi.indexOf(id);
-   if(i>=0&&j>=0){[S.xi[i],S.xi[j]]=[S.xi[j],S.xi[i]]}else if(i>=0)S.xi[i]=id;else if(j>=0)S.xi[j]=sel;sel=null;save()}}
- else if(a==="sell"){const p=S.squad.find(x=>x.id===id);if(S.squad.length>16){S.budget=Math.round((S.budget+p.v*.7)*10)/10;S.squad=S.squad.filter(x=>x.id!==id);save()}}
- else if(a==="buy"){const p=market().find(x=>x.id===id);if(p&&S.budget>=p.v){S.budget=Math.round((S.budget-p.v)*10)/10;S.squad.push(p);Z=p;save()}}
- else if(a==="cpu"){play(nextOpp());return}
- else if(a==="on"){const p=peers.find(x=>x.id===id);try{const o=JSON.parse(p.d.st);play({name:o.name,squad:o.squad,xi:o.xi,form:o.form,online:1,prize:3});return}catch(x){}}
- else if(a==="zok"){Z=null}
- else if(a==="kick"){M.pre=0;M.iv=setInterval(()=>tick(),130)}
- else if(a==="skip"){skip();return}
- else if(a==="close"){M=null;tab="club"}
- render()});
-(async()=>{render();
- try{if(window.claude){const u=await claude.use("user");uid=u?await u.id():null;db=uid?await claude.use("db"):null}}catch(e){}
- if(!db){try{await fbInit()}catch(e){}}
- if(db){
-  try{db.collection(P+"managers").onSnapshot(s=>{peers=s.docs.map(x=>({id:x.id,d:x.data()}));if(!M&&S)render()})}catch(e){}
-  try{db.collection(P+"results").limit(40).onSnapshot(s=>{feed=s.docs.map(x=>x.data()).sort((a,b)=>b.t-a.t).slice(0,8);if(!M&&tab==="league")render()})}catch(e){}}
- if(S||scr==="menu")render()})();
-</script></body></html>
+var ZONES = [
+    { name: "PLAYA", icon: "🏝️", options: [
+        { txt: "🌊 Buscar cocos en la orilla", fn: function(s) {
+            if(Math.random() > 0.2) { s.sed = Math.min(100, s.sed + 25); s.inv.comida++; return {msg:"+25 sed +1 comida", cls:"good"}; }
+            return {msg:"No encontraste cocos esta vez.", cls:"neutral"};
+        }},
+        { txt: "🪵 Recoger madera de la costa", fn: function(s) { var n = 3 + Math.floor(Math.random()*3); s.inv.madera += n; return {msg:"+" + n + " madera", cls:"good"}; }},
+        { txt: "🐟 Pescar en la orilla", fn: function(s) {
+            if(s.inv.anzuelo) { var n = 2 + Math.floor(Math.random()*3); s.inv.comida += n; return {msg:"+" + n + " comida (con anzuelo)", cls:"good"}; }
+            if(Math.random() > 0.5) { s.inv.comida++; return {msg:"+1 comida (a mano)", cls:"good"}; }
+            return {msg:"Se te escaparon los peces.", cls:"neutral"};
+        }},
+        { txt: "🐚 Buscar objetos en la playa", fn: function(s) {
+            var r = Math.random();
+            if(r > 0.7) { s.inv.fosforos += 2; return {msg:"Encontraste una caja con 2 fosforos!", cls:"good"}; }
+            if(r > 0.4) { s.inv.cuerda++; return {msg:"+1 cuerda", cls:"good"}; }
+            return {msg:"Solo conchas y algas.", cls:"neutral"};
+        }},
+        { txt: "🌿 Ir a la Selva", fn: function(s) { s.zone = 1; return {msg:"Te adentras en la selva...", cls:"neutral"}; }},
+        { txt: "😴 Descansar en la arena", fn: function(s) {
+            var heal = s.inv.cabana ? 25 : 12;
+            s.hp = Math.min(100, s.hp + heal);
+            return {msg:"+" + heal + " HP" + (s.inv.cabana ? " (cabana)" : ""), cls:"good"};
+        }},
+    ]},
+    { name: "SELVA", icon: "🌿", options: [
+        { txt: "🍌 Buscar frutas", fn: function(s) {
+            if(Math.random() > 0.15) { var n = 1 + Math.floor(Math.random()*3); s.inv.comida += n; s.hambre = Math.min(100,s.hambre+15); return {msg:"+" + n + " comida +15 hambre", cls:"good"}; }
+            s.hp -= 8; return {msg:"Comiste una fruta toxica! -8 HP", cls:"bad"};
+        }},
+        { txt: "🪵 Talar arboles", fn: function(s) { var n = 5 + Math.floor(Math.random()*4); s.inv.madera += n; return {msg:"+" + n + " madera", cls:"good"}; }},
+        { txt: "💧 Buscar rio", fn: function(s) {
+            if(Math.random() > 0.25) { s.sed = Math.min(100,s.sed+35); s.inv.agua += 2; return {msg:"+35 sed +2 agua", cls:"good"}; }
+            return {msg:"No encontraste agua limpia.", cls:"neutral"};
+        }},
+        { txt: "🗡️ Fabricar lanza (4 madera + 1 cuerda)", fn: function(s) {
+            if(s.inv.madera >= 4 && s.inv.cuerda >= 1) { s.inv.madera-=4; s.inv.cuerda--; s.inv.lanza=true; return {msg:"Lanza fabricada!", cls:"good"}; }
+            if(s.inv.madera < 4) return {msg:"Necesitas 4 madera (tienes " + s.inv.madera + ")", cls:"bad"};
+            return {msg:"Necesitas 1 cuerda (tienes " + s.inv.cuerda + ")", cls:"bad"};
+        }},
+        { txt: "🏗️ Construir cabana (14 madera + 2 cuerda)", fn: function(s) {
+            if(s.inv.madera >= 14 && s.inv.cuerda >= 2) { s.inv.madera-=14; s.inv.cuerda-=2; s.inv.cabana=true; return {msg:"Cabana construida! Descansas mejor.", cls:"good"}; }
+            return {msg:"Faltan materiales (madera: " + s.inv.madera + "/14, cuerda: " + s.inv.cuerda + "/2)", cls:"bad"};
+        }},
+        { txt: "🪤 Poner trampa (2 madera + 1 cuerda)", fn: function(s) {
+            if(s.inv.madera >= 2 && s.inv.cuerda >= 1) { s.inv.madera-=2; s.inv.cuerda--; s.inv.trampa = (s.inv.trampa||0)+1; return {msg:"Trampa colocada! (total: " + s.inv.trampa + ")", cls:"good"}; }
+            return {msg:"Necesitas 2 madera + 1 cuerda", cls:"bad"};
+        }},
+        { txt: "⛰️ Subir a la Montana", fn: function(s) { s.zone = 2; return {msg:"Subes a la montana...", cls:"neutral"}; }},
+        { txt: "🌧️ Entrar al Pantano", fn: function(s) { s.zone = 3; return {msg:"Entras al pantano...", cls:"neutral"}; }},
+        { txt: "🏝️ Volver a la Playa", fn: function(s) { s.zone = 0; return {msg:"Vuelves a la playa.", cls:"neutral"}; }},
+    ]},
+    { name: "MONTANA", icon: "⛰️", options: [
+        { txt: "🦌 Cazar animales", fn: function(s) {
+            if(s.inv.lanza) {
+                if(Math.random() > 0.25) { var n = 4 + Math.floor(Math.random()*4); s.inv.comida += n; return {msg:"Caza exitosa! +" + n + " comida", cls:"good"}; }
+                return {msg:"El animal escapo.", cls:"neutral"};
+            }
+            s.hp -= 20; return {msg:"-20 HP! Sin lanza es peligroso.", cls:"bad"};
+        }},
+        { txt: "🌧️ Recoger agua de lluvia", fn: function(s) {
+            if(Math.random() > 0.3) { s.sed = Math.min(100,s.sed+30); s.inv.agua += 2; return {msg:"+30 sed +2 agua", cls:"good"}; }
+            return {msg:"No llueve hoy.", cls:"neutral"};
+        }},
+        { txt: "🔥 Encender hoguera (3 madera + 1 fosforo)", fn: function(s) {
+            if(s.inv.fosforos > 0 && s.inv.madera >= 3) {
+                s.inv.madera -= 3; s.inv.fosforos--;
+                s.hp = Math.min(100, s.hp + 20);
+                s.inv.comidaCocida = true;
+                return {msg:"+20 HP. Puedes cocinar comida.", cls:"good"};
+            }
+            return {msg:"Necesitas 3 madera + 1 fosforo", cls:"bad"};
+        }},
+        { txt: "🪨 Explorar cueva", fn: function(s) { s.zone = 4; return {msg:"Entras en una cueva oscura...", cls:"neutral"}; }},
+        { txt: "📡 Senal de humo (6 madera + 1 fosforo, dia 10+)", fn: function(s) {
+            if(s.inv.madera >= 6 && s.inv.fosforos > 0 && s.dia >= 10) {
+                s.inv.madera -= 6; s.inv.fosforos--;
+                if(Math.random() > 0.4) { s.rescate = true; return {msg:"Ves un barco acercarse! Espera un turno mas...", cls:"good"}; }
+                return {msg:"Nadie vio la senal. Intenta manana.", cls:"neutral"};
+            }
+            if(s.dia < 10) return {msg:"Es muy pronto, no hay barcos cercanos (dia 10+)", cls:"neutral"};
+            return {msg:"Necesitas 6 madera + 1 fosforo", cls:"bad"};
+        }},
+        { txt: "🌿 Bajar a la Selva", fn: function(s) { s.zone = 1; return {msg:"Bajas a la selva.", cls:"neutral"}; }},
+    ]},
+    { name: "PANTANO", icon: "🌧️", options: [
+        { txt: "🐊 Cazar reptiles", fn: function(s) {
+            if(s.inv.lanza) {
+                if(Math.random() > 0.35) { var n = 5 + Math.floor(Math.random()*3); s.inv.comida += n; return {msg:"+" + n + " comida!", cls:"good"}; }
+                s.hp -= 10; return {msg:"-10 HP. El reptil contraataco.", cls:"bad"};
+            }
+            s.hp -= 25; return {msg:"-25 HP! Sin lanza es suicida.", cls:"bad"};
+        }},
+        { txt: "🪱 Buscar larvas y raices", fn: function(s) { var n = 2 + Math.floor(Math.random()*2); s.inv.comida += n; return {msg:"+" + n + " comida", cls:"good"}; }},
+        { txt: "🌿 Plantas medicinales", fn: function(s) {
+            if(Math.random() > 0.2) { var heal = 20 + Math.floor(Math.random()*15); s.hp = Math.min(100, s.hp + heal); return {msg:"+" + heal + " HP!", cls:"good"}; }
+            s.hp -= 10; return {msg:"-10 HP. Planta venenosa!", cls:"bad"};
+        }},
+        { txt: "🔍 Explorar restos del naufragio", fn: function(s) {
+            var r = Math.random();
+            if(r > 0.65) { s.inv.fosforos += 3; s.inv.anzuelo = true; return {msg:"Botin: +3 fosforos + anzuelo!", cls:"good"}; }
+            if(r > 0.35) { s.inv.cuerda += 2; s.inv.madera += 3; return {msg:"+2 cuerda +3 madera", cls:"good"}; }
+            if(r > 0.15) { return {msg:"Solo lodo y moho.", cls:"neutral"}; }
+            s.hp -= 15; return {msg:"-15 HP. Pisaste algo afilado.", cls:"bad"};
+        }},
+        { txt: "🐸 Recolectar veneno de rana", fn: function(s) {
+            if(Math.random() > 0.5) { s.inv.veneno = true; return {msg:"Veneno recolectado! Tu lanza hace mas dano.", cls:"good"}; }
+            s.hp -= 12; return {msg:"-12 HP. Te salpico veneno.", cls:"bad"};
+        }},
+        { txt: "🏝️ Ir a la Playa Oculta", fn: function(s) { s.zone = 5; return {msg:"Encuentras una playa escondida...", cls:"neutral"}; }},
+        { txt: "🌿 Volver a la Selva", fn: function(s) { s.zone = 1; return {msg:"Sales del pantano.", cls:"neutral"}; }},
+    ]},
+    { name: "CUEVA", icon: "🪨", options: [
+        { txt: "🔦 Explorar el fondo", fn: function(s) {
+            var r = Math.random();
+            if(r > 0.6) { s.inv.fosforos += 3; s.inv.cuerda += 2; return {msg:"Encontraste suministros! +3 fosforos +2 cuerda", cls:"good"}; }
+            if(r > 0.3) { s.inv.madera += 4; return {msg:"Madera seca +4", cls:"good"}; }
+            s.hp -= 18; return {msg:"-18 HP. Caiste en un hoyo.", cls:"bad"};
+        }},
+        { txt: "🦇 Cazar murcielagos", fn: function(s) {
+            if(s.inv.lanza) { var n = 3 + Math.floor(Math.random()*3); s.inv.comida += n; return {msg:"+" + n + " comida", cls:"good"}; }
+            s.inv.comida += 2; s.hp -= 5; return {msg:"+2 comida pero -5 HP (mordedura)", cls:"neutral"};
+        }},
+        { txt: "🏕️ Dormir protegido", fn: function(s) {
+            var heal = 30 + Math.floor(Math.random()*10);
+            s.hp = Math.min(100, s.hp + heal);
+            return {msg:"+" + heal + " HP. Buen descanso.", cls:"good"};
+        }},
+        { txt: "💎 Buscar minerales", fn: function(s) {
+            if(Math.random() > 0.6) { s.inv.piedraAfilada = true; return {msg:"Piedra afilada! Mejora tu lanza.", cls:"good"}; }
+            return {msg:"Solo rocas normales.", cls:"neutral"};
+        }},
+        { txt: "⛰️ Salir a la Montana", fn: function(s) { s.zone = 2; return {msg:"Sales de la cueva.", cls:"neutral"}; }},
+    ]},
+    { name: "PLAYA OCULTA", icon: "🏖️", options: [
+        { txt: "🚢 Revisar barco varado", fn: function(s) {
+            var r = Math.random();
+            if(r > 0.5) { s.inv.fosforos += 4; s.inv.cuerda += 3; s.inv.anzuelo = true; return {msg:"Botin: +4 fosforos +3 cuerda +anzuelo!", cls:"good"}; }
+            if(r > 0.2) { s.inv.comida += 5; s.inv.agua += 3; return {msg:"+5 comida +3 agua (provisiones)", cls:"good"}; }
+            s.hp -= 10; return {msg:"-10 HP. Tabla podrida.", cls:"bad"};
+        }},
+        { txt: "🐢 Recolectar huevos de tortuga", fn: function(s) { var n = 3 + Math.floor(Math.random()*3); s.inv.comida += n; return {msg:"+" + n + " comida", cls:"good"}; }},
+        { txt: "🧱 Construir balsa (20 madera + 4 cuerda, dia 15+)", fn: function(s) {
+            if(s.inv.madera >= 20 && s.inv.cuerda >= 4 && s.dia >= 15) {
+                s.inv.madera -= 20; s.inv.cuerda -= 4;
+                s.balsa = true;
+                return {msg:"Balsa construida! Puedes intentar escapar!", cls:"good"};
+            }
+            if(s.dia < 15) return {msg:"Necesitas mas experiencia para navegar (dia 15+)", cls:"neutral"};
+            return {msg:"Necesitas 20 madera + 4 cuerda (madera: " + s.inv.madera + "/20, cuerda: " + s.inv.cuerda + "/4)", cls:"bad"};
+        }},
+        { txt: "⛵ Escapar en balsa", fn: function(s) {
+            if(!s.balsa) return {msg:"No tienes balsa.", cls:"bad"};
+            if(s.inv.agua < 3 || s.inv.comida < 5) return {msg:"Necesitas minimo 3 agua + 5 comida para el viaje.", cls:"bad"};
+            if(Math.random() > 0.3) { s.escaped = true; return {msg:"Ves tierra firme! LO LOGRASTE!", cls:"good"}; }
+            s.hp -= 30; s.inv.agua -= 2; s.inv.comida -= 3;
+            return {msg:"-30 HP. Tormenta! Volviste a la isla.", cls:"bad"};
+        }},
+        { txt: "🌧️ Volver al Pantano", fn: function(s) { s.zone = 3; return {msg:"Vuelves al pantano.", cls:"neutral"}; }},
+    ]}
+];
+
+var RANDOM_EVENTS = [
+    { chance: 0.08, fn: function(s) { s.hp -= 15; return "Tormenta nocturna! -15 HP" + (s.inv.cabana ? " (la cabana te protegio un poco)" : ""); }, cabin: function(s) { s.hp += 10; } },
+    { chance: 0.06, fn: function(s) { s.inv.comida = Math.max(0, s.inv.comida - 2); return "Animales robaron tu comida! -2 comida"; }, cabin: null },
+    { chance: 0.07, fn: function(s) { var n = 2 + Math.floor(Math.random()*3); s.inv.comida += n; return "Encontraste un nido! +" + n + " comida"; }, cabin: null },
+    { chance: 0.05, fn: function(s) { s.inv.agua += 3; s.sed = Math.min(100, s.sed + 20); return "Lluvia! +3 agua +20 sed"; }, cabin: null },
+    { chance: 0.04, fn: function(s) { s.hp -= 20; return "Picadura de insecto venenoso! -20 HP"; }, cabin: function(s) { s.hp += 12; } },
+    { chance: 0.03, fn: function(s) { s.inv.cuerda += 2; s.inv.fosforos++; return "Encontraste restos flotando! +2 cuerda +1 fosforo"; }, cabin: null },
+    { chance: 0.04, fn: function(s) { if(s.inv.trampa && s.inv.trampa > 0) { var n = s.inv.trampa * 2; s.inv.comida += n; return "Tus trampas atraparon comida! +" + n + " comida"; } return null; }, cabin: null },
+];
+
+var state = {};
+
+function loadRecord() {
+    var r = localStorage.getItem('mg_survival_record') || '0';
+    var g = localStorage.getItem('mg_survival_games') || '0';
+    document.getElementById('recordDays').textContent = r;
+    document.getElementById('totalGames').textContent = g;
+}
+
+function saveRecord(dias) {
+    var r = parseInt(localStorage.getItem('mg_survival_record') || '0');
+    var g = parseInt(localStorage.getItem('mg_survival_games') || '0');
+    if(dias > r) localStorage.setItem('mg_survival_record', dias);
+    localStorage.setItem('mg_survival_games', g + 1);
+    loadRecord();
+}
+
+function resetGame() {
+    state = {
+        dia: 1, hp: 100, hambre: 100, sed: 100, zone: 0,
+        rescate: false, balsa: false, escaped: false,
+        inv: { madera: 0, comida: 3, agua: 2, lanza: false, cabana: false, fosforos: 1, anzuelo: false, cuerda: 0, trampa: 0, veneno: false, piedraAfilada: false, comidaCocida: false }
+    };
+    document.getElementById("overlay").className = "";
+    updateLog("Despiertas en una isla desierta. Sobrevive todo lo que puedas.", "neutral");
+    renderGame();
+    loadRecord();
+}
+
+function renderInventory() {
+    var inv = state.inv;
+    var html = '';
+    html += '<div class="inv-item">🪵 Madera: <span>' + inv.madera + '</span></div>';
+    html += '<div class="inv-item">🍖 Comida: <span>' + inv.comida + '</span></div>';
+    html += '<div class="inv-item">💧 Agua: <span>' + inv.agua + '</span></div>';
+    html += '<div class="inv-item">🧶 Cuerda: <span>' + inv.cuerda + '</span></div>';
+    html += '<div class="inv-item">🔥 Fosforos: <span>' + inv.fosforos + '</span></div>';
+    html += '<div class="inv-item">🗡️ Lanza: <span>' + (inv.lanza ? (inv.veneno ? "ENVENENADA" : (inv.piedraAfilada ? "MEJORADA" : "SI")) : "NO") + '</span></div>';
+    html += '<div class="inv-item">🏠 Cabana: <span>' + (inv.cabana ? "SI" : "NO") + '</span></div>';
+    if(inv.anzuelo) html += '<div class="inv-item">🪝 Anzuelo: <span>SI</span></div>';
+    if(inv.trampa) html += '<div class="inv-item">🪤 Trampas: <span>' + inv.trampa + '</span></div>';
+    document.getElementById('invDisplay').innerHTML = html;
+}
+
+function renderGame() {
+    document.getElementById("sDia").textContent = state.dia;
+    document.getElementById("sHp").textContent = Math.floor(state.hp);
+    document.getElementById("sHam").textContent = Math.floor(state.hambre);
+    document.getElementById("sSed").textContent = Math.floor(state.sed);
+    document.getElementById("bHp").style.width = state.hp + "%";
+    document.getElementById("bHam").style.width = state.hambre + "%";
+    document.getElementById("bSed").style.width = state.sed + "%";
+
+    renderInventory();
+
+    var zone = ZONES[state.zone];
+    document.getElementById("zoneName").textContent = zone.icon + " " + zone.name;
+
+    var opts = document.getElementById("options");
+    opts.innerHTML = "";
+    zone.options.forEach(function(opt, i) {
+        var btn = document.createElement("button");
+        btn.className = "opt-btn";
+        btn.textContent = opt.txt;
+        btn.onclick = function() { doAction(i); };
+        opts.appendChild(btn);
+    });
+}
+
+function updateLog(msg, cls) {
+    document.getElementById("log").innerHTML = '<span class="' + cls + '">' + msg + '</span>';
+}
+
+function doAction(idx) {
+    var result = ZONES[state.zone].options[idx].fn(state);
+
+    state.dia++;
+    var hungerDrain = 11 + Math.random() * 8;
+    var thirstDrain = 14 + Math.random() * 9;
+    state.hambre = Math.max(0, state.hambre - hungerDrain);
+    state.sed = Math.max(0, state.sed - thirstDrain);
+
+    if(state.inv.cabana) state.hp = Math.min(100, state.hp + 5);
+    if(state.hambre <= 0) state.hp -= 16;
+    if(state.sed <= 0) state.hp -= 20;
+
+    if(state.hambre < 20 && state.inv.comida > 0) {
+        state.inv.comida--;
+        var foodRestore = state.inv.comidaCocida ? 50 : 35;
+        state.hambre = Math.min(100, state.hambre + foodRestore);
+    }
+    if(state.sed < 20 && state.inv.agua > 0) {
+        state.inv.agua--;
+        state.sed = Math.min(100, state.sed + 40);
+    }
+
+    var eventMsg = '';
+    RANDOM_EVENTS.forEach(function(ev) {
+        if(Math.random() < ev.chance) {
+            var r = ev.fn(state);
+            if(r) {
+                if(state.inv.cabana && ev.cabin) ev.cabin(state);
+                eventMsg += ' | ' + r;
+            }
+        }
+    });
+
+    state.hp = Math.max(0, Math.min(100, state.hp));
+
+    var logMsg = result.msg;
+    if(eventMsg) logMsg += '<br><span class="event">' + eventMsg.substring(3) + '</span>';
+    if(state.hp < 25) logMsg += ' <span class="bad">HP CRITICO!</span>';
+    if(state.hambre < 20 && state.inv.comida <= 0) logMsg += ' <span class="bad">Sin comida!</span>';
+    if(state.sed < 20 && state.inv.agua <= 0) logMsg += ' <span class="bad">Sin agua!</span>';
+
+    document.getElementById("log").innerHTML = '<span class="' + result.cls + '">' + logMsg + '</span>';
+
+    if(state.hp <= 0) endGame('dead');
+    else if(state.rescate) endGame('rescue');
+    else if(state.escaped) endGame('escape');
+    else renderGame();
+}
+
+function endGame(type) {
+    var ov = document.getElementById("overlay");
+    ov.className = "show";
+    var dias = state.dia - 1;
+    saveRecord(dias);
+
+    if(type === 'dead') {
+        ov.classList.add("dead");
+        document.getElementById("oTitle").textContent = "HAS MUERTO";
+        document.getElementById("oMsg").textContent = "Sobreviviste " + dias + " dias.";
+        document.getElementById("oDetail").textContent = "Causa: " + (state.hambre <= 0 && state.sed <= 0 ? "Hambre y sed" : state.hambre <= 0 ? "Hambre" : state.sed <= 0 ? "Deshidratacion" : "Heridas");
+    } else if(type === 'rescue') {
+        ov.classList.add("win");
+        document.getElementById("oTitle").textContent = "RESCATADO!";
+        document.getElementById("oMsg").textContent = "Un barco te rescato el dia " + dias + ".";
+        document.getElementById("oDetail").textContent = "Metodo: Senal de humo desde la montana";
+    } else if(type === 'escape') {
+        ov.classList.add("win");
+        document.getElementById("oTitle").textContent = "ESCAPASTE!";
+        document.getElementById("oMsg").textContent = "Navegaste a tierra firme el dia " + dias + ".";
+        document.getElementById("oDetail").textContent = "Metodo: Balsa desde la playa oculta";
+    }
+}
+
+resetGame();
+</script>
+</body>
+</html>
