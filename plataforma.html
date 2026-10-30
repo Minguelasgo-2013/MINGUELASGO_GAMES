@@ -335,6 +335,19 @@ section{padding:60px 20px}
 .games-grid{grid-template-columns:1fr}
 .profiles-grid{grid-template-columns:1fr}
 }
+
+/* ============ MINGUELASGO PASS ============ */
+.mg-pass-section{padding:70px 24px;background:radial-gradient(ellipse at 50% 0%,rgba(102,126,234,.19),transparent 62%),var(--bg-primary)}
+.mg-pass-wrap{max-width:1120px;margin:0 auto;background:linear-gradient(135deg,rgba(20,23,70,.96),rgba(12,14,43,.98));border:1px solid rgba(125,145,255,.38);border-radius:24px;padding:30px;box-shadow:0 18px 60px rgba(0,0,0,.28);position:relative;overflow:hidden}
+:root[data-theme="light"] .mg-pass-wrap{background:linear-gradient(135deg,#fff,#e9ecff)}
+.mg-pass-wrap:before{content:"";position:absolute;width:360px;height:360px;right:-130px;top:-190px;border-radius:50%;background:rgba(102,126,234,.18);filter:blur(10px);pointer-events:none}
+.mg-pass-head{display:flex;justify-content:space-between;align-items:center;gap:20px;position:relative;z-index:1;flex-wrap:wrap}
+.mg-pass-kicker{font-size:.75rem;letter-spacing:3px;color:#9daeff;font-weight:800}.mg-pass-title{font-size:clamp(1.8rem,4vw,2.7rem);font-weight:950;margin:5px 0;background:linear-gradient(90deg,#fff,#9eb0ff,#d7a8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+:root[data-theme="light"] .mg-pass-title{background:linear-gradient(90deg,#22275f,#5269d7,#8549a7);-webkit-background-clip:text}
+.mg-pass-desc{color:var(--text-secondary);max-width:650px;line-height:1.5}.mg-pass-level{background:rgba(102,126,234,.17);border:1px solid rgba(150,165,255,.3);padding:12px 17px;border-radius:14px;text-align:center;min-width:110px}.mg-pass-level strong{display:block;font-size:1.55rem;color:#b8c5ff}.mg-pass-level span{font-size:.72rem;color:var(--text-secondary);letter-spacing:1px}
+.mg-pass-progress{margin:25px 0 28px;position:relative;z-index:1}.mg-pass-progress-line{height:12px;border-radius:20px;background:rgba(255,255,255,.1);overflow:hidden;border:1px solid rgba(255,255,255,.08)}.mg-pass-progress-fill{height:100%;width:0;background:linear-gradient(90deg,#667eea,#b36bff,#42e8d5);border-radius:20px;transition:width .5s}.mg-pass-progress-meta{display:flex;justify-content:space-between;gap:10px;margin-top:8px;color:var(--text-muted);font-size:.82rem}
+.mg-pass-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:13px;position:relative;z-index:1}.mg-pass-reward{background:rgba(255,255,255,.045);border:1px solid rgba(150,165,255,.17);border-radius:17px;padding:17px 13px;text-align:center;min-height:205px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:8px;transition:transform .2s,border-color .2s}.mg-pass-reward:hover{transform:translateY(-4px);border-color:rgba(160,175,255,.65)}.mg-pass-reward.ready{border-color:#56d6a0;background:rgba(46,204,143,.09)}.mg-pass-reward.claimed{border-color:rgba(102,126,234,.55);background:rgba(102,126,234,.12)}.mg-pass-reward.locked{opacity:.68}.mg-pass-icon{font-size:2.55rem;filter:drop-shadow(0 5px 10px rgba(0,0,0,.25))}.mg-pass-reward h4{font-size:.94rem}.mg-pass-reward p{font-size:.78rem;color:var(--text-secondary)}.mg-pass-xp{font-size:.75rem;color:#aebaff;font-weight:800}.mg-pass-action{width:100%;border:0;border-radius:9px;padding:9px 8px;font-weight:800;cursor:pointer;background:linear-gradient(100deg,#667eea,#8955c7);color:#fff}.mg-pass-action:disabled{cursor:default;background:rgba(255,255,255,.12);color:var(--text-secondary)}.mg-pass-footer{margin-top:18px;color:var(--text-muted);font-size:.78rem;line-height:1.5;position:relative;z-index:1}.mg-pass-login{color:#b8c5ff;font-weight:700}
+@media(max-width:600px){.mg-pass-wrap{padding:21px 15px}.mg-pass-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mg-pass-reward{min-height:195px}.mg-pass-head{align-items:flex-start}}
 </style>
 
 <style id="minguelasgo-futuristic-facelift">
@@ -557,7 +570,7 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 </div>
 <div class="chatbot-messages" id="chatbotMessages"></div>
 <div class="chatbot-input">
-<input type="text" id="chatbotInput" placeholder="Pregunta sobre juegos..." onkeydown="if(event.key==='Enter')sendChatbotMsg()">
+<input type="text" id="chatbotInput" placeholder="Pregunta lo que quieras..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendChatbotMsg();}"><button id="chatbotSend" type="button" onclick="sendChatbotMsg()" style="margin-top:8px;width:100%;padding:10px;border:0;border-radius:9px;background:linear-gradient(100deg,#00bcd4,#8055d8);color:white;font-weight:800;cursor:pointer">Enviar mensaje ➤</button>
 </div>
 </div>
 
@@ -568,6 +581,7 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 <li><a href="#novedades">Novedades</a></li>
 <li><a href="#ranking">Ranking</a></li>
 <li><a href="#torneos">Torneo</a></li>
+<li><a href="#minguelasgoPass">🎁 Pass</a></li>
 <li><a href="#logros">Logros</a></li>
 <li><a href="#chat">Chat</a></li>
 <li><a href="#opiniones">Opiniones</a></li>
@@ -630,6 +644,18 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 <div class="hero-stat"><div class="hero-stat-number" id="statReviews">0</div><div class="hero-stat-label">Opiniones</div></div>
 </div>
 <div class="scroll-indicator">&#8595;</div>
+</section>
+
+<section class="mg-pass-section" id="minguelasgoPass">
+ <div class="mg-pass-wrap">
+  <div class="mg-pass-head">
+   <div><div class="mg-pass-kicker">TEMPORADA 01 · RECOMPENSAS EXCLUSIVAS</div><h2 class="mg-pass-title">🎁 MINGUELASGO PASS</h2><p class="mg-pass-desc">Juega, consigue XP y desbloquea avatares, insignias y títulos exclusivos. ¡Las recompensas que reclames se guardarán en tu cuenta!</p></div>
+   <div class="mg-pass-level"><strong id="mgPassLevel">—</strong><span>NIVEL DE PASE</span></div>
+  </div>
+  <div class="mg-pass-progress"><div class="mg-pass-progress-line"><div class="mg-pass-progress-fill" id="mgPassProgressFill"></div></div><div class="mg-pass-progress-meta"><span id="mgPassProgressText">Inicia sesión para ver tu progreso</span><span id="mgPassXP">0 XP</span></div></div>
+  <div class="mg-pass-grid" id="mgPassRewards"></div>
+  <div class="mg-pass-footer" id="mgPassFooter">Inicia sesión para reclamar y guardar tus recompensas. Consigues XP jugando a juegos nuevos de la web.</div>
+ </div>
 </section>
 
 <section id="vipArea" class="vip-section">
@@ -695,6 +721,7 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
   <div class="mg-tournament-note">La rotación y el contador son automáticos. La clasificación competitiva requiere que los juegos envíen puntuaciones al sistema; inscribirse no inventa resultados.</div>
  </div>
  <div class="mg-tournament-board"><h3>📡 INSCRITOS ESTA SEMANA</h3><div id="mgTournamentPlayers"><p class="mg-tournament-empty">Cargando participantes…</p></div></div>
+ <div class="mg-tournament-board" style="margin-top:18px"><h3>🥇 CLASIFICACIÓN DEL TORNEO</h3><div id="mgTournamentScores"><p class="mg-tournament-empty">Cargando puntuaciones…</p></div><p class="mg-tournament-note">Los juegos deben enviar su puntuación mediante el puente de torneo para aparecer en esta tabla.</p></div>
 </section>
 
 <section class="news" id="novedades">
@@ -836,6 +863,7 @@ function recordGameLaunch(gameId){
         });
     }).then(function(result){
         if(result && typeof showToast==='function') showToast('🎮 +10 XP por descubrir un juego nuevo','success');
+        if(result && typeof loadMinguelasgoPass==='function') loadMinguelasgoPass();
     }).catch(function(err){console.warn('No se pudo actualizar XP:',err);});
 }
 var pendingGame=null,authReady=false;
@@ -1225,6 +1253,43 @@ function handleAuth(){
             .catch(function(e){errEl.textContent='Error: '+e.message;});
     }
 }
+/* ============ MINGUELASGO PASS · RECOMPENSAS EN FIRESTORE ============ */
+var mgPassRewards=[
+ {id:'avatar_fox',xp:50,icon:'🦊',name:'Zorro Neón',desc:'Avatar exclusivo',type:'avatar',value:'🦊'},
+ {id:'avatar_robot',xp:100,icon:'🤖',name:'Robot MG',desc:'Avatar exclusivo',type:'avatar',value:'🤖'},
+ {id:'badge_starter',xp:200,icon:'🌟',name:'Primera estrella',desc:'Insignia de temporada',type:'badge',value:'Primera estrella'},
+ {id:'avatar_dragon',xp:300,icon:'🐉',name:'Dragón Épico',desc:'Avatar exclusivo',type:'avatar',value:'🐉'},
+ {id:'avatar_alien',xp:450,icon:'👾',name:'Alien Glitch',desc:'Avatar exclusivo',type:'avatar',value:'👾'},
+ {id:'title_veteran',xp:600,icon:'🏅',name:'Veterano MG',desc:'Título exclusivo',type:'title',value:'Veterano MG'},
+ {id:'avatar_shark',xp:750,icon:'🦈',name:'Tiburón',desc:'Avatar exclusivo',type:'avatar',value:'🦈'},
+ {id:'avatar_king',xp:900,icon:'👑',name:'Rey del Gaming',desc:'Avatar exclusivo',type:'avatar',value:'👑'},
+ {id:'avatar_wolf',xp:1100,icon:'🐺',name:'Lobo Legendario',desc:'Avatar exclusivo',type:'avatar',value:'🐺'},
+ {id:'title_legend',xp:1400,icon:'💠',name:'Leyenda MG',desc:'Título definitivo',type:'title',value:'Leyenda MG'}
+];
+var mgPassXP=0,mgPassClaimed=[],mgPassAvatars=[],mgPassTitles=[],currentAvatarEmoji='';
+function renderMinguelasgoPass(){
+ var grid=document.getElementById('mgPassRewards');if(!grid)return;
+ var info=xpLevelInfo(mgPassXP),next=mgPassRewards.find(function(r){return mgPassXP<r.xp;});
+ var levelEl=document.getElementById('mgPassLevel');if(levelEl)levelEl.textContent=String(mgPassRewards.filter(function(r){return mgPassXP>=r.xp;}).length+1);
+ var fill=document.getElementById('mgPassProgressFill'),pct=next?Math.min(100,Math.round(mgPassXP/next.xp*100)):100;if(fill)fill.style.width=pct+'%';
+ var prog=document.getElementById('mgPassProgressText');if(prog)prog.textContent=next?(next.xp-mgPassXP)+' XP para '+next.name:'¡Has completado todas las recompensas!';
+ var xp=document.getElementById('mgPassXP');if(xp)xp.textContent=mgPassXP+' XP';
+ grid.innerHTML=mgPassRewards.map(function(r){var claimed=mgPassClaimed.indexOf(r.id)!==-1,ready=mgPassXP>=r.xp&&!claimed;var cls=claimed?'claimed':(ready?'ready':'locked');var status=claimed?'✓ RECLAMADO':(ready?'¡DISPONIBLE!':'🔒 BLOQUEADO');var action=claimed?(r.type==='avatar'?(currentAvatarEmoji===r.value?'EQUIPADO':'Equipar'):'RECLAMADO'):(ready?'Reclamar':'Necesitas '+r.xp+' XP');var disabled=!claimed&&!ready?'disabled':(claimed&&r.type!=='avatar'?'disabled':'');return '<article class="mg-pass-reward '+cls+'"><div class="mg-pass-icon">'+r.icon+'</div><div><h4>'+r.name+'</h4><p>'+r.desc+'</p><div class="mg-pass-xp">'+r.xp+' XP · '+status+'</div></div><button class="mg-pass-action" '+disabled+' onclick="'+(claimed?(r.type==='avatar'?'equipMinguelasgoAvatar(\''+r.id+'\')':''):'claimMinguelasgoReward(\''+r.id+'\')')+'">'+action+'</button></article>';}).join('');
+ var footer=document.getElementById('mgPassFooter');if(footer)footer.innerHTML=currentUser?'Tu progreso y recompensas están vinculados a tu cuenta. Avatar equipado: '+(currentAvatarEmoji||'Inicial de tu nombre')+'.':'<span class="mg-pass-login">Inicia sesión para reclamar recompensas.</span> Cada juego nuevo te da +10 XP.';
+}
+renderMinguelasgoPass();
+function loadMinguelasgoPass(){
+ if(!currentUser){mgPassXP=0;mgPassClaimed=[];mgPassAvatars=[];mgPassTitles=[];currentAvatarEmoji='';renderMinguelasgoPass();return;}
+ db.collection('players').doc(currentUser.uid).get().then(function(doc){var d=doc.exists?(doc.data()||{}):{};mgPassXP=Math.max(0,Number(d.xp)||0);mgPassClaimed=Array.isArray(d.passClaimed)?d.passClaimed:[];mgPassAvatars=Array.isArray(d.unlockedAvatars)?d.unlockedAvatars:[];mgPassTitles=Array.isArray(d.unlockedTitles)?d.unlockedTitles:[];currentAvatarEmoji=d.avatarEmoji||'';renderMinguelasgoPass();}).catch(function(e){console.warn('No se pudo cargar MINGUELASGO PASS:',e);renderMinguelasgoPass();});
+}
+window.claimMinguelasgoReward=function(id){
+ if(!currentUser){showToast('Inicia sesión para reclamar recompensas','warning');openAuth();return;}
+ var reward=mgPassRewards.find(function(r){return r.id===id;});if(!reward)return;
+ var ref=db.collection('players').doc(currentUser.uid);showToast('Comprobando recompensa…','info');
+ db.runTransaction(function(tx){return tx.get(ref).then(function(doc){if(!doc.exists)throw new Error('No existe tu perfil de jugador');var d=doc.data()||{},xp=Math.max(0,Number(d.xp)||0),claimed=Array.isArray(d.passClaimed)?d.passClaimed:[];if(claimed.indexOf(id)!==-1)return {already:true,data:d};if(xp<reward.xp)throw new Error('Todavía no tienes suficiente XP');var patch={passClaimed:claimed.concat([id])};if(reward.type==='avatar')patch.unlockedAvatars=(Array.isArray(d.unlockedAvatars)?d.unlockedAvatars:[]).concat([reward.value]);if(reward.type==='title')patch.unlockedTitles=(Array.isArray(d.unlockedTitles)?d.unlockedTitles:[]).concat([reward.value]);tx.set(ref,patch,{merge:true});return {already:false};});}).then(function(result){if(!result.already){showToast('🎉 ¡Has reclamado '+reward.name+'!','success');if(typeof sendConfetti==='function')sendConfetti();}loadMinguelasgoPass();}).catch(function(e){showToast(e.message||'No se pudo reclamar la recompensa','warning');});
+};
+window.equipMinguelasgoAvatar=function(id){var reward=mgPassRewards.find(function(r){return r.id===id&&r.type==='avatar';});if(!reward||!currentUser)return;if(mgPassAvatars.indexOf(reward.value)===-1){showToast('Primero reclama este avatar','warning');return;}db.collection('players').doc(currentUser.uid).set({avatarEmoji:reward.value},{merge:true}).then(function(){currentAvatarEmoji=reward.value;refreshAv();renderMinguelasgoPass();showToast('Avatar equipado: '+reward.value,'success');}).catch(function(e){showToast('No se pudo equipar el avatar','warning');console.warn(e);});};
+
 auth.onAuthStateChanged(function(user){
     authReady=true;
     var area=document.getElementById('authArea');
@@ -1239,11 +1304,13 @@ auth.onAuthStateChanged(function(user){
             var pdata=doc.data()||{};
             currentPlayerName=pdata.name||user.displayName||'Jugador';
             myPhoto=pdata.photo||'';
+            currentAvatarEmoji=pdata.avatarEmoji||'';
             // Migración compatible: no inventa XP a partir de puntuaciones antiguas.
             if(typeof pdata.xp!=='number'){
                 return db.collection('players').doc(user.uid).update({xp:0,playedGames:Array.isArray(pdata.playedGames)?pdata.playedGames:[],level:1});
             }
         }).then(function(){
+            loadMinguelasgoPass();
             area.innerHTML='<div style="display:flex;gap:8px;align-items:center"><div id="myAv" class="my-av" onclick="openPhoto()" title="Cambiar foto de perfil">'+avHtml(myPhoto,myInitial())+'</div><div style="font-size:.9em;color:var(--accent);font-weight:600">'+esc(currentPlayerName||user.displayName||'Jugador')+'</div><button class="auth-btn" id="photoBtn" onclick="openPhoto()">'+(myPhoto?'📷 Cambiar foto':'📷 Añadir foto')+'</button><button class="auth-btn" onclick="auth.signOut()">Salir</button></div>';
         }).catch(function(err){console.warn('Perfil XP:',err);});
         document.getElementById('commentText').disabled=false;
@@ -1253,6 +1320,7 @@ auth.onAuthStateChanged(function(user){
         document.getElementById('livechatBtn').disabled=false;
     } else {
         currentUser=null;currentPlayerName='';
+        loadMinguelasgoPass();
         notifArea.style.display='none';
         area.innerHTML='<button class="auth-btn" onclick="openAuth()">Iniciar sesion</button>';
         document.getElementById('commentText').disabled=true;
@@ -1267,7 +1335,7 @@ auth.onAuthStateChanged(function(user){
 var myPhoto='',newPhoto='';
 function okPhoto(p){return typeof p==='string'&&p.length<60000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(p);}
 function avHtml(p,fb){return okPhoto(p)?'<img class="ph-img" alt="" src="'+p+'">':fb;}
-function myInitial(){return esc((currentPlayerName||'?').charAt(0).toUpperCase());}
+function myInitial(){return currentAvatarEmoji?esc(currentAvatarEmoji):esc((currentPlayerName||'?').charAt(0).toUpperCase());}
 function paintPrev(p){document.getElementById('photoPrev').innerHTML=avHtml(p,myInitial());}
 function refreshAv(){var a=document.getElementById('myAv');if(a)a.innerHTML=avHtml(myPhoto,myInitial());var b=document.getElementById('photoBtn');if(b)b.textContent=myPhoto?'📷 Cambiar foto':'📷 Añadir foto';}
 function openPhoto(){if(!currentUser)return;newPhoto='';paintPrev(myPhoto);document.getElementById('photoSave').style.display='none';document.getElementById('photoModal').classList.add('active');}
@@ -1369,58 +1437,14 @@ db.collection('players').orderBy('score','desc').limit(8).onSnapshot(function(sn
     });
 },function(err){console.error('Error cargando perfiles XP:',err);});
 
-/* ============ CHATBOT IA ============ */
-function toggleChatbot(){
-    var cb=document.getElementById('aiChatbot');
-    var fab=document.getElementById('chatbotFab');
-    if(cb.classList.contains('open')){
-        cb.classList.remove('open');
-        fab.classList.remove('hidden');
-    } else {
-        cb.classList.add('open');
-        fab.classList.add('hidden');
-        if(document.getElementById('chatbotMessages').children.length===0){
-            addBotMsg('¡Hola! Soy Mini IA 🤖. Pregúntame sobre juegos, ranking o cómo usar la plataforma.');
-        }
-    }
-}
-function addBotMsg(text){
-    var m=document.getElementById('chatbotMessages');
-    var d=document.createElement('div');
-    d.className='chatbot-msg bot';
-    d.textContent=text;
-    m.appendChild(d);
-    m.scrollTop=m.scrollHeight;
-}
-function addUserMsg(text){
-    var m=document.getElementById('chatbotMessages');
-    var d=document.createElement('div');
-    d.className='chatbot-msg user';
-    d.textContent=text;
-    m.appendChild(d);
-    m.scrollTop=m.scrollHeight;
-}
-function sendChatbotMsg(){
-    var input=document.getElementById('chatbotInput');
-    var text=input.value.trim();
-    if(!text) return;
-    addUserMsg(text);
-    input.value='';
-    setTimeout(function(){addBotMsg(getBotResponse(text.toLowerCase()));},400);
-}
-function getBotResponse(q){
-    if(q.includes('hola')||q.includes('hey')||q.includes('buenas')) return '¡Hola! ¿En qué puedo ayudarte?';
-    if(q.includes('gracias')) return '¡De nada! Disfruta los juegos 🎮';
-    if(q.includes('juego')||q.includes('jugar')||q.includes('catalogo')||q.includes('catálogo')) return 'Tenemos '+GAMES.length+' juegos disponibles. Puedes explorar el catálogo y descubrir tus favoritos. ¡Échale un ojo!';
-    if(q.includes('ranking')||q.includes('top')||q.includes('mejores')) return 'En la sección "Ranking Global" ves el Top 10. También hay ranking por juego 🏆';
-    if(q.includes('cuenta')||q.includes('registr')||q.includes('sesion')||q.includes('sesión')) return 'Haz clic en "Iniciar sesión" arriba a la derecha. Es gratis y desbloqueas chat, comentarios y logros.';
-    if(q.includes('chat')) return 'El chat en vivo está en la sección "Chat". Necesitas iniciar sesión para participar.';
-    if(q.includes('logro')||q.includes('medalla')) return 'Hay 10 logros para desbloquear. ¡Algunos requieren jugar varios juegos o comentar!';
-    if(q.includes('vip')) return '🔒 Es un secreto... prueba combinaciones de teclas clásicas 😉';
-    if(q.includes('minecraft')) return 'Minecraft ya está disponible ⛏️. Búscalo en Novedades.';
-    return 'No estoy seguro de eso. Prueba preguntar sobre: juegos, ranking, chat, logros o cuenta.';
-}
-
+/* ============ ASISTENTE MINGUELASGO ============ */
+function toggleChatbot(){var cb=document.getElementById('aiChatbot'),fab=document.getElementById('chatbotFab');if(!cb||!fab)return;var opening=!cb.classList.contains('open');cb.classList.toggle('open',opening);fab.classList.toggle('hidden',opening);if(opening&&document.getElementById('chatbotMessages').children.length===0)addBotMsg('¡Buenas! Soy el asistente de MINGUELASGO GAMES 🤖. Puedo ayudarte con juegos, cuentas, XP, el PASS, torneos, rankings y problemas de la web.');if(opening)setTimeout(function(){var i=document.getElementById('chatbotInput');if(i)i.focus();},80);}
+function addBotMsg(message){var m=document.getElementById('chatbotMessages');if(!m)return;var d=document.createElement('div');d.className='chatbot-msg bot';d.textContent=message;m.appendChild(d);m.scrollTop=m.scrollHeight;}
+function addUserMsg(message){var m=document.getElementById('chatbotMessages');if(!m)return;var d=document.createElement('div');d.className='chatbot-msg user';d.textContent=message;m.appendChild(d);m.scrollTop=m.scrollHeight;}
+function mgNormalize(value){return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[¿?¡!,.;:]/g,' ').replace(/\s+/g,' ').trim();}
+function mgFindGame(query){if(!Array.isArray(GAMES))return null;var q=mgNormalize(query);return GAMES.find(function(g){var n=mgNormalize(g.name),f=mgNormalize(g.folder||'');return(n&&q.includes(n))||(f&&q.includes(f));})||null;}
+function getBotResponse(raw){var q=mgNormalize(raw),g=mgFindGame(raw);if(!q)return 'Escríbeme qué necesitas y lo miramos.';if(/^(hola|hey|buenas|buenos dias|buenas tardes|buenas noches)$/.test(q))return '¡Holaaa! 👋 ¿Qué necesitas hacer en MINGUELASGO GAMES?';if(q.includes('gracias'))return '¡De nada! 🎮 Si algo sigue fallando, dime exactamente qué estabas haciendo.';if(g){if(/no abre|no funciona|error|pantalla negra|pantalla en blanco|congela/.test(q))return 'Vamos a revisar '+g.name+'. Dime si se queda cargando, aparece una pantalla en blanco o se congela durante la partida para localizar el fallo.';return g.name+' está en el catálogo. '+(g.desc||'Puedes encontrarlo en la sección Juegos.')+' Entra en el catálogo y pulsa su tarjeta para abrirlo.';}if(/torneo|inscrib|competicion|competir/.test(q))return '🏆 Los torneos semanales están en TORNEO NEON RUSH. Inicia sesión y pulsa INSCRIBIRME. La clasificación recibe resultados reales cuando el juego envía su puntuación al sistema.';if(/pass|recompensa|avatar|reclamar/.test(q))return '🎁 En MINGUELASGO PASS puedes conseguir XP jugando a juegos nuevos y reclamar recompensas cuando estén disponibles. Inicia sesión para guardar tu progreso.';if(/xp|experiencia|nivel/.test(q))return '✨ Consigues 10 XP al descubrir un juego nuevo con tu cuenta. La web evita repetir la recompensa por el mismo juego. Consulta tu progreso en MINGUELASGO PASS.';if(/ranking|clasificacion|top 10|puntuacion/.test(q))return '🏅 Ranking Global muestra los puntos de los jugadores. Top 10 por Juego utiliza la colección scores de Firebase. Si una partida no aparece, ese juego debe guardar su resultado.';if(/registr|iniciar sesion|cuenta|contrasena|password|login/.test(q))return '👤 Pulsa Iniciar sesión en la barra superior. Desde ahí puedes crear una cuenta o entrar con una existente. Usa la opción de recuperación si has olvidado tu contraseña.';if(/chat|mensaje/.test(q))return '💬 El Chat en Vivo está en la sección Chat. Inicia sesión para escribir mensajes. Este asistente es independiente del chat público.';if(/favorit|like/.test(q))return '❤️ Pulsa el pulgar de una tarjeta para añadir o quitar un juego de Mis Likes. Se guarda en este navegador.';if(/no funciona|error|fall|roto|problema|ayuda/.test(q))return 'Te ayudo. ¿Qué parte falla: inicio de sesión, un juego, XP/PASS, torneo o chat? Si aparece un error, cópialo aquí tal cual.';if(/cuantos juegos|catalogo|juegos disponibles/.test(q))return '🎮 El catálogo contiene '+(Array.isArray(GAMES)?GAMES.length:0)+' juegos. Puedes buscarlos por nombre o filtrarlos por categoría.';return 'No he encontrado información suficiente para responder con seguridad. ¿Puedes explicarme qué quieres conseguir o qué error aparece?';}
+function sendChatbotMsg(){var input=document.getElementById('chatbotInput');if(!input)return;var message=input.value.trim();if(!message)return;addUserMsg(message);input.value='';var btn=document.getElementById('chatbotSend');if(btn)btn.disabled=true;var typing=document.createElement('div');typing.className='chatbot-msg bot';typing.textContent='Estoy revisándolo…';var box=document.getElementById('chatbotMessages');if(box){box.appendChild(typing);box.scrollTop=box.scrollHeight;}setTimeout(function(){if(typing.parentNode)typing.parentNode.removeChild(typing);addBotMsg(getBotResponse(message));if(btn)btn.disabled=false;},220);}
 /* ============ LIVE CHAT ============ */
 var liveChatUnsub=null;
 function loadLiveChat(){
@@ -1819,31 +1843,32 @@ db.collection('comments').onSnapshot(function(snap){
 </script>
 
 <script id="mg-weekly-tournament-system">
-/* ============ ARENA SEMANAL AUTOMATIZADA ============
-   Rotación semanal calculada por fecha. Inscripciones compartidas vía Firestore.
-   No fabrica puntuaciones: los juegos deben enviar sus scores para una clasificación real.
-*/
+/* ============ ARENA SEMANAL ============ */
 (function(){
  const challenges=[
-  {title:'Velocidad de luz',desc:'Astro Rush 3D: llega a 1.500 puntos en una sola partida sin quedarte sin escudos. Cada punto cuenta para tu clasificación.',format:'Mayor puntuación en Astro Rush 3D',prize:'Insignia LIGHTSPEED'},
-  {title:'Cazador de anillos',desc:'Astro Rush 3D: encadena anillos de energía hasta el combo x5 y mantenlo todo lo que puedas. Los anillos seguidos multiplican tus puntos.',format:'Anillos y combo máximo',prize:'Insignia RING HUNTER'},
-  {title:'Rozando el vacío',desc:'Astro Rush 3D: consigue el mayor número de bonus «¡CERCA!» en una partida rozando asteroides sin chocar. Solo para pilotos con nervios de acero.',format:'Bonus CERCA en una partida',prize:'Insignia NERVES OF STEEL'},
-  {title:'Reflejos neón',desc:'BlockDash: esquiva sin descanso y supera tu mejor puntuación. La velocidad aumenta con cada bloque, así que no pierdas el ritmo.',format:'Mejor puntuación en BlockDash',prize:'Insignia NEON REFLEX'},
-  {title:'Noche de supervivencia',desc:'ZOMBIE ASSAULT o Wasteland: aguanta el mayor tiempo posible bajo presión y demuestra que eres el último en pie.',format:'Mayor puntuación de supervivencia',prize:'Insignia LAST SURVIVOR'},
-  {title:'Doble boost',desc:'Astro Rush 3D: usa el boost sin parar y puntúa el doble. Gasta energía con cabeza y recárgala atravesando anillos.',format:'Puntuación con boost',prize:'Insignia DOUBLE BOOST'},
-  {title:'Maratón de luces',desc:'Juega a 5 juegos distintos del catálogo durante la semana y deja tu marca en cada categoría.',format:'Juegos distintos completados',prize:'Insignia LIGHT MARATHON'},
-  {title:'Gran final Neon Rush',desc:'La prueba definitiva: suma tu mejor puntuación en Astro Rush 3D, BlockDash y un juego a tu elección. Gana quien reúna más puntos.',format:'Puntuación total de tres juegos',prize:'Insignia NEON LEGEND'}
- ];
- function mondayStart(d){const x=new Date(d);x.setHours(0,0,0,0);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);return x;}
- function getTournament(){const now=new Date(),start=mondayStart(now),week=Math.floor(start.getTime()/604800000),end=new Date(start);end.setDate(end.getDate()+7);return {now,start,end,week,index:((week%challenges.length)+challenges.length)%challenges.length,number:Math.floor((start-new Date(start.getFullYear(),0,1))/604800000)+1};}
- function fmt(ms){if(ms<0)ms=0;const total=Math.floor(ms/1000),d=Math.floor(total/86400),h=Math.floor(total%86400/3600),m=Math.floor(total%3600/60),s=total%60;return (d?d+'d ':'')+[h,m,s].map(v=>String(v).padStart(2,'0')).join(':');}
- function renderTournament(){const t=getTournament(),c=challenges[t.index];const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};set('mgTournamentTitle',c.title);set('mgTournamentDesc',c.desc);set('mgTournamentFormat',c.format);set('mgTournamentPrize',c.prize);set('mgTournamentWeek','SEMANA '+String(t.number).padStart(2,'0'));set('mgTournamentCountdown',fmt(t.end-Date.now()));const b=document.getElementById('mgTournamentJoin');if(b)b.disabled=false;loadTournamentPlayers(t.week);updateJoinStatus(t.week);}
- function updateJoinStatus(week){const status=document.getElementById('mgTournamentStatus');if(!status)return;if(!currentUser){status.textContent='Inicia sesión para guardar tu inscripción.';return;}db.collection('weeklyTournaments').doc(String(week)).collection('players').doc(currentUser.uid).get().then(doc=>{status.textContent=doc.exists?'✅ Ya estás inscrito esta semana.':'Inscripción abierta: participa con tu cuenta.';}).catch(()=>{status.textContent='No se pudo consultar la inscripción. Comprueba la conexión.';});}
- function loadTournamentPlayers(week){const el=document.getElementById('mgTournamentPlayers');if(!el)return;if(!window.db){el.innerHTML='<p class="mg-tournament-empty">No se pudo conectar con el servicio.</p>';return;}db.collection('weeklyTournaments').doc(String(week)).collection('players').orderBy('joinedAt','asc').limit(50).get().then(snap=>{if(!snap.size){el.innerHTML='<p class="mg-tournament-empty">Aún no hay inscritos. ¡Sé el primero!</p>';return;}el.innerHTML='';snap.forEach((doc,i)=>{const d=doc.data()||{},row=document.createElement('div');row.className='mg-tournament-player';const rank=document.createElement('span');rank.className='mg-player-rank';rank.textContent='#'+(i+1);const info=document.createElement('div');const name=document.createElement('strong');name.textContent=d.name||'Jugador';const small=document.createElement('small');small.textContent='Inscrito en el torneo semanal';info.append(name,small);row.append(rank,info);el.appendChild(row);});}).catch(()=>{el.innerHTML='<p class="mg-tournament-empty">No se pudieron cargar los inscritos. Revisa las reglas de Firestore.</p>';});}
- window.joinWeeklyTournament=async function(){if(!currentUser){const s=document.getElementById('mgTournamentStatus');if(s)s.textContent='Inicia sesión primero para inscribirte.';if(typeof showToast==='function')showToast('Inicia sesión para participar','warning');if(typeof openAuth==='function')openAuth();return;}const t=getTournament();const b=document.getElementById('mgTournamentJoin');if(b)b.disabled=true;try{await db.collection('weeklyTournaments').doc(String(t.week)).collection('players').doc(currentUser.uid).set({uid:currentUser.uid,name:currentPlayerName||currentUser.displayName||'Jugador',joinedAt:firebase.firestore.FieldValue.serverTimestamp(),week:t.week},{merge:true});const s=document.getElementById('mgTournamentStatus');if(s)s.textContent='✅ Inscripción guardada. ¡A por el reto!';loadTournamentPlayers(t.week);try{localStorage.setItem('mg_joined_'+currentUser.uid,'1')}catch(_){}if(window.mgAchCheck)setTimeout(window.mgAchCheck,400);if(typeof showToast==='function')showToast('¡Inscripción al torneo semanal completada!','success');}catch(e){const s=document.getElementById('mgTournamentStatus');if(s)s.textContent=(e&&e.code==='permission-denied')?'Sin permiso: publica las reglas nuevas de Firestore (weeklyTournaments).':'No se pudo guardar la inscripción. Inténtalo de nuevo.';if(typeof showToast==='function')showToast('No se pudo completar la inscripción','warning');console.error('Torneo semanal:',e);}finally{if(b)b.disabled=false;}};
- document.addEventListener('DOMContentLoaded',()=>{renderTournament();setInterval(()=>{const t=getTournament();const el=document.getElementById('mgTournamentCountdown');if(el)el.textContent=fmt(t.end-Date.now());},1000);});
- window.addEventListener('focus',()=>{renderTournament();});
- if(window.auth&&auth.onAuthStateChanged)auth.onAuthStateChanged(()=>{renderTournament();});
+ {title:'Velocidad de luz',desc:'Astro Rush 3D: consigue la mayor puntuación posible en una sola partida.',format:'Mayor puntuación en Astro Rush 3D',prize:'Insignia LIGHTSPEED'},
+ {title:'Cazador de anillos',desc:'Astro Rush 3D: encadena anillos y consigue el mejor resultado.',format:'Puntuación de Astro Rush 3D',prize:'Insignia RING HUNTER'},
+ {title:'Rozando el vacío',desc:'Consigue el mejor resultado esquivando obstáculos.',format:'Puntuación de la partida',prize:'Insignia NERVES OF STEEL'},
+ {title:'Reflejos neón',desc:'BlockDash: esquiva sin descanso y supera a los demás jugadores.',format:'Mayor puntuación en BlockDash',prize:'Insignia NEON REFLEX'},
+ {title:'Noche de supervivencia',desc:'Aguanta el mayor tiempo posible en el desafío de supervivencia.',format:'Puntuación de supervivencia',prize:'Insignia LAST SURVIVOR'},
+ {title:'Doble boost',desc:'Consigue la mayor puntuación utilizando el boost con cabeza.',format:'Puntuación de Astro Rush 3D',prize:'Insignia DOUBLE BOOST'},
+ {title:'Maratón de luces',desc:'Demuestra tu habilidad y completa el reto semanal.',format:'Resultado del desafío semanal',prize:'Insignia LIGHT MARATHON'},
+ {title:'Gran final Neon Rush',desc:'La prueba definitiva para los mejores jugadores de la comunidad.',format:'Mayor puntuación registrada',prize:'Insignia NEON LEGEND'}];
+ function monday(d){var x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
+ function current(){var start=monday(new Date()),end=new Date(start);end.setDate(end.getDate()+7);var week=Math.floor(start.getTime()/604800000);return{start:start,end:end,week:week,index:((week%challenges.length)+challenges.length)%challenges.length};}
+ function ref(t){return db.collection('weeklyTournaments').doc(String(t.week));}
+ function set(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+ function fmt(ms){var n=Math.max(0,Math.floor(ms/1000)),d=Math.floor(n/86400),h=Math.floor(n%86400/3600),m=Math.floor(n%3600/60),s=n%60;return(d?d+'d ':'')+[h,m,s].map(v=>String(v).padStart(2,'0')).join(':');}
+ function errorText(e){console.error('Torneo semanal:',e);if(e&&e.code==='permission-denied')return 'Firebase ha bloqueado la operación. Publica las reglas de weeklyTournaments.';if(e&&e.code==='unavailable')return 'Firebase no está disponible. Comprueba tu conexión.';return 'No se pudo conectar con el torneo. Inténtalo de nuevo.';}
+ async function loadPlayers(t){var el=document.getElementById('mgTournamentPlayers');if(!el)return;try{var snap=await ref(t).collection('players').get();if(!snap.size){el.innerHTML='<p class="mg-tournament-empty">Aún no hay inscritos. ¡Sé el primero!</p>';return;}var arr=snap.docs.map(d=>d.data()||{});arr.sort((a,b)=>((a.joinedAt&&a.joinedAt.toMillis?a.joinedAt.toMillis():0)-(b.joinedAt&&b.joinedAt.toMillis?b.joinedAt.toMillis():0)));el.innerHTML='';arr.forEach((p,i)=>{var row=document.createElement('div');row.className='mg-tournament-player';var rank=document.createElement('span');rank.className='mg-player-rank';rank.textContent='#'+(i+1);var info=document.createElement('div'),name=document.createElement('strong'),small=document.createElement('small');name.textContent=p.name||'Jugador';small.textContent='Inscrito en el torneo semanal';info.append(name,small);row.append(rank,info);el.appendChild(row);});}catch(e){el.innerHTML='<p class="mg-tournament-empty">'+errorText(e)+'</p>';}}
+ async function loadScores(t){var el=document.getElementById('mgTournamentScores');if(!el)return;try{var snap=await ref(t).collection('scores').get(),arr=snap.docs.map(d=>d.data()||{}).sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0)).slice(0,10);el.innerHTML='';if(!arr.length){el.innerHTML='<p class="mg-tournament-empty">Todavía no hay puntuaciones. Inscríbete y juega para aparecer aquí.</p>';return;}arr.forEach((p,i)=>{var row=document.createElement('div');row.className='mg-tournament-player';var rank=document.createElement('span');rank.className='mg-player-rank';rank.textContent='#'+(i+1);var info=document.createElement('div'),name=document.createElement('strong'),small=document.createElement('small');name.textContent=p.name||'Jugador';small.textContent=(p.game||'Juego')+' · '+(Number(p.score)||0)+' puntos';info.append(name,small);row.append(rank,info);el.appendChild(row);});}catch(e){el.innerHTML='<p class="mg-tournament-empty">'+errorText(e)+'</p>';}}
+ async function status(t){if(!currentUser){set('mgTournamentStatus','Inicia sesión para guardar tu inscripción.');return;}try{var d=await ref(t).collection('players').doc(currentUser.uid).get();set('mgTournamentStatus',d.exists?'✅ Ya estás inscrito esta semana.':'Inscripción abierta: participa con tu cuenta.');}catch(e){set('mgTournamentStatus',errorText(e));}}
+ async function render(){var t=current(),c=challenges[t.index],yearStart=new Date(t.start.getFullYear(),0,1),weekNo=Math.ceil((((t.start-yearStart)/86400000)+yearStart.getDay()+1)/7);set('mgTournamentTitle',c.title);set('mgTournamentDesc',c.desc);set('mgTournamentFormat',c.format);set('mgTournamentPrize',c.prize);set('mgTournamentWeek','SEMANA '+String(weekNo).padStart(2,'0'));set('mgTournamentCountdown',fmt(t.end-Date.now()));await Promise.all([loadPlayers(t),status(t)]);}
+ window.joinWeeklyTournament=async function(){if(!currentUser){set('mgTournamentStatus','Inicia sesión primero para inscribirte.');if(typeof showToast==='function')showToast('Inicia sesión para participar','warning');if(typeof openAuth==='function')openAuth();return;}var t=current(),b=document.getElementById('mgTournamentJoin');if(b)b.disabled=true;set('mgTournamentStatus','Guardando inscripción…');try{await ref(t).set({week:t.week,challenge:challenges[t.index].title,startsAt:firebase.firestore.Timestamp.fromDate(t.start),endsAt:firebase.firestore.Timestamp.fromDate(t.end),updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});await ref(t).collection('players').doc(currentUser.uid).set({uid:currentUser.uid,name:currentPlayerName||currentUser.displayName||'Jugador',joinedAt:firebase.firestore.FieldValue.serverTimestamp(),week:t.week},{merge:true});set('mgTournamentStatus','✅ Inscripción guardada. ¡A por el reto!');if(typeof showToast==='function')showToast('¡Ya estás dentro del torneo semanal!','success');await loadPlayers(t);}catch(e){set('mgTournamentStatus',errorText(e));if(typeof showToast==='function')showToast('No se pudo completar la inscripción','warning');}finally{if(b)b.disabled=false;}};
+ /* Los juegos dentro de iframe pueden enviar el resultado con parent.submitWeeklyTournamentScore(nombreJuego,puntos). */
+ window.submitWeeklyTournamentScore=async function(game,score){if(!currentUser)throw new Error('Inicia sesión para enviar tu puntuación.');var n=Number(score);if(!Number.isFinite(n)||n<0)throw new Error('Puntuación no válida.');var t=current(),player=ref(t).collection('players').doc(currentUser.uid);if(!(await player.get()).exists)throw new Error('Primero debes inscribirte en el torneo.');var sr=ref(t).collection('scores').doc(currentUser.uid);await db.runTransaction(async function(tx){var old=await tx.get(sr),best=old.exists?Number(old.data().score)||0:0;if(n>best)tx.set(sr,{uid:currentUser.uid,name:currentPlayerName||currentUser.displayName||'Jugador',game:String(game||'Juego').slice(0,80),score:n,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});});await loadScores(t);return true;};
+ window.refreshWeeklyTournament=async function(){var t=current();await Promise.all([loadPlayers(t),loadScores(t),status(t)]);};
+ document.addEventListener('DOMContentLoaded',function(){render();loadScores(current());setInterval(function(){var t=current();set('mgTournamentCountdown',fmt(t.end-Date.now()));},1000);});window.addEventListener('focus',function(){render();loadScores(current());});if(window.auth&&auth.onAuthStateChanged)auth.onAuthStateChanged(function(){render();});
 })();
 </script>
 <script id="mg-logros-system">
