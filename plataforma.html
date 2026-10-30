@@ -1243,7 +1243,7 @@ auth.onAuthStateChanged(function(user){
                 return db.collection('players').doc(user.uid).update({xp:0,playedGames:Array.isArray(pdata.playedGames)?pdata.playedGames:[],level:1});
             }
         }).then(function(){
-            area.innerHTML='<div style="display:flex;gap:8px;align-items:center"><div id="myAv" class="my-av" onclick="openPhoto()" title="Cambiar foto de perfil">'+avHtml(myPhoto,myInitial())+'</div><div style="font-size:.9em;color:var(--accent);font-weight:600">'+esc(currentPlayerName||user.displayName||'Jugador')+'</div><button class="auth-btn" onclick="auth.signOut()">Salir</button></div>';
+            area.innerHTML='<div style="display:flex;gap:8px;align-items:center"><div id="myAv" class="my-av" onclick="openPhoto()" title="Cambiar foto de perfil">'+avHtml(myPhoto,myInitial())+'</div><div style="font-size:.9em;color:var(--accent);font-weight:600">'+esc(currentPlayerName||user.displayName||'Jugador')+'</div><button class="auth-btn" id="photoBtn" onclick="openPhoto()">'+(myPhoto?'📷 Cambiar foto':'📷 Añadir foto')+'</button><button class="auth-btn" onclick="auth.signOut()">Salir</button></div>';
         }).catch(function(err){console.warn('Perfil XP:',err);});
         document.getElementById('commentText').disabled=false;
         document.getElementById('commentBtn').disabled=false;
@@ -1268,7 +1268,7 @@ function okPhoto(p){return typeof p==='string'&&p.length<60000&&/^data:image\/(j
 function avHtml(p,fb){return okPhoto(p)?'<img class="ph-img" alt="" src="'+p+'">':fb;}
 function myInitial(){return esc((currentPlayerName||'?').charAt(0).toUpperCase());}
 function paintPrev(p){document.getElementById('photoPrev').innerHTML=avHtml(p,myInitial());}
-function refreshAv(){var a=document.getElementById('myAv');if(a)a.innerHTML=avHtml(myPhoto,myInitial());}
+function refreshAv(){var a=document.getElementById('myAv');if(a)a.innerHTML=avHtml(myPhoto,myInitial());var b=document.getElementById('photoBtn');if(b)b.textContent=myPhoto?'📷 Cambiar foto':'📷 Añadir foto';}
 function openPhoto(){if(!currentUser)return;newPhoto='';paintPrev(myPhoto);document.getElementById('photoSave').style.display='none';document.getElementById('photoModal').classList.add('active');}
 function closePhoto(){document.getElementById('photoModal').classList.remove('active');}
 document.getElementById('photoFile').addEventListener('change',function(e){
