@@ -188,6 +188,11 @@ section{padding:80px 40px;position:relative;z-index:1}
 .gt-prev{position:absolute;top:0;left:0;border:0;transform-origin:0 0;pointer-events:none;opacity:0;transition:opacity .5s;background:#000}
 .gt-prev.on{opacity:1}
 .gt-cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ph-img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.ranking-avatar,.profile-avatar{overflow:hidden}
+.my-av,.av-prev{border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-secondary));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;overflow:hidden}
+.my-av{width:36px;height:36px;cursor:pointer;border:2px solid var(--accent);flex-shrink:0}
+.av-prev{width:140px;height:140px;margin:0 auto 18px;font-size:3em}
 .fav-section{background:var(--bg-secondary)}
 .game-tag{padding:3px 10px;background:rgba(102,126,234,.15);border-radius:10px;font-size:.75em;color:var(--accent)}
 .grad-1{background:linear-gradient(135deg,#667eea,#764ba2)}.grad-2{background:linear-gradient(135deg,#f093fb,#f5576c)}.grad-3{background:linear-gradient(135deg,#4facfe,#00f2fe)}.grad-4{background:linear-gradient(135deg,#43e97b,#38f9d7)}.grad-5{background:linear-gradient(135deg,#fa709a,#fee140)}.grad-6{background:linear-gradient(135deg,#30cfd0,#330867)}.grad-8{background:linear-gradient(135deg,#a8edea,#fed6e3)}
@@ -591,6 +596,19 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 <div class="auth-error" id="authError"></div>
 <button class="auth-submit" onclick="handleAuth()" id="authSubmitBtn">Entrar</button>
 <div class="auth-toggle" id="authToggle">No tienes cuenta? <span onclick="switchAuthMode()">Registrate</span></div>
+</div>
+</div>
+
+<!-- ============ FOTO DE PERFIL ============ -->
+<div class="auth-overlay" id="photoModal">
+<div class="auth-modal" style="text-align:center">
+<button class="auth-close" onclick="closePhoto()">&times;</button>
+<h2>Foto de perfil</h2>
+<div id="photoPrev" class="av-prev"></div>
+<input type="file" id="photoFile" accept="image/*" style="display:none">
+<button class="auth-submit" onclick="document.getElementById('photoFile').click()">Elegir foto</button>
+<button class="auth-submit" id="photoSave" onclick="savePhoto()" style="margin-top:10px;display:none">Guardar</button>
+<div class="auth-toggle"><span onclick="removePhoto()">Quitar foto</span></div>
 </div>
 </div>
 
@@ -1211,21 +1229,21 @@ auth.onAuthStateChanged(function(user){
     var area=document.getElementById('authArea');
     var notifArea=document.getElementById('notifArea');
     if(user){
-        currentUser=user;
+        currentUser=user;myPhoto='';
         notifArea.style.display='block';
-        listenUserNotifications(user);
         db.collection('players').doc(user.uid).get().then(function(doc){
             if(!doc.exists){
                 return db.collection('players').doc(user.uid).set({name:user.displayName||'Jugador',score:0,xp:0,level:1,games:0,playedGames:[],joined:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){currentPlayerName=user.displayName||'Jugador';});
             }
             var pdata=doc.data()||{};
             currentPlayerName=pdata.name||user.displayName||'Jugador';
+            myPhoto=pdata.photo||'';
             // Migración compatible: no inventa XP a partir de puntuaciones antiguas.
             if(typeof pdata.xp!=='number'){
                 return db.collection('players').doc(user.uid).update({xp:0,playedGames:Array.isArray(pdata.playedGames)?pdata.playedGames:[],level:1});
             }
         }).then(function(){
-            area.innerHTML='<div style="display:flex;gap:8px;align-items:center"><div style="font-size:.9em;color:var(--accent);font-weight:600">'+esc(currentPlayerName||user.displayName||'Jugador')+'</div><button class="auth-btn" onclick="auth.signOut()">Salir</button></div>';
+            area.innerHTML='<div style="display:flex;gap:8px;align-items:center"><div id="myAv" class="my-av" onclick="openPhoto()" title="Cambiar foto de perfil">'+avHtml(myPhoto,myInitial())+'</div><div style="font-size:.9em;color:var(--accent);font-weight:600">'+esc(currentPlayerName||user.displayName||'Jugador')+'</div><button class="auth-btn" onclick="auth.signOut()">Salir</button></div>';
         }).catch(function(err){console.warn('Perfil XP:',err);});
         document.getElementById('commentText').disabled=false;
         document.getElementById('commentBtn').disabled=false;
@@ -1234,7 +1252,6 @@ auth.onAuthStateChanged(function(user){
         document.getElementById('livechatBtn').disabled=false;
     } else {
         currentUser=null;currentPlayerName='';
-        listenUserNotifications(null);
         notifArea.style.display='none';
         area.innerHTML='<button class="auth-btn" onclick="openAuth()">Iniciar sesion</button>';
         document.getElementById('commentText').disabled=true;
@@ -1245,6 +1262,45 @@ auth.onAuthStateChanged(function(user){
     }
 });
 
+/* ============ FOTO DE PERFIL ============ */
+var myPhoto='',newPhoto='';
+function okPhoto(p){return typeof p==='string'&&p.length<60000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(p);}
+function avHtml(p,fb){return okPhoto(p)?'<img class="ph-img" alt="" src="'+p+'">':fb;}
+function myInitial(){return esc((currentPlayerName||'?').charAt(0).toUpperCase());}
+function paintPrev(p){document.getElementById('photoPrev').innerHTML=avHtml(p,myInitial());}
+function refreshAv(){var a=document.getElementById('myAv');if(a)a.innerHTML=avHtml(myPhoto,myInitial());}
+function openPhoto(){if(!currentUser)return;newPhoto='';paintPrev(myPhoto);document.getElementById('photoSave').style.display='none';document.getElementById('photoModal').classList.add('active');}
+function closePhoto(){document.getElementById('photoModal').classList.remove('active');}
+document.getElementById('photoFile').addEventListener('change',function(e){
+    var f=e.target.files&&e.target.files[0];e.target.value='';
+    if(!f)return;
+    if(!/^image\//.test(f.type)){showToast('Elige un archivo de imagen','error');return;}
+    var img=new Image(),url=URL.createObjectURL(f);
+    img.onload=function(){
+        var m=Math.min(img.width,img.height),c=document.createElement('canvas');
+        c.width=c.height=160;
+        c.getContext('2d').drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,160,160);
+        URL.revokeObjectURL(url);
+        newPhoto=c.toDataURL('image/jpeg',.82);
+        paintPrev(newPhoto);
+        document.getElementById('photoSave').style.display='block';
+    };
+    img.onerror=function(){URL.revokeObjectURL(url);showToast('No se pudo leer la imagen','error');};
+    img.src=url;
+});
+function savePhoto(){
+    if(!currentUser||!newPhoto)return;
+    db.collection('players').doc(currentUser.uid).update({photo:newPhoto}).then(function(){
+        myPhoto=newPhoto;refreshAv();closePhoto();showToast('Foto de perfil actualizada','success');
+    }).catch(function(){showToast('No se pudo guardar la foto','error');});
+}
+function removePhoto(){
+    if(!currentUser)return;
+    db.collection('players').doc(currentUser.uid).update({photo:''}).then(function(){
+        myPhoto='';refreshAv();closePhoto();showToast('Foto quitada','success');
+    }).catch(function(){showToast('No se pudo quitar la foto','error');});
+}
+
 /* ============ RANKING GLOBAL ============ */
 db.collection('players').orderBy('xp','desc').limit(10).onSnapshot(function(snap){
     var table=document.getElementById('rankingTable');
@@ -1253,7 +1309,7 @@ db.collection('players').orderBy('xp','desc').limit(10).onSnapshot(function(snap
     snap.docs.forEach(function(doc,i){
         var d=doc.data(),row=document.createElement('div');
         row.className='ranking-row'+(i<3?' top-'+(i+1):'');
-        row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+(emojis[i]||'🎮')+'</div><span class="ranking-name">'+esc(d.name||'Anónimo')+'</span><span class="ranking-score">'+(Number(d.xp)||0)+'</span><span class="ranking-level">'+xpLevelInfo(d.xp).level+'</span>';
+        row.innerHTML='<span class="ranking-position">'+(i+1)+'</span><div class="ranking-avatar">'+avHtml(d.photo,(emojis[i]||'🎮'))+'</div><span class="ranking-name">'+esc(d.name||'Anónimo')+'</span><span class="ranking-score">'+(Number(d.xp)||0)+'</span><span class="ranking-level">'+xpLevelInfo(d.xp).level+'</span>';
         table.appendChild(row);
     });
 });
@@ -1298,7 +1354,7 @@ db.collection('players').orderBy('score','desc').limit(8).onSnapshot(function(sn
         var d=doc.data()||{},card=document.createElement('div');
         card.className='profile-card';
         var info=xpLevelInfo(d.xp);
-        card.innerHTML='<div class="profile-avatar">'+emojis[i]+'</div>'+ 
+        card.innerHTML='<div class="profile-avatar">'+avHtml(d.photo,emojis[i])+'</div>'+ 
             '<div class="profile-name">'+esc(d.name||'Anónimo')+'</div>'+ 
             '<span class="profile-level-badge">Lvl '+info.level+'</span>'+ 
             '<div class="profile-title">'+(titles[Math.min(info.level-1,titles.length-1)])+'</div>'+ 
@@ -1483,27 +1539,28 @@ function sendConfetti(){
     }
 }
 
-/* ============ NOTIFICACIONES FIRESTORE POR USUARIO ============ */
-var notificationsUnsub=null;
-function listenUserNotifications(user){
-    if(notificationsUnsub){notificationsUnsub();notificationsUnsub=null;}
-    var list=document.getElementById('notifList'),badge=document.getElementById('notifBadge');
-    if(!user){list.innerHTML='<div class="notif-empty">Inicia sesión para ver tus notificaciones</div>';badge.style.display='none';return;}
-    // La consulta se limita al UID autenticado, como exigen las reglas de Firestore.
-    notificationsUnsub=db.collection('notifications').where('to','==',user.uid).orderBy('time','desc').limit(20).onSnapshot(function(snap){
-        list.innerHTML='';var unread=0;
-        if(snap.empty){list.innerHTML='<div class="notif-empty">Sin notificaciones</div>';badge.style.display='none';return;}
-        snap.docs.forEach(function(doc){
-            var d=doc.data()||{};if(!d.read)unread++;
-            var item=document.createElement('div');item.className='notif-item'+(d.read?'':' unread');
-            var title=document.createElement('strong');title.textContent=d.title||'MINGUELASGO GAMES';title.style.display='block';title.style.marginBottom='4px';title.style.color='var(--text-primary)';
-            var body=document.createElement('span');body.textContent=d.text||'';item.appendChild(title);item.appendChild(body);
-            item.addEventListener('click',function(){if(!d.read)doc.ref.update({read:true}).catch(function(e){console.warn('No se pudo marcar como leída:',e);});});
-            list.appendChild(item);
-        });
-        if(unread>0){badge.textContent=unread>99?'99+':unread;badge.style.display='flex';}else badge.style.display='none';
-    },function(err){console.error('Notificaciones:',err);list.innerHTML='<div class="notif-empty">No se pudieron cargar. Revisa las reglas de Firestore.</div>';badge.style.display='none';});
-}
+/* ============ NOTIFICACIONES FIRESTORE ============ */
+db.collection('notifications').orderBy('time','desc').limit(10).onSnapshot(function(snap){
+    var list=document.getElementById('notifList');
+    var badge=document.getElementById('notifBadge');
+    list.innerHTML='';
+    var unread=0;
+    if(snap.empty){
+        list.innerHTML='<div class="notif-empty">Sin notificaciones</div>';
+        badge.style.display='none';
+        return;
+    }
+    snap.docs.forEach(function(doc){
+        var d=doc.data();
+        if(!d.read) unread++;
+        var item=document.createElement('div');
+        item.className='notif-item'+(d.read?'':' unread');
+        item.textContent=d.text||'';
+        list.appendChild(item);
+    });
+    if(unread>0){badge.textContent=unread;badge.style.display='flex';}
+    else{badge.style.display='none';}
+});
 
 /* ============ ONLINE COUNT (real con Firestore) ============ */
 var onlineInterval=null;
@@ -1616,13 +1673,7 @@ db.collection('comments').onSnapshot(function(snap){
     '.adm-tag{background:#f5576c;color:#fff;font-size:.65em;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle}'+
     '.adm-btn{padding:8px 16px;border:none;border-radius:8px;font-weight:600;cursor:pointer;color:#fff;flex-shrink:0}'+
     '.adm-btn.ban{background:#f5576c}.adm-btn.unban{background:#4ade80;color:#000}'+
-    '#adminStats{color:var(--text-muted);font-size:.85em;text-align:center;margin-top:4px}'+
-    '.adm-notif-box{border:1px solid var(--border);border-radius:12px;padding:14px;margin:12px 0;background:var(--bg-primary)}'+
-    '.adm-notif-box h3{font-size:1em;margin-bottom:10px;color:var(--text-primary)}'+
-    '.adm-notif-box input,.adm-notif-box textarea,.adm-notif-box select{display:block;width:100%;margin:7px 0;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-card);color:var(--text-primary);font:inherit}'+
-    '.adm-notif-box textarea{min-height:75px;resize:vertical}'+
-    '.adm-notif-send{width:100%;padding:11px;border:0;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-secondary));color:#fff;font-weight:800;cursor:pointer}'+
-    '.adm-notif-send:disabled{opacity:.55;cursor:wait}';
+    '#adminStats{color:var(--text-muted);font-size:.85em;text-align:center;margin-top:4px}';
   document.head.appendChild(st);
 
    /* ---------- HTML: panel + pantalla de baneado ---------- */
@@ -1630,11 +1681,6 @@ db.collection('comments').onSnapshot(function(snap){
     '<div class="auth-overlay" id="adminModal"><div class="auth-modal" style="max-width:640px;max-height:85vh;display:flex;flex-direction:column">'+
       '<button class="auth-close" id="adminClose">&times;</button>'+
       '<h2>🛡️ Panel de Admin</h2>'+
-      '<div class="adm-notif-box"><h3>📣 Enviar notificación</h3>'+
-      '<input id="adminNotifTitle" maxlength="80" placeholder="Título de la notificación">'+
-      '<textarea id="adminNotifText" maxlength="500" placeholder="Escribe el mensaje (máximo 500 caracteres)"></textarea>'+
-      '<select id="adminNotifTarget"><option value="all">📢 Todos los jugadores activos</option></select>'+
-      '<button class="adm-notif-send" id="adminNotifSend" type="button">Enviar notificación</button></div>'+
       '<input type="text" id="adminSearch" placeholder="Buscar jugador o ID..." style="margin-bottom:0">'+
       '<div id="adminStats"></div><div class="adm-list" id="adminList"></div>'+
     '</div></div>'+
@@ -1680,8 +1726,6 @@ db.collection('comments').onSnapshot(function(snap){
     all=all.filter(function(p){return !q||p.name.toLowerCase().indexOf(q)>-1||p.uid.toLowerCase().indexOf(q)>-1;});
     all.sort(function(a,b){return (bans[b.uid]?1:0)-(bans[a.uid]?1:0)||b.score-a.score;});
     document.getElementById('adminStats').textContent=players.length+' jugadores, '+Object.keys(bans).length+' baneados';
-    var target=document.getElementById('adminNotifTarget');
-    if(target){var chosen=target.value;target.innerHTML='<option value="all">📢 Todos los jugadores activos</option>'+players.filter(function(p){return !bans[p.uid];}).map(function(p){return '<option value="'+encodeURIComponent(p.uid)+'">'+esc(p.name)+' — '+esc(p.uid.slice(0,10))+'</option>';}).join('');if(chosen!=='all'&&players.some(function(p){return encodeURIComponent(p.uid)===chosen&&!bans[p.uid];}))target.value=chosen;}
     document.getElementById('adminList').innerHTML=all.length?all.map(function(p){
       var b=bans[p.uid];
       return '<div class="adm-row'+(b?' banned':'')+'"><div class="adm-info"><div class="adm-name">'+esc(p.name)+(b?'<span class="adm-tag">BANEADO</span>':'')+'</div>'+
@@ -1711,28 +1755,6 @@ db.collection('comments').onSnapshot(function(snap){
       .catch(function(e){showToast('Error: '+e.message,'warning');});
   }
 
-  function sendAdminNotification(){
-    if(!isAdmin||!auth.currentUser){showToast('Solo los administradores pueden enviar notificaciones','warning');return;}
-    var title=document.getElementById('adminNotifTitle').value.trim();
-    var message=document.getElementById('adminNotifText').value.trim();
-    var target=document.getElementById('adminNotifTarget').value;
-    var btn=document.getElementById('adminNotifSend');
-    if(!title||!message){showToast('Escribe un título y un mensaje','warning');return;}
-    var recipients=target==='all'?players.filter(function(p){return !bans[p.uid];}).map(function(p){return p.uid;}):[decodeURIComponent(target)];
-    if(!recipients.length){showToast('No hay destinatarios disponibles','warning');return;}
-    btn.disabled=true;btn.textContent='Enviando 0/'+recipients.length+'…';
-    var chunks=[];for(var i=0;i<recipients.length;i+=400)chunks.push(recipients.slice(i,i+400));
-    var sent=0;
-    chunks.reduce(function(chain,chunk){return chain.then(function(){
-      var batch=db.batch();chunk.forEach(function(uid){var ref=db.collection('notifications').doc();batch.set(ref,{to:uid,title:title,text:message,read:false,time:firebase.firestore.FieldValue.serverTimestamp(),from:auth.currentUser.uid});});
-      return batch.commit().then(function(){sent+=chunk.length;btn.textContent='Enviando '+sent+'/'+recipients.length+'…';});
-    });},Promise.resolve()).then(function(){
-      document.getElementById('adminNotifTitle').value='';document.getElementById('adminNotifText').value='';
-      showToast('Notificación enviada a '+sent+' jugador(es)','success');
-    }).catch(function(e){console.error('Error enviando notificaciones:',e);showToast('No se pudo enviar: '+(e.message||'revisa las reglas de Firestore'),'warning');})
-    .finally(function(){btn.disabled=false;btn.textContent='Enviar notificación';});
-  }
-  document.getElementById('adminNotifSend').onclick=sendAdminNotification;
   document.getElementById('adminOpen').onclick=openPanel;
   document.getElementById('adminClose').onclick=closePanel;
   document.getElementById('adminSearch').oninput=render;
