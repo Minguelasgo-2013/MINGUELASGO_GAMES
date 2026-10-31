@@ -1814,10 +1814,26 @@ db.collection('comments').onSnapshot(function(snap){
       .catch(function(e){showToast('Error: '+e.message,'warning');});
   }
   function sendNotif(uids,text){
+    // Debe coincidir con las reglas de Firestore de /notifications.
+    var user=auth.currentUser;
+    if(!user)return Promise.reject(new Error('Inicia sesión para enviar notificaciones.'));
+    var message=String(text||'').trim();
+    if(!message)return Promise.reject(new Error('Escribe un mensaje.'));
+    if(message.length>500)return Promise.reject(new Error('El mensaje no puede superar los 500 caracteres.'));
+
     var chunks=[];for(var i=0;i<uids.length;i+=400)chunks.push(uids.slice(i,i+400));
     return Promise.all(chunks.map(function(c){
       var bt=db.batch();
-      c.forEach(function(u){bt.set(db.collection('notifications').doc(),{to:u,text:text,read:false,time:firebase.firestore.FieldValue.serverTimestamp(),from:'admin'});});
+      c.forEach(function(u){
+        bt.set(db.collection('notifications').doc(),{
+          to:String(u),
+          title:'MINGUELASGO GAMES',
+          text:message,
+          read:false,
+          time:firebase.firestore.FieldValue.serverTimestamp(),
+          from:user.uid
+        });
+      });
       return bt.commit();
     }));
   }
