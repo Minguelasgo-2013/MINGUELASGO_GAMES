@@ -73,6 +73,13 @@ nav{position:fixed;top:0;left:0;width:100%;padding:15px 40px;display:flex;align-
 .theme-toggle{width:42px;height:42px;border-radius:50%;justify-content:center;padding:0;font-size:1.2em}
 .theme-toggle:hover,.auth-btn:hover{background:var(--accent);color:#fff}
 .online-badge{display:flex;align-items:center;gap:6px;font-size:.85em;color:#4ade80}
+.online-badge{position:relative;cursor:pointer}
+.online-tip{position:absolute;top:calc(100% + 12px);left:50%;transform:translateX(-50%) translateY(-4px);min-width:170px;max-width:260px;max-height:260px;overflow:auto;background:var(--bg-card,#111145);border:1px solid var(--border,rgba(102,126,234,.3));border-radius:12px;padding:10px 12px;box-shadow:0 12px 32px rgba(0,0,0,.45);color:var(--text-primary,#fff);font-size:.95em;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s,transform .18s,visibility .18s;z-index:10050;text-align:left}
+.online-badge:hover .online-tip,.online-badge.show-tip .online-tip{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.online-tip-title{font-size:.75em;text-transform:uppercase;letter-spacing:1px;color:var(--text-secondary,#8787b5);margin-bottom:6px}
+.online-tip-row{display:flex;align-items:center;gap:8px;padding:3px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.online-tip-row i{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0}
+.online-tip-empty{color:var(--text-secondary,#8787b5);font-size:.9em}
 .online-dot{width:8px;height:8px;background:#4ade80;border-radius:50%;animation:pulse-dot 2s infinite}
 @keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(74,222,128,.4)}50%{opacity:.8;box-shadow:0 0 0 6px rgba(74,222,128,0)}}
 .nav-hamburger{display:none;background:none;border:none;color:var(--text-primary);font-size:1.6em;cursor:pointer}
@@ -549,7 +556,7 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 <h2>Bienvenido a MINGUELASGO GAMES</h2>
 <p>La plataforma ha sido renovada con nuevas funciones.</p>
 <div class="welcome-features">
-<div class="welcome-feat" id="featGames">14 Juegos</div>
+<div class="welcome-feat" id="featGames">17 Juegos</div>
 <div class="welcome-feat">Ranking Global</div>
 <div class="welcome-feat">Chat en Vivo</div>
 <div class="welcome-feat">Logros</div>
@@ -585,7 +592,7 @@ footer{background:linear-gradient(180deg,rgba(7,13,27,.65),rgba(3,7,16,.96));bor
 <li><a href="#logros">Logros</a></li>
 <li><a href="#chat">Chat</a></li>
 <li><a href="#opiniones">Opiniones</a></li>
-<li><span class="online-badge"><span class="online-dot"></span><span id="onlineCount">0</span> online</span></li>
+<li><span class="online-badge" id="onlineBadge" onclick="this.classList.toggle('show-tip')"><span class="online-dot"></span><span id="onlineCount">0</span> online<span class="online-tip" id="onlineTip"><div class="online-tip-title">Conectados ahora</div><div class="online-tip-empty">Nadie conectado</div></span></span></li>
 <li><button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button></li>
 <li id="notifArea" style="display:none;position:relative">
 <button class="notif-btn" onclick="toggleNotifs()">🔔<span class="notif-badge" id="notifBadge" style="display:none">0</span></button>
@@ -1023,6 +1030,9 @@ var GAMES=[
     {name:'Miguelasgo FC',folder:'MiguelasgoFC',icon:'⚽',cat:'Estrategia',grad:7,desc:'Dirige tu club, ficha cracks y machaca a otros managers'},
     {name:'SURVIVAL VIP',folder:'SurvivalVIP',icon:'🧟',cat:'Accion',grad:6,desc:'Sobrevive, resiste las oleadas y demuestra que eres VIP'},
     {name:'WOOD vs BOX',folder:'WoodvsBox',icon:'🏹',cat:'Arcade',grad:8,desc:'Destruye cajas, defiende tu posición y mejora tu arsenal'},
+    {name:'STREET RACER 3D',folder:'StreetRacer3D',icon:'🏎️',cat:'Carreras',grad:5,desc:'Carreras callejeras en 3D a toda velocidad'},
+    {name:'TOWER DEFENSE OVERDRIVE',folder:'TowerDefense',icon:'🗼',cat:'Estrategia',grad:2,desc:'Defiende tu base con torres en varios mapas y dificultades'},
+    {name:'Vapor Chronicles',folder:'VaporChronicles',icon:'⚔️',cat:'Aventura',grad:3,desc:'RPG masivo de exploración y combate'},
 ];
 /* El número de juegos se calcula solo a partir de GAMES */
 (function(){var n=GAMES.length,a=document.getElementById('featGames'),b=document.getElementById('catSub');if(a)a.textContent=n+' Juegos';if(b)b.textContent='Explora nuestros '+n+' juegos';})();
@@ -1623,18 +1633,36 @@ function stopOnlinePresence(){
     }
 }
 
-db.collection('online').onSnapshot(function(snap){
+function renderOnline(snap){
     var now = Date.now();
-    var count = 0;
+    var names = [];
     snap.docs.forEach(function(doc){
         var d = doc.data();
         if(d.lastSeen && d.lastSeen.toDate && (now - d.lastSeen.toDate().getTime()) < 5*60*1000){
-            count++;
+            names.push(String(d.name || 'Anónimo'));
         }
     });
+    names.sort(function(a,b){return a.localeCompare(b);});
     var el = document.getElementById('onlineCount');
-    if(el) el.textContent = count;
-});
+    if(el) el.textContent = names.length;
+    var tip = document.getElementById('onlineTip');
+    if(tip){
+        tip.textContent = '';
+        var t = document.createElement('div'); t.className = 'online-tip-title'; t.textContent = 'Conectados ahora';
+        tip.appendChild(t);
+        if(!names.length){
+            var e = document.createElement('div'); e.className = 'online-tip-empty'; e.textContent = 'Nadie conectado';
+            tip.appendChild(e);
+        } else {
+            names.forEach(function(n){
+                var r = document.createElement('div'); r.className = 'online-tip-row';
+                var dot = document.createElement('i'); var s = document.createElement('span'); s.textContent = n;
+                r.appendChild(dot); r.appendChild(s); tip.appendChild(r);
+            });
+        }
+    }
+}
+db.collection('online').onSnapshot(renderOnline);
 
 auth.onAuthStateChanged(function(user){
     if(user){
@@ -1651,18 +1679,7 @@ window.addEventListener('beforeunload', function(){
 });
 
 setInterval(function(){
-    db.collection('online').get().then(function(snap){
-        var now = Date.now();
-        var count = 0;
-        snap.docs.forEach(function(doc){
-            var d = doc.data();
-            if(d.lastSeen && d.lastSeen.toDate && (now - d.lastSeen.toDate().getTime()) < 5*60*1000){
-                count++;
-            }
-        });
-        var el = document.getElementById('onlineCount');
-        if(el) el.textContent = count;
-    });
+    db.collection('online').get().then(renderOnline);
 }, 60000);
 
 /* ============ HERO STATS ============ */
