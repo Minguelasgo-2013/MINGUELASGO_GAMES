@@ -57,7 +57,7 @@ const FUN=[["Atlético Tortilla","Real Siesta CF","Deportivo La Chancla","Racing
 ["Pizza Margherita FC","Spaghetti Calcio","Gelato Sciolto United","AC Cappuccino","Tiramisù Atletico","Lasagna Rovers","US Mozzarella","Virtus Parmigiano","Nonna Sgrida FC","Vespa Rotta 1908","AS Pasta Scotta","Fuorigioco Club","Pomodoro Sportiva","Limoncello Boys","Bruschetta FC","Gnocchi Furiosi"],
 ["FC Bratwurst","SV Bierfass","Sauerkraut Kickers","Brezel United 04","Wurstsalat Eintracht","FC Currywurst","Schnitzel Sportfreunde","SG Pünktlichkeit","Kartoffelsalat FC","Lederhosen Union","Fußball Verein Gemütlich","Bierbauch Borussia","Rasenmäher Rangers","VfB Verspätung","TSV Schwarzbrot","Gurkensalat 09"]];
 const CL=["Los Cuchillos FC","Atlético Barrizal","Real Pelotazo","Deportivo Tarjeta","Unión Patadón","Racing Chusma","CF Navaja","Sporting Chapuza"];
-const FORM={"4-4-2":[4,4,2],"4-3-3":[4,3,3],"3-5-2":[3,5,2],"5-3-2":[5,3,2]};
+const FORM={"4-4-2":[4,4,2],"4-3-3":[4,3,3],"3-5-2":[3,5,2],"5-3-2":[5,3,2],"4-2-3-1":[4,5,1],"4-1-4-1":[4,5,1],"3-4-3":[3,4,3],"5-4-1":[5,4,1],"4-5-1":[4,5,1],"3-6-1":[3,6,1]};
 const $=s=>document.querySelector(s);
 const FBC={apiKey:"AIzaSyCyKZLCvvj6rW8VktyLjF53Smc7o9Q4LbY",authDomain:"miguelasgo-games.firebaseapp.com",projectId:"miguelasgo-games",storageBucket:"miguelasgo-games.firebasestorage.app",messagingSenderId:"17704257603",appId:"1:17704257603:web:544bc481254462d2846cf6"};
 let P="";
@@ -87,10 +87,10 @@ const ovrT=t=>{const q=parts(t);return Math.round((q.gk+q.def*4+q.mid*3+q.att*3)
 let db=null,uid=null,S=null,tab="club",sel=null,M=null,peers=[],feed=[];
 const cpuTeams=()=>[0,1,2].map(i=>{const b=clamp(54+S.round*1.3+i*7,50,84),sq=mkSquad(S.seed+S.round*31+i,b,"c"+i),f=["4-4-2","4-3-3","3-5-2"][i];
  return{name:CL[(S.round+i*3)%CL.length],squad:sq,form:f,xi:autoXI(sq,f),prize:2+i*2.5,lab:["Fácil","Medio","Difícil"][i]}});
-const market=()=>{const r=rng(S.seed+S.round*977),L=[];
+const market=()=>{const r=rng(S.seed+Math.floor(S.round/5)*977),L=[];
  for(let i=0;i<10;i++){L.push(mkP(r,"m"+S.round+"-"+i,["POR","DEF","DEF","MED","MED","DEL","DEL","MED","DEF","DEL"][i],62+Math.min(S.round,10),S.ctry||0))}return L.filter(p=>!S.squad.some(x=>x.id===p.id))};
 function newState(name,slot){const seed=hash(name+(uid||Math.random()));const sq=mkSquad(seed,60,"p",nc);
- const o={name,slot,ctry:nc,seed,squad:sq,form:"4-4-2",xi:autoXI(sq,"4-4-2"),budget:30,pts:0,w:0,d:0,l:0,gf:0,ga:0,round:0,streak:0,div:3,season:1};newLeague(o);return o}
+ const o={name,slot,ctry:nc,stadium:stadiumFor(nc,0),seed,squad:sq,form:"4-4-2",xi:autoXI(sq,"4-4-2"),budget:42,pts:0,w:0,d:0,l:0,gf:0,ga:0,round:0,streak:0,div:3,season:1};newLeague(o);return o}
 async function save(){try{localStorage.setItem("mgfc_s"+S.slot,JSON.stringify(S))}catch(e){}
  if(mode==="online"&&db&&uid&&S){try{await db.doc(P+"managers/"+uid).set({name:S.name,pts:S.pts,w:S.w,d:S.d,l:S.l,gf:S.gf,ga:S.ga,ovr:ovrT(S),st:JSON.stringify(S),t:Date.now()})}catch(e){}}}
 const pick=a=>a[Math.floor(Math.random()*a.length)];
@@ -98,10 +98,29 @@ const C=[{n:"España",d:["LaLiga","Segunda","Primera RFEF","Segunda RFEF"],s:0,p
 {n:"Inglaterra",d:["Premier","Championship","League One","League Two"],s:1,p:["United","City","Town","Rovers","Athletic","Wanderers"],c:["Leeds","Bristol","Norwich","Derby","Leicester","Brighton","Hull","Stoke","Preston","Reading","Luton","Burnley","Ipswich","Wigan","Bolton","Swansea"]},
 {n:"Italia",d:["Serie A","Serie B","Serie C","Serie D"],s:0,p:["AC","US","AS","FC","Calcio","Virtus"],c:["Torino","Génova","Bolonia","Parma","Verona","Cagliari","Lecce","Udine","Bari","Pisa","Brescia","Como","Padua","Siena","Empoli","Perugia"]},
 {n:"Alemania",d:["Bundesliga","2. Bundesliga","3. Liga","Regionalliga"],s:0,p:["FC","SV","VfB","Eintracht","Fortuna","Union"],c:["Bremen","Colonia","Hamburgo","Leipzig","Mainz","Bochum","Kiel","Dresde","Fürth","Ulm","Aachen","Jena","Rostock","Essen","Bonn","Hannover"]}];
-const dv=o=>C[o.ctry||0].d[o.div],PR=[10,7,5,3];let scr="menu",mode=null,nc=0,nname="",Z=null;
+const dv=o=>C[o.ctry||0].d[o.div],PR=[10,7,5,3];
+const STADIUMS=[
+ ["Estadio Miguelasgo","Nuevo Santiago","La Fortaleza Roja","Municipal de la Chancla","Arena del Norte","Coliseo Verde","Estadio Costa Brava","La Bombonera Ibérica","Olimpo de Vigo","Campo de las Leyendas","Estadio del Jamón","Arena Mediterránea"],
+ ["Royal Crown Stadium","Old Trafford Lane","The Riverside Ground","King's Park","London Arena","The Iron Bowl","Northbridge Stadium","The Seaside Park","County Ground","The Lion's Den","The Foundry","West End Arena"],
+ ["Stadio Vittoria","Arena del Sole","Campo Azzurro","Stadio Imperiale","San Lorenzo Park","Arena Toscana","Stadio del Porto","Colosseo Calcio","Stadio Adriatico","Arena Verona","Campo Romano","Stadio Nuovo"],
+ ["Kaiser Arena","Waldstadion","Adler Park","Berliner Stadion","Rhein Arena","Stahlwerk Park","Nordlicht Stadion","Olympiastadion West","Bayern Feld","Schwarzwald Arena","Hafenstadion","Eichen Park"]
+];
+const stadiumFor=(country,index=0)=>STADIUMS[country||0][Math.abs(index)%12];
+const seasonPrize=(div,pos)=>{const base=[34,25,18,12][div];const factor=pos===1?1.65:pos===2?1.4:pos===3?1.25:pos<=6?1.05:pos<=9?.9:.72;return Math.round(base*factor*10)/10;};let scr="menu",mode=null,nc=0,nname="",Z=null;
 const slotD=n=>{try{return JSON.parse(localStorage.getItem("mgfc_s"+n))}catch(e){return null}};
-function newLeague(o){const r=rng(o.seed+o.season*101+o.div*7),K=C[o.ctry||0],b=[74,68,62,56][o.div],cs=[...FUN[o.ctry||0]].sort(()=>r()-.5).slice(0,11),z=()=>({pts:0,gf:0,ga:0,w:0,d:0,l:0}),nm=c=>{const p=K.p[Math.floor(r()*K.p.length)];return K.s?c+" "+p:p+" "+c};
- o.lg={rd:0,t:[{n:o.name,b:60,me:1,...z()},...cs.map(c=>({n:c,b:Math.round(b+(r()-.5)*12),...z()}))],ord:Array.from({length:11},(_,i)=>i+1).sort(()=>r()-.5)}}
+function migrateSave(o){
+ if(!o)return o;
+ if(!o.stadium)o.stadium=stadiumFor(o.ctry||0,0);
+ if(o.lg){
+  if(o.lg.ord&&o.lg.ord.length===11)o.lg.ord=[...o.lg.ord,...o.lg.ord];
+  (o.lg.t||[]).forEach((t,i)=>{if(!t.stadium)t.stadium=stadiumFor(o.ctry||0,i)});
+ }
+ return o;
+}
+function newLeague(o){const r=rng(o.seed+o.season*101+o.div*7),K=C[o.ctry||0],b=[78,70,63,56][o.div],fun=[...FUN[o.ctry||0]],z=()=>({pts:0,gf:0,ga:0,w:0,d:0,l:0});
+ // Conservamos los nombres humorísticos originales de cada país.
+ const names=fun.map((n,i)=>({n,k:r()})).sort((a,b)=>a.k-b.k).slice(0,11).map(x=>x.n);
+ o.lg={rd:0,t:[{n:o.name,b:60,me:1,stadium:o.stadium||stadiumFor(o.ctry,0),...z()},...names.map((name,i)=>({n:name,b:Math.round(b+(r()-.5)*12),stadium:stadiumFor(o.ctry,i+1),...z()}))],ord:[...Array.from({length:11},(_,i)=>i+1).sort(()=>r()-.5),...Array.from({length:11},(_,i)=>i+1).sort(()=>r()-.5)]}}
 const rec=(t,x,y)=>{t.gf+=x;t.ga+=y;if(x>y){t.w++;t.pts+=3}else if(x===y){t.d++;t.pts++}else t.l++};
 const qg=l=>{let g=0,p=Math.exp(-l),c=p,u=Math.random();while(u>c&&g<9){g++;p*=l/g;c+=p}return g};
 const sortT=L=>[...L.t].sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf);
@@ -122,7 +141,7 @@ function vMenu(){if(!mode)return`<h1 style="font-size:30px;text-align:center;mar
  if(scr==="new")return`<h1>Nueva carrera</h1><div class="card"><input id="nm" maxlength="22" value="${esc(nname)}" placeholder="Nombre de tu club"><div class="mut" style="margin:10px 0 6px">País y liga</div><div class="row">${C.map((c,i)=>`<button class="${nc===i?"on":""}" data-a="ctry" data-i="${i}">${c.n}</button>`).join("")}</div><div class="mut" style="margin:10px 0 6px">Elige hueco de guardado</div><div class="row">${[1,2,3].map(n=>`<button class="p" data-a="start" data-n="${n}">Hueco ${n}${slotD(n)?" (sobrescribir)":""}</button>`).join("")}</div></div><button data-a="back" style="width:100%">Volver</button>`;
  return`<h1 style="font-size:30px;text-align:center;margin:30px 0 16px">Manager</h1><button class="p" data-a="new" style="width:100%;padding:14px">Nueva carrera</button><h2>Partidas guardadas</h2>`+[1,2,3].map(n=>{const d=slotD(n);return`<div class="card row"><div class="n"><b>Hueco ${n}</b><div class="mut">${d?esc(d.name)+" · "+dv(d)+" · temporada "+d.season:"Vacío"}</div></div>${d?`<button class="p" data-a="load" data-n="${n}" style="flex:0 0 auto">Cargar</button><button data-a="del" data-n="${n}" style="flex:0 0 auto">Borrar</button>`:""}</div>`}).join("")+`<button data-a="mode" data-m="" style="width:100%;margin-top:10px">Cambiar modo (${mode})</button>`}
 function vTable(){const L=S.lg,T=sortT(L),pos=T.findIndex(x=>x.me)+1,N=L.t.length;
- return`<h2>${dv(S)} · temporada ${S.season}</h2><div class="card">${T.map((x,i)=>`<div class="r" style="cursor:default;${x.me?"background:var(--bg)":""}"><span class="pos">${i+1}º</span><span class="n" style="${i<2&&S.div>0?"color:var(--ac)":i>=N-2&&S.div<3?"color:var(--bad)":""}">${esc(x.n)}</span><span class="mut">${x.w}-${x.d}-${x.l}</span><b>${x.pts}</b></div>`).join("")}</div><div class="mut">Los 2 primeros suben de división y los 2 últimos bajan.</div>`+(L.rd>=L.ord.length?`<div class="card"><b>Fin de temporada: ${pos}º</b>${pos===1&&S.div===0?`<p>¡Campeón de primera división! Te espera la Champions de los campeones nacionales.</p><button class="p" data-a="season" style="width:100%;margin-top:8px">Clasificar a Champions</button>`:`<button class="p" data-a="season" style="width:100%;margin-top:8px">Siguiente temporada</button>`}</div>`:"")+((S.hist||[]).length?`<h2>Historial</h2><div class="card">${S.hist.map(h=>`<div class="mut">Temp. ${h.s}: ${h.p}º en ${C[S.ctry||0].d[h.d]}</div>`).join("")}</div>`:"")}
+ return`<h2>${dv(S)} · temporada ${S.season}</h2><div class="card">${T.map((x,i)=>`<div class="r" style="cursor:default;${x.me?"background:var(--bg)":""}"><span class="pos">${i+1}º</span><span class="n" style="${i<2&&S.div>0?"color:var(--ac)":i>=N-2&&S.div<3?"color:var(--bad)":""}">${esc(x.n)}</span><span class="mut">${x.w}-${x.d}-${x.l}</span><b>${x.pts}</b></div>`).join("")}</div><div class="mut">12 equipos · 22 jornadas (ida y vuelta). Los 2 primeros suben y los 2 últimos bajan.</div>`+(L.rd>=L.ord.length?`<div class="card"><b>Fin de temporada: ${pos}º</b><p>Premio de temporada: ${seasonPrize(S.div,pos)}M · según división y puesto.</p>${S.div===0&&pos<=2?`<p>¡Clasificado a Champions! Los dos primeros de cada país entran.</p>`:""}${S.div===0&&pos===3?`<p>¡Clasificado a Copa Plata! Los cuatro terceros disputan semifinales y final.</p>`:""}<button class="p" data-a="season" style="width:100%;margin-top:8px">Jugar Copa Nacional y avanzar</button></div>`:"")+((S.hist||[]).length?`<h2>Historial</h2><div class="card">${S.hist.map(h=>`<div class="mut">Temp. ${h.s}: ${h.p}º en ${C[S.ctry||0].d[h.d]} · premio ${h.prize||0}M</div>`).join("")}</div>`:"")}
 function simulate(A,B){const a=parts(A),b=parts(B),T=[a,b],ev=[];let sc=[0,0];
  const scorer=(q,side)=>{const L=[...q.g.DEL.flatMap(x=>[x,x,x,x]),...q.g.MED.flatMap(x=>[x,x]),...q.g.DEF];return pick(L).p};
  for(let m=1;m<=90;m++){
@@ -145,6 +164,32 @@ function skip(){while(M&&M.min<90){M.min++;M.ev.filter(e=>e.m===M.min).forEach(e
 function finish(){if(M.done)return;clearInterval(M.iv);M.done=true;const h=M.hg,a=M.ag;
  let res;
  if(M.opp.cup){
+  if(M.opp.cupType==="national"){
+   const T=S.nationalCup,winner=h===a?(Math.random()<.5?S:M.opp):(h>a?S:M.opp);
+   if(winner===S){const remaining=Math.max(1,Math.ceil(T.teams.length/2));const rest=T.teams.filter(x=>x!==T.opponent&&x.user!==1);const pool=[...rest].sort(()=>Math.random()-.5);T.teams=[S,...pool.slice(0,remaining-1)];}
+   else{T.stage="done";T.won=false;T.result="Eliminado en "+T.roundName+" · "+h+"-"+a;save();return}
+   if(T.teams.length<=1){T.stage="done";T.won=true;T.result="¡Has ganado la Copa Nacional!"}
+   else{T.roundName=T.teams.length>=16?"Octavos":T.teams.length>=8?"Cuartos":T.teams.length>=4?"Semifinales":"Final";T.opponent=T.teams[1]||makeCupClub(S.ctry,0,0,S.seed+S.season*77);}
+   M.res=T.result||"Has superado la eliminatoria.";save();return;
+  }
+  if(M.opp.cupType==="champions"){
+   const T=S.champCup,won=h===a?Math.random()<.5:h>a;
+   if(!won){T.stage="done";T.won=false;T.result="Eliminado en "+T.roundName+" · "+h+"-"+a;}
+   else{
+    const rest=T.teams.filter(x=>x!==T.opponent&&x.user!==1).sort(()=>Math.random()-.5);
+    const remaining=Math.max(1,Math.ceil(T.teams.length/2));
+    T.teams=[{name:S.name,stadium:S.stadium,squad:S.squad,form:S.form,xi:S.xi,country:S.ctry,user:1,cup:1},...rest.slice(0,remaining-1)];
+    if(T.teams.length===1){T.stage="done";T.won=true;T.result="¡Has ganado la Champions Miguelasgo!";}
+    else{T.roundName=T.teams.length>=4?"Semifinales":"Final";T.stage=T.teams.length>=4?"semi":"final";T.opponent=T.teams[1]||makeCupClub(S.ctry,0,0,S.seed+S.season*99);}
+   }
+   M.res=T.result||(won?"¡Has pasado de ronda!":"Eliminado");save();return;
+  }
+  if(M.opp.cupType==="plata"){
+   const T=S.plataCup,won=h===a?Math.random()<.5:h>a;
+   if(T.stage==="semi"){if(won){T.stage="final";T.finalOpponent=T.otherSemiWinner;T.result="Semifinal superada";}else{T.stage="done";T.won=false;T.result="Eliminado en semifinales";}}
+   else{T.stage="done";T.won=won;T.result=won?"¡Campeón de la Copa Plata!":"Derrota en la final";}
+   M.res=T.result;save();return;
+  }
   const T=S.champCup;
   if(T.stage==="semi"){
    const won=h===a?Math.random()<.5:h>a;
@@ -153,13 +198,13 @@ function finish(){if(M.done)return;clearInterval(M.iv);M.done=true;const h=M.hg,
   }else if(T.stage==="final"){
    T.stage="done";T.won=h===a?Math.random()<.5:h>a;T.result="Final "+h+"-"+a+(h===a?" (decidida en penaltis)":"");
   }
-  if(T.stage==="done"&&T.won)S.budget+=10;
+  /* Los títulos no entregan dinero: la economía se liquida al final de liga. */
   M.res=(T.result||"Partido terminado")+(T.stage==="done"&&T.won?" · PREMIO +10M":"");
   save();return;
  }
  S.gf+=h;S.ga+=a;S.round++;
- if(M.opp.lg){const L=S.lg,o=L.t[M.opp.li];rec(L.t[0],h,a);rec(o,a,h);const q=L.ord.filter(i=>i!==M.opp.li).sort(()=>Math.random()-.5);for(let k=0;k<q.length-1;k+=2){const A=L.t[q[k]],B=L.t[q[k+1]],g1=qg(1.3*Math.pow(A.b/B.b,3)),g2=qg(1.3*Math.pow(B.b/A.b,3));rec(A,g1,g2);rec(B,g2,g1)}L.rd++}
- if(h>a){S.w++;S.pts+=3;S.streak++;S.budget+=M.opp.prize||3;res="PALIZA. Esto es Miguelasgo."}else if(h===a){S.d++;S.pts++;S.budget+=1;S.streak=0;res="Empate. Sabe a poco."}else{S.l++;S.streak=0;res="Derrota. Hoy toca tragársela."}
+ if(M.opp.lg){const L=S.lg,o=L.t[M.opp.li];rec(L.t[0],h,a);rec(o,a,h);const q=L.t.slice(1).map((x,i)=>i+1).filter(i=>i!==M.opp.li).sort(()=>Math.random()-.5);for(let k=0;k<q.length-1;k+=2){const A=L.t[q[k]],B=L.t[q[k+1]],g1=qg(1.3*Math.pow(A.b/B.b,3)),g2=qg(1.3*Math.pow(B.b/A.b,3));rec(A,g1,g2);rec(B,g2,g1)}L.rd++}
+ if(h>a){S.w++;S.pts+=3;S.streak++;res="Victoria. ¡Tres puntos para la clasificación!"}else if(h===a){S.d++;S.pts++;S.streak=0;res="Empate. Un punto más."}else{S.l++;S.streak=0;res="Derrota. Toca recuperarse."}
  const best={};M.ev.filter(e=>e.g&&!e.s).forEach(e=>best[e.p]=(best[e.p]||0)+1);
  const mv=Object.entries(best).sort((x,y)=>y[1]-x[1])[0];let up="";
  if(mv){const p=S.squad.find(x=>x.id===mv[0]);if(p&&p.ovr<95){p.ovr++;p.v=Math.round(Math.pow(p.ovr/50,5)*8)/10;up=" · "+esc(p.n)+" sube a "+p.ovr}}
@@ -169,71 +214,122 @@ function ovc(o){return o>=75?"hi":o<55?"lo":""}
 function row(p,s,i){const bad=s&&p.pos!==s;return`<div class="r${sel===p.id?" s":""}" data-a="pick" data-id="${p.id}"><span class="pos">${s||p.pos}</span><span class="n">${esc(p.n)} ${bad?'<span class="lo">⚠ '+p.pos+"</span>":""}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span></div>`}
 function vClub(){const sl=slots(S.form),bench=S.squad.filter(p=>!S.xi.includes(p.id));
  return`<div class="row">${Object.keys(FORM).map(f=>`<button class="${S.form===f?"on":""}" data-a="form" data-f="${f}">${f}</button>`).join("")}</div>
- <h2>Once inicial · media ${ovrT(S)}</h2>${pitch()}
+ <h2>🏟️ ${esc(S.stadium||"Estadio Miguelasgo")}</h2><h2>Once inicial · media ${ovrT(S)}</h2>${pitch()}
  <h2>Banquillo (${bench.length})</h2><div class="mut">Toca un titular y luego un suplente para cambiarlos.</div><div class="card">${bench.map(p=>`<div class="r${sel===p.id?" s":""}" data-a="pick" data-id="${p.id}"><span class="pos">${p.pos}</span><span class="n">${nat(p)[1]} ${esc(p.n)}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span><button data-a="sell" data-id="${p.id}">Vender ${(p.v*.7).toFixed(1)}M</button></div>`).join("")}</div>
  <button data-a="auto" style="width:100%">Alineación automática</button>`}
-function vMarket(){return`<h2>Mercado · jornada ${S.round+1}</h2><div class="mut">Se renueva tras cada partido. Plantilla ${S.squad.length}/24.</div>`+market().map(p=>`<div class="card r" style="cursor:default"><span class="pos">${p.pos}</span><span class="n">${nat(p)[1]} ${esc(p.n)}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span><button class="p" data-a="buy" data-id="${p.id}" ${S.budget<p.v||S.squad.length>=24?"disabled":""}>${p.v.toFixed(1)}M</button></div>`).join("")}
+function vMarket(){return`<h2>Mercado · ciclo ${Math.floor(S.round/5)+1}</h2><div class="mut">Se renueva cada 5 partidos. Próxima renovación en ${5-(S.round%5)} partido(s). Plantilla ${S.squad.length}/24.</div>`+market().map(p=>`<div class="card r" style="cursor:default"><span class="pos">${p.pos}</span><span class="n">${nat(p)[1]} ${esc(p.n)}</span><span class="ovr ${ovc(p.ovr)}">${p.ovr}</span><button class="p" data-a="buy" data-id="${p.id}" ${S.budget<p.v||S.squad.length>=24?"disabled":""}>${p.v.toFixed(1)}M</button></div>`).join("")}
 function vPlay(){const L=S.lg,on=peers.filter(p=>p.id!==uid),t=L.t[L.ord[L.rd]]||{};
- return`<h2>${dv(S)} · jornada ${Math.min(L.rd+1,L.ord.length)}/${L.ord.length}</h2>`+(L.rd>=L.ord.length?`<div class="card">Temporada terminada. Mira la pestaña Tabla.</div>`:`<div class="card row"><div class="n"><b>${esc(t.n)}</b><div class="mut">media ~${t.b} · premio ${PR[S.div]}M</div></div><button class="p" data-a="cpu" style="flex:0 0 auto">Jugar</button></div>`)
+ return`<h2>${dv(S)} · jornada ${Math.min(L.rd+1,L.ord.length)}/${L.ord.length}</h2>`+(L.rd>=L.ord.length?`<div class="card">Temporada terminada. Mira la pestaña Tabla.</div>`:`<div class="card row"><div class="n"><b>${esc(t.n)}</b><div class="mut">media ~${t.b} · ${esc(t.stadium||"Estadio local")}</div></div><button class="p" data-a="cpu" style="flex:0 0 auto">Jugar</button></div>`)
  +(mode!=="online"?"":`<h2>Retos online: a por ellos</h2>`+(db?(on.length?on.map(p=>`<div class="card row"><div class="n"><b>${esc(p.d.name)}</b><div class="mut">media ${p.d.ovr} · ${p.d.pts} pts</div></div><button class="p" data-a="on" data-id="${p.id}" style="flex:0 0 auto">Machacar</button></div>`).join(""):'<div class="mut">Aún no hay otros managers. ¡Comparte el enlace!</div>'):'<div class="mut">Modo online no disponible en esta vista. Comparte el enlace con permiso de colaborar para jugar contra amigos.</div>'))}
 
 function cupTeam(country,seed,base){
  const r=rng(seed),K=C[country],names=[...FUN[country]];
- const club=(K.s?pick(K.c)+" "+pick(K.p):pick(K.p)+" "+pick(K.c));
+ const club=FUN[country][Math.floor(r()*FUN[country].length)];
  const squad=mkSquad(seed,base,"cup"+country,country),form=["4-4-2","4-3-3","3-5-2"][country%3];
- return {name:club,squad,form,xi:autoXI(squad,form),prize:0,cup:1,country};
+ return {name:club,stadium:stadiumFor(country,Math.floor(r()*12)),squad,form,xi:autoXI(squad,form),prize:0,cup:1,country};
+}
+function makeCupClub(country,div,index,seed){
+ const base=[76,68,61,54][div],r=rng(seed+index*17+div*97),club=FUN[country][(index+div*3)%FUN[country].length]+(div?" "+["","B","C","D"][div]:"");
+ const squad=mkSquad(seed+index*31+div*211,base,"nc"+country+"d"+div+"t"+index,country),form=["4-4-2","4-3-3","3-5-2","4-2-3-1"][index%4];
+ return{name:club,stadium:stadiumFor(country,(index+div*3)%12),squad,form,xi:autoXI(squad,form),country,div,cup:1};
+}
+function cupWinner(A,B){
+ const aa=A.squad.reduce((v,p)=>v+p.ovr,0)/A.squad.length,bb=B.squad.reduce((v,p)=>v+p.ovr,0)/B.squad.length;
+ const g1=qg(1.25*Math.pow(aa/bb,3)),g2=qg(1.25*Math.pow(bb/aa,3));
+ return g1===g2?(Math.random()<.5?A:B):(g1>g2?A:B);
+}
+function startNationalCup(){
+ const all=[];for(let d=0;d<4;d++)for(let i=0;i<12;i++)all.push(makeCupClub(S.ctry,d,i,S.seed+S.season*1009));
+ const mine=all.findIndex(x=>x.div===S.div&&x.name===undefined);
+ all[0]={name:S.name,stadium:S.stadium,squad:S.squad,form:S.form,xi:S.xi,country:S.ctry,div:S.div,user:1,cup:1};
+ // 48 participantes: 16 cabezas de serie pasan directamente a dieciseisavos.
+ const shuffled=all.filter((x,i)=>i!==0).sort(()=>Math.random()-.5);shuffled.unshift(all[0]);
+ const byes=shuffled.slice(0,16),playIn=shuffled.slice(16);
+ const winners=[...byes];for(let i=0;i<playIn.length;i+=2)winners.push(cupWinner(playIn[i],playIn[i+1]));
+ const pool=winners.filter(x=>!x.user).sort(()=>Math.random()-.5);
+ S.nationalCup={stage:"round32",teams:winners,opponent:pool[0],roundName:"Dieciseisavos",result:"Copa Nacional: 48 equipos de las cuatro divisiones"};
+ tab="national";
 }
 function startChampions(){
- const others=[0,1,2,3].filter(i=>i!==S.ctry);
- const r=rng(S.seed+S.season*991);
- const rival=others.splice(Math.floor(r()*others.length),1)[0];
- const rest=others;
- const A=cupTeam(rival,S.seed+S.season*701+rival*31,78);
- const B=cupTeam(rest[0],S.seed+S.season*811+rest[0]*31,77);
- const D=cupTeam(rest[1],S.seed+S.season*911+rest[1]*31,79);
- const g1=qg(1.4*Math.pow(B.squad.reduce((a,p)=>a+p.ovr,0)/D.squad.reduce((a,p)=>a+p.ovr,0),3));
- const g2=qg(1.4*Math.pow(D.squad.reduce((a,p)=>a+p.ovr,0)/B.squad.reduce((a,p)=>a+p.ovr,0),3));
- const winner=g1===g2?(Math.random()<.5?B:D):(g1>g2?B:D);
- S.champCup={stage:"semi",semiOpponent:A,otherSemi:{a:B.name,b:D.name,score:g1+"-"+g2,winner:winner.name,team:winner},result:null};
- tab="cup";
+ const teams=[];
+ for(let c=0;c<4;c++)for(let k=0;k<2;k++)teams.push(makeCupClub(c,0,k,S.seed+S.season*4011+c*113+k*29));
+ const mine=teams.findIndex(x=>x.country===S.ctry&&x.div===0);
+ teams.splice(mine>=0?mine:0,1,{name:S.name,stadium:S.stadium,squad:S.squad,form:S.form,xi:S.xi,country:S.ctry,user:1,cup:1});
+ const pool=teams.filter(x=>!x.user).sort(()=>Math.random()-.5);
+ S.champCup={stage:"quarters",opponent:pool[0],teams,roundName:"Cuartos de final",result:"Champions Miguelasgo: 8 equipos, los dos primeros de cada país"};
+ tab="champions";
 }
-function vCup(){
+function vChampions(){
  const T=S.champCup;
- if(!T)return `<h2>Champions Miguelasgo</h2><div class="card">Clasifícate primero en ${C[S.ctry].d[0]} para disputar las semifinales europeas.</div>`;
- if(T.stage==="semi")return `<h2>🏆 Champions Miguelasgo</h2><div class="card"><b>SEMIFINAL</b><p>${esc(S.name)} 🇪🇸 vs ${esc(T.semiOpponent.name)} (${C[T.semiOpponent.country].n})</p><div class="mut">La otra semifinal: ${esc(T.otherSemi.a)} ${T.otherSemi.score} ${esc(T.otherSemi.b)} · pasa ${esc(T.otherSemi.winner)}</div><button class="p" style="width:100%;margin-top:8px" data-a="cupmatch">Jugar semifinal</button></div>`;
- if(T.stage==="final")return `<h2>🏆 Champions Miguelasgo</h2><div class="card"><b>FINAL EUROPEA</b><p>${esc(S.name)} vs ${esc(T.finalOpponent.name)} (${C[T.finalOpponent.country].n})</p><button class="p" style="width:100%;margin-top:8px" data-a="cupmatch">Jugar la final</button></div>`;
- return `<h2>🏆 ${T.won?"¡CAMPEONES DE EUROPA!":"Champions Miguelasgo"}</h2><div class="card"><b>${T.won?"¡Has ganado la Champions!":"Fin de la Champions"}</b><p>${esc(T.result||"Torneo terminado")}</p><button class="p" style="width:100%" data-a="season">Empezar siguiente temporada</button></div>`;
+ if(!T)return `<h2>🏆 Champions Miguelasgo</h2><div class="card">Se clasifican los dos primeros de la primera división de cada país.</div>`;
+ if(T.stage==="done")return `<h2>🏆 Champions Miguelasgo</h2><div class="card"><b>${T.won?"¡CAMPEÓN DE EUROPA!":"Eliminado"}</b><p>${esc(T.result)}</p><button class="p" data-a="season">Continuar</button></div>`;
+ return `<h2>🏆 Champions Miguelasgo · ${esc(T.roundName)}</h2><div class="card"><b>${esc(S.name)} vs ${esc(T.opponent.name)}</b><p class="mut">🏟️ ${esc(T.opponent.stadium||"Estadio europeo")}</p><button class="p" style="width:100%" data-a="championsMatch">Jugar eliminatoria</button></div>`;
 }
+function startPlata(){
+ const teams=[];for(let c=0;c<4;c++){const club=makeCupClub(c,0,2,S.seed+S.season*3001+c*71);teams.push(club)}
+ const mineIndex=S.ctry;
+ teams[mineIndex]={name:S.name,stadium:S.stadium,squad:S.squad,form:S.form,xi:S.xi,country:S.ctry,user:1,cup:1};
+ const opponents=teams.filter((x,i)=>i!==mineIndex),semi=opponents[0];
+ const otherA=opponents[1],otherB=opponents[2],winner=cupWinner(otherA,otherB);
+ S.plataCup={stage:"semi",semiOpponent:semi,otherSemiWinner:winner,result:"Copa Plata: los cuatro terceros de cada país"};
+ tab="plata";
+}
+function vNational(){
+ const T=S.nationalCup;if(!T)return `<h2>🏆 Copa Nacional</h2><div class="card">Compiten 48 clubes: 12 equipos de cada una de las cuatro divisiones del país. Empieza al final de la temporada.</div><button class="p" data-a="nationalStart" style="width:100%">Comenzar Copa Nacional</button>`;
+ if(T.stage==="done")return `<h2>🏆 Copa Nacional</h2><div class="card"><b>${T.won?"¡CAMPEÓN DE LA COPA NACIONAL!":"Eliminado"}</b><p>${esc(T.result)}</p><button class="p" data-a="season">Continuar temporada</button></div>`;
+ const opp=T.opponent;return `<h2>🏆 Copa Nacional · ${esc(T.roundName)}</h2><div class="card"><p>${esc(S.name)} vs ${esc(opp?opp.name:"Rival pendiente")}</p><div class="mut">🏟️ ${esc(opp?.stadium||"Estadio por confirmar")}</div><p class="mut">${T.teams.length} equipos siguen en competición.</p><button class="p" style="width:100%" data-a="nationalMatch">Jugar eliminatoria</button></div>`;
+}
+function vPlata(){
+ const T=S.plataCup;if(!T)return `<h2>🥈 Copa Plata</h2><div class="card">Los terceros clasificados de España, Inglaterra, Italia y Alemania disputan semifinales y final.</div><button class="p" data-a="plataStart" style="width:100%">Comenzar Copa Plata</button>`;
+ if(T.stage==="done")return `<h2>🥈 Copa Plata</h2><div class="card"><b>${T.won?"¡CAMPEÓN DE LA COPA PLATA!":"Fin del torneo"}</b><p>${esc(T.result)}</p><button class="p" data-a="season">Continuar</button></div>`;
+ return `<h2>🥈 Copa Plata</h2><div class="card"><b>${T.stage==="semi"?"SEMIFINAL":"FINAL"}</b><p>${esc(S.name)} vs ${esc((T.stage==="semi"?T.semiOpponent:T.finalOpponent).name)}</p><button class="p" style="width:100%" data-a="plataMatch">Jugar partido</button></div>`;
+}
+function vCup(){return vPlata()}
 function advanceSeason(){
  const pos=sortT(S.lg).findIndex(x=>x.me)+1;
- (S.hist=S.hist||[]).push({s:S.season,d:S.div,p:pos});
- S.budget=Math.round((S.budget+(pos<=3?PR[S.div]*2:PR[S.div]))*10)/10;
+ (S.hist=S.hist||[]).push({s:S.season,d:S.div,p:pos,prize:seasonPrize(S.div,pos)});
+ const prize=seasonPrize(S.div,pos);S.lastSeasonPrize=prize;S.budget=Math.round((S.budget+prize)*10)/10;
+ if(S.div===0&&pos<=2){S.champQualified=true;S.champSeed=pos;}
+ if(S.div===0&&pos===3){S.plataQualified=true;}
  if(pos<=2&&S.div>0)S.div--;else if(pos>=S.lg.t.length-1&&S.div<3)S.div++;
- S.season++;delete S.champCup;newLeague(S);tab="play";save();
+ S.season++;S.stadium=stadiumFor(S.ctry,(S.season-1)%12);delete S.champCup;delete S.nationalCup;delete S.plataCup;newLeague(S);tab="play";save();
 }
 
 function vLeague(){const L=[...peers].sort((a,b)=>b.d.pts-a.d.pts||(b.d.gf-b.d.ga)-(a.d.gf-a.d.ga));
  return`<h2>Clasificación online</h2><div class="card">`+(L.length?L.map((p,i)=>`<div class="r" style="cursor:default"><span class="pos">${i+1}º</span><span class="n">${esc(p.d.name)}${p.id===uid?" (tú)":""}</span><span class="mut">${p.d.w}-${p.d.d}-${p.d.l}</span><b>${p.d.pts}</b></div>`).join(""):'<div class="mut">Sin datos online todavía.</div>')+`</div><h2>Últimos partidos</h2><div class="card">`+(feed.length?feed.map(f=>`<div class="mut">${esc(f.a)} <b>${f.ga}-${f.gb}</b> ${esc(f.b)}</div>`).join(""):'<div class="mut">Nada aún.</div>')+"</div>"}
-function vMatch(){if(M.pre)return`<div class="card"><div class="mut" style="text-align:center">${esc(S.name)} vs ${esc(M.opp.name)}</div>${radar(S,M.opp)}<div class="row" style="justify-content:center;margin:6px 0"><span class="chip" style="border-color:var(--ac)">● ${esc(S.name)}</span><span class="chip" style="border-color:var(--ac2)">● ${esc(M.opp.name)}</span></div></div><button class="p" style="width:100%;padding:14px" data-a="kick">Pitido inicial</button>`;
+function vMatch(){if(M.pre)return`<div class="card"><div class="mut" style="text-align:center">${esc(S.name)} vs ${esc(M.opp.name)}</div><div class="mut" style="text-align:center">🏟️ ${esc(M.opp.stadium||S.stadium||"Estadio Miguelasgo")}</div>${radar(S,M.opp)}<div class="row" style="justify-content:center;margin:6px 0"><span class="chip" style="border-color:var(--ac)">● ${esc(S.name)}</span><span class="chip" style="border-color:var(--ac2)">● ${esc(M.opp.name)}</span></div></div><button class="p" style="width:100%;padding:14px" data-a="kick">Pitido inicial</button>`;
  return`<div class="card"><div class="mut" style="text-align:center">${esc(S.name)} vs ${esc(M.opp.name)} · min <span id="mn">${Math.min(M.min,90)}</span>'</div><div class="score" id="sc">${M.hg} - ${M.ag}</div><div class="pitch" id="bar" style="width:${M.min/.9}%"></div></div>${mpit()}
  ${M.done?`<div class="card" style="text-align:center"><b>${M.res}</b></div><button class="p" style="width:100%" data-a="close">Continuar</button>`:`<button style="width:100%" data-a="skip">Saltar ⏩</button>`}
  <div class="card log" id="lg">${M.log.map(l=>`<div class="${l.g?(l.s?"gb":"g"):""}">${l.m}' ${esc(l.t)}</div>`).join("")||'<div class="mut">Pitido inicial…</div>'}</div>`}
 function render(){const el=$("#app");if(!S){el.innerHTML=vMenu();return}
- let b;if(M)b=vMatch();else if(Z)b=vSign();else b={club:vClub,market:vMarket,play:vPlay,table:vTable,league:vLeague,cup:vCup}[tab]();
+ let b;if(M)b=vMatch();else if(Z)b=vSign();else b={club:vClub,market:vMarket,play:vPlay,table:vTable,league:vLeague,cup:vCup,national:vNational,plata:vPlata,champions:vChampions}[tab]();
  el.innerHTML=`<div class="top"><h1>${esc(S.name)}</h1><span class="mut">${mode==="online"?"🟢 online":"⚪ solo"} <button data-a="menu" style="padding:4px 8px">Menú</button></span></div>
  <div class="chips"><span class="chip">${dv(S)}</span><span class="chip">💰 ${S.budget.toFixed(1)}M</span><span class="chip">${S.pts} pts</span><span class="chip">${S.w}V ${S.d}E ${S.l}D</span><span class="chip">racha ${S.streak}</span><span class="chip">Media ${ovrT(S)}</span></div>
- ${M?"":`<div class="tabs">${[["club","Club"],["market","Mercado"],["play","Jugar"],["table","Tabla"],...(mode==="online"?[["league","Online"]]:[]),...(S.champCup?[["cup","🏆 Champions"]]:[])].map(([k,l])=>`<button class="${tab===k?"on":""}" data-a="tab" data-k="${k}">${l}</button>`).join("")}</div>`}${b}`}
+ ${M?"":`<div class="tabs">${[["club","Club"],["market","Mercado"],["play","Jugar"],["table","Tabla"],...(mode==="online"?[["league","Online"]]:[]),...(S.nationalCup?[["national","🏆 Copa Nacional"]]:[]),...(S.champCup?[["champions","🏆 Champions"]]:[]),...(S.plataCup?[["plata","🥈 Copa Plata"]]:[])].map(([k,l])=>`<button class="${tab===k?"on":""}" data-a="tab" data-k="${k}">${l}</button>`).join("")}</div>`}${b}`}
 document.addEventListener("click",e=>{const t=e.target.closest("[data-a]");if(!t)return;e.stopPropagation();const a=t.dataset.a,id=t.dataset.id;
  if(a==="start"){const n=$("#nm").value.trim()||"Mi club";S=newState(n,+t.dataset.n);scr="menu";tab="club";save()}
  else if(a==="mode"){mode=t.dataset.m||null}
  else if(a==="new"){scr="new";nname=""}
  else if(a==="ctry"){nname=$("#nm").value;nc=+t.dataset.i}
  else if(a==="back"){scr="menu"}
- else if(a==="load"){S=slotD(+t.dataset.n);tab="club"}
+ else if(a==="load"){S=migrateSave(slotD(+t.dataset.n));tab="club";save()}
  else if(a==="del"){try{localStorage.removeItem("mgfc_s"+t.dataset.n)}catch(x){}}
  else if(a==="menu"){save();S=null;sel=null;tab="club"}
- else if(a==="season"){if(S.champCup&&S.champCup.stage==="done"){advanceSeason()}else{const pos=sortT(S.lg).findIndex(x=>x.me)+1;if(pos===1&&S.div===0){startChampions();save()}else advanceSeason()}}
-  else if(a==="cupmatch"){const T=S.champCup;if(T){const opp=T.stage==="semi"?T.semiOpponent:T.finalOpponent;play({...opp,cup:1,prize:0});return}}
+ else if(a==="season"){
+   if(!S.nationalCup){startNationalCup();save();render();return}
+   if(S.nationalCup.stage!=="done"){tab="national";render();return}
+   const pos=sortT(S.lg).findIndex(x=>x.me)+1;
+   if(S.div===0&&pos<=2&&!S.champCup){startChampions();save();render();return}
+   if(S.div===0&&pos===3&&!S.plataCup){startPlata();save();render();return}
+   if(S.champCup&&S.champCup.stage!=="done"){tab="champions";render();return}
+   if(S.plataCup&&S.plataCup.stage!=="done"){tab="plata";render();return}
+   advanceSeason()
+  }
+  else if(a==="championsMatch"){const T=S.champCup;if(T&&T.opponent){play({...T.opponent,cup:1,cupType:"champions",prize:0});return}}
+  else if(a==="nationalStart"){startNationalCup();save()}
+  else if(a==="nationalMatch"){const T=S.nationalCup;if(T&&T.opponent){play({...T.opponent,cup:1,cupType:"national",prize:0});return}}
+  else if(a==="plataStart"){startPlata();save()}
+  else if(a==="plataMatch"){const T=S.plataCup,opp=T.stage==="semi"?T.semiOpponent:T.finalOpponent;if(T&&opp){play({...opp,cup:1,cupType:"plata",prize:0});return}}
  else if(a==="tab"){tab=t.dataset.k;sel=null;Z=null}
  else if(a==="form"){S.form=t.dataset.f;S.xi=autoXI(S.squad,S.form);sel=null;save()}
  else if(a==="auto"){S.xi=autoXI(S.squad,S.form);sel=null;save()}
